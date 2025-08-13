@@ -1,7 +1,7 @@
 class AppValues {
   AppValues._();
 
-  static const appName = 'Tổng điều tra kinh tế cá thể - tôn giáo';
+  static const appName = 'Tổng điều tra kinh tế cá thể';
   static const timeOut = 15; // 15s for limit request
   static const bundleIdAndroid =
       'gov.statistics.investigation.economic'; // get from android/app/build.gradle
