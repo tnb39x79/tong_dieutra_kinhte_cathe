@@ -10,8 +10,7 @@ import 'package:gov_statistics_investigation_economic/common/utils/utils.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/dialog_widget.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_colors.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
-import 'package:gov_statistics_investigation_economic/modules/sync_module/sync_module.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_tongiao.dart';
+import 'package:gov_statistics_investigation_economic/modules/sync_module/sync_module.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/sync/sync_result.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
@@ -29,12 +28,10 @@ class SyncController extends BaseController with SyncMixin {
 
   final MainMenuController mainMenuController = Get.find();
 
-  final bKCoSoSXKDProvider = BKCoSoSXKDProvider();
-  final bKCoSoTonGiaoProvider = BKCoSoTonGiaoProvider();
+  final bKCoSoSXKDProvider = BKCoSoSXKDProvider(); 
   final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider();
 
-  final danhSachBKCoSoSXKDInterviewed = <TableBkCoSoSXKD>[].obs;
-  final danhSachBKDiabanHoInterviewed = <TableBkTonGiao>[].obs;
+  final danhSachBKCoSoSXKDInterviewed = <TableBkCoSoSXKD>[].obs; 
 
   final progress = 0.0.obs;
   final endSync = false.obs;

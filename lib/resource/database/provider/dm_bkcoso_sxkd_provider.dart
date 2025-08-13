@@ -1,7 +1,6 @@
 import 'dart:developer' as developer;
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_tongiao.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';

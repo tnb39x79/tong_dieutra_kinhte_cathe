@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_tongiao.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_tongiao.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart'; 
 import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
@@ -40,18 +38,14 @@ class InterviewListDetailController extends BaseController {
   String? currentIdCoSoTG;
   String? currentIdCoSo;
 
-  //RX
-  final danhSachDiabanHo = <TableDmDiaBanTonGiao>[].obs;
-  final danhSachDiaBanCoSoSXKD = <TableDmDiaBanCosoSxkd>[].obs;
-  final danhSachBKTonGiao = <TableBkTonGiao>[].obs;
+  //RX 
+  final danhSachDiaBanCoSoSXKD = <TableDmDiaBanCosoSxkd>[].obs; 
   final danhSachBKCoSoSXXKD = <TableBkCoSoSXKD>[].obs;
   
 
   // provider
-  final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
-  final bkCoSoTonGiaoProvider = BKCoSoTonGiaoProvider();
-  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider();
-  final diaBanCoSoTonGiaoProvider = DiaBanCoSoTonGiaoProvider();
+  final bkCoSoSXKDProvider = BKCoSoSXKDProvider(); 
+  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider(); 
   final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider();
    
   @override
@@ -111,12 +105,7 @@ class InterviewListDetailController extends BaseController {
        currentMaDiaBan= danhSachBKCoSoSXXKD[index].maDiaBan;
       await Get.toNamed(AppRoutes.activeStatus);
       await getSubjects();
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      currentIdCoSoTG = danhSachBKTonGiao[index].iDCoSo;
-      //currentMaDiaban= danhSachBKTonGiao[index].maDiaBan;
-      await Get.toNamed(AppRoutes.activeStatus);
-      await getSubjects();
-    } else {}
+    }  else {}
   }
 
   Future getSubjects() async {
@@ -134,14 +123,7 @@ class InterviewListDetailController extends BaseController {
       } else {
         await getListBkDiaBanCoSoSXKDInterviewed(int.parse(currentMaDoiTuongDT),currentMaDiaBan!);
       }
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      // => dieu tra theo xa (cơ sở tôn giáo, tín ngưỡng)
-      if (currentMaTinhTrangDT == AppDefine.chuaPhongVan.toString()) {
-        await getListBkTonGiaoUnInterviewed();
-      } else {
-        await getListBkCoSoTonGiaoInterviewed();
-      }
-    }
+    }  
   }
 
   onSearch(String search) async {
@@ -167,45 +149,10 @@ class InterviewListDetailController extends BaseController {
             int.parse(currentMaDoiTuongDT), currentMaDiaBan!,
             search: search);
       }
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      // => dieu tra theo dia ban(ho)
-      if (currentMaTinhTrangDT == AppDefine.chuaPhongVan.toString()) {
-        await getListBkTonGiaoUnInterviewed(search: search);
-      } else {
-        await getListBkCoSoTonGiaoInterviewed(search: search);
-      }
-    }
+    }  
   }
 
-  // danh sach BK cơ sở tôn giáo chua phong van
-  Future getListBkTonGiaoUnInterviewed({String? search}) async {
-    if (search != null) {
-      List<Map> maps =
-          await bkCoSoTonGiaoProvider.searchListUnInterviewed(search);
-      danhSachBKTonGiao.clear();
-      danhSachBKTonGiao.value = TableBkTonGiao.listFromJson(maps);
-    } else {
-      List<Map> maps =
-          await bkCoSoTonGiaoProvider.selectListUnInterviewed();
-      danhSachBKTonGiao.clear();
-      danhSachBKTonGiao.value = TableBkTonGiao.listFromJson(maps);
-    }
-  }
-
-  // danh sach BK  cơ sở tôn giáo phong van
-  Future getListBkCoSoTonGiaoInterviewed({String? search}) async {
-    if (search != null) {
-      List<Map> maps =
-          await bkCoSoTonGiaoProvider.searchListInterviewed(search);
-      danhSachBKTonGiao.clear();
-      danhSachBKTonGiao.value = TableBkTonGiao.listFromJson(maps);
-    } else {
-      List<Map> maps =
-          await bkCoSoTonGiaoProvider.selectAllListInterviewed();
-      danhSachBKTonGiao.clear();
-      danhSachBKTonGiao.value = TableBkTonGiao.listFromJson(maps);
-    }
-  }
+  
 
   // danh sach BK CoSo SXKD chua phong van
   Future getListBkDiaBanCoSoSXKDUnInterviewed(int maDoiTuongDT, String maDB,

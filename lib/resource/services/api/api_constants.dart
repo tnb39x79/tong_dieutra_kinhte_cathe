@@ -51,7 +51,7 @@ class ApiConstants {
   static const String getData = 'api/LayThongTinDuLieu';
 
   //sync data
-  static const String sync = 'api/SyncData/';
+  static const String sync = 'api/SyncCTData/';
 
   //send error data
   static const String sendErrorData = 'api/LogErrorData/';

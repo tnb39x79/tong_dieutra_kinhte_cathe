@@ -8,8 +8,7 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_defin
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_no07_controller.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/phieu_07_mau_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/phieu_08_tongiao_provider.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/phieu_07_mau_provider.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau_dm.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_data.dart';
@@ -17,8 +16,7 @@ import 'package:gov_statistics_investigation_economic/resource/database/table/ta
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_tongiao.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_07_mau_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:gov_statistics_investigation_economic/routes/routes.dart';
@@ -69,8 +67,7 @@ class GeneralInformationController extends BaseController {
   final HomeController homeController = Get.find();
   final MainMenuController mainMenuController = Get.find();
 
-  /// RX
-  final tblBkTonGiao = TableBkTonGiao().obs;
+  /// RX 
   final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
   //final tblBkCoSoSXKDNganhSanPham = <TableBkCoSoSXKDNganhSanPham>[].obs;
   final tblBkCoSoSXKDNganhSanPham = TableBkCoSoSXKDNganhSanPham().obs;
@@ -78,14 +75,12 @@ class GeneralInformationController extends BaseController {
   final currentScreenNo = 0.obs;
 
   /// provider
-  final dataProvider = DataProvider();
-  final bkCoSoTonGiaoProvider = BKCoSoTonGiaoProvider();
+  final dataProvider = DataProvider(); 
   final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
   final bkCoSoSXKDNganhSanPhamProvider = BKCoSoSXKDNganhSanPhamProvider();
 
   final phieuMauProvider = PhieuMauProvider();
-  final phieuMauSanphamProvider = PhieuMauSanphamProvider();
-  final phieuTonGiaoProvider = PhieuTonGiaoProvider();
+  final phieuMauSanphamProvider = PhieuMauSanphamProvider(); 
   //final dmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
   final dmMotaSanphamProvider = DmMotaSanphamProvider();
 
@@ -177,37 +172,7 @@ class GeneralInformationController extends BaseController {
               tblBkCoSoSXKDNganhSanPham.value.tenNganh ?? '';
         }
       }
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      var map = await bkCoSoTonGiaoProvider.getInformation(currentIdCoSoTG!);
-      if (map != null) {
-        tblBkTonGiao.value = TableBkTonGiao.fromJson(map);
-        maTinhController.text = tblBkTonGiao.value.maTinh ?? '';
-        tenTinhController.text = tblBkTonGiao.value.tenTinh ?? '';
-        maHuyenController.text = tblBkTonGiao.value.maHuyen ?? '';
-        tenHuyenController.text = tblBkTonGiao.value.tenHuyen ?? '';
-        maXaController.text = tblBkTonGiao.value.maXa ?? '';
-        tenXaController.text = tblBkTonGiao.value.tenXa ?? '';
-        maThonController.text = tblBkTonGiao.value.maThon ?? '';
-        tenThonController.text = tblBkTonGiao.value.tenThon ?? '';
-        tenChuHoController.text = tblBkTonGiao.value.tenCoSo ?? '';
-        diaChiChuHoController.text = tblBkTonGiao.value.diaChi ?? '';
-        dienThoaiController.text = tblBkTonGiao.value.dienThoai ?? '';
-        emailController.text = tblBkTonGiao.value.email ?? '';
-        coSoSoGiaTriController.text = tblBkTonGiao.value.maCoSo != null
-            ? tblBkTonGiao.value.maCoSo.toString()
-            : '';
-        String ttNT = '';
-        if (tblBkTonGiao.value.ttNT != null) {
-          if (tblBkTonGiao.value.ttNT == 1) {
-            ttNT = 'Thành thị';
-          } else if (tblBkTonGiao.value.ttNT == 2) {
-            ttNT = 'Nông thôn';
-          }
-        }
-        ttNTController.text = ttNT;
-        //phieuTonGiaoProvider
-      }
-    }
+    }  
   }
 
   // Future<bool> checkMaNganhCap1BCEByMaVCPA() async {

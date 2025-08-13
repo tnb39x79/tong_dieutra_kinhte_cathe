@@ -12,8 +12,7 @@ class ProgressListController extends BaseController {
   final doiTuongDTs = <TableDoiTuongDieuTra>[].obs;
   final progressList = <ProgressModel>[].obs;
 
-  BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider();
-  BKCoSoTonGiaoProvider bkCoSoTonGiaoProvider = BKCoSoTonGiaoProvider();
+  BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider(); 
 
   // final countPhieuMauInterviewed = 0.obs;
   // final countPhieuMauUnInterviewed = 0.obs;
@@ -53,20 +52,7 @@ class ProgressListController extends BaseController {
 
   Future<ProgressModel> getProgress(
       int maDoiTuongDT, String tenDoiTuongDT, String moTa) async {
-    if (maDoiTuongDT == AppDefine.maDoiTuongDT_08) {
-      ProgressModel progressModel = ProgressModel();
-      progressModel.maDoiTuongDT = maDoiTuongDT;
-      progressModel.tenDoiTuongDT = tenDoiTuongDT;
-      progressModel.moTaDoiTuongDT = moTa;
-      progressModel.countPhieuInterviewed =
-          await bkCoSoTonGiaoProvider.countOfInterviewedAll() ?? 0;
-      progressModel.countPhieuUnInterviewed =
-          await bkCoSoTonGiaoProvider.countOfUnInterviewedAll() ?? 0;
-      progressModel.countPhieuSyncSuccess =
-          await bkCoSoTonGiaoProvider.countSyncSuccess() ?? 0;
-      return progressModel;
-    } else {
-      ProgressModel progressModel = ProgressModel();
+    ProgressModel progressModel = ProgressModel();
       progressModel.maDoiTuongDT = maDoiTuongDT;
       progressModel.tenDoiTuongDT = tenDoiTuongDT;
       progressModel.moTaDoiTuongDT = moTa;
@@ -77,7 +63,6 @@ class ProgressListController extends BaseController {
       progressModel.countPhieuSyncSuccess =
           await bkCoSoSXKDProvider.countSyncSuccessAll(maDoiTuongDT) ?? 0;
       return progressModel;
-    }
   }
 
   // Future getProgressCount() async {

@@ -1,9 +1,0 @@
-export 'table_tg_dm_cap_congnhan.dart';
-export 'table_tg_dm_loai_coso.dart';
-export 'table_tg_dm_loaihinh_tongiao.dart';
-export 'table_tg_dm_nangluong.dart';
-export 'table_tg_dm_sudung_phanmem.dart';
-export 'table_tg_dm_trinhdo_chuyenmon.dart';
-export 'table_tg_dm_xephang.dart';
-export 'table_tg_dm_xephang_ditich.dart'; 
-export 'table_tg_dm_loai_tongiao.dart'; 

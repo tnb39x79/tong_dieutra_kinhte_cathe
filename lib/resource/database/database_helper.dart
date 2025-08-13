@@ -5,31 +5,26 @@ import 'package:gov_statistics_investigation_economic/resource/database/provider
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_dantoc_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_gioitinh_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_linhvuc_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/tg_dm_loai_tongiao_provider.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/database/provider/xacnhan_logic_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
 import 'provider/provider.dart';
 import 'provider/provider_p07mau.dart';
-import 'provider/provider_p07mau_dm.dart';
-import 'provider/provider_p08.dart';
-import 'provider/provider_p08dm.dart';
+import 'provider/provider_p07mau_dm.dart'; 
 
 class DatabaseHelper {
   static const _databaseVersion = 1;
   static const _databaseName = 'DieuTraKinhTeCaTheTonGiao.db';
   final dataProvider = DataProvider();
-  final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider();
-  final bkCoSoTonGiaoProvider = BKCoSoTonGiaoProvider();
+  final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider(); 
   final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
   final bkCoSoSXKDNganhSanPhamProvider = BKCoSoSXKDNganhSanPhamProvider();
   final dmMotaSanphamProvider = DmMotaSanphamProvider();
   final dmLinhvucProvider = DmLinhvucProvider();
 
-  final diaBanCoSoSXKdProvider = DiaBanCoSoSXKDProvider();
-  final diaBanCoSoTonGiaoProvider = DiaBanCoSoTonGiaoProvider();
+  final diaBanCoSoSXKdProvider = DiaBanCoSoSXKDProvider(); 
   final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider();
 
   final dmTinhTrangHDProvider = DmTinhTrangHDProvider();
@@ -58,20 +53,7 @@ class DatabaseHelper {
   final phieuMauA61Provider = PhieuMauA61Provider();
   final phieuMauA68Provider = PhieuMauA68Provider();
   final phieuMauSanphamProvider = PhieuMauSanphamProvider();
-
-  ///Phiếu Tôn giáo
-  final tgDmCapCongNhanProvider = TGDmCapCongNhanProvider();
-  final tgDmLoaiCoSoProvider = TGDmLoaiCoSoProvider();
-  final tgDmLoaiHinhTonGiaoProvider = TGDmLoaiHinhTonGiaoProvider();
-  final tgDmNangLuongProvider = TGDmNangLuongProvider();
-  final tgDmSuDungPhanMemProvider = TGDmSuDungPhanMemProvider();
-  final tgDmTrinhDoChuyenMonProvider = TGDmTrinhDoChuyenMonProvider();
-  final tgDmXepHangProvider = TGDmXepHangProvider();
-  final tgDmXepHangDiTichProvider = TGDmXepHangDiTichProvider();
-  final tgDmLoaiTonGiaoProvider = TGDmLoaiTonGiaoProvider();
-
-  final phieuTonGiaoProvider = PhieuTonGiaoProvider();
-  final phieuTonGiaoA43Provider = PhieuTonGiaoA43Provider();
+  
 
   // only have a single app-wide reference to the database
   static Database? _database;
@@ -133,14 +115,12 @@ class DatabaseHelper {
     await Future.wait([
       dataProvider.onCreateTable(db),
       doiTuongDieuTraProvider.onCreateTable(db),
-      userInfoProvider.onCreateTable(db),
-      bkCoSoTonGiaoProvider.onCreateTable(db),
+      userInfoProvider.onCreateTable(db), 
       bkCoSoSXKDProvider.onCreateTable(db),
       bkCoSoSXKDNganhSanPhamProvider.onCreateTable(db),
       dmMotaSanphamProvider.onCreateTable(db),
       dmLinhvucProvider.onCreateTable(db),
-      diaBanCoSoSXKdProvider.onCreateTable(db),
-      diaBanCoSoTonGiaoProvider.onCreateTable(db),
+      diaBanCoSoSXKdProvider.onCreateTable(db), 
       diaBanCoSoSXKDProvider.onCreateTable(db),
       dmTinhTrangHDProvider.onCreateTable(db),
       dmTrangThaiDTProvider.onCreateTable(db),
@@ -172,26 +152,7 @@ class DatabaseHelper {
       phieuMauSanphamProvider.onCreateTable(db)
     ]);
 
-    // Dm phieu tôn giáo
-
-    await Future.wait([
-      tgDmCapCongNhanProvider.onCreateTable(db),
-      tgDmLoaiCoSoProvider.onCreateTable(db),
-      tgDmLoaiHinhTonGiaoProvider.onCreateTable(db),
-      tgDmNangLuongProvider.onCreateTable(db),
-      tgDmSuDungPhanMemProvider.onCreateTable(db),
-      tgDmTrinhDoChuyenMonProvider.onCreateTable(db),
-      tgDmXepHangProvider.onCreateTable(db),
-      tgDmXepHangDiTichProvider.onCreateTable(db),
-      tgDmLoaiTonGiaoProvider.onCreateTable(db)
-    ]);
-
-    // phieu tôn giáo
-
-    await Future.wait([
-      phieuTonGiaoProvider.onCreateTable(db),
-      phieuTonGiaoA43Provider.onCreateTable(db),
-    ]);
+     
 
     log('END::Create all table compelete');
   }
@@ -201,14 +162,12 @@ class DatabaseHelper {
 
     await dataProvider.deletedTable(db);
     await doiTuongDieuTraProvider.deletedTable(db);
-    await userInfoProvider.deletedTable(db);
-    await bkCoSoTonGiaoProvider.deletedTable(db);
+    await userInfoProvider.deletedTable(db); 
     await bkCoSoSXKDNganhSanPhamProvider.deletedTable(db);
     await dmMotaSanphamProvider.deletedTable(db);
     await dmLinhvucProvider.deletedTable(db);
     await bkCoSoSXKDProvider.deletedTable(db);
-    await diaBanCoSoSXKdProvider.deletedTable(db);
-    await diaBanCoSoTonGiaoProvider.deletedTable(db);
+    await diaBanCoSoSXKdProvider.deletedTable(db); 
     await diaBanCoSoSXKDProvider.deletedTable(db);
     // await dmTongHopKQProvider.deletedTable(db);
     await xacNhanLogicProvider.deletedTable(db);
@@ -235,23 +194,7 @@ class DatabaseHelper {
     await phieuMauA61Provider.deletedTable(db);
     await phieuMauA68Provider.deletedTable(db);
     await phieuMauSanphamProvider.deletedTable(db);
-
-    // DM phieu ton giao
-    await tgDmCapCongNhanProvider.deletedTable(db);
-    await tgDmLoaiCoSoProvider.deletedTable(db);
-    await tgDmLoaiHinhTonGiaoProvider.deletedTable(db);
-    await tgDmNangLuongProvider.deletedTable(db);
-    await tgDmSuDungPhanMemProvider.deletedTable(db);
-    await tgDmTrinhDoChuyenMonProvider.deletedTable(db);
-    await tgDmXepHangProvider.deletedTable(db);
-    await tgDmXepHangDiTichProvider.deletedTable(db);
-    await tgDmLoaiTonGiaoProvider.deletedTable(db);
-    await phieuTonGiaoProvider.deletedTable(db);
-    await phieuTonGiaoA43Provider.deletedTable(db);
-
-    // phieu ton giao
-    await phieuTonGiaoProvider.deletedTable(db);
-    await phieuTonGiaoA43Provider.deletedTable(db);
+ 
 
     log('END::deleteAll table compelete');
     createTable(db);
@@ -263,14 +206,13 @@ class DatabaseHelper {
     await Future.wait([
       dataProvider.onCreateTable(db),
       doiTuongDieuTraProvider.onCreateTable(db),
-      userInfoProvider.onCreateTable(db),
-      bkCoSoTonGiaoProvider.onCreateTable(db),
+      userInfoProvider.onCreateTable(db), 
       bkCoSoSXKDProvider.onCreateTable(db),
       bkCoSoSXKDNganhSanPhamProvider.onCreateTable(db),
       diaBanCoSoSXKdProvider.onCreateTable(db),
-      diaBanCoSoTonGiaoProvider.onCreateTable(db),
+       
       diaBanCoSoSXKDProvider.onCreateTable(db),
-      // dmTongHopKQProvider.onCreateTable(db),
+      
       xacNhanLogicProvider.onCreateTable(db)
     ]);
 
@@ -282,14 +224,7 @@ class DatabaseHelper {
       phieuMauA68Provider.onCreateTable(db),
       phieuMauSanphamProvider.onCreateTable(db)
     ]);
-
-    // phieu 05
-
-    await Future.wait([
-      phieuTonGiaoProvider.onCreateTable(db),
-      phieuTonGiaoA43Provider.onCreateTable(db)
-    ]);
-
+ 
     log('END::Create all table compelete');
   }
 
@@ -299,12 +234,10 @@ class DatabaseHelper {
 
     await dataProvider.deletedTable(db);
     await doiTuongDieuTraProvider.deletedTable(db);
-    await userInfoProvider.deletedTable(db);
-    await bkCoSoTonGiaoProvider.deletedTable(db);
+    await userInfoProvider.deletedTable(db); 
     await bkCoSoSXKDNganhSanPhamProvider.deletedTable(db);
     await bkCoSoSXKDProvider.deletedTable(db);
-    await diaBanCoSoSXKdProvider.deletedTable(db);
-    await diaBanCoSoTonGiaoProvider.deletedTable(db);
+    await diaBanCoSoSXKdProvider.deletedTable(db); 
     await diaBanCoSoSXKDProvider.deletedTable(db);
     //  await dmTongHopKQProvider.deletedTable(db);
     await xacNhanLogicProvider.deletedTable(db);
@@ -314,11 +247,7 @@ class DatabaseHelper {
     phieuMauA61Provider.deletedTable(db);
     phieuMauA68Provider.deletedTable(db);
     phieuMauSanphamProvider.deletedTable(db);
-
-    // phieu 05
-    phieuTonGiaoProvider.deletedTable(db);
-    phieuTonGiaoA43Provider.deletedTable(db);
-
+ 
     log('END::deleteAll table compelete');
     createOnlyDataTable(db);
   }

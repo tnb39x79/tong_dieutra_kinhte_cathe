@@ -6,8 +6,7 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_style
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/checkbox_circle_dm.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/input_string_dm.dart';
 
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm08.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_gioitinh.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
@@ -94,12 +93,12 @@ class SelectStringCTDmState extends State<SelectStringCTDm> {
               dynamic itemDyn;
               int ghiRo = 0;
 
-              if (widget.tenDanhMuc == tableTGDmNangLuong) {
-                TableTGDmNangLuong item = widget.listValue[index];
-                itemDyn = item;
-                maVal = item.ma!;
-                tenVal = item.ten!;
-              }
+              // if (widget.tenDanhMuc == tableTGDmNangLuong) {
+              //   TableTGDmNangLuong item = widget.listValue[index];
+              //   itemDyn = item;
+              //   maVal = item.ma!;
+              //   tenVal = item.ten!;
+              // }
               return Column(
                 children: [
                   CheckBoxCircleDm(

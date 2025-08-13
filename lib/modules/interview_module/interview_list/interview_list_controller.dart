@@ -22,8 +22,7 @@ class InterviewListController extends BaseController {
   static const maXaKey = 'maXa';
   static const tenDoiTuongDTKey = "tenDoiTuongDT";
 
-  BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider();
-  BKCoSoTonGiaoProvider bkCoSoTonGiaoProvider = BKCoSoTonGiaoProvider();
+  BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider(); 
 
   final countOfUnInterviewed = 0.obs;
   final countOfInterviewed = 0.obs;
@@ -106,12 +105,7 @@ class InterviewListController extends BaseController {
       countOfInterviewed.value = await bkCoSoSXKDProvider.countOfInterviewed(
               int.parse(currentMaDoiTuongDT), currentMaDiaBan!) ??
           0;
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      countOfUnInterviewed.value =
-          await bkCoSoTonGiaoProvider.countOfUnInterviewedAll() ?? 0;
-      countOfInterviewed.value =
-          await bkCoSoTonGiaoProvider.countOfInterviewedAll() ?? 0;
-    } else {
+    }   else {
       countOfUnInterviewed.value = 0;
       countOfInterviewed.value = 0;
     }

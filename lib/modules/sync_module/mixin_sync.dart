@@ -6,10 +6,8 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p08.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_tongiao.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_sync_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/senderror/senderror_model.dart';
@@ -20,10 +18,8 @@ import 'package:gov_statistics_investigation_economic/resource/services/api/sync
 
 mixin SyncMixin {
   Map body = {};
-
-  final bkCoSoTonGiaoMixProvider = BKCoSoTonGiaoProvider();
-  final bkCoSoSXKDMixProvider = BKCoSoSXKDProvider();
-  final diaBanCoSoTonGiaoMixProvider = DiaBanCoSoTonGiaoProvider();
+ 
+  final bkCoSoSXKDMixProvider = BKCoSoSXKDProvider(); 
   final diaBanCoSoSXKDMixProvider = DiaBanCoSoSXKDProvider();
 
   ///Phiếu 07 mẫu
@@ -31,13 +27,8 @@ mixin SyncMixin {
   final phieuMauA61MixProvider = PhieuMauA61Provider();
   final phieuMauA68MixProvider = PhieuMauA68Provider();
   final phieuMauSanPhamMixProvider = PhieuMauSanphamProvider();
-
-  ///Phiếu 08 tôn giáo, tín ngưỡng
-  final phieuTonGiaoMixProvider = PhieuTonGiaoProvider();
-  final phieuTonGiaoA43MixProvider = PhieuTonGiaoA43Provider();
-
-  final danhSachBkCoSoSXKDInterviewed = <TableBkCoSoSXKD>[].obs;
-  final danhSachBkDiaBanTonGiaoInterviewed = <TableBkTonGiao>[].obs;
+ 
+  final danhSachBkCoSoSXKDInterviewed = <TableBkCoSoSXKD>[].obs; 
 
   Future<ResponseSyncModel> syncDataMixin(SyncRepository syncRepository,
       SendErrorRepository sendErrorRepository, progress,
@@ -55,22 +46,13 @@ mixin SyncMixin {
 
   Future getBody() async {
     await Future.wait([
-      getCoSoSX(),
-      getDataTonGiao(),
+      getCoSoSX(), 
     ]);
     developer.log('GET BODY: ${jsonEncode(body)}');
   }
 
   Future getListInterviewed() async {
-    List<Map>? interviewed =
-        await bkCoSoTonGiaoMixProvider.selectAllListInterviewedSync();
-    danhSachBkDiaBanTonGiaoInterviewed.clear();
-    if (interviewed.isNotEmpty) {
-      for (var element in interviewed) {
-        danhSachBkDiaBanTonGiaoInterviewed
-            .add(TableBkTonGiao.fromJson(element));
-      }
-    }
+     
     List<Map>? interviewedCoSoSXKD =
         await bkCoSoSXKDMixProvider.selectAllListInterviewedSync();
     danhSachBkCoSoSXKDInterviewed.clear();
@@ -134,45 +116,7 @@ mixin SyncMixin {
 
     return mapP07Mau;
   }
-
-  Future getDataTonGiao() async {
-    List<Map> tonGiao = [];
-
-    await Future.wait(danhSachBkDiaBanTonGiaoInterviewed.map((item) async {
-      var map = {
-        "IDCoso": item.iDCoSo,
-        "TenCoSo": item.tenCoSo,
-        "MaTinh": item.maTinh,
-        "MaHuyen": item.maHuyen,
-        "MaXa": item.maXa,
-        "MaThon": item.maThon,
-        "TenThon": item.tenThon,
-        "DiaChi": item.diaChi,
-        "DienThoai": item.dienThoai,
-        "Email": item.email,
-        "MaTinhTrangHD": item.maTinhTrangHD
-      };
-
-      Map phieuTonGiaos = await getPhieuTonGiaos(item.iDCoSo!);
-      if (phieuTonGiaos.isNotEmpty) map['PhieuTonGiaos'] = phieuTonGiaos;
-      tonGiao.add(map);
-    }));
-    body['TonGiaoData'] = tonGiao;
-    return tonGiao;
-  }
-
-  Future<Map> getPhieuTonGiaos(String idCoSo) async {
-    Map mapPhieuTonGiao = {};
-    Map phieuTonGiao = await phieuTonGiaoMixProvider.selectByIdCoSo(idCoSo);
-
-    List<Map> phieuso05SanphamC16s =
-        await phieuTonGiaoA43MixProvider.selectByIdCoSoSync(idCoSo);
-    if (phieuTonGiao.isNotEmpty) {
-      mapPhieuTonGiao['PhieuTonGiao'] = phieuTonGiao;
-      mapPhieuTonGiao['PhieuTonGiao_A4_3Dtos'] = phieuso05SanphamC16s;
-    }
-    return mapPhieuTonGiao;
-  }
+  
 
   Future<ResponseSyncModel> uploadDataMixin(SyncRepository syncRepository,
       SendErrorRepository sendErrorRepository, progress,
@@ -203,23 +147,15 @@ mixin SyncMixin {
       if (syncData.responseCode == ApiConstants.responseSuccess) {
         var coSoSuccess =
             jsonDecode(request.body)["Data"]["CoSoSXKDData"] as List;
-        var coSoTGSuccess =
-            jsonDecode(request.body)["Data"]["TonGiaoData"] as List;
-
+        
         var iDCoSos = coSoSuccess
             .where((element) => element["ErrorMessage"] == null)
             .map((e) => e['IDCoso'])
             .toList();
-
-        var idCoSoTGs = coSoTGSuccess
-            .where((element) => element["ErrorMessage"] == null)
-            .map((e) => e['IDCoSo'])
-            .toList();
-
-        developer.log('$iDCoSos \n$idCoSoTGs');
+ 
 
         bkCoSoSXKDMixProvider.updateSuccess(iDCoSos);
-        bkCoSoTonGiaoMixProvider.updateSuccess(idCoSoTGs);
+      
         phieuMauSanPhamMixProvider.updateSuccess(iDCoSos);
         ResponseSyncModel responseSyncModel = ResponseSyncModel(
             isSuccess: true,

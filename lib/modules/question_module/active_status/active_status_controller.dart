@@ -13,15 +13,12 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_style
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p08.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/database/provider/xacnhan_logic_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_tongiao.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_08_tongiao.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/model/errorlog/errorlog_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_cmm_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_model.dart';
@@ -50,12 +47,10 @@ class ActiveStatusController extends BaseController {
   final InterviewListDetailController interviewListDetailController =
       Get.find();
 
-  final bKCoSoSXKDProvider = BKCoSoSXKDProvider();
-  final bkCoSoTonGiaoProvider = BKCoSoTonGiaoProvider();
+  final bKCoSoSXKDProvider = BKCoSoSXKDProvider(); 
 
   // provider
-  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider();
-  final diaBanCoSoTonGiaoProvider = DiaBanCoSoTonGiaoProvider();
+  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider(); 
   final dmTinhTrangHDProvider = DmTinhTrangHDProvider();
 
   final phieuMauProvider = PhieuMauProvider();
@@ -63,16 +58,11 @@ class ActiveStatusController extends BaseController {
   final phieuMauA68Provider = PhieuMauA68Provider();
   final phieuMauSanPhamProvider = PhieuMauSanphamProvider();
   final xacNhanLogicProvider = XacNhanLogicProvider();
-
-  final phieuTonGiaoProvider = PhieuTonGiaoProvider();
-  final phieuTonGiaoA43Provider = PhieuTonGiaoA43Provider();
-
-  TablePhieuMau tablePhieuMau = TablePhieuMau();
-  TablePhieuTonGiao tablePhieuTonGiao = TablePhieuTonGiao();
+ 
+  TablePhieuMau tablePhieuMau = TablePhieuMau(); 
 
   TableDmTinhTrangHD tableDmTinhTrangHD = TableDmTinhTrangHD();
-
-  final tblBkTonGiao = TableBkTonGiao().obs;
+ 
   final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
 
   String? currentMaDoiTuongDT;
@@ -153,14 +143,7 @@ class ActiveStatusController extends BaseController {
         // var phieu07Mau = await phieuMauProvider.selectByIdCoso(currentIdCoSo!);
         // tablePhieuMau = TablePhieuMau.fromJson(phieu07Mau);
       }
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      var bkCoSoTG =
-          await bkCoSoTonGiaoProvider.getInformation(currentIdCoSoTG!);
-      if (bkCoSoTG != null) {
-        tblBkTonGiao.value = TableBkTonGiao.fromJson(bkCoSoTG);
-        currentIndex.value = (tblBkTonGiao.value.maTinhTrangHD ?? 0) - 1;
-      }
-    }
+    }  
   }
 
   onPressNext() async {
@@ -197,33 +180,7 @@ class ActiveStatusController extends BaseController {
             arguments: currentIndex.value + 1,
           );
         }
-      } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-        if (tblBkTonGiao.value.maTinhTrangHD != null &&
-            tblBkTonGiao.value.maTinhTrangHD != 1) {
-          String msgContent =
-              'Cơ sở này đã được xác nhận mất mẫu, không thể cập nhật trạng thái "Phỏng vấn"';
-          Get.dialog(DialogWidget(
-            onPressedPositive: () {
-              Get.back();
-            },
-            onPressedNegative: () {
-              Get.back();
-            },
-            title: 'Không thể cập nhật',
-            confirmText: 'Đóng',
-            isCancelButton: false,
-            content: msgContent,
-          ));
-
-          return;
-        } else {
-          await insertNewPhieu07MauTBCxx();
-          Get.toNamed(
-            AppRoutes.generalInformation,
-            arguments: currentIndex.value + 1,
-          );
-        }
-      }
+      }  
     } else {
       ///Nếu maTinhTrangDH=6 (currentIndex.value=5) => hiện dialog xác nhận thông tin tự kê khai;
       if (currentIndex.value == 5) {
@@ -243,13 +200,7 @@ class ActiveStatusController extends BaseController {
             // ho
             bKCoSoSXKDProvider.updateTrangThaiDTTinhTrangHD(
                 currentIdCoSo!, tinhTrangHD);
-          } else {
-            //  updatePhieu08();
-            deleteRecordPhieuTG();
-            // thon
-            bkCoSoTonGiaoProvider.updateTrangThaiDTTinhTrangHD(
-                currentIdCoSoTG!, tinhTrangHD);
-          }
+          }  
           Get.back();
           Get.back();
         },
@@ -271,14 +222,7 @@ class ActiveStatusController extends BaseController {
       await phieuMauA68Provider.deleteByCoSoId(currentIdCoSo!);
     }
   }
-
-  deleteRecordPhieuTG() async {
-    var phieuTG = await phieuTonGiaoProvider.isExistQuestion(currentIdCoSoTG!);
-    if (phieuTG) {
-      await phieuTonGiaoProvider.deleteByCoSoId(currentIdCoSoTG!);
-      await phieuTonGiaoA43Provider.deleteAllByIdCoSo(currentIdCoSoTG!);
-    }
-  }
+ 
   // updatePhieu07Mau() async {
   //   await insertNewPhieu07MauTBCxx();
   //   var phieuMau = await phieuMauProvider.selectByIdCoso(currentIdCoSo!);
@@ -310,17 +254,7 @@ class ActiveStatusController extends BaseController {
       } else {
         await initRecordPhieu07Mau(tblBkCoSoSXKD.value, maTrangThaiHD);
       }
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      // var map = await bkCoSoTonGiaoProvider.getInformation(currentIdCoSoTG!);
-      // var tableBkTonGiao = TablePhieuTonGiao.fromJson(map);
-      var phieu08 = await phieuTonGiaoProvider.selectByIdCoSo(currentIdCoSoTG!);
-      if (phieu08.isNotEmpty) {
-        // await phieuTonGiaoProvider.updateById(columnMaTinhTrangHD,
-        //     currentIndex.value + 1, TablePhieuTonGiao.fromJson(phieu08).id!);
-      } else {
-        await initRecordPhieu08(tblBkTonGiao.value, maTrangThaiHD);
-      }
-    }
+    }  
   }
 
   ///BEGIN:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
@@ -343,26 +277,8 @@ class ActiveStatusController extends BaseController {
 
   ///END:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
   ///
-  ///BEGIN:: Phieu05 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
-  Future initRecordPhieu08(
-      TableBkTonGiao tableBkTonGiao, int maTrangThaiHD) async {
-    List<TablePhieuTonGiao> tablePhieuTonGiaos = [];
-    var tablePhieuTonGiao = TablePhieuTonGiao(
-        maTinh: tableBkTonGiao.maTinh!,
-        maHuyen: tableBkTonGiao.maHuyen,
-        maXa: tableBkTonGiao.maXa,
-        maThon: tableBkTonGiao.maThon,
-        iDCoSo: tableBkTonGiao.iDCoSo,
-        a1_1: tableBkTonGiao.tenCoSo,
-        a1_2: tableBkTonGiao.diaChi,
-        a1_3: tableBkTonGiao.dienThoai,
-        a1_4: tableBkTonGiao.email,
-        maDTV: AppPref.uid);
-    tablePhieuTonGiaos.add(tablePhieuTonGiao);
-    await phieuTonGiaoProvider.insert(
-        tablePhieuTonGiaos, AppPref.dateTimeSaveDB!);
-  }
-
+  
+   
   Future showDialogNhapSDT(int maTinhTrangHD) async {
     soDienThoaiCs.value = '';
     isAnimating.value = false;
