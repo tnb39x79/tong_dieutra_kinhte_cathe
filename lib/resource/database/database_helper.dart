@@ -16,7 +16,7 @@ import 'provider/provider_p07mau_dm.dart';
 
 class DatabaseHelper {
   static const _databaseVersion = 1;
-  static const _databaseName = 'DieuTraKinhTeCaTheTonGiao.db';
+  static const _databaseName = 'DTKinhTeCaThe.db';
   final dataProvider = DataProvider();
   final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider(); 
   final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
