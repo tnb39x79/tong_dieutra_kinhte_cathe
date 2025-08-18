@@ -286,12 +286,33 @@ mixin SyncMixin {
     return responseSyncModel;
   }
 
+    Future<bool> getAllowSendFile(SendErrorRepository sendErrorRepository) async {
+    bool result = false;
+    var allowSendFile = await sendErrorRepository.getAllowSendFile();
+    if (allowSendFile.responseCode == ApiConstants.responseSuccess) {
+      if (allowSendFile.objectData != null) {
+        result = allowSendFile.objectData!;
+      }
+    }
+    return result;
+  }
+
   Future<ResponseSyncModel> uploadFullDataJson(SyncRepository syncRepository,
       SendErrorRepository sendErrorRepository, progress,
       {bool isRetryWithSignIn = false}) async {
     var errorMessage = '';
     var responseCode = '';
     var isSuccess = false;
+
+     var allowSendFile = await getAllowSendFile(sendErrorRepository);
+    if (allowSendFile == false) {
+      ResponseSyncModel responseSyncModel = ResponseSyncModel(
+          isSuccess: true,
+          responseCode: ApiConstants.allowSendFileOff,
+          responseMessage: errorMessage);
+      return responseSyncModel;
+    }
+
 
     var fileModel = await getZipDbFileContent();
     developer.log('FILE MODEL: ${fileModel.toJson()}');

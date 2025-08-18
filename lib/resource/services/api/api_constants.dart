@@ -30,6 +30,7 @@ class ApiConstants {
   static const String duLieuDongBoRong = '615';
   static const String requestTimeOut = '408';
   static const String modelAILastestVersion = '620';
+  static const String allowSendFileOff = '622'; //Allow send file dang tat
 
   //dev http://v1_capi_giasanxuat.gso.gov.vn/
   //live: http://api_cathe_thidiemtdtkt2026.gso.gov.vn/
@@ -56,8 +57,10 @@ class ApiConstants {
   //send error data
   static const String sendErrorData = 'api/LogErrorCTData/';
 
-     //send full data json
+  //send full data json
   static const String sendFullData = 'api/SendFullTCDataError/';
+  //Lay gia tri cho phep gui file
+  static const String getAllowSendFile = 'api/GetAllowSendFile/';
 
   /// ky dieu tra
   static const String getKyDieuTra = 'api/GetKyDieuTra';

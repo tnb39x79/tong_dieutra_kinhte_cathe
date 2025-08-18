@@ -43,6 +43,33 @@ class SendErrorRepository {
     }
   }
 
+
+  Future<ResponseCmmModel<bool>> getAllowSendFile() async {
+    if (NetworkService.connectionType == Network.none) {
+      return ResponseCmmModel.withDisconnect();
+    }
+    try {
+      final data = await provider.getAllowSendFile();
+      if (data.statusCode == ApiConstants.success) {
+        var res = ResponseCmmModel.fromJson(data.body);
+        
+        return ResponseCmmModel(
+          responseCode: res.responseCode,
+          responseMessage: res.responseMessage,
+          objectData: res.objectData,
+        );
+      } else if (data.statusCode == HttpStatus.requestTimeout) {
+        return ResponseCmmModel.withRequestTimeout();
+      } else {
+        return ResponseCmmModel.withError(data);
+      }
+    } on TimeoutException catch (_) {
+      return ResponseCmmModel.withRequestTimeout();
+    } catch (e) {
+      return ResponseCmmModel.withRequestException(e);
+    }
+  }
+
   Future<ResponseModel<String>> sendFullData(FileModel body,
       {Function(double)? uploadProgress}) async {
     if (NetworkService.connectionType == Network.none) {

@@ -20,7 +20,7 @@ class SendErrorProvider extends GetConnect {
       'Authorization': 'Bearer ${AppPref.extraToken}',
       'Content-Type': 'application/json'
     };
-    
+
     httpClient.timeout = const Duration(seconds: 40);
     String url =
         'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.sendErrorData}';
@@ -54,8 +54,38 @@ class SendErrorProvider extends GetConnect {
     }
   }
 
+  Future<Response> getAllowSendFile() async {
+    Map<String, String>? headers = {
+      'Authorization': 'Bearer ${AppPref.accessToken}'
+    };
+    httpClient.timeout = const Duration(seconds: 15);
+    String modelUrl =
+        '${ApiConstants.baseUrl}${ApiConstants.getAllowSendFile}?uid=${AppPref.uid}';
+    try {
+      var response = get(
+        modelUrl,
+        headers: headers,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return const Response(
+              statusCode: HttpStatus.requestTimeout,
+              statusText: "Request timeout");
+        },
+      );
+      return response;
+    } on TimeoutException catch (e) {
+      // catch timeout here..
+      return Response(
+          statusCode: HttpStatus.requestTimeout, statusText: e.message);
+    } catch (e) {
+      return Response(
+          statusCode: ApiConstants.errorException, statusText: e.toString());
+    }
+  }
 
-    Future<Response> sendFullData(FileModel body,
+  Future<Response> sendFullData(FileModel body,
       {Function(double)? uploadProgress}) async {
     String loginData0 = AppPref.loginData;
     var json = jsonDecode(loginData0);
@@ -98,5 +128,4 @@ class SendErrorProvider extends GetConnect {
           statusCode: ApiConstants.errorException, statusText: e.toString());
     }
   }
-  
 }
