@@ -5,21 +5,29 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/database_helper.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart'; 
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_sync_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/senderror/senderror_model.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/sync/file_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/sync/sync_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/api/api_constants.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/api/send_error/send_error_repository.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/api/sync_data/sync_data_repository.dart';
 
+import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:archive/archive_io.dart';
+
 mixin SyncMixin {
   Map body = {};
- 
-  final bkCoSoSXKDMixProvider = BKCoSoSXKDProvider(); 
+
+  final bkCoSoSXKDMixProvider = BKCoSoSXKDProvider();
   final diaBanCoSoSXKDMixProvider = DiaBanCoSoSXKDProvider();
 
   ///Phiếu 07 mẫu
@@ -27,8 +35,8 @@ mixin SyncMixin {
   final phieuMauA61MixProvider = PhieuMauA61Provider();
   final phieuMauA68MixProvider = PhieuMauA68Provider();
   final phieuMauSanPhamMixProvider = PhieuMauSanphamProvider();
- 
-  final danhSachBkCoSoSXKDInterviewed = <TableBkCoSoSXKD>[].obs; 
+
+  final danhSachBkCoSoSXKDInterviewed = <TableBkCoSoSXKD>[].obs;
 
   Future<ResponseSyncModel> syncDataMixin(SyncRepository syncRepository,
       SendErrorRepository sendErrorRepository, progress,
@@ -46,13 +54,12 @@ mixin SyncMixin {
 
   Future getBody() async {
     await Future.wait([
-      getCoSoSX(), 
+      getCoSoSX(),
     ]);
     developer.log('GET BODY: ${jsonEncode(body)}');
   }
 
   Future getListInterviewed() async {
-     
     List<Map>? interviewedCoSoSXKD =
         await bkCoSoSXKDMixProvider.selectAllListInterviewedSync();
     danhSachBkCoSoSXKDInterviewed.clear();
@@ -116,7 +123,6 @@ mixin SyncMixin {
 
     return mapP07Mau;
   }
-  
 
   Future<ResponseSyncModel> uploadDataMixin(SyncRepository syncRepository,
       SendErrorRepository sendErrorRepository, progress,
@@ -126,6 +132,7 @@ mixin SyncMixin {
     print('$body');
     var resCode = '';
     var errorMessage = '';
+    var mustSendErrorToServer = false;
 
     //  await Future.delayed(const Duration(milliseconds: 1000000));
     ResponseModel request = await syncRepository.syncDataV2(body,
@@ -147,15 +154,14 @@ mixin SyncMixin {
       if (syncData.responseCode == ApiConstants.responseSuccess) {
         var coSoSuccess =
             jsonDecode(request.body)["Data"]["CoSoSXKDData"] as List;
-        
+
         var iDCoSos = coSoSuccess
             .where((element) => element["ErrorMessage"] == null)
             .map((e) => e['IDCoso'])
             .toList();
- 
 
         bkCoSoSXKDMixProvider.updateSuccess(iDCoSos);
-      
+
         phieuMauSanPhamMixProvider.updateSuccess(iDCoSos);
         ResponseSyncModel responseSyncModel = ResponseSyncModel(
             isSuccess: true,
@@ -176,6 +182,8 @@ mixin SyncMixin {
         } else {
           errorMessage = "Lỗi đồng bộ:${syncData.responseMessage}";
         }
+        uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+            isRetryWithSignIn: false);
         ResponseSyncModel responseSyncModel = ResponseSyncModel(
             isSuccess: false,
             responseCode: syncData.responseCode,
@@ -187,8 +195,7 @@ mixin SyncMixin {
     } else if (request.statusCode == ApiConstants.errorDisconnect) {
       errorMessage = 'Kết nối mạng đã bị ngắt. Vui lòng kiểm tra lại.';
     } else if (request.statusCode == ApiConstants.errorException) {
-      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
-          isRetryWithSignIn: false);
+      mustSendErrorToServer = true;
       errorMessage = 'Có lỗi: ${request.message}';
     } else if (request.statusCode == HttpStatus.requestTimeout) {
       uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
@@ -204,6 +211,12 @@ mixin SyncMixin {
           isRetryWithSignIn: false);
       errorMessage =
           'Đã có lỗi xảy ra, vui lòng kiểm tra kết nối internet và thử lại!';
+    }
+    if (mustSendErrorToServer) {
+      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
+      uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
     }
     ResponseSyncModel responseSyncModel = ResponseSyncModel(
         isSuccess: false,
@@ -271,5 +284,159 @@ mixin SyncMixin {
         responseCode: responseCode,
         responseMessage: errorMessage);
     return responseSyncModel;
+  }
+
+  Future<ResponseSyncModel> uploadFullDataJson(SyncRepository syncRepository,
+      SendErrorRepository sendErrorRepository, progress,
+      {bool isRetryWithSignIn = false}) async {
+    var errorMessage = '';
+    var responseCode = '';
+    var isSuccess = false;
+
+    var fileModel = await getZipDbFileContent();
+    developer.log('FILE MODEL: ${fileModel.toJson()}');
+    if (fileModel.dataFileContent == '') {
+      fileModel = await getDbFileContent();
+    }
+
+    ResponseModel request = await sendErrorRepository.sendFullData(fileModel,
+        uploadProgress: (value) => progress.value = value);
+    developer.log('SEND FULL DATA SUCCESS: ${request.body}');
+
+    if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
+      var resp = await syncRepository.getToken(
+          userName: AppPref.userName, password: AppPref.password);
+      AppPref.accessToken = resp.body?.accessToken;
+      uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: true);
+    }
+    responseCode = request.statusCode.toString();
+    if (request.statusCode == 200) {
+      SendErrorModel dataSend =
+          SendErrorModel.fromJson(jsonDecode(request.body));
+      errorMessage = dataSend.responseMessage ?? '';
+      responseCode = dataSend.responseCode ?? '';
+
+      if (dataSend.responseCode == ApiConstants.responseSuccess) {
+        errorMessage = dataSend.responseMessage ?? '';
+        isSuccess = true;
+      } else {}
+    } else if (request.statusCode == 401) {
+      errorMessage = 'Tài khoản đã hết hạn, vui lòng đăng nhập và đồng bộ lại.';
+    } else if (request.statusCode == ApiConstants.errorDisconnect) {
+      errorMessage = 'Kết nối mạng đã bị ngắt. Vui lòng kiểm tra lại.';
+    } else if (request.statusCode == ApiConstants.errorException) {
+      errorMessage = 'Có lỗi: ${request.message}';
+    } else if (request.statusCode.toString() == ApiConstants.notAllowSendFile) {
+      errorMessage = request.message ??
+          'Bạn chưa được phân quyền thực hiện chức năng này.';
+    } else if (request.statusCode.toString() ==
+        ApiConstants.errorMaDTVNotFound) {
+      errorMessage = request.message ?? 'Không tìm thấy dữ liệu';
+    } else if (request.statusCode == HttpStatus.requestTimeout) {
+      errorMessage = 'Request timeout.';
+    } else if (request.statusCode == HttpStatus.internalServerError) {
+      errorMessage = 'Có lỗi: ${request.message}';
+    } else {
+      errorMessage =
+          'Đã có lỗi xảy ra, vui lòng kiểm tra kết nối internet và thử lại!';
+    }
+    developer.log('_request.statusCode uploadDataJson ${request.statusCode}');
+    ResponseSyncModel responseSyncModel = ResponseSyncModel(
+        isSuccess: isSuccess,
+        responseCode: responseCode,
+        responseMessage: errorMessage);
+    return responseSyncModel;
+  }
+
+  Future<FileModel> getDbFileContent() async {
+    String dbPath = await DatabaseHelper.instance.getMyDatabasePath();
+    String dbFilePath =
+        p.join(dbPath, DatabaseHelper.instance.getMyDatabaseName());
+    final dbFile = File(dbFilePath);
+    final dbFileName = p.basename(dbFile.path);
+
+    var isexistDbFile = dbFile.existsSync();
+    if (isexistDbFile) {
+      final fileBytes = dbFile.readAsBytesSync();
+      final fileBase64 = base64Encode(fileBytes);
+
+      var fileModel = FileModel(
+          fileName: dbFileName, fileExt: "db", dataFileContent: fileBase64);
+      return fileModel;
+    }
+    return FileModel(fileName: "", fileExt: "", dataFileContent: "");
+  }
+
+  Future<FileModel> getZipDbFileContent() async {
+    String dbBackUpDir = 'dbbackup';
+    String dbPath = await DatabaseHelper.instance.getMyDatabasePath();
+    String dbFilePath =
+        p.join(dbPath, DatabaseHelper.instance.getMyDatabaseName());
+    final dbFile = File(dbFilePath);
+    final dbFileName = p.basename(dbFile.path);
+
+    Directory directory = Directory("");
+    if (Platform.isAndroid) {
+      directory = (await getExternalStorageDirectory())!;
+    } else {
+      directory = (await getApplicationDocumentsDirectory());
+    }
+    var dirPath = await createFolder(dbBackUpDir);
+    try {
+      final dir = Directory(dirPath);
+      final List<FileSystemEntity> files = dir.listSync();
+      for (final FileSystemEntity file in files) {
+        await file.delete();
+      }
+    } catch (e) {
+      // Error in getting access to the file.
+    }
+
+    String dtNow = DateFormat('yyyyMMddHHmmss').format(DateTime.now());
+    String zipDbFileName = 'tongdtkt_tg_$dtNow.zip';
+    String filePathBk = p.join(dirPath, zipDbFileName);
+    // File dbFileCopied = await dbFile.copy(filePathBk);
+    var isexistDbFile = dbFile.existsSync();
+
+    final fileBytes = dbFile.readAsBytesSync();
+    //zip file
+
+    final archive = Archive();
+    archive.addFile(ArchiveFile(dbFileName, fileBytes.length, fileBytes));
+
+    final outputStream = OutputFileStream(filePathBk);
+    final encoder = ZipEncoder();
+    encoder.encode(archive, output: outputStream);
+    await outputStream.close();
+
+    final zipDbFile = File(filePathBk);
+    if (zipDbFile.existsSync()) {
+      final zipFileBytes = zipDbFile.readAsBytesSync();
+      final zipFileBase64 = base64Encode(zipFileBytes);
+      var zipFileModel = FileModel(
+          fileName: zipDbFileName,
+          fileExt: "zip",
+          dataFileContent: zipFileBase64);
+      return zipFileModel;
+    }
+    return FileModel(fileName: "", fileExt: "", dataFileContent: "");
+  }
+
+  Future<String> createFolder(String cow) async {
+    final dir = Directory(
+        '${(Platform.isAndroid ? await getExternalStorageDirectory() //FOR ANDROID
+                : await getApplicationDocumentsDirectory() //FOR IOS
+            )!.path}/$cow');
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    if ((await dir.exists())) {
+      return dir.path;
+    } else {
+      dir.create();
+      return dir.path;
+    }
   }
 }

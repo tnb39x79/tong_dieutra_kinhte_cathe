@@ -54,7 +54,10 @@ class ApiConstants {
   static const String sync = 'api/SyncCTData/';
 
   //send error data
-  static const String sendErrorData = 'api/LogErrorData/';
+  static const String sendErrorData = 'api/LogErrorCTData/';
+
+     //send full data json
+  static const String sendFullData = 'api/SendFullTCDataError/';
 
   /// ky dieu tra
   static const String getKyDieuTra = 'api/GetKyDieuTra';
