@@ -5,7 +5,7 @@ import 'package:gov_statistics_investigation_economic/resource/database/table/ta
 ///Danh mục địa bàn(xã/phường thị trấn) cho cơ sở sản xuất kinh
 const String tableDiaBanCoSoSXKD = 'DmDiaBanCoSoSXKD';
 const String columnDmDiaBanCoSoSxkdId = '_id';
-const String columnDmDiaBanCoSoSxkdMaPhieu = 'MaPhieu';
+const String columnDmDiaBanCoSoSxkdMaPhieu = 'LoaiPhieu';
 const String columnDmDiaBanCoSoSxkdMaTinh = 'MaTinh';
 const String columnDmDiaBanCoSoSxkdMaHuyen = 'MaHuyen';
 const String columnDmDiaBanCoSoSxkdMaXa = 'MaXa';
@@ -18,7 +18,7 @@ const String columnDmDiaBanCoSoUpdatedAt = 'UpdatedAt';
 
 class TableDmDiaBanCosoSxkd {
   int? id;
-  int? maPhieu;
+  int? loaiPhieu;
   String? maTinh;
   String? maHuyen;
   String? maXa;
@@ -30,7 +30,7 @@ class TableDmDiaBanCosoSxkd {
   List<TableBkCoSoSXKD>? tablebkCoSoSXKD;
 
   TableDmDiaBanCosoSxkd(
-      {this.maPhieu,
+      {this.loaiPhieu,
       this.maTinh,
       this.maHuyen,
       this.maXa,
@@ -43,7 +43,7 @@ class TableDmDiaBanCosoSxkd {
 
   TableDmDiaBanCosoSxkd.fromJson(dynamic json) {
     id = json['_id'];
-    maPhieu = json['MaPhieu'];
+    loaiPhieu = json['LoaiPhieu'];
     maTinh = json['MaTinh'];
     maHuyen = json['MaHuyen'];
     maXa = json['MaXa'];
@@ -59,7 +59,7 @@ class TableDmDiaBanCosoSxkd {
 
   Map<String, Object?> toJson() {
     final Map<String, Object?> data = <String, Object?>{};
-    data['MaPhieu'] = maPhieu;
+    data['LoaiPhieu'] = loaiPhieu;
     data['MaTinh'] = maTinh;
     data['MaHuyen'] = maHuyen;
     data['MaXa'] = maXa;

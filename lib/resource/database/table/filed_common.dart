@@ -1,5 +1,5 @@
 const String columnId = '_id';
-const String columnMaPhieu = 'MaPhieu';
+const String columnMaPhieu = 'LoaiPhieu';
 const String columnIDCoSo = 'IDCoSo';
 const String columnMaDTV = 'MaDTV';  
 const String columnMaTinh = 'MaTinh';

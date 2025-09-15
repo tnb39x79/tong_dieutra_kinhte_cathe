@@ -1,5 +1,11 @@
  
-export 'phieu_07_mau_A61_provider.dart';
-export 'phieu_07_mau_A68_provider.dart';
-export 'phieu_07_mau_provider.dart';
-export 'phieu_07_mau_sanpham_provider.dart'; 
+
+export 'phieu_provider.dart';
+export 'phieu_mautb_provider.dart';
+export 'phieu_mautb_sanpham_provider.dart'; 
+export 'phieu_nganh_cn_provider.dart';
+export 'phieu_nganh_lt_provider.dart';  
+export 'phieu_nganh_tm_provider.dart';
+export 'phieu_nganh_tm_sanpham_provider.dart';
+export 'phieu_nganh_vt_provider.dart'; 
+export 'phieu_nganh_vt_ghiro_provider.dart'; 

@@ -1,0 +1,70 @@
+import 'table_p07mau.dart';
+
+const String tablePhieuNganhTMSanPham = 'CT_PhieuNganhTMSanPham';
+
+const String colPhieuNganhTMSanPhamId = '_id';
+const String colPhieuNganhTMSanPhamIDCoSo = 'IDCoSo';
+const String colPhieuNganhTMSanPhamSTT_SanPham = 'STT_SanPham';
+const String colPhieuNganhTMSanPhamMaNganhC5 = 'MaNganhC5';
+const String colPhieuNganhTMSanPhamA1_2 = 'A1_2';
+
+const String colPhieuNganhTMSanPhamCreatedAt = 'CreatedAt';
+const String colPhieuNganhTMSanPhamUpdatedAt = 'UpdatedAt';
+
+class TablePhieuNganhTMSanPham {
+  int? id;
+  String? iDCoSo;
+  int? sTT_SanPham;
+  String? maNganhC5;
+  double? a1_2;
+
+  String? maDTV;
+  String? createdAt;
+  String? updatedAt;
+
+  TablePhieuNganhTMSanPham(
+      {this.id,
+      this.iDCoSo,
+      this.sTT_SanPham,
+      this.maNganhC5,
+      this.a1_2,
+      this.createdAt,
+      this.updatedAt});
+
+  TablePhieuNganhTMSanPham.fromJson(dynamic json) {
+    id = json['_id'];
+    iDCoSo = json['IDCoSo'];
+    sTT_SanPham = json['STT_SanPham'];
+    maNganhC5 = json['MaNganhC5'];
+    a1_2 = json['A1_2'];
+
+    maDTV = json['MaDTV'];
+    createdAt = json['CreatedAt'];
+    updatedAt = json['UpdatedAt'];
+  }
+
+  Map<String, Object?> toJson() {
+    var json = <String, Object?>{};
+    json['_id'] = id;
+
+    json['IDCoSo'] = iDCoSo;
+    json['STT_SanPham'] = sTT_SanPham;
+    json['MaNganhC5'] = maNganhC5;
+    json['A1_2'] = a1_2;
+
+    json['MaDTV'] = maDTV;
+    json['CreatedAt'] = createdAt;
+    json['UpdatedAt'] = updatedAt;
+    return json;
+  }
+
+  static List<TablePhieuNganhTMSanPham>? fromListJson(dynamic json) {
+    List<TablePhieuNganhTMSanPham> list = [];
+    if (json != null) {
+      for (var item in json) {
+        list.add(TablePhieuNganhTMSanPham.fromJson(item));
+      }
+    }
+    return list;
+  }
+}

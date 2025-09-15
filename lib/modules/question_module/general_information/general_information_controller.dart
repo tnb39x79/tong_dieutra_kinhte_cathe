@@ -8,7 +8,7 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_defin
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_no07_controller.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/phieu_07_mau_provider.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/provider/phieu_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau_dm.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_data.dart';
@@ -16,8 +16,9 @@ import 'package:gov_statistics_investigation_economic/resource/database/table/ta
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart'; 
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_07_mau_sanpham.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_mautb_sanpham.dart';
+
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 
@@ -67,7 +68,7 @@ class GeneralInformationController extends BaseController {
   final HomeController homeController = Get.find();
   final MainMenuController mainMenuController = Get.find();
 
-  /// RX 
+  /// RX
   final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
   //final tblBkCoSoSXKDNganhSanPham = <TableBkCoSoSXKDNganhSanPham>[].obs;
   final tblBkCoSoSXKDNganhSanPham = TableBkCoSoSXKDNganhSanPham().obs;
@@ -75,12 +76,13 @@ class GeneralInformationController extends BaseController {
   final currentScreenNo = 0.obs;
 
   /// provider
-  final dataProvider = DataProvider(); 
+  final dataProvider = DataProvider();
   final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
   final bkCoSoSXKDNganhSanPhamProvider = BKCoSoSXKDNganhSanPhamProvider();
 
-  final phieuMauProvider = PhieuMauProvider();
-  final phieuMauSanphamProvider = PhieuMauSanphamProvider(); 
+  final phieuProvider = PhieuProvider();
+  final phieuMauTBProvider = PhieuMauTBProvider();
+  final phieuMauTBSanPhamProvider = PhieuMauTBSanPhamProvider();
   //final dmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
   final dmMotaSanphamProvider = DmMotaSanphamProvider();
 
@@ -141,8 +143,8 @@ class GeneralInformationController extends BaseController {
         maTinhController.text = tblBkCoSoSXKD.value.maTinh ?? '';
         tenTinhController.text = tblBkCoSoSXKD.value.tenTinh ?? '';
 
-        maHuyenController.text = tblBkCoSoSXKD.value.maHuyen ?? '';
-        tenHuyenController.text = tblBkCoSoSXKD.value.tenHuyen ?? '';
+        maHuyenController.text = tblBkCoSoSXKD.value.maTKCS ?? '';
+        tenHuyenController.text = tblBkCoSoSXKD.value.tenTKCS ?? '';
 
         maXaController.text = tblBkCoSoSXKD.value.maXa ?? '';
         tenXaController.text = tblBkCoSoSXKD.value.tenXa ?? '';
@@ -172,7 +174,7 @@ class GeneralInformationController extends BaseController {
               tblBkCoSoSXKDNganhSanPham.value.tenNganh ?? '';
         }
       }
-    }  
+    }
   }
 
   // Future<bool> checkMaNganhCap1BCEByMaVCPA() async {
@@ -215,14 +217,7 @@ class GeneralInformationController extends BaseController {
             QuestionCommonModel.listFromJson(jsonDecode(question04));
 
         screenNos.value = questionsTemp.map((e) => e.manHinh!).toSet().toList();
-      } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-        dynamic question05 = tableData.toCauHoiPhieu08();
-
-        List<QuestionCommonModel> questionsTemp =
-            QuestionCommonModel.listFromJson(jsonDecode(question05));
-
-        screenNos.value = questionsTemp.map((e) => e.manHinh!).toSet().toList();
-      }
+      }  
       // return questionSceenNo;
     } catch (e) {
       log('ERROR lấy danh sách câu hỏi phiếu: $e');
@@ -251,27 +246,7 @@ class GeneralInformationController extends BaseController {
       //   "A1_2": diaChiChuHoController.text
       // });
       await insertNewRecordSanPham();
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      // await bkCoSoTonGiaoProvider.updateValues('', 1, currentIdCoSoTG!, multiValue: {
-      //   "DiaChi": diaChiChuHoController.text,
-      //   "TenThon": tenThonController.text
-      // });
-      // var phoneValidate = Valid.validateMobile(dienThoaiController.text);
-      // if (phoneValidate != null && phoneValidate != '') {
-      //   return showError(phoneValidate);
-      // }
-      // var emailValidate = Valid.validateEmail(emailController.text);
-      // if (emailValidate != null && emailValidate != '') {
-      //   return showError(emailValidate);
-      // }
-      // await phieuTonGiaoProvider
-      //     .updateValuesMultiFields('', 1, currentIdCoSoTG!, multiValue: {
-      //   "A1_1": tenChuHoController.text,
-      //   "A1_2": diaChiChuHoController.text,
-      //   "A1_3": dienThoaiController.text,
-      //   "A1_4": emailController.text
-      // });
-    }
+    }  
     setLoading(false);
     if (screenNos.isEmpty) {
       String msgContent =
@@ -307,11 +282,7 @@ class GeneralInformationController extends BaseController {
         QuestionNo07Controller.idCoSoKey: currentIdCoSo!,
         QuestionNo07Controller.isNhomNganhCap1BCEKey: '',
       });
-     } 
-     //else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-    //   Get.toNamed(AppRoutes.question08,
-    //       parameters: {QuestionNo08Controller.idCoSoKey: currentIdCoSoTG!});
-    // }
+    } 
   }
 
 /***********/
@@ -319,7 +290,7 @@ class GeneralInformationController extends BaseController {
 
   ///
   Future insertNewRecordSanPham() async {
-    var res = await phieuMauSanphamProvider.isExistProduct(currentIdCoSo!);
+    var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
     if (res == false) {
       //var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
       //     .selectMaNganhByIdCoSo(tblBkCoSoSXKD.value.iDCoSo!);
@@ -328,17 +299,17 @@ class GeneralInformationController extends BaseController {
       //   maNganhVcpa = maNganhs.first;
       // }
       var maxStt =
-          await phieuMauSanphamProvider.getMaxSTTByIdCoso(currentIdCoSo!);
+          await phieuMauTBSanPhamProvider.getMaxSTTByIdCoso(currentIdCoSo!);
       maxStt = maxStt + 1;
-      var tblSp = TablePhieuMauSanPham(
+      var tblSp = TablePhieuMauTBSanPham(
           iDCoSo: currentIdCoSo,
           sTTSanPham: maxStt,
           isDefault: 1,
           maDTV: AppPref.uid);
-      List<TablePhieuMauSanPham> tblSps = [];
+      List<TablePhieuMauTBSanPham> tblSps = [];
       tblSps.add(tblSp);
 
-      await phieuMauSanphamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
+      await phieuMauTBSanPhamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
     }
   }
 

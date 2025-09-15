@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
 import 'package:http/http.dart' as http;
@@ -62,7 +65,9 @@ class AuthProvider extends BaseProvider {
   }
 
   Future<Response> getUser(String uid) async {
-    return get('${ApiConstants.getUser}?uid=$uid');
+    var result= await get('${ApiConstants.getUser}?uid=$uid');
+    return result;
+     
   }
 
   Future<Response> updateUser({
@@ -74,7 +79,7 @@ class AuthProvider extends BaseProvider {
 
   Future<Response> changePassword({required String uid, required body}) async {
     //  String url='${ApiConstants.baseUrl}${ApiConstants.changePassword}?uid=$uid';
-    var result = put('${ApiConstants.changePassword}?uid=$uid', body);
+    var result = await put('${ApiConstants.changePassword}?uid=$uid', body);
     return result;
   }
 }

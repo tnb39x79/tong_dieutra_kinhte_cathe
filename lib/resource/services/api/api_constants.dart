@@ -35,17 +35,17 @@ class ApiConstants {
   //dev http://v1_capi_giasanxuat.gso.gov.vn/
   //live: http://api_cathe_thidiemtdtkt2026.gso.gov.vn/
   static const String baseUrl = String.fromEnvironment('BASE_API',
-      defaultValue: "http://api_cathe_thidiemtdtkt2026.gso.gov.vn/");
+      defaultValue: "http://v1_capi_giasanxuat.gso.gov.vn/");
 
   static const String baseUrlNganhSp = "http://sic3_api1.gso.gov.vn:8000/";
 
   // define
-  static const String basicUserName = 'KT';
+  static const String basicUserName = 'CT';
   static const String basicPass = '59E63FC7-388E-46B8-8A22-DA12C56F3398';
 
   // auth
   static const String getToken = '/token';
-  static const String getUser = 'api/SICNguoiDungCAPIs';
+  static const String getUser = 'api/GetCapiUser';
   static const String changePassword = 'api/SICChangePwdCAPIs';
 
   // data

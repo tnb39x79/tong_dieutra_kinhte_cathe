@@ -48,9 +48,8 @@ class InterviewObjectListController extends BaseController {
       toCosoSXKD(maDT!, tenDoiTuongDT);
     } else if (maDT == AppDefine.maDoiTuongDT_07TB) {
       await toCosoSXKD(maDT!, tenDoiTuongDT);
-    } else if (maDT == AppDefine.maDoiTuongDT_08) {
-      await toTonGiao(maDT!, tenDoiTuongDT);
     }
+    
   }
 
   Future toCosoSXKD(int maDT, String? tenDoiTuongDT) async {

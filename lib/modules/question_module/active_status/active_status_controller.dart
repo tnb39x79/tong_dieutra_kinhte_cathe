@@ -12,13 +12,14 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_defin
 import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/xacnhan_logic_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart'; 
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/errorlog/errorlog_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_cmm_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_model.dart';
@@ -47,22 +48,28 @@ class ActiveStatusController extends BaseController {
   final InterviewListDetailController interviewListDetailController =
       Get.find();
 
-  final bKCoSoSXKDProvider = BKCoSoSXKDProvider(); 
+  final bKCoSoSXKDProvider = BKCoSoSXKDProvider();
+  final bkCoSoSXKDNganhSanPhamProvider = BKCoSoSXKDNganhSanPhamProvider();
 
   // provider
-  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider(); 
+  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider();
   final dmTinhTrangHDProvider = DmTinhTrangHDProvider();
 
-  final phieuMauProvider = PhieuMauProvider();
-  final phieuMauA61Provider = PhieuMauA61Provider();
-  final phieuMauA68Provider = PhieuMauA68Provider();
-  final phieuMauSanPhamProvider = PhieuMauSanphamProvider();
+  final phieuProvider = PhieuProvider();
+  final phieuMauTBProvider = PhieuMauTBProvider();
+  final phieuMauTBSanPhamProvider = PhieuMauTBSanPhamProvider();
+  final phieuNganhCNProvider = PhieuNganhCNProvider();
+  final phieuNganhLTProvider = PhieuNganhLTProvider();
+  final phieuNganhTMProvider = PhieuNganhTMProvider();
+  final phieuNganhTMSanphamProvider = PhieuNganhTMSanPhamProvider();
+  final phieuNganhVTProvider = PhieuNganhVTProvider();
+  final phieuNganhVTGhiRoProvider = PhieuNganhVTGhiRoProvider();
   final xacNhanLogicProvider = XacNhanLogicProvider();
- 
-  TablePhieuMau tablePhieuMau = TablePhieuMau(); 
+
+  TablePhieu tablePhieuMau = TablePhieu();
 
   TableDmTinhTrangHD tableDmTinhTrangHD = TableDmTinhTrangHD();
- 
+
   final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
 
   String? currentMaDoiTuongDT;
@@ -143,7 +150,7 @@ class ActiveStatusController extends BaseController {
         // var phieu07Mau = await phieuMauProvider.selectByIdCoso(currentIdCoSo!);
         // tablePhieuMau = TablePhieuMau.fromJson(phieu07Mau);
       }
-    }  
+    }
   }
 
   onPressNext() async {
@@ -180,7 +187,7 @@ class ActiveStatusController extends BaseController {
             arguments: currentIndex.value + 1,
           );
         }
-      }  
+      }
     } else {
       ///Nếu maTinhTrangDH=6 (currentIndex.value=5) => hiện dialog xác nhận thông tin tự kê khai;
       if (currentIndex.value == 5) {
@@ -200,7 +207,7 @@ class ActiveStatusController extends BaseController {
             // ho
             bKCoSoSXKDProvider.updateTrangThaiDTTinhTrangHD(
                 currentIdCoSo!, tinhTrangHD);
-          }  
+          }
           Get.back();
           Get.back();
         },
@@ -214,15 +221,21 @@ class ActiveStatusController extends BaseController {
   }
 
   deleteRecordPhieuMau() async {
-    var phieuMau = await phieuMauProvider.isExistQuestion(currentIdCoSo!);
+    var phieuMau = await phieuProvider.isExistQuestion(currentIdCoSo!);
     if (phieuMau) {
-      await phieuMauProvider.deleteByCoSoId(currentIdCoSo!);
-      await phieuMauSanPhamProvider.deleteByCoSoId(currentIdCoSo!);
-      await phieuMauA61Provider.deleteByCoSoId(currentIdCoSo!);
-      await phieuMauA68Provider.deleteByCoSoId(currentIdCoSo!);
+      await phieuProvider.deleteByCoSoId(currentIdCoSo!);
+      await phieuMauTBProvider.deleteByCoSoId(currentIdCoSo!);
+      await phieuMauTBSanPhamProvider.deleteByCoSoId(currentIdCoSo!);
+      await phieuNganhCNProvider.deleteByCoSoId(currentIdCoSo!);
+
+      await phieuNganhLTProvider.deleteByCoSoId(currentIdCoSo!);
+      await phieuNganhTMProvider.deleteByCoSoId(currentIdCoSo!);
+      await phieuNganhTMSanphamProvider.deleteByCoSoId(currentIdCoSo!);
+      await phieuNganhVTProvider.deleteByCoSoId(currentIdCoSo!);
+      await phieuNganhVTGhiRoProvider.deleteByCoSoId(currentIdCoSo!);
     }
   }
- 
+
   // updatePhieu07Mau() async {
   //   await insertNewPhieu07MauTBCxx();
   //   var phieuMau = await phieuMauProvider.selectByIdCoso(currentIdCoSo!);
@@ -247,38 +260,52 @@ class ActiveStatusController extends BaseController {
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       // var map = await bKCoSoSXKDProvider.getInformation(currentIdCoSo!);
       // var tableBkCoSoSXKD = TableBkCoSoSXKD.fromJson(map);
-      var phieuMau = await phieuMauProvider.selectByIdCoSo(currentIdCoSo!);
+      var phieuMau = await phieuProvider.selectByIdCoSo(currentIdCoSo!);
       if (phieuMau.isNotEmpty) {
         // await phieuMauProvider.updateById(columnMaTinhTrangHD,
         //     currentIndex.value + 1, TablePhieuMau.fromJson(phieuMau).id!);
       } else {
-        await initRecordPhieu07Mau(tblBkCoSoSXKD.value, maTrangThaiHD);
+        var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
+            .selectMaNganhByIdCoSo(tblBkCoSoSXKD.value.iDCoSo!);
+        var maNganhMau = '';
+        if (maNganhs.isNotEmpty) {
+          maNganhMau = maNganhs.first;
+          await initRecordPhieu07Mau(
+              tblBkCoSoSXKD.value, maNganhMau, maTrangThaiHD);
+        }
+        //await initRecordPhieu07Mau(tblBkCoSoSXKD.value, maTrangThaiHD);
       }
-    }  
+    }
   }
 
   ///BEGIN:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
-  Future initRecordPhieu07Mau(
-      TableBkCoSoSXKD tableBkCoSoSXKD, int maTrangThaiHD) async {
-    List<TablePhieuMau> tableP07Maus = [];
-    var tableP07 = TablePhieuMau(
-        maPhieu: int.parse(currentMaDoiTuongDT!),
+  Future initRecordPhieu07Mau(TableBkCoSoSXKD tableBkCoSoSXKD, String maNganh,
+      int maTrangThaiHD) async {
+    List<TablePhieu> tableP07Maus = [];
+
+    var tableP07 = TablePhieu(
+        loaiPhieu: tableBkCoSoSXKD.loaiPhieu,
         iDCoSo: tableBkCoSoSXKD.iDCoSo,
         maTinh: tableBkCoSoSXKD.maTinh!,
-        maHuyen: tableBkCoSoSXKD.maHuyen,
+        maTKCS: tableBkCoSoSXKD.maTKCS,
         maXa: tableBkCoSoSXKD.maXa,
+        maThon: tableBkCoSoSXKD.maThon,
+        iDDB: tableBkCoSoSXKD.iDDB,
         maDiaBan: tableBkCoSoSXKD.maDiaBan,
-        a1_1: tableBkCoSoSXKD.tenCoSo,
-        a1_2: tableBkCoSoSXKD.diaChi,
+        maCoSo: tableBkCoSoSXKD.maCoSo,
+        tenCoSo: tableBkCoSoSXKD.tenCoSo,
+        diaChi: tableBkCoSoSXKD.diaChi,
+        tenChuCoSo: tableBkCoSoSXKD.tenChuCoSo,
+        sDTCoSo: tableBkCoSoSXKD.dienThoai,
+        maNganhMau: maNganh,
         maDTV: AppPref.uid);
     tableP07Maus.add(tableP07);
-    await phieuMauProvider.insert(tableP07Maus, AppPref.dateTimeSaveDB!);
+    await phieuProvider.insert(tableP07Maus, AppPref.dateTimeSaveDB!);
   }
 
   ///END:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
   ///
-  
-   
+
   Future showDialogNhapSDT(int maTinhTrangHD) async {
     soDienThoaiCs.value = '';
     isAnimating.value = false;
@@ -624,11 +651,16 @@ class ActiveStatusController extends BaseController {
   }
 
   Future deleteCoSoSXKD() async {
-    await phieuMauA61Provider.deleteByCoSoId(currentIdCoSo!);
-    await phieuMauA68Provider.deleteByCoSoId(currentIdCoSo!);
-    await phieuMauSanPhamProvider.deleteByCoSoId(currentIdCoSo!);
-    await phieuMauProvider.deleteByCoSoId(currentIdCoSo!);
-    await bKCoSoSXKDProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuMauTBProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuMauTBSanPhamProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuNganhCNProvider.deleteByCoSoId(currentIdCoSo!);
+
+    await phieuNganhLTProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuNganhTMProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuNganhTMSanphamProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuNganhVTProvider.deleteByCoSoId(currentIdCoSo!);
+    await phieuNganhVTGhiRoProvider.deleteByCoSoId(currentIdCoSo!);
   }
 
   Future<(String, String)> xacNhanToServer(body,

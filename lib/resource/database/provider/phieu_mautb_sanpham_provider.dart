@@ -9,17 +9,17 @@ import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
 import 'package:sqflite/sqflite.dart';
 
-class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
-  static final PhieuMauSanphamProvider _singleton =
-      PhieuMauSanphamProvider._internal();
+class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
+  static final PhieuMauTBSanPhamProvider _singleton =
+      PhieuMauTBSanPhamProvider._internal();
 
-  factory PhieuMauSanphamProvider() {
+  factory PhieuMauTBSanPhamProvider() {
     return _singleton;
   }
 
   Database? db;
 
-  PhieuMauSanphamProvider._internal();
+  PhieuMauTBSanPhamProvider._internal();
 
   @override
   Future delete(int id) {
@@ -34,14 +34,14 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
 
   @override
   Future<List<int>> insert(
-      List<TablePhieuMauSanPham> value, String createdAt) async {
+      List<TablePhieuMauTBSanPham> value, String createdAt) async {
     List<int> ids = [];
     for (var element in value) {
       element.createdAt = createdAt;
       //    element.updatedAt = createdAt;
       element.isDefault = element.sTTSanPham == 1 ? 1 : null;
       element.maDTV = AppPref.uid;
-      ids.add(await db!.insert(tablePhieuMauSanPham, element.toJson()));
+      ids.add(await db!.insert(tablePhieuMauTBSanPham, element.toJson()));
     }
     return ids;
   }
@@ -49,25 +49,15 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
-    CREATE TABLE IF NOT EXISTS $tablePhieuMauSanPham
+    CREATE TABLE IF NOT EXISTS $tablePhieuMauTBSanPham
       (
       $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-      $columnIDCoSo TEXT,
-      $columnPhieuMauSanPhamMaNganhC5 TEXT,
-      $columnPhieuMauSanPhamSTTNganhC5 INTEGER,
-      $columnPhieuMauSanPhamSTTSanPham INTEGER,
-      $columnPhieuMauSanPhamA5_1_1 TEXT,
-      $columnPhieuMauSanPhamA5_1_2 TEXT,
-      $columnPhieuMauSanPhamDonViTinh TEXT,
-      $columnPhieuMauSanPhamA5_2 REAL,
-      $columnPhieuMauSanPhamA5_3 REAL,
-      $columnPhieuMauSanPhamA5_3_1 REAL,
-      $columnPhieuMauSanPhamA5_4 REAL,
-      $columnPhieuMauSanPhamA5_5 REAL,
-      $columnPhieuMauSanPhamA5_6 INTEGER,
-      $columnPhieuMauSanPhamA5_6_1 REAL,
-      $columnPhieuMauSanPhamA5_0 INTEGER,
-      $columnPhieuMauSanPhamA5_7 REAL,  
+      $colPhieuMauTBSanPhamIDCoSo  TEXT,
+      $colPhieuMauTBSanPhamSTTSanPham  INTEGER,
+      $colPhieuMauTBSanPhamMaNganhC5  TEXT,
+      $colPhieuMauTBSanPhamA5_1_1  TEXT,
+      $colPhieuMauTBSanPhamA5_1_2  TEXT,
+      $colPhieuMauTBSanPhamA5_2  REAL,
       $columnPhieuMauSanPhamDefault INTEGER, 
       $columnPhieuMauSanPhamIsSync INTEGER,
       $columnMaDTV  TEXT,
@@ -90,11 +80,11 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
   }
 
   @override
-  Future update(TablePhieuMauSanPham value, String id) async {
+  Future update(TablePhieuMauTBSanPham value, String id) async {
     String createAt = AppPref.dateTimeSaveDB!;
     String updatedAt = DateTime.now().toIso8601String();
     value.updatedAt = updatedAt;
-    await db!.update(tablePhieuMauSanPham, value.toJson(), where: '''
+    await db!.update(tablePhieuMauTBSanPham, value.toJson(), where: '''
       $columnCreatedAt = '$createAt' AND $columnIDCoSo = '$id' 
       
     ''');
@@ -107,7 +97,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       columnUpdatedAt: DateTime.now().toIso8601String(),
     };
 
-    var i = await db!.update(tablePhieuMauSanPham, values,
+    var i = await db!.update(tablePhieuMauTBSanPham, values,
         where:
             "$columnIDCoSo = '$idCoSo'  AND $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'");
 
@@ -119,7 +109,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       fieldName: value,
       columnUpdatedAt: DateTime.now().toIso8601String(),
     };
-    var i = await db!.update(tablePhieuMauSanPham, values,
+    var i = await db!.update(tablePhieuMauTBSanPham, values,
         where: '$columnId = ? AND $columnIDCoSo = ?', whereArgs: [id, iDCoSo]);
 
     log('UPDATE san pham: ${i.toString()}');
@@ -133,7 +123,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       columnUpdatedAt: DateTime.now().toIso8601String(),
     };
 
-    var i = await db!.update(tablePhieuMauSanPham, values,
+    var i = await db!.update(tablePhieuMauTBSanPham, values,
         where:
             "$columnIDCoSo = '$idCoSo'  AND $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'");
 
@@ -145,7 +135,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       fieldNameTotal: value,
       columnUpdatedAt: DateTime.now().toIso8601String(),
     };
-    var totalUp = await db!.update(tablePhieuMauSanPham, totalValues,
+    var totalUp = await db!.update(tablePhieuMauTBSanPham, totalValues,
         where:
             "$columnIDCoSo = '$idCoSo'  AND $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'");
 
@@ -158,7 +148,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     ///Tính tổng
     var total = 0.0;
     List<Map> map = await db!.rawQuery('''
-          SELECT SUM($columnPhieuMauSanPhamA5_2) as totalA5_2 FROM $tablePhieuMauSanPham 
+          SELECT SUM($colPhieuMauTBSanPhamA5_2) as totalA5_2 FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoSo' 
           AND $columnCreatedAt = '$createdAt'
         ''');
@@ -182,7 +172,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       values.addEntries({item: value}.entries);
     }
 
-    var i = await db!.update(tablePhieuMauSanPham, values,
+    var i = await db!.update(tablePhieuMauTBSanPham, values,
         where:
             "$columnIDCoSo = '$idCoSo'  AND $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'");
 
@@ -199,7 +189,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       values.addEntries({item: value}.entries);
     }
 
-    var i = await db!.update(tablePhieuMauSanPham, values,
+    var i = await db!.update(tablePhieuMauTBSanPham, values,
         where:
             "$columnIDCoSo = '$idCoSo'  AND $columnMaDTV = '${AppPref.uid}'  AND  $columnId=$id ");
 
@@ -208,14 +198,14 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
 
   Future<int> deleteById(int id) {
     var res =
-        db!.delete(tablePhieuMauSanPham, where: '''  $columnId = '$id'  ''');
+        db!.delete(tablePhieuMauTBSanPham, where: '''  $columnId = '$id'  ''');
     return res;
   }
   // Future<Map> selectOneByIdCoSo(String idCoso) async {
   //   String createdAt = AppPref.dateTimeSaveDB!;
 
   //   List<Map> map = await db!.rawQuery('''
-  //         SELECT * FROM $tablePhieuMauSanPham
+  //         SELECT * FROM $tablePhieuMauTBSanPham
   //         WHERE $columnIDCoSo = '$idCoso'
   //         AND $columnCreatedAt = '$createdAt'
   //         AND $columnMaDTV='${AppPref.uid}'
@@ -226,10 +216,26 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''
-          SELECT * FROM $tablePhieuMauSanPham 
+          SELECT * FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnMaDTV='${AppPref.uid}'
           AND $columnCreatedAt = '$createdAt' ORDER BY STT_SanPham
+        ''');
+    return maps;
+  }
+
+  Future<List<Map>> selectByIdCosoSync(String idCoso) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    List<Map> maps = await db!.rawQuery('''
+          SELECT * FROM $tablePhieuMauTBSanPham 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND $colPhieuMauTBSanPhamSTTSanPham is not null
+          AND $colPhieuMauTBSanPhamMaNganhC5 is not null
+          AND $colPhieuMauTBSanPhamA5_1_1 is not null
+          AND $colPhieuMauTBSanPhamA5_1_2 is not null 
+          AND $colPhieuMauTBSanPhamA5_2 is not null 
+          AND $columnCreatedAt = '$createdAt' ORDER BY STT
         ''');
     return maps;
   }
@@ -244,7 +250,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     //   }
     // }
     List<Map> map = await db!.rawQuery('''
-          SELECT  ${fieldNames.join(',')} FROM $tablePhieuMauSanPham 
+          SELECT  ${fieldNames.join(',')} FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
           AND $columnMaDTV='${AppPref.uid}'
@@ -254,7 +260,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
 
   Future<bool> isExistProduct(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.query(tablePhieuMauSanPham, where: '''
+    List<Map> map = await db!.query(tablePhieuMauTBSanPham, where: '''
       $columnCreatedAt = '$createdAt'
       AND $columnIDCoSo = '$idCoso' AND $columnMaDTV='${AppPref.uid}'
     ''');
@@ -263,9 +269,9 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
 
   Future<bool> isExistProductBySTT(String idCoso, int stt) async {
     String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.query(tablePhieuMauSanPham, where: '''
+    List<Map> map = await db!.query(tablePhieuMauTBSanPham, where: '''
       $columnCreatedAt = '$createdAt'
-      AND  $columnPhieuMauSanPhamSTTSanPham = '$stt'
+      AND  $colPhieuMauTBSanPhamSTTSanPham = '$stt'
       AND $columnIDCoSo = '$idCoso' AND $columnMaDTV='${AppPref.uid}'
     ''');
     return map.isNotEmpty;
@@ -273,7 +279,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
 
   Future<bool> isExistProductById(String idCoso, int id) async {
     String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.query(tablePhieuMauSanPham, where: '''
+    List<Map> map = await db!.query(tablePhieuMauTBSanPham, where: '''
       $columnCreatedAt = '$createdAt'
       AND  $columnId = '$id'
       AND $columnIDCoSo = '$idCoso' AND $columnMaDTV='${AppPref.uid}'
@@ -284,9 +290,9 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
   Future<bool> isExistProductByMaNganhC5(
       String idCoso, String maNganhC5) async {
     String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.query(tablePhieuMauSanPham, where: '''
+    List<Map> map = await db!.query(tablePhieuMauTBSanPham, where: '''
       $columnCreatedAt = '$createdAt'
-      AND  $columnPhieuMauSanPhamMaNganhC5 = '$maNganhC5'
+      AND  $colPhieuMauTBSanPhamMaNganhC5 = '$maNganhC5'
       AND $columnIDCoSo = '$idCoso' AND $columnMaDTV='${AppPref.uid}'
     ''');
     return map.isNotEmpty;
@@ -298,7 +304,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     List<int> countValues = [];
     String createdAt = AppPref.dateTimeSaveDB!;
     List<Map> map = await db!.rawQuery('''
-          SELECT ${fieldNames.join(',')} FROM $tablePhieuMauSanPham 
+          SELECT ${fieldNames.join(',')} FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
           AND $columnMaDTV='${AppPref.uid}'
@@ -320,7 +326,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT_SanPham) as MaxSTT FROM $tablePhieuMauSanPham 
+          SELECT MAX(STT_SanPham) as MaxSTT FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
         ''');
@@ -336,7 +342,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> map = await db!.rawQuery('''
-          SELECT IsDefault FROM $tablePhieuMauSanPham 
+          SELECT IsDefault FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
         ''');
@@ -352,7 +358,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> map = await db!.rawQuery('''
-          SELECT _id FROM $tablePhieuMauSanPham 
+          SELECT _id FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
           AND $columnPhieuMauSanPhamDefault is null 
@@ -367,12 +373,12 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
 
   Future<int> deleteNotIsDefault(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
-//     var sqlDel="DELETE FROM $tablePhieuMauSanPham WHERE $columnIDCoSo = '$idCoso' AND $columnPhieuMauSanPhamDefault <> 1  AND $columnCreatedAt = '$createdAt'";
+//     var sqlDel="DELETE FROM $tablePhieuMauTBSanPham WHERE $columnIDCoSo = '$idCoso' AND $columnPhieuMauSanPhamDefault <> 1  AND $columnCreatedAt = '$createdAt'";
 //  var res = await db!.rawDelete(sqlDel);
     int id = 0;
     var res = 0;
     List<Map> map = await db!.rawQuery('''
-          SELECT $columnId FROM $tablePhieuMauSanPham 
+          SELECT $columnId FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnPhieuMauSanPhamDefault = 1
           AND $columnCreatedAt = '$createdAt'
@@ -383,7 +389,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       }
     }
     if (id > 0) {
-      res = await db!.delete(tablePhieuMauSanPham,
+      res = await db!.delete(tablePhieuMauTBSanPham,
           where:
               '''  $columnIDCoSo = '$idCoso' AND $columnId <> $id  AND $columnCreatedAt = '$createdAt'  ''');
     }
@@ -399,7 +405,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
       fields.add("IFNULL($item,0)");
     }
     String sql =
-        "SELECT ${fields.join('+')} as total FROM $tablePhieuMauSanPham  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "SELECT ${fields.join('+')} as total FROM $tablePhieuMauTBSanPham  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {
@@ -421,10 +427,10 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     ///Tính tổng
     var total = 0.0;
     List<Map> map = await db!.rawQuery('''
-          SELECT SUM($columnPhieuMauSanPhamA5_2) as totalA5_2 FROM $tablePhieuMauSanPham 
+          SELECT SUM($colPhieuMauTBSanPhamA5_2) as totalA5_2 FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoSo' 
           AND $columnCreatedAt = '$createdAt'
-          AND substr($columnPhieuMauSanPhamA5_1_2,1,2) in (${vcpa2DieuKiens.map((e) => "'$e'").join(', ')})
+          AND substr($colPhieuMauTBSanPhamA5_1_2,1,2) in (${vcpa2DieuKiens.map((e) => "'$e'").join(', ')})
         ''');
     if (map.isNotEmpty) {
       if (map[0] != null) {
@@ -442,7 +448,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     var vcpas = vcpaCap5s.map((e) => "'$e'").join(', ');
 
     String sql =
-        "SELECT $columnPhieuMauSanPhamMaNganhC5 FROM $tablePhieuMauSanPham  WHERE $columnPhieuMauSanPhamMaNganhC5 in (${vcpaCap5s.map((e) => "'$e'").join(', ')})";
+        "SELECT $colPhieuMauTBSanPhamMaNganhC5 FROM $tablePhieuMauTBSanPham  WHERE $colPhieuMauTBSanPhamMaNganhC5 in (${vcpaCap5s.map((e) => "'$e'").join(', ')})";
     List<Map> maps = await db!.rawQuery(sql);
     for (var item in maps) {
       item.forEach((key, value) {
@@ -459,7 +465,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> result = [];
     List<Map> maps = await db!.rawQuery('''
-          SELECT $columnPhieuMauSanPhamA5_1_2 FROM $tablePhieuMauSanPham 
+          SELECT $colPhieuMauTBSanPhamA5_1_2 FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
         ''');
@@ -478,7 +484,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
 
     for (var item in idCoSos) {
-      var update = await db!.update(tablePhieuMauSanPham,
+      var update = await db!.update(tablePhieuMauTBSanPham,
           {"UpdatedAt": createdAt, columnPhieuMauSanPhamIsSync: 1},
           where: '$columnIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
           whereArgs: [item]);
@@ -487,7 +493,7 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
   }
 
   Future<int> deleteByCoSoId(String coSoId) {
-    var res = db!.delete(tablePhieuMauSanPham,
+    var res = db!.delete(tablePhieuMauTBSanPham,
         where: '''  $columnIDCoSo = '$coSoId'  ''');
     return res;
   }
@@ -495,6 +501,6 @@ class PhieuMauSanphamProvider extends BaseDBProvider<TablePhieuMauSanPham> {
   @override
   Future deletedTable(Database database) async {
     return await database
-        .rawQuery('DROP TABLE IF EXISTS $tablePhieuMauSanPham');
+        .rawQuery('DROP TABLE IF EXISTS $tablePhieuMauTBSanPham');
   }
 }

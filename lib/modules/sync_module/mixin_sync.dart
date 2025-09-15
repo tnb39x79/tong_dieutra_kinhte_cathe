@@ -31,10 +31,15 @@ mixin SyncMixin {
   final diaBanCoSoSXKDMixProvider = DiaBanCoSoSXKDProvider();
 
   ///Phiếu 07 mẫu
-  final phieuMauMixProvider = PhieuMauProvider();
-  final phieuMauA61MixProvider = PhieuMauA61Provider();
-  final phieuMauA68MixProvider = PhieuMauA68Provider();
-  final phieuMauSanPhamMixProvider = PhieuMauSanphamProvider();
+  final phieuMixProvider = PhieuProvider();
+  final phieuMauTBMixProvider = PhieuMauTBProvider();
+  final phieuMauTBSanPhamMixProvider = PhieuMauTBSanPhamProvider();
+  final phieuNganhCNMixProvider = PhieuNganhCNProvider();
+  final phieuNganhLTMixProvider = PhieuNganhLTProvider();
+  final phieuNganhTMMixProvider = PhieuNganhTMProvider();
+  final phieuNganhTMSanphamMixProvider = PhieuNganhTMSanPhamProvider();
+  final phieuNganhVTMixProvider = PhieuNganhVTProvider();
+  final phieuNganhVTGhiRoMixProvider = PhieuNganhVTGhiRoProvider();
 
   final danhSachBkCoSoSXKDInterviewed = <TableBkCoSoSXKD>[].obs;
 
@@ -77,11 +82,11 @@ mixin SyncMixin {
 
     await Future.wait(danhSachBkCoSoSXKDInterviewed.map((item) async {
       var map = {
-        "MaPhieu": item.maPhieu,
+        "LoaiPhieu": item.loaiPhieu,
         "IDCoso": item.iDCoSo,
         "TenCoso": item.tenCoSo,
         "MaTinh": item.maTinh,
-        "MaHuyen": item.maHuyen,
+        "MaTKCS": item.maTKCS,
         "MaXa": item.maXa,
         "MaDiaBan": item.maDiaBan,
         "TenDiaBan": item.tenDiaBan,
@@ -105,23 +110,39 @@ mixin SyncMixin {
   }
 
   Future<Map> getPhieuMaus(String iDCoSo) async {
-    Map mapP07Mau = {};
+    Map mapPhieu = {};
 
-    Map phieuMau = await phieuMauMixProvider.selectByIdCoSo(iDCoSo);
-    List<Map> phieuMauA61s =
-        await phieuMauA61MixProvider.selectByIdCosoSync(iDCoSo);
-    List<Map> phieuMauA68s =
-        await phieuMauA68MixProvider.selectByIdCosoSync(iDCoSo);
-    List<Map> phieuMauSanphams =
-        await phieuMauSanPhamMixProvider.selectByIdCoSo(iDCoSo);
-    if (phieuMau.isNotEmpty) {
-      mapP07Mau['PhieuCaThe_Mau'] = phieuMau;
-      mapP07Mau['PhieuCaThe_Mau_A61Dtos'] = phieuMauA61s;
-      mapP07Mau['PhieuCaThe_Mau_A68Dtos'] = phieuMauA68s;
-      mapP07Mau['PhieuCaThe_Mau_SanPhams'] = phieuMauSanphams;
+    Map phieu = await phieuMixProvider.selectByIdCoSo(iDCoSo);
+    Map phieuMauTB = await phieuMauTBMixProvider.selectByIdCoSo(iDCoSo);
+    List<Map> phieuMauTBSanPhams =
+        await phieuMauTBSanPhamMixProvider.selectByIdCosoSync(iDCoSo);
+    List<Map> phieuNganhCNs =
+        await phieuNganhCNMixProvider.selectByIdCosoSync(iDCoSo);
+    List<Map> phieuNganhLTs =
+        await phieuNganhLTMixProvider.selectByIdCosoSync(iDCoSo);
+
+    List<Map> phieuNganhTMs =
+        await phieuNganhTMMixProvider.selectByIdCosoSync(iDCoSo);
+    List<Map> phieuNganhTMSanPhams =
+        await phieuNganhTMSanphamMixProvider.selectByIdCosoSync(iDCoSo);
+    List<Map> phieuNganhVTs =
+        await phieuNganhVTMixProvider.selectByIdCosoSync(iDCoSo);
+    List<Map> phieuNganhVTGhiRos =
+        await phieuNganhVTGhiRoMixProvider.selectByIdCosoSync(iDCoSo);
+
+    if (phieu.isNotEmpty) {
+      mapPhieu['PhieuDto'] = phieu;
+      mapPhieu['Phieu_MauTBDto'] = phieuMauTB;
+      mapPhieu['Phieu_MauTB_SanPhamDtos'] = phieuMauTBSanPhams;
+      mapPhieu['Phieu_NganhCNDtos'] = phieuNganhCNs;
+      mapPhieu['Phieu_NganhLTDto'] = phieuNganhLTs;
+      mapPhieu['Phieu_NganhTMDto'] = phieuNganhTMs;
+      mapPhieu['Phieu_NganhTM_SanPhamDtos'] = phieuNganhTMSanPhams;
+      mapPhieu['Phieu_NganhVTDto'] = phieuNganhVTs;
+      mapPhieu['Phieu_NganhVT_GhiRoDtos'] = phieuNganhVTGhiRos;
     }
 
-    return mapP07Mau;
+    return mapPhieu;
   }
 
   Future<ResponseSyncModel> uploadDataMixin(SyncRepository syncRepository,
@@ -140,13 +161,13 @@ mixin SyncMixin {
 
     ///TRẢ LẠI SAU
     developer.log('SYNC SUCCESS: ${request.body}');
-    if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
-      var resp = await syncRepository.getToken(
-          userName: AppPref.userName ?? '', password: AppPref.password ?? '');
-      AppPref.extraToken = resp.body?.accessToken;
-      uploadDataMixin(syncRepository, sendErrorRepository, progress,
-          isRetryWithSignIn: true);
-    }
+    // if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
+    //   var resp = await syncRepository.getToken(
+    //       userName: AppPref.userName ?? '', password: AppPref.password ?? '');
+    //   AppPref.extraToken = resp.body?.accessToken;
+    //   uploadDataMixin(syncRepository, sendErrorRepository, progress,
+    //       isRetryWithSignIn: true);
+    // }
 
     if (request.statusCode == 200) {
       SyncModel syncData = SyncModel.fromJson(jsonDecode(request.body));
@@ -162,7 +183,7 @@ mixin SyncMixin {
 
         bkCoSoSXKDMixProvider.updateSuccess(iDCoSos);
 
-        phieuMauSanPhamMixProvider.updateSuccess(iDCoSos);
+        phieuMauTBSanPhamMixProvider.updateSuccess(iDCoSos);
         ResponseSyncModel responseSyncModel = ResponseSyncModel(
             isSuccess: true,
             responseCode: syncData.responseCode,
@@ -179,7 +200,8 @@ mixin SyncMixin {
           errorMessage = "Khóa CAPI đang bật.";
         } else if (syncData.responseCode == ApiConstants.duLieuDongBoRong) {
           errorMessage = "${syncData.responseMessage}";
-        } else {
+        }
+         else {
           errorMessage = "Lỗi đồng bộ:${syncData.responseMessage}";
         }
         uploadFullDataJson(syncRepository, sendErrorRepository, progress,
@@ -286,7 +308,7 @@ mixin SyncMixin {
     return responseSyncModel;
   }
 
-    Future<bool> getAllowSendFile(SendErrorRepository sendErrorRepository) async {
+  Future<bool> getAllowSendFile(SendErrorRepository sendErrorRepository) async {
     bool result = false;
     var allowSendFile = await sendErrorRepository.getAllowSendFile();
     if (allowSendFile.responseCode == ApiConstants.responseSuccess) {
@@ -304,7 +326,7 @@ mixin SyncMixin {
     var responseCode = '';
     var isSuccess = false;
 
-     var allowSendFile = await getAllowSendFile(sendErrorRepository);
+    var allowSendFile = await getAllowSendFile(sendErrorRepository);
     if (allowSendFile == false) {
       ResponseSyncModel responseSyncModel = ResponseSyncModel(
           isSuccess: true,
@@ -313,9 +335,8 @@ mixin SyncMixin {
       return responseSyncModel;
     }
 
-
     var fileModel = await getZipDbFileContent();
-    developer.log('FILE MODEL: ${fileModel.toJson()}');
+   // developer.log('FILE MODEL: ${fileModel.toJson()}');
     if (fileModel.dataFileContent == '') {
       fileModel = await getDbFileContent();
     }

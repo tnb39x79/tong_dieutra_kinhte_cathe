@@ -54,12 +54,7 @@ class InterviewListController extends BaseController {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       Get.toNamed(AppRoutes.interviewObjectList);
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      Get.toNamed(AppRoutes.interviewLocationList, parameters: {
-        InterviewLocationListController.maDoiTuongDTKey: currentMaDoiTuongDT,
-        InterviewLocationListController.tenDoiTuongDTKey: currentTenDoiTuongDT,
-      });
-    }
+    } 
   }
 
   void toInterViewListDetail(int maTinhTrangDT) async {
@@ -70,15 +65,6 @@ class InterviewListController extends BaseController {
         InterviewListDetailController.tenDoiTuongDTKey: currentTenDoiTuongDT,
         InterviewListDetailController.maTinhTrangDTKey: '$maTinhTrangDT',
         InterviewListDetailController.maDiaBanKey: currentMaDiaBan ?? '',
-        InterviewListDetailController.maXaKey: currentMaXa ?? '',
-      });
-      selectCountByType();
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      Get.toNamed(AppRoutes.interviewListDetail, parameters: {
-        InterviewListDetailController.maDoiTuongDTKey: currentMaDoiTuongDT,
-        InterviewListDetailController.tenDoiTuongDTKey: currentTenDoiTuongDT,
-        InterviewListDetailController.maTinhTrangDTKey: '$maTinhTrangDT',
-        InterviewListDetailController.maDiaBanTGKey: currentMaDiaBanTG ?? '',
         InterviewListDetailController.maXaKey: currentMaXa ?? '',
       });
       selectCountByType();

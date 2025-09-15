@@ -37,7 +37,7 @@ class InputDataProvider extends GetConnect {
     String urlKdt =
         '${ApiConstants.baseUrl}${ApiConstants.getKyDieuTra}?uid=${AppPref.uid}';
     try {
-      var response = get(
+      var response = await get(
         urlKdt,
         headers: headers,
       ).timeout(
@@ -71,7 +71,7 @@ class InputDataProvider extends GetConnect {
     String urlGetVersion =
         'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getCheckVersion}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}';
     try {
-      var response = get(
+      var response = await get(
         urlGetVersion,
         headers: headers,
       ).timeout(
@@ -102,7 +102,7 @@ class InputDataProvider extends GetConnect {
     String modelUrl =
         '${ApiConstants.baseUrl}${ApiConstants.getModelVersion}?uid=${AppPref.uid}&mVersion=${AppPref.dataModelAIVersionFileName}';
     try {
-      var response = get(
+      var response = await get(
         modelUrl,
         headers: headers,
       ).timeout(

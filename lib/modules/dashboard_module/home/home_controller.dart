@@ -8,28 +8,18 @@ import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/modules/sync_module/mixin_sync.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_cokhong_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_dantoc_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_gioitinh_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_linhvuc_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau_dm.dart';   
+import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau_dm.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/xacnhan_logic_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_cap.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_quoctich.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_data.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm07mau.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart'; 
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_cokhong.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dantoc.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart'; 
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_gioitinh.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_linhvuc.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_mota_sanpham.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_user_info.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_sync_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/location/location_provider.dart';
@@ -54,7 +44,6 @@ class HomeController extends BaseController with SyncMixin {
   final InputDataRepository inputDataRepository;
   final SyncRepository syncRepository;
 
-  //added by tuannb 12/07/2024
   final SendErrorRepository sendErrorRepository;
 
   bool isGrantedPermission = false;
@@ -68,9 +57,9 @@ class HomeController extends BaseController with SyncMixin {
 
   ///Provider
   ///DB
-  final dataProvider = DataProvider(); 
+  final dataProvider = DataProvider();
   final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
-  final bkCoSoSXKDNganhSanPhamProvider = BKCoSoSXKDNganhSanPhamProvider(); 
+  final bkCoSoSXKDNganhSanPhamProvider = BKCoSoSXKDNganhSanPhamProvider();
   final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider();
   final dmTinhTrangHDProvider = DmTinhTrangHDProvider();
   final dmTrangThaiDTProvider = DmTrangThaiDTProvider();
@@ -88,7 +77,6 @@ class HomeController extends BaseController with SyncMixin {
 
   ///Phiếu Cá thể mẫu
   ///thieeus dm_cap, dm hoat dong logistic
-  final ctDmCapProvider = DmCapProvider();
   final ctDmHoatDongLogisticProvider = CTDmHoatDongLogisticProvider();
   final ctDmDiaDiemSXKDProvider = CTDmDiaDiemSXKDProvider();
   final ctDmLinhVucProvider = CTDmLinhVucProvider();
@@ -100,11 +88,16 @@ class HomeController extends BaseController with SyncMixin {
   final dmMotaSanphamProvider = DmMotaSanphamProvider();
   final dmLinhvucProvider = DmLinhvucProvider();
 
-  final phieuMauProvider = PhieuMauProvider();
-  final phieuMauA61Provider = PhieuMauA61Provider();
-  final phieuMauA68Provider = PhieuMauA68Provider();
-  final phieuMauSanphamProvider = PhieuMauSanphamProvider();
- 
+  final phieuProvider = PhieuProvider();
+  final phieuMauTBProvider = PhieuMauTBProvider();
+  final phieuMauTBSanPhamProvider = PhieuMauTBSanPhamProvider();
+  final phieuNganhCNProvider = PhieuNganhCNProvider();
+  final phieuNganhLTProvider = PhieuNganhLTProvider();
+  final phieuNganhTMProvider = PhieuNganhTMProvider();
+  final phieuNganhTMSanphamProvider = PhieuNganhTMSanPhamProvider();
+  final phieuNganhVTProvider = PhieuNganhVTProvider();
+  final phieuNganhVTGhiRoProvider = PhieuNganhVTGhiRoProvider();
+
   final progress = 0.0.obs;
   final errorMessage = ''.obs;
   final isSuccess = false.obs;
@@ -235,8 +228,6 @@ class HomeController extends BaseController with SyncMixin {
   }
 
   Future updateData() async {
-    //String dtSaveDB = DateTime.now().toIso8601String();
-
     await LocationProVider.requestPermission();
     await LocationProVider.requestLocationServices();
     mainMenuController.setLoading(true);
@@ -322,36 +313,36 @@ class HomeController extends BaseController with SyncMixin {
   }
 
   refreshLoginData() async {
-    await loginController.login(AppPref.userName!, AppPref.password!);
+    // await loginController.login(AppPref.userName!, AppPref.password!);
     var newLoginData = jsonDecode(AppPref.loginData);
     mainMenuController.loginData.value = TokenModel.fromJson(newLoginData);
 
-    await reGetToken();
+    // await reGetToken();
   }
 
-  Future reGetToken() async {
-    try {
-      final data = await syncRepository.getToken(
-          userName: AppPref.userName, password: AppPref.password);
-      if (data.isSuccess) {
-        AppPref.extraToken = data.body!.accessToken;
-      } else {
-        if (data.statusCode == 500 || data.statusCode == 404) {
-          snackBar('error'.tr, 'can_not_connect_serve'.tr,
-              style: ToastSnackType.error);
-        } else if (data.errorDescription ==
-            'Provided username and password is incorrect') {
-          snackBar('error'.tr, 'username_password_incorrect'.tr,
-              style: ToastSnackType.error);
-        } else {
-          snackBar('error'.tr, data.errorDescription ?? 'some_error'.tr,
-              style: ToastSnackType.error);
-        }
-      }
-    } catch (e) {
-      developer.log(e.toString());
-    }
-  }
+  // Future reGetToken() async {
+  //   try {
+  //     final data = await syncRepository.getToken(
+  //         userName: AppPref.userName, password: AppPref.password);
+  //     if (data.isSuccess) {
+  //       AppPref.extraToken = data.body!.accessToken;
+  //     } else {
+  //       if (data.statusCode == 500 || data.statusCode == 404) {
+  //         snackBar('error'.tr, 'can_not_connect_serve'.tr,
+  //             style: ToastSnackType.error);
+  //       } else if (data.errorDescription ==
+  //           'Provided username and password is incorrect') {
+  //         snackBar('error'.tr, 'username_password_incorrect'.tr,
+  //             style: ToastSnackType.error);
+  //       } else {
+  //         snackBar('error'.tr, data.errorDescription ?? 'some_error'.tr,
+  //             style: ToastSnackType.error);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     developer.log(e.toString());
+  //   }
+  // }
 
   Future getDataFromServer() async {
     final data = await inputDataRepository.getData();
@@ -369,7 +360,6 @@ class HomeController extends BaseController with SyncMixin {
         maDTV: AppPref.uid,
         questionNo07Mau: jsonEncode(data.body!.cauHoiPhieu07Maus),
         questionNo07TB: jsonEncode(data.body!.cauHoiPhieu07TBs),
-      //  questionNo08: jsonEncode(data.body!.cauHoiPhieu08s),
         createdAt: dtSaveDB,
         updatedAt: dtSaveDB,
       );
@@ -381,7 +371,6 @@ class HomeController extends BaseController with SyncMixin {
       if (data.body!.hasDm == '1') {
         await insertDanhMucChung(data.body!, dtSaveDB);
         await insertDanhMucPhieuMau(data.body!, dtSaveDB);
-     //   await insertDanhMucTonGiao(data.body!, dtSaveDB);
         await insertDmNhomNganhVcpa();
         await insertDanhMucMoTaSanPham(data.body!, dtSaveDB);
       }
@@ -427,31 +416,22 @@ class HomeController extends BaseController with SyncMixin {
       danhSachNganhSanPham.addAll(element.tableNganhSanPhams ?? []);
     }
 
-    // List<TableBkTonGiao> danhSachBKCoSoTonGiao = [];
-
-    // for (var element in dmDiaBanTonGiao) {
-    //   danhSachBKCoSoTonGiao.addAll(element.tableBkTonGiao ?? []);
-    // }
-
     await insertDmDiaBanCosoSxkd(dmDiaBanCosoSxkd, dtSaveDB);
-   // await insertDmDiaBanCoSoTonGiao(dmDiaBanTonGiao, dtSaveDB);
 
     await insertBkCoSoxkd(danhSachBkCsSxkd, dtSaveDB);
     await insertNganhSanPham(danhSachNganhSanPham, dtSaveDB);
-   // await insertBkCoSoTonGiao(danhSachBKCoSoTonGiao, dtSaveDB);
 
     await insertPhieuMau(danhSachBkCsSxkd, dtSaveDB);
-  //  await insertPhieuTonGiao(danhSachBKCoSoTonGiao, dtSaveDB);
   }
 
   Future insertDmDiaBanCosoSxkd(
       List<TableDmDiaBanCosoSxkd> dsDiaBanCosoSxkd, String dtSaveDB) async {
     await diaBanCoSoSXKDProvider.insert(dsDiaBanCosoSxkd, dtSaveDB);
   }
- 
+
   Future insertBkCoSoxkd(
       List<TableBkCoSoSXKD> bkCosoSxkd, String dtSaveDB) async {
-    await bkCoSoSXKDProvider.insert(bkCosoSxkd, dtSaveDB,fromGetData: true);
+    await bkCoSoSXKDProvider.insert(bkCosoSxkd, dtSaveDB, fromGetData: true);
   }
 
   Future insertNganhSanPham(
@@ -460,35 +440,67 @@ class HomeController extends BaseController with SyncMixin {
     await bkCoSoSXKDNganhSanPhamProvider.insert(
         bkCosoSxkdNganhSanPham, dtSaveDB);
   }
- 
+
   Future insertPhieuMau(
       List<TableBkCoSoSXKD> danhSachBkCsSxkd, String dtSaveDB) async {
-    List<TablePhieuMau> danhSachPhieuMau = [];
-    List<TablePhieuMauA61> danhSachPhieuMauA61 = [];
-    List<TablePhieuMauA68> danhSachPhieuMauA68 = [];
-    List<TablePhieuMauSanPham> danhSachPhieuMauSanPham = [];
+    List<TablePhieu> danhSachPhieu = [];
+    List<TablePhieuMauTB> danhSachPhieuMauTB = [];
+    List<TablePhieuMauTBSanPham> danhSachPhieuMauTBSanPham = [];
+    List<TablePhieuNganhCN> danhSachPhieuNganhCN = [];
+    List<TablePhieuNganhLT> danhSachPhieuNganhLT = [];
+    List<TablePhieuNganhTM> danhSachPhieuNganhTM = [];
+    List<TablePhieuNganhTMSanPham> danhSachPhieuNganhTMSanPham = [];
+    List<TablePhieuNganhVT> danhSachPhieuNganhVT = [];
+    List<TablePhieuNganhVTGhiRo> danhSachPhieuNganhVTGhiRos = [];
 
     for (var element in danhSachBkCsSxkd) {
-      if (element.tablePhieuMau != null) {
-        danhSachPhieuMau.add(element.tablePhieuMau!);
-        if (element.tablePhieuMau!.tablePhieuMauA61 != null) {
-          danhSachPhieuMauA61.addAll(element.tablePhieuMau!.tablePhieuMauA61!);
+      if (element.tablePhieu != null) {
+        danhSachPhieu.add(element.tablePhieu!);
+        if (element.tablePhieu!.tablePhieuMauTB != null) {
+          danhSachPhieuMauTB.add(element.tablePhieu!.tablePhieuMauTB!);
         }
-        if (element.tablePhieuMau!.tablePhieuMauA68 != null) {
-          danhSachPhieuMauA68.addAll(element.tablePhieuMau!.tablePhieuMauA68!);
+        if (element.tablePhieu!.tablePhieuMauTBSanPham != null) {
+          danhSachPhieuMauTBSanPham
+              .addAll(element.tablePhieu!.tablePhieuMauTBSanPham!);
         }
-        if (element.tablePhieuMau!.tablePhieuMauSanPham != null) {
-          danhSachPhieuMauSanPham
-              .addAll(element.tablePhieuMau!.tablePhieuMauSanPham!);
+        if (element.tablePhieu!.tablePhieuNganhCN != null) {
+          danhSachPhieuNganhCN.addAll(element.tablePhieu!.tablePhieuNganhCN!);
+        }
+        if (element.tablePhieu!.tablePhieuNganhLT != null) {
+          danhSachPhieuNganhLT.add(element.tablePhieu!.tablePhieuNganhLT!);
+        }
+        if (element.tablePhieu!.tablePhieuNganhTM != null) {
+          danhSachPhieuNganhTM.add(element.tablePhieu!.tablePhieuNganhTM!);
+        }
+        if (element.tablePhieu!.tablePhieuNganhTMSanPham != null) {
+          danhSachPhieuNganhTMSanPham
+              .addAll(element.tablePhieu!.tablePhieuNganhTMSanPham!);
+        }
+        if (element.tablePhieu!.tablePhieuNganhVT != null) {
+          danhSachPhieuNganhVT.add(element.tablePhieu!.tablePhieuNganhVT!);
+
+          if (element.tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos !=
+              null) {
+            danhSachPhieuNganhVTGhiRos.addAll(element
+                .tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos!);
+          }
         }
       }
     }
-    await phieuMauProvider.insert(danhSachPhieuMau, dtSaveDB);
-    await phieuMauA61Provider.insert(danhSachPhieuMauA61, dtSaveDB);
-    await phieuMauA68Provider.insert(danhSachPhieuMauA68, dtSaveDB);
-    await phieuMauSanphamProvider.insert(danhSachPhieuMauSanPham, dtSaveDB);
+    await phieuProvider.insert(danhSachPhieu, dtSaveDB);
+    await phieuMauTBProvider.insert(danhSachPhieuMauTB, dtSaveDB);
+    await phieuMauTBSanPhamProvider.insert(danhSachPhieuMauTBSanPham, dtSaveDB);
+    await phieuNganhCNProvider.insert(danhSachPhieuNganhCN, dtSaveDB);
+
+    await phieuNganhLTProvider.insert(danhSachPhieuNganhLT, dtSaveDB);
+    await phieuNganhTMProvider.insert(danhSachPhieuNganhTM, dtSaveDB);
+    await phieuNganhTMSanphamProvider.insert(
+        danhSachPhieuNganhTMSanPham, dtSaveDB);
+    await phieuNganhVTProvider.insert(danhSachPhieuNganhVT, dtSaveDB);
+
+    await phieuNganhVTGhiRoProvider.insert(
+        danhSachPhieuNganhVTGhiRos, dtSaveDB);
   }
- 
 
   Future insertUserInfo(String dtSaveDB) async {
     UserModel userModel = mainMenuController.userModel.value;
@@ -497,10 +509,12 @@ class HomeController extends BaseController with SyncMixin {
       ..maDangNhap = userModel.maDangNhap
       ..tenNguoiDung = userModel.tenNguoiDung
       ..matKhau = userModel.matKhau
-      ..maPBCC = userModel.maPBCC
+      ..maTinh=userModel.maTinh
+      ..maTKCS = userModel.maTKCS
       ..diaChi = userModel.diaChi
       ..sdt = userModel.sDT
       ..ghiChu = userModel.ghiChu
+      ..iMei = userModel.iMei
       ..ngayCapNhat = userModel.ngayCapNhat
       ..createdAt = dtSaveDB
       ..updatedAt = dtSaveDB;
@@ -532,7 +546,7 @@ class HomeController extends BaseController with SyncMixin {
 
   Future insertDanhMucPhieuMau(DataModel bodyData, String dtSaveDB) async {
     // if (AppPref.isFistInstall == 0) {
-    List<TableDmCap> dmCap = TableData.toListCTDmCaps(bodyData.ctDmCap);
+    //  List<TableDmCap> dmCap = TableData.toListCTDmCaps(bodyData.ctDmCap);
     List<TableCTDmHoatDongLogistic> dmHoatDongLogistic =
         TableData.toListCTDmHoatDongLogistics(bodyData.ctDmHoatDongLogistic);
     List<TableCTDmDiaDiemSXKD> dmDiaDiemSxkd =
@@ -549,7 +563,6 @@ class HomeController extends BaseController with SyncMixin {
     List<TableCTDmQuocTich> dmQuocTich =
         TableData.toListCTDmQuocTichs(bodyData.ctDmQuocTich);
 
-    await ctDmCapProvider.insert(dmCap, dtSaveDB);
     await ctDmHoatDongLogisticProvider.insert(dmHoatDongLogistic, dtSaveDB);
     await ctDmDiaDiemSXKDProvider.insert(dmDiaDiemSxkd, dtSaveDB);
     await ctDmLoaiDiaDiemProvider.insert(dmLoaiDiaDiem, dtSaveDB);
@@ -575,7 +588,6 @@ class HomeController extends BaseController with SyncMixin {
       AppPref.savedNhomNganhVcpa = true;
     }
   }
- 
 
   Future insertDanhMucMoTaSanPham(DataModel bodyData, String dtSaveDB) async {
     //  if (AppPref.isFistInstall == 0) {
@@ -620,9 +632,9 @@ class HomeController extends BaseController with SyncMixin {
 
   Future initProvider() async {
     await dataProvider.init();
-    await doiTuongDieuTraProvider.init(); 
+    await doiTuongDieuTraProvider.init();
     await bkCoSoSXKDProvider.init();
-    await bkCoSoSXKDNganhSanPhamProvider.init(); 
+    await bkCoSoSXKDNganhSanPhamProvider.init();
     await diaBanCoSoSXKDProvider.init();
     await userInfoProvider.init();
     await dmTinhTrangHDProvider.init();
@@ -634,7 +646,7 @@ class HomeController extends BaseController with SyncMixin {
     await xacNhanLogicProvider.init();
 
     ///DM Phiếu 07 mau
-    await ctDmCapProvider.init();
+
     await ctDmHoatDongLogisticProvider.init();
     await ctDmLinhVucProvider.init();
     await ctDmDiaDiemSXKDProvider.init();
@@ -647,12 +659,16 @@ class HomeController extends BaseController with SyncMixin {
     await dmLinhvucProvider.init();
 
     ///Phiếu 07 mau
-    await phieuMauProvider.init();
-    await phieuMauA61Provider.init();
-    await phieuMauA68Provider.init();
-    await phieuMauSanphamProvider.init();
+    await phieuProvider.init();
+    await phieuMauTBProvider.init();
+    await phieuMauTBSanPhamProvider.init();
+    await phieuNganhCNProvider.init();
 
-     
+    await phieuNganhLTProvider.init();
+    await phieuNganhTMProvider.init();
+    await phieuNganhTMSanphamProvider.init();
+    await phieuNganhVTProvider.init();
+    await phieuNganhVTGhiRoProvider.init();
   }
 
   Future checkUpdateApp() async {
@@ -738,12 +754,16 @@ class HomeController extends BaseController with SyncMixin {
       return (userModel.maDangNhap!.characters.first == "D" ||
               userModel.maDangNhap!.characters.first == "d") ||
           (userModel.maDangNhap!.characters.first == "H" ||
-              userModel.maDangNhap!.characters.first == "h");
+              userModel.maDangNhap!.characters.first == "h") ||
+          (userModel.maDangNhap!.characters.first == "T" ||
+              userModel.maDangNhap!.characters.first == "t");
     } else {
       return (AppPref.uid!.characters.first == "D" ||
               AppPref.uid!.characters.first == "d") ||
           (AppPref.uid!.characters.first == "H" ||
-              AppPref.uid!.characters.first == "h");
+              AppPref.uid!.characters.first == "h") ||
+          (userModel.maDangNhap!.characters.first == "T" ||
+              userModel.maDangNhap!.characters.first == "t");
     }
   }
 
@@ -761,7 +781,7 @@ class HomeController extends BaseController with SyncMixin {
       String tenDoiTuongDT = '';
       var doiTuongDTs = <TableDoiTuongDieuTra>[];
       List<Map> doiTuongMaps = await doiTuongDieuTraProvider.selectOneWithMaDT(
-          maDT: bkCosoSXKD.maPhieu!.toString());
+          maDT: bkCosoSXKD.loaiPhieu!.toString());
       for (var element in doiTuongMaps) {
         doiTuongDTs.add(TableDoiTuongDieuTra.fromJson(element));
       }
@@ -771,18 +791,18 @@ class HomeController extends BaseController with SyncMixin {
       }
       //
       List<Map> map =
-          await diaBanCoSoSXKDProvider.selectByMaPhieu(bkCosoSXKD.maPhieu!);
+          await diaBanCoSoSXKDProvider.selectByMaPhieu(bkCosoSXKD.loaiPhieu!);
       var diaBanCoSoSXKDs = <TableDmDiaBanCosoSxkd>[];
       for (var element in map) {
         diaBanCoSoSXKDs.add(TableDmDiaBanCosoSxkd.fromJson(element));
       }
       if (diaBanCoSoSXKDs.isNotEmpty) {
         int index = 0;
-        await insertNewPhieu07MauTBCxx();
+        await insertNewPhieu07MauTBCxx(bkCosoSXKD);
 
         Get.toNamed(AppRoutes.generalInformation, parameters: {
           GeneralInformationController.giMaDoiTuongDTKey:
-              bkCosoSXKD.maPhieu!.toString(),
+              bkCosoSXKD.loaiPhieu!.toString(),
           GeneralInformationController.giTenDoiTuongDTKey: tenDoiTuongDT,
           GeneralInformationController.giMaTinhTrangDTKey:
               bkCosoSXKD.maTrangThaiDT == AppDefine.hoanThanhPhongVan
@@ -797,38 +817,45 @@ class HomeController extends BaseController with SyncMixin {
     }
   }
 
-  insertNewPhieu07MauTBCxx() async {
+  insertNewPhieu07MauTBCxx(TableBkCoSoSXKD tableBkCoSoSXKD) async {
     var maTrangThaiHD = AppDefine.maTinhTrangHDTuKeKhai;
-
-    var map = await bkCoSoSXKDProvider.getInformation(AppPref.uid!);
-    if (map != null) {
-      var bkCosoSXKD = TableBkCoSoSXKD.fromJson(map);
-
-      var phieuMau = await phieuMauProvider.selectByIdCoSo(AppPref.uid!);
-      if (phieuMau.isNotEmpty) {
-        // await phieuMauProvider.updateById(columnMaTinhTrangHD,
-        //     currentIndex.value + 1, TablePhieuMau.fromJson(phieuMau).id!);
-      } else {
-        await initRecordPhieu07Mau(bkCosoSXKD, maTrangThaiHD);
+    var phieuMau = await phieuProvider.selectByIdCoSo(AppPref.uid!);
+    if (phieuMau.isNotEmpty) {
+      // await phieuMauProvider.updateById(columnMaTinhTrangHD,
+      //     currentIndex.value + 1, TablePhieuMau.fromJson(phieuMau).id!);
+    } else {
+      var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
+          .selectMaNganhByIdCoSo(tableBkCoSoSXKD.iDCoSo!);
+      var maNganhMau = '';
+      if (maNganhs.isNotEmpty) {
+        maNganhMau = maNganhs.first;
+        await initRecordPhieu07Mau(tableBkCoSoSXKD, maNganhMau, maTrangThaiHD);
       }
     }
   }
 
-  Future initRecordPhieu07Mau(
-      TableBkCoSoSXKD tableBkCoSoSXKD, int maTrangThaiHD) async {
-    List<TablePhieuMau> tableP07Maus = [];
-    var tableP07 = TablePhieuMau(
-        maPhieu: tableBkCoSoSXKD.maPhieu,
+  Future initRecordPhieu07Mau(TableBkCoSoSXKD tableBkCoSoSXKD, String maNganh,
+      int maTrangThaiHD) async {
+    List<TablePhieu> tableP07Maus = [];
+
+    var tableP07 = TablePhieu(
+        loaiPhieu: tableBkCoSoSXKD.loaiPhieu,
         iDCoSo: tableBkCoSoSXKD.iDCoSo,
         maTinh: tableBkCoSoSXKD.maTinh!,
-        maHuyen: tableBkCoSoSXKD.maHuyen,
+        maTKCS: tableBkCoSoSXKD.maTKCS,
         maXa: tableBkCoSoSXKD.maXa,
+        maThon: tableBkCoSoSXKD.maThon,
+        iDDB: tableBkCoSoSXKD.iDDB,
         maDiaBan: tableBkCoSoSXKD.maDiaBan,
-        a1_1: tableBkCoSoSXKD.tenCoSo,
-        a1_2: tableBkCoSoSXKD.diaChi,
+        maCoSo: tableBkCoSoSXKD.maCoSo,
+        tenCoSo: tableBkCoSoSXKD.tenCoSo,
+        diaChi: tableBkCoSoSXKD.diaChi,
+        tenChuCoSo: tableBkCoSoSXKD.tenChuCoSo,
+        sDTCoSo: tableBkCoSoSXKD.dienThoai,
+        maNganhMau: maNganh,
         maDTV: AppPref.uid);
     tableP07Maus.add(tableP07);
-    await phieuMauProvider.insert(tableP07Maus, AppPref.dateTimeSaveDB!);
+    await phieuProvider.insert(tableP07Maus, AppPref.dateTimeSaveDB!);
   }
 /**
  * END::TỰ KÊ KHAI

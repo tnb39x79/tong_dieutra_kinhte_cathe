@@ -58,40 +58,38 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       CREATE TABLE IF NOT EXISTS $tablebkCoSoSXKD
       (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT, 
-        $columnBkCoSoSXKDMaPhieu INTEGER,
-       $columnBkCoSoSXKDIDCoSo TEXT,
-        $columnBkCoSoSXKDMaTinh TEXT,
-        $columnBkCoSoSXKDTenTinh TEXT,
-        $columnBkCoSoSXKDMaHuyen TEXT,
-        $columnBkCoSoSXKDTenHuyen TEXT,
-        $columnBkCoSoSXKDMaXa TEXT,
-        $columnBkCoSoSXKDTenXa TEXT,
-        $columnBkCoSoSXKDMaThon TEXT,
-        $columnBkCoSoSXKDTenThon TEXT,
-        $columnBkCoSoSXKDMaDiaBan TEXT,
-        $columnBkCoSoSXKDTenDiaBan TEXT,
-        $columnBkCoSoSXKDMaDiaDiem TEXT,
-        $columnBkCoSoSXKDTenDiaDiem TEXT,
-        $columnBkCoSoSXKDMaCoSo INTEGER,
-        $columnBkCoSoSXKDTenCoSo TEXT,
-        $columnbkCoSoSXKDMaSoThue TEXT,
-         
-        $columnBkCoSoSXKDDiaChi TEXT,
-        $columnBkCoSoSXKDDienThoai TEXT,      
-        $columnBkCoSoSXKDEmail TEXT, 
-        $columnBkCoSoSXKDDoanhThu REAL,
-        $columnBkCoSoSXKDSoLaoDong INTEGER,  
-        $columnBkCoSoSXKDMaTinhTrangHD INTEGER,
-        $columnBkCoSoSXKDMaTrangThaiDT INTEGER,
-        $columnBkCoSoSXKDMaTinhTrangHDTruocTD INTEGER,
-        $columnBkCoSoSXKDTenNguoiCungCap TEXT, 
-        $columnBkCoSoSXKDDienThoaiNguoiCungCap TEXT, 
-        $columnBkCoSoSXKDIDCoSoDuPhong TEXT,
-        $columnBkCoSoSXKDIDCoSoThayThe TEXT,
-        $columnMaDTV TEXT,
-        $columnBkCoSoSXKDLoaiDieuTra INTEGER, 
-        $columnBkCoSoSXKDTrangThaiLogic INTEGER, 
-        $columnBkCoSoSXKDIsSyncSuccess INTEGER, 
+       
+
+        $colBkCoSoSXKDIDCoSo  TEXT,
+        $colBkCoSoSXKDLoaiPhieu  INTEGER,
+        $colBkCoSoSXKDMaTinh  TEXT,
+        $colBkCoSoSXKDTenTinh  TEXT,
+        $colBkCoSoSXKDMaTKCS  TEXT,
+        $colBkCoSoSXKDTenTKCS  TEXT,
+        $colBkCoSoSXKDMaXa  TEXT,
+        $colBkCoSoSXKDTenXa  TEXT,
+        $colBkCoSoSXKDMaThon  TEXT,
+        $colBkCoSoSXKDTenThon  TEXT,
+        $colBkCoSoSXKDIDDB  TEXT,
+        $colBkCoSoSXKDMaDiaBan  TEXT,
+        $colBkCoSoSXKDTenDiaBan  TEXT,
+        $colBkCoSoSXKDMaCoSo  INTEGER,
+        $colBkCoSoSXKDTenCoSo  TEXT,
+        $colBkCoSoSXKDDiaChi  TEXT,
+        $colBkCoSoSXKDTenChuCoSo  TEXT,
+        $colBkCoSoSXKDMaDiaDiem  TEXT,
+        $colBkCoSoSXKDDienThoai  TEXT,
+        $colBkCoSoSXKDEmail  TEXT,
+        $colBkCoSoSXKDSoLaoDong  INTEGER,
+        $colBkCoSoSXKDDoanhThu  REAL,
+        $colBkCoSoSXKDMaTinhTrangHD  INTEGER,
+        $colBkCoSoSXKDTenNguoiCungCap  TEXT,
+        $colBkCoSoSXKDDienThoaiNguoiCungCap  TEXT,
+        $colBkCoSoSXKDMaDTV  TEXT,
+        $colBkCoSoSXKDMaTrangThaiDT  INTEGER, 
+
+        $colBkCoSoSXKDTrangThaiLogic INTEGER, 
+        $colBkCoSoSXKDIsSyncSuccess INTEGER, 
         $columnCreatedAt TEXT,
         $columnUpdatedAt TEXT
       )
@@ -122,11 +120,11 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
-      WHERE $columnBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
+      WHERE $colBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
       AND $columnMaPhieu = '$maDoiTuongDT' 
-      AND $columnBkCoSoSXKDMaDiaBan = '$maDiaBan'
+      AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
       '''));
 
     return count;
@@ -136,7 +134,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
-      WHERE $columnBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
+      WHERE $colBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
       AND $columnMaPhieu = '$maDoiTuongDT' 
@@ -149,10 +147,10 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
-      WHERE $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
+      WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
-      AND $columnBkCoSoSXKDMaPhieu = $maDoiTuongDT
-      AND $columnBkCoSoSXKDMaDiaBan = '$maDiaBan'
+      AND $colBkCoSoSXKDLoaiPhieu = $maDoiTuongDT
+      AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
       AND $columnMaDTV = '${AppPref.uid}'
       '''));
     return count;
@@ -162,7 +160,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
-      WHERE $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
+      WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
        AND $columnMaPhieu = '$maDoiTuongDT' 
@@ -174,10 +172,10 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
-      WHERE $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
+      WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $columnBkCoSoSXKDIsSyncSuccess=1
+      AND $colBkCoSoSXKDIsSyncSuccess=1
       '''));
     return count;
   }
@@ -186,10 +184,10 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
-      WHERE $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
+      WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $columnBkCoSoSXKDIsSyncSuccess=1
+      AND $colBkCoSoSXKDIsSyncSuccess=1
         AND $columnMaPhieu = '$maDoiTuongDT' 
       '''));
     return count;
@@ -202,10 +200,10 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return await db!.rawQuery('''
     SELECT * FROM $tablebkCoSoSXKD
     WHERE $columnCreatedAt = '$createdAt' 
-    AND $columnBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})    
+    AND $colBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})    
     AND $columnMaDTV = '${AppPref.uid}'
-    AND $columnBkCoSoSXKDMaPhieu = $maDoiTuongDT
-    AND $columnBkCoSoSXKDMaDiaBan = '$maDiaBan'
+    AND $colBkCoSoSXKDLoaiPhieu = $maDoiTuongDT
+    AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
     ''');
   }
 
@@ -216,12 +214,12 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return await db!.rawQuery('''
     SELECT * FROM $tablebkCoSoSXKD
     WHERE $columnCreatedAt = '$createdAt' 
-    AND $columnBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
-    AND $columnBkCoSoSXKDMaDiaBan = '$maDiaBan'
-    AND $columnBkCoSoSXKDMaPhieu = '$maDoiTuongDT'
+    AND $colBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
+    AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
+    AND $colBkCoSoSXKDLoaiPhieu = '$maDoiTuongDT'
     AND $columnMaDTV = '${AppPref.uid}'
-    AND $columnBkCoSoSXKDTenCoSo LIKE '%$search%'
-    OR $columnBkCoSoSXKDTenCoSo LIKE '%$search'
+    AND $colBkCoSoSXKDTenCoSo LIKE '%$search%'
+    OR $colBkCoSoSXKDTenCoSo LIKE '%$search'
     ''');
   }
 
@@ -232,10 +230,10 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return await db!.rawQuery('''
     SELECT * FROM $tablebkCoSoSXKD
     WHERE $columnCreatedAt = '$createdAt' 
-    AND $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
+    AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
      AND $columnMaDTV = '${AppPref.uid}'
-    AND $columnBkCoSoSXKDMaDiaBan = '$maDiaBan'
-    AND $columnBkCoSoSXKDMaPhieu = '$maDoiTuongDT'
+    AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
+    AND $colBkCoSoSXKDLoaiPhieu = '$maDoiTuongDT'
     ''');
   }
 
@@ -246,12 +244,12 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return await db!.rawQuery('''
     SELECT * FROM $tablebkCoSoSXKD
     WHERE $columnCreatedAt = '$createdAt' 
-    AND $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
-    AND $columnBkCoSoSXKDMaDiaBan = '$maDiaBan'
-    AND $columnBkCoSoSXKDMaPhieu = '$maDoiTuongDT'
+    AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
+    AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
+    AND $colBkCoSoSXKDLoaiPhieu = '$maDoiTuongDT'
     AND $columnMaDTV = '${AppPref.uid}'
-    AND $columnBkCoSoSXKDTenCoSo LIKE '%$search%'
-    OR $columnBkCoSoSXKDTenCoSo LIKE '%$search'
+    AND $colBkCoSoSXKDTenCoSo LIKE '%$search%'
+    OR $colBkCoSoSXKDTenCoSo LIKE '%$search'
     ''');
   }
 
@@ -260,7 +258,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     print('createdAt: $createdAt');
     return await db!.query(tablebkCoSoSXKD, where: '''
       $columnCreatedAt = '$createdAt'
-      AND $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
+      AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
       AND NOT $columnUpdatedAt = '$createdAt'
       AND $columnMaDTV='${AppPref.uid}'
     ''');
@@ -271,7 +269,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     print('createdAt: $createdAt');
     return await db!.query(tablebkCoSoSXKD, where: '''
       $columnCreatedAt = '$createdAt'
-      AND $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
+      AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
       AND NOT $columnUpdatedAt = '$createdAt'
       AND $columnMaDTV='${AppPref.uid}'
     ''');
@@ -281,7 +279,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<Map> map = await db!.query(tablebkCoSoSXKD, where: '''
       $columnCreatedAt = '$createdAt'
-      AND $columnBkCoSoSXKDIDCoSo = '$idCoSo'
+      AND $colBkCoSoSXKDIDCoSo = '$idCoSo'
        AND $columnMaDTV='${AppPref.uid}'
     ''');
     if (map.isEmpty) return {};
@@ -293,7 +291,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     List<Map> maps = await db!.rawQuery('''
         SELECT TrangThaiLogic FROM $tablebkCoSoSXKD
         WHERE  $columnCreatedAt = '$createdAt'
-      AND $columnBkCoSoSXKDIDCoSo = '$idCoSo'
+      AND $colBkCoSoSXKDIDCoSo = '$idCoSo'
        AND $columnMaDTV='${AppPref.uid}'
       ''');
     if (maps.isNotEmpty) {
@@ -312,24 +310,24 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
     developer.log('ID HO: $idCoSo');
     await db!.update(tablebkCoSoSXKD, values,
-        where: '$columnBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
+        where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
         whereArgs: [idCoSo]);
     print('updateTrangThai');
     print('db: ${await db!.query(tablebkCoSoSXKD, where: '''
-      $columnBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
+      $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
     ''')}');
   }
 
   Future updateTrangThaiDTTinhTrangHD(String idCoSo, int tinhTrangHD) async {
     Map<String, Object?> values = {
-      columnBkCoSoSXKDMaTrangThaiDT: AppDefine.hoanThanhPhongVan,
-      columnBkCoSoSXKDMaTinhTrangHD: tinhTrangHD,
+      colBkCoSoSXKDMaTrangThaiDT: AppDefine.hoanThanhPhongVan,
+      colBkCoSoSXKDMaTinhTrangHD: tinhTrangHD,
       "UpdatedAt": DateTime.now().toIso8601String()
     };
     String createdAt = AppPref.dateTimeSaveDB ?? "";
     developer.log('ID HO: $idCoSo');
     var res = await db!.update(tablebkCoSoSXKD, values,
-        where: '$columnBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
+        where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
         whereArgs: [idCoSo]);
     print('updateTrangThai $res');
   }
@@ -341,7 +339,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       /// Phiếu sau khi đồng bộ vào sửa phiếu => còn lỗi logic chưa hoàn thành lại phiếu vẫn đồng bộ lên .
       ///multiValue['UpdatedAt'] = DateTime.now().toIso8601String();
       await db!.update(tablebkCoSoSXKD, multiValue,
-          where: '$columnBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt = ? ',
+          where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt = ? ',
           whereArgs: [idCoSo, createdAt]);
     }
   }
@@ -355,7 +353,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     };
     developer.log('ID HO: $idCoSo');
     await db!.update(tablebkCoSoSXKD, values,
-        where: '$columnBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
+        where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
         whereArgs: [idCoSo]);
   }
 
@@ -365,8 +363,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     for (var item in idCoSos) {
       var update = await db!.update(
           tablebkCoSoSXKD, {"UpdatedAt": createdAt, "SyncSuccess": 1},
-          where:
-              '$columnBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
+          where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
           whereArgs: [item]);
       developer.log('RESULT UPDATE CSSXKD SUCCESS=$update');
     }
@@ -378,7 +375,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     Map<String, Object?> values = {fieldName: value};
     developer.log('ID HO: $idCoSo');
     await db!.update(tablebkCoSoSXKD, values,
-        where: '$columnBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
+        where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
         whereArgs: [idCoSo]);
   }
 

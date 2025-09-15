@@ -5,6 +5,7 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_style
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_nhomnganh_vcpa.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dantoc.dart';
 
 class SearchDanToc extends StatefulWidget {
   const SearchDanToc({

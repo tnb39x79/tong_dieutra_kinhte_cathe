@@ -1,11 +1,9 @@
 import 'dart:developer';
 
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_cokhong_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_dantoc_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_gioitinh_provider.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_linhvuc_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau_dm.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/xacnhan_logic_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
@@ -39,7 +37,6 @@ class DatabaseHelper {
 
   ///Phiếu Cá thể mẫu
   ///thieeus dm_cap, dm hoat dong logistic
-  final ctDmCapProvider = DmCapProvider();
   final ctDmHoatDongLogisticProvider = CTDmHoatDongLogisticProvider();
   final ctDmDiaDiemSXKDProvider = CTDmDiaDiemSXKDProvider();
   final ctDmLinhVucProvider = CTDmLinhVucProvider();
@@ -49,10 +46,15 @@ class DatabaseHelper {
   final ctDmTinhTrangDKKDProvider = CTDmTinhTrangDKKDProvider();
   final ctDmTrinhDoChuyenMonProvider = CTDmTrinhDoChuyenMonProvider();
 
-  final phieuMauProvider = PhieuMauProvider();
-  final phieuMauA61Provider = PhieuMauA61Provider();
-  final phieuMauA68Provider = PhieuMauA68Provider();
-  final phieuMauSanphamProvider = PhieuMauSanphamProvider();
+  final phieuProvider = PhieuProvider();
+  final phieuMauTBProvider = PhieuMauTBProvider();
+  final phieuMauTBSanPhamProvider = PhieuMauTBSanPhamProvider();
+  final phieuNganhCNProvider = PhieuNganhCNProvider();
+  final phieuNganhLTProvider = PhieuNganhLTProvider();
+  final phieuNganhTMProvider = PhieuNganhTMProvider();
+  final phieuNganhTMSanphamProvider = PhieuNganhTMSanPhamProvider();
+  final phieuNganhVTProvider = PhieuNganhVTProvider();
+  final phieuNganhVTGhiRoProvider = PhieuNganhVTGhiRoProvider();
 
   // only have a single app-wide reference to the database
   static Database? _database;
@@ -140,7 +142,6 @@ class DatabaseHelper {
 
     // dm phieu cá thể mẫu
     await Future.wait([
-      ctDmCapProvider.onCreateTable(db),
       ctDmHoatDongLogisticProvider.onCreateTable(db),
       ctDmDiaDiemSXKDProvider.onCreateTable(db),
       ctDmLinhVucProvider.onCreateTable(db),
@@ -154,10 +155,15 @@ class DatabaseHelper {
 
     // phieu cá thể mẫu
     await Future.wait([
-      phieuMauProvider.onCreateTable(db),
-      phieuMauA61Provider.onCreateTable(db),
-      phieuMauA68Provider.onCreateTable(db),
-      phieuMauSanphamProvider.onCreateTable(db)
+      phieuProvider.onCreateTable(db),
+      phieuMauTBProvider.onCreateTable(db),
+      phieuMauTBSanPhamProvider.onCreateTable(db),
+      phieuNganhCNProvider.onCreateTable(db),
+      phieuNganhLTProvider.onCreateTable(db),
+      phieuNganhTMProvider.onCreateTable(db),
+      phieuNganhTMSanphamProvider.onCreateTable(db),
+      phieuNganhVTProvider.onCreateTable(db),
+      phieuNganhVTGhiRoProvider.onCreateTable(db)
     ]);
 
     log('END::Create all table compelete');
@@ -185,7 +191,6 @@ class DatabaseHelper {
     await dmGioiTinhProvider.deletedTable(db);
 
     // DM hieu ca the mau
-    await ctDmCapProvider.deletedTable(db);
     await ctDmHoatDongLogisticProvider.deletedTable(db);
     await ctDmLinhVucProvider.deletedTable(db);
     await ctDmDiaDiemSXKDProvider.deletedTable(db);
@@ -196,10 +201,15 @@ class DatabaseHelper {
     await ctDmNhomNganhVcpaProvider.deletedTable(db);
 
     // phieu ca the mau
-    await phieuMauProvider.deletedTable(db);
-    await phieuMauA61Provider.deletedTable(db);
-    await phieuMauA68Provider.deletedTable(db);
-    await phieuMauSanphamProvider.deletedTable(db);
+    await phieuProvider.deletedTable(db);
+    await phieuMauTBProvider.deletedTable(db);
+    await phieuMauTBSanPhamProvider.deletedTable(db);
+    await phieuNganhCNProvider.deletedTable(db);
+    await phieuNganhLTProvider.deletedTable(db);
+    await phieuNganhTMProvider.deletedTable(db);
+    await phieuNganhTMSanphamProvider.deletedTable(db);
+    await phieuNganhVTProvider.deletedTable(db);
+    await phieuNganhVTGhiRoProvider.deletedTable(db);
 
     log('END::deleteAll table compelete');
     createTable(db);
@@ -222,10 +232,15 @@ class DatabaseHelper {
     // phieu ca the mau
 
     await Future.wait([
-      phieuMauProvider.onCreateTable(db),
-      phieuMauA61Provider.onCreateTable(db),
-      phieuMauA68Provider.onCreateTable(db),
-      phieuMauSanphamProvider.onCreateTable(db)
+      phieuProvider.onCreateTable(db),
+      phieuMauTBProvider.onCreateTable(db),
+      phieuMauTBSanPhamProvider.onCreateTable(db),
+      phieuNganhCNProvider.onCreateTable(db),
+      phieuNganhLTProvider.onCreateTable(db),
+      phieuNganhTMProvider.onCreateTable(db),
+      phieuNganhTMSanphamProvider.onCreateTable(db),
+      phieuNganhVTProvider.onCreateTable(db),
+      phieuNganhVTGhiRoProvider.onCreateTable(db)
     ]);
 
     log('END::Create all table compelete');
@@ -246,10 +261,17 @@ class DatabaseHelper {
     await xacNhanLogicProvider.deletedTable(db);
 
     // phieu ca mau
-    phieuMauProvider.deletedTable(db);
-    phieuMauA61Provider.deletedTable(db);
-    phieuMauA68Provider.deletedTable(db);
-    phieuMauSanphamProvider.deletedTable(db);
+      await Future.wait([
+      phieuProvider.onCreateTable(db),
+      phieuMauTBProvider.onCreateTable(db),
+      phieuMauTBSanPhamProvider.onCreateTable(db),
+      phieuNganhCNProvider.onCreateTable(db),
+      phieuNganhLTProvider.onCreateTable(db),
+      phieuNganhTMProvider.onCreateTable(db),
+      phieuNganhTMSanphamProvider.onCreateTable(db),
+      phieuNganhVTProvider.onCreateTable(db),
+      phieuNganhVTGhiRoProvider.onCreateTable(db)
+    ]);
 
     log('END::deleteAll table compelete');
     createOnlyDataTable(db);

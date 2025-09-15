@@ -136,16 +136,29 @@ class LoginController extends BaseController {
         } else {
           AppPref.soNgayChoPhepXoaDuLieu = '0';
         }
+        String imei = response.body!.iMei!;
+        //AppPref.extraToken = response.body!.accessToken;
+
         final response0 = await authRepository
             .getExtraToken(
                 userName: getEditingController(keyUserName).text.trim(),
                 password: getEditingController(keyPass).text.trim(),
                 url:
-                    'http://${response.body!.domainAPI}:${response.body!.portAPI}/')
+                    'http://${response.body!.domainAPI}:${response.body!.portAPI}/',
+                iMei: imei)
             .timeout(const Duration(seconds: AppValues.timeOut));
         if (response0.isSuccess) {
           AppPref.extraToken = response0.body!.accessToken;
+          final value = await authRepository.getUser();
+          if (value.isSuccess) {
+            //userModel.value = value.body!;
 
+            // save in cache for use when not connect internet
+            String user = jsonEncode(value.body!);
+
+            log('userData: $user');
+            AppPref.userData = user;
+          }
           return true;
         }
       } else {

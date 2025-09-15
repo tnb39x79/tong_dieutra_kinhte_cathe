@@ -29,7 +29,7 @@
 
 ```dart
 // build apk dev 
-    flutter build apk --flavor dev --dart-define "BASE_API=http://xxxxx.gso.gov.vn:2985/"
+    flutter build apk --flavor dev --dart-define "BASE_API=https://v1_capi_giasanxuat.gso.gov.vn/"
  
 
 ```

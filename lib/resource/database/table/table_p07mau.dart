@@ -1,4 +1,9 @@
-export 'table_phieu_07_mau.dart'; 
-export 'table_phieu_07_mau_A61.dart';
-export 'table_phieu_07_mau_A68.dart';
-export 'table_phieu_07_mau_sanpham.dart';
+export 'table_phieu.dart'; 
+export 'table_phieu_mautb.dart'; 
+export 'table_phieu_mautb_sanpham.dart';
+export 'table_phieu_nganh_cn.dart';
+export 'table_phieu_nganh_lt.dart';
+export 'table_phieu_nganh_tm.dart';
+export 'table_phieu_nganh_tm_sanpham.dart';
+export 'table_phieu_nganh_vt.dart';
+export 'table_phieu_nganh_vt_ghiro.dart';

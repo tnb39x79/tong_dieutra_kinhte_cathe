@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_cap.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart'; 
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_quoctich.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_cokhong.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dantoc.dart';
@@ -30,8 +29,7 @@ const String tableData = 'DataInfo';
 const String columnDataId = '_id';
 const String columnDataMaDTV = 'MaDTV';
 const String columnDataQuestionMau = 'CauHoiPhieu07Maus';
-const String columnDataQuestionTB = 'CauHoiPhieu07TBs';
-const String columnDataQuestionTonGiao = 'CauHoiPhieu08TonGiaos';
+const String columnDataQuestionTB = 'CauHoiPhieu07TBs'; 
 const String columnDataCreatedAt = 'CreatedAt';
 const String columnDataUpdatedAt = 'UpdatedAt';
 
@@ -39,8 +37,7 @@ class TableData {
   int? id;
   String? maDTV;
   String? questionNo07Mau;
-  String? questionNo07TB;
-  String? questionNo08;
+  String? questionNo07TB; 
   String? createdAt;
   String? updatedAt;
 
@@ -48,8 +45,7 @@ class TableData {
     this.id,
     this.maDTV,
     this.questionNo07Mau,
-    this.questionNo07TB,
-    this.questionNo08,
+    this.questionNo07TB, 
     this.createdAt,
     this.updatedAt,
   });
@@ -59,16 +55,14 @@ class TableData {
     updatedAt = dataJson['UpdatedAt'];
     maDTV = dataJson['MaDTV'];
     questionNo07Mau = jsonEncode(dataJson['CauHoiPhieu07Maus']);
-    questionNo07TB = jsonEncode(dataJson['CauHoiPhieu07TBs']);
-    questionNo08 = jsonEncode(dataJson['CauHoiPhieu08TonGiaos']);
+    questionNo07TB = jsonEncode(dataJson['CauHoiPhieu07TBs']); 
   }
 
   Map<String, Object?> toJson() {
     var map = <String, Object?>{};
     map['MaDTV'] = maDTV;
     map['CauHoiPhieu07Maus'] = questionNo07Mau;
-    map['CauHoiPhieu07TBs'] = questionNo07TB;
-    map['CauHoiPhieu08TonGiaos'] = questionNo08;
+    map['CauHoiPhieu07TBs'] = questionNo07TB; 
     map['CreatedAt'] = createdAt;
     map['UpdatedAt'] = updatedAt;
     return map;
@@ -81,10 +75,7 @@ class TableData {
   dynamic toCauHoiPhieu07TB() {
     return jsonDecode(questionNo07TB!);
   }
-
-  dynamic toCauHoiPhieu08() {
-    return jsonDecode(questionNo08!);
-  }
+ 
 
   dynamic toCauHoiPhieu07(String maDoiTuongDT) {
     if (maDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
@@ -196,15 +187,7 @@ class TableData {
 
   /*************/
   ///BEGIN::Danh mục cho phiếu 07 mẫu
-  static List<TableDmCap> toListCTDmCaps(dynamic json) {
-    List<DmCommonModel> subject = DmCommonModel.listFromJson(json);
-    List<TableDmCap> dm = [];
-
-    for (var element in subject) {
-      dm.add(TableDmCap(id: 0, ma: element.ma, ten: element.ten));
-    }
-    return dm;
-  }
+   
 
   static List<TableCTDmHoatDongLogistic> toListCTDmHoatDongLogistics(
       dynamic json) {

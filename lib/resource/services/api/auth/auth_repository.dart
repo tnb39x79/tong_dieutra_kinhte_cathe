@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter_udid/flutter_udid.dart';
 import 'package:gov_statistics_investigation_economic/common/utils/utils.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
@@ -18,10 +19,12 @@ class AuthRepository {
     if (NetworkService.connectionType == Network.none) {
       return ResponseToken.withDisconnect();
     }
+    final _mobileDeviceIdentifier = await FlutterUdid.udid;
     final body = {
       'grant_type': 'password',
       'username': userName,
       'password': password,
+      "imei": _mobileDeviceIdentifier,
     };
 
     final params = {'grant_type': 'refresh_token'};
@@ -58,7 +61,8 @@ class AuthRepository {
   Future<ResponseToken<TokenModel>> getExtraToken(
       {required String userName,
       required String password,
-      required url}) async {
+      required url,
+      String? iMei}) async {
     if (NetworkService.connectionType == Network.none) {
       return ResponseToken.withDisconnect();
     }
@@ -66,6 +70,7 @@ class AuthRepository {
       'grant_type': 'password',
       'username': userName,
       'password': password,
+      'imei': iMei??''
     };
 
     final params = {'grant_type': 'refresh_token'};

@@ -7,216 +7,191 @@ import 'package:gov_statistics_investigation_economic/resource/model/question/pr
 ///Bảng kê cơ sở sản xuất kinh doanh CT_DI_BKCoSoSXKD
 ///
 const String tablebkCoSoSXKD = 'DmBkCoSoSXKD';
-const String columnBkCoSoSXKDId = '_id';
-const String columnBkCoSoSXKDMaPhieu = 'MaPhieu';
-const String columnBkCoSoSXKDIDCoSo = 'IDCoSo';
-const String columnBkCoSoSXKDMaTinh = 'MaTinh';
-const String columnBkCoSoSXKDTenTinh = 'TenTinh';
-const String columnBkCoSoSXKDMaHuyen = 'MaHuyen';
-const String columnBkCoSoSXKDTenHuyen = 'TenHuyen';
-const String columnBkCoSoSXKDMaXa = 'MaXa';
-const String columnBkCoSoSXKDTenXa = 'TenXa';
-const String columnBkCoSoSXKDMaThon = 'maThon';
-const String columnBkCoSoSXKDTenThon = 'TenThon';
-const String columnBkCoSoSXKDMaDiaBan = 'MaDiaBan';
-const String columnBkCoSoSXKDTenDiaBan = 'TenDiaBan';
-const String columnBkCoSoSXKDMaDiaDiem = 'MaDiaDiem';
-const String columnBkCoSoSXKDTenDiaDiem = 'TenDiaDiem';
-const String columnBkCoSoSXKDMaCoSo = 'MaCoSo';
-const String columnBkCoSoSXKDTenCoSo = 'TenCoSo';
-const String columnbkCoSoSXKDMaSoThue = 'MaSoThue';
-const String columnBkCoSoSXKDDiaChi = 'DiaChi';
-const String columnBkCoSoSXKDDienThoai = 'DienThoai';
-const String columnBkCoSoSXKDEmail = 'Email';
-const String columnBkCoSoSXKDSoLaoDong = 'SoLaoDong';
-const String columnBkCoSoSXKDDoanhThu = 'DoanhThu';
-
-const String columnBkCoSoSXKDMaTinhTrangHD = 'MaTinhTrangHD';
-const String columnBkCoSoSXKDMaTinhTrangHDTruocTD = 'MaTinhTrangHDTruocTD';
-const String columnBkCoSoSXKDMaTrangThaiDT = 'MaTrangThaiDT';
-const String columnBkCoSoSXKDTenNguoiCungCap = 'TenNguoiCungCap';
-const String columnBkCoSoSXKDDienThoaiNguoiCungCap = 'DienThoaiNguoiCungCap';
-const String columnBkCoSoSXKDIDCoSoDuPhong = 'IDCoSo_DuPhong';
-const String columnBkCoSoSXKDIDCoSoThayThe = 'IDCoSo_ThayThe';
-const String columnBkCoSoSXKDMaDTV = 'MaDTV';
-const String columnBkCoSoSXKDLoaiDieuTra = 'LoaiDieuTra';
+const String colBkCoSoSXKDId = '_id';
+const String colBkCoSoSXKDIDCoSo = 'IDCoSo';
+const String colBkCoSoSXKDLoaiPhieu = 'LoaiPhieu';
+const String colBkCoSoSXKDMaTinh = 'MaTinh';
+const String colBkCoSoSXKDTenTinh = 'TenTinh';
+const String colBkCoSoSXKDMaTKCS = 'MaTKCS';
+const String colBkCoSoSXKDTenTKCS = 'TenTKCS';
+const String colBkCoSoSXKDMaXa = 'MaXa';
+const String colBkCoSoSXKDTenXa = 'TenXa';
+const String colBkCoSoSXKDMaThon = 'MaThon';
+const String colBkCoSoSXKDTenThon = 'TenThon';
+const String colBkCoSoSXKDIDDB = 'IDDB';
+const String colBkCoSoSXKDMaDiaBan = 'MaDiaBan';
+const String colBkCoSoSXKDTenDiaBan = 'TenDiaBan';
+const String colBkCoSoSXKDMaCoSo = 'MaCoSo';
+const String colBkCoSoSXKDTenCoSo = 'TenCoSo';
+const String colBkCoSoSXKDDiaChi = 'DiaChi';
+const String colBkCoSoSXKDTenChuCoSo = 'TenChuCoSo';
+const String colBkCoSoSXKDMaDiaDiem = 'MaDiaDiem';
+const String colBkCoSoSXKDDienThoai = 'DienThoai';
+const String colBkCoSoSXKDEmail = 'Email';
+const String colBkCoSoSXKDSoLaoDong = 'SoLaoDong';
+const String colBkCoSoSXKDDoanhThu = 'DoanhThu';
+const String colBkCoSoSXKDMaTinhTrangHD = 'MaTinhTrangHD';
+const String colBkCoSoSXKDTenNguoiCungCap = 'TenNguoiCungCap';
+const String colBkCoSoSXKDDienThoaiNguoiCungCap = 'DienThoaiNguoiCungCap';
+const String colBkCoSoSXKDMaDTV = 'MaDTV';
+const String colBkCoSoSXKDMaTrangThaiDT = 'MaTrangThaiDT';
 //const String columnBkCoSoSXKDMauBoSung = 'MauBoSung';
 ///0: chưa insert; 1: đã insert logic; vào bảng Xác nhận logic
-const String columnBkCoSoSXKDTrangThaiLogic = 'TrangThaiLogic';
-const String columnBkCoSoSXKDIsSyncSuccess = 'SyncSuccess';
+const String colBkCoSoSXKDTrangThaiLogic = 'TrangThaiLogic';
+const String colBkCoSoSXKDIsSyncSuccess = 'SyncSuccess';
 
 /// tablebkCoSoSXKD -> TablebkCoSoSXKD gồm
 /// List DanhSachCoSoSXKD_PV
 
 class TableBkCoSoSXKD {
   int? id;
-  int? maPhieu;
   String? iDCoSo;
+  int? loaiPhieu;
   String? maTinh;
   String? tenTinh;
-  String? maHuyen;
-  String? tenHuyen;
+  String? maTKCS;
+  String? tenTKCS;
   String? maXa;
   String? tenXa;
   String? maThon;
   String? tenThon;
+  String? iDDB;
   String? maDiaBan;
   String? tenDiaBan;
   int? maCoSo;
   String? tenCoSo;
-  //int? coSoSo;
-
-  String? maSoThue;
   String? diaChi;
+  String? tenChuCoSo;
+  String? maDiaDiem;
   String? dienThoai;
   String? email;
-  String? maDiaDiem;
-  String? tenDiaDiem;
-  double? doanhThu;
   int? soLaoDong;
+  double? doanhThu;
   int? maTinhTrangHD;
-
-  int? maTinhTrangHDTruocTD;
   String? tenNguoiCungCap;
   String? dienThoaiNguoiCungCap;
-
   String? maDTV;
   int? maTrangThaiDT;
-  String? iDCoSoDuPhong;
-  String? iDCoSoThayThe;
-  int? loaiDieuTra;
   int? trangThaiLogic;
   int? isSyncSuccess;
   String? createdAt;
   String? updatedAt;
 
   List<TableBkCoSoSXKDNganhSanPham>? tableNganhSanPhams;
-  TablePhieuMau? tablePhieuMau;
+  TablePhieu? tablePhieu;
 
   TableBkCoSoSXKD(
       {this.id,
-      this.maPhieu,
       this.iDCoSo,
+      this.loaiPhieu,
       this.maTinh,
-      this.tenTinh,
-      this.maHuyen,
-      this.tenHuyen,
+      this.maTKCS,
       this.maXa,
-      this.tenXa,
       this.maThon,
       this.tenThon,
+      this.iDDB,
       this.maDiaBan,
       this.tenDiaBan,
-      this.maDiaDiem,
-      this.tenDiaDiem,
       this.maCoSo,
       this.tenCoSo,
-      this.maSoThue,
       this.diaChi,
+      this.tenChuCoSo,
+      this.maDiaDiem,
       this.dienThoai,
-      this.doanhThu,
+      this.email,
       this.soLaoDong,
+      this.doanhThu,
       this.maTinhTrangHD,
-      this.maTinhTrangHDTruocTD,
-      this.iDCoSoDuPhong,
-      this.iDCoSoThayThe,
+      this.tenNguoiCungCap,
+      this.dienThoaiNguoiCungCap,
       this.maDTV,
       this.maTrangThaiDT,
-      this.tablePhieuMau,
+      this.tablePhieu,
       this.tableNganhSanPhams,
       this.trangThaiLogic,
-      this.loaiDieuTra,
       this.isSyncSuccess,
       this.createdAt,
       this.updatedAt});
 
   TableBkCoSoSXKD.fromJson(dynamic json) {
     id = json['_id'];
-    maPhieu = json['MaPhieu'];
     iDCoSo = json['IDCoSo'];
+    loaiPhieu = json['LoaiPhieu'];
     maTinh = json['MaTinh'];
     tenTinh = json['TenTinh'];
-    maHuyen = json['MaHuyen'];
-    tenHuyen = json['TenHuyen'];
+    maTKCS = json['MaTKCS'];
+    tenTKCS = json['TenTKCS'];
     maXa = json['MaXa'];
     tenXa = json['TenXa'];
     maThon = json['MaThon'];
     tenThon = json['TenThon'];
+    iDDB = json['IDDB'];
     maDiaBan = json['MaDiaBan'];
     tenDiaBan = json['TenDiaBan'];
     maCoSo = json['MaCoSo'];
     tenCoSo = json['TenCoSo'];
-
-    maSoThue = json['MaSoThue'];
     diaChi = json['DiaChi'];
+    tenChuCoSo = json['TenChuCoSo'];
+    maDiaDiem = json['MaDiaDiem'];
     dienThoai = json['DienThoai'];
-
-    doanhThu = json['DoanhThuUocTinh'];
-    soLaoDong = json['SoLaodong'];
-
+    email = json['Email'];
+    soLaoDong = json['SoLaoDong'];
+    doanhThu = json['DoanhThu'];
     maTinhTrangHD = json['MaTinhTrangHD'];
-    maTrangThaiDT = json['MaTrangThaiDT'];
-    maTinhTrangHDTruocTD = json['MaTinhTrangHDTruocTD'];
     tenNguoiCungCap = json['TenNguoiCungCap'];
     dienThoaiNguoiCungCap = json['DienThoaiNguoiCungCap'];
-    iDCoSoDuPhong = json['IDCoSo_DuPhong'];
-    iDCoSoThayThe = json['IDCoSo_ThayThe'];
-
     maDTV = json['MaDTV'];
-    loaiDieuTra =
-        (json['LoaiDieuTra'] == true || json['LoaiDieuTra'] == "true") ? 1 : 0;
+    maTrangThaiDT = json['MaTrangThaiDT'];
+
     isSyncSuccess = json['SyncSuccess'];
     createdAt = json['CreatedAt'];
     updatedAt = json['UpdatedAt'];
-    //maDiaDiem = json['MaDiaDiem'];
+
     //tenDiaDiem = json['TenDiaDiem'];
-    tablePhieuMau = json['PhieuCaTheResponseDto'] != null
-        ? TablePhieuMau.fromJson(json['PhieuCaTheResponseDto'])
+    tablePhieu = json['PhieuCaTheResponseDto'] != null
+        ? TablePhieu.fromJson(json['PhieuCaTheResponseDto'])
         : null;
-    tableNganhSanPhams = json['cT_DI_BKCoSoSXKD_NganhDtos'] != null
+    tableNganhSanPhams = json['CT_DI_BKCoSoSXKD_NganhDtos'] != null
         ? TableBkCoSoSXKDNganhSanPham.listFromJson(
-            json['cT_DI_BKCoSoSXKD_NganhDtos'])
+            json['CT_DI_BKCoSoSXKD_NganhDtos'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['MaPhieu'] = maPhieu;
-    data['IDCoSo'] = iDCoSo;
-    data['MaTinh'] = maTinh;
-    data['TenTinh'] = tenTinh;
-    data['MaHuyen'] = maHuyen;
-    data['TenHuyen'] = tenHuyen;
-    data['MaXa'] = maXa;
-    data['TenXa'] = tenXa;
-    data['MaDiaBan'] = maDiaBan;
-    data['TenDiaBan'] = tenDiaBan;
-    data['MaCoSo'] = maCoSo;
-    data['TenCoSo'] = tenCoSo;
-    data['TenThon'] = tenThon;
-    data['MaDiaDiem'] = maDiaDiem;
-    data['TenDiaDiem'] = tenDiaDiem;
-    data['MaSoThue'] = maSoThue;
-    data['DiaChi'] = diaChi;
-    data['DienThoai'] = dienThoai;
+    final Map<String, dynamic> json = <String, dynamic>{};
+    json['IDCoSo'] = iDCoSo;
+    json['LoaiPhieu'] = loaiPhieu;
+    json['MaTinh'] = maTinh;
+    json['TenTinh'] = tenTinh;
+    json['MaTKCS'] = maTKCS;
+    json['TenTKCS'] = tenTKCS;
+    json['MaXa'] = maXa;
+    json['TenXa'] = tenXa;
+    json['MaThon'] = maThon;
+    json['TenThon'] = tenThon;
+    json['IDDB'] = iDDB;
+    json['MaDiaBan'] = maDiaBan;
+    json['TenDiaBan'] = tenDiaBan;
+    json['MaCoSo'] = maCoSo;
+    json['TenCoSo'] = tenCoSo;
+    json['DiaChi'] = diaChi;
+    json['TenChuCoSo'] = tenChuCoSo;
+    json['MaDiaDiem'] = maDiaDiem;
+    json['DienThoai'] = dienThoai;
+    json['Email'] = email;
+    json['SoLaoDong'] = soLaoDong;
+    json['DoanhThu'] = doanhThu;
+    json['MaTinhTrangHD'] = maTinhTrangHD;
+    json['TenNguoiCungCap'] = tenNguoiCungCap;
+    json['DienThoaiNguoiCungCap'] = dienThoaiNguoiCungCap;
+    json['MaDTV'] = maDTV;
+    json['MaTrangThaiDT'] = maTrangThaiDT;
+    json['TrangThaiLogic'] = trangThaiLogic;
+    json['SyncSuccess'] = isSyncSuccess;
+    json['CreatedAt'] = createdAt;
+    json['UpdatedAt'] = updatedAt;
 
-    data['DoanhThu'] = doanhThu;
-    data['soLaoDong'] = soLaoDong;
-    data['MaTinhTrangHD'] = maTinhTrangHD;
-    data['MaTrangThaiDT'] = maTrangThaiDT;
-    data['MaTinhTrangHDTruocTD'] = maTinhTrangHDTruocTD;
-    data['IDCoSo_DuPhong'] = iDCoSoDuPhong;
-    data['IDCoSo_ThayThe'] = iDCoSoThayThe;
-    data['TenNguoiCungCap'] = tenNguoiCungCap;
-    data['DienThoaiNguoiCungCap'] = dienThoaiNguoiCungCap;
-    data['MaDTV'] = maDTV;
-    data['TrangThaiLogic'] = trangThaiLogic;
-    data['LoaiDieuTra'] = loaiDieuTra;
-    data['SyncSuccess'] = isSyncSuccess;
-    data['CreatedAt'] = createdAt;
-    data['UpdatedAt'] = updatedAt;
-
-    return data;
+    return json;
   }
 
   static List<TableBkCoSoSXKD> listFromJson(dynamic json) {

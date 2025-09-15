@@ -4,8 +4,7 @@ import 'package:gov_statistics_investigation_economic/common/widgets/categories/
 import 'package:gov_statistics_investigation_economic/config/constants/app_colors.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_mota_sanpham.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_07_mau_sanpham.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_mota_sanpham.dart'; 
 
 class SearchSpVcpa extends StatefulWidget {
   const SearchSpVcpa(

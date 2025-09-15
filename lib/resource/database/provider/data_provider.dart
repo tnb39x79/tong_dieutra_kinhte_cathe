@@ -51,7 +51,6 @@ class DataProvider extends BaseDBProvider<TableData> {
         $columnDataMaDTV TEXT,
         $columnDataQuestionMau TEXT,
         $columnDataQuestionTB TEXT,
-        $columnDataQuestionTonGiao TEXT,
         $columnCreatedAt TEXT,
         $columnUpdatedAt TEXT
       )

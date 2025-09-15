@@ -91,6 +91,7 @@ class AppPref {
     await _box.remove(lastLoginDateKey);
     await _box.remove(soNgayHetHanDangNhapKey);
     await _box.remove(soNgayChoPhepXoaDuLieuKey);
+    await _box.remove(versionDanhMucKey);
   }
 
   // user name
@@ -198,7 +199,7 @@ class AppPref {
       _box.write(suggestionVcpaUrlKey, soNgay);
   static String get suggestionVcpaUrl => _box.read(suggestionVcpaUrlKey) ?? '';
 
-    static set dataModelAIFilePath(String filePath) =>
+  static set dataModelAIFilePath(String filePath) =>
       _box.write(dataModelAIFilePathKey, filePath);
   static String get dataModelAIFilePath =>
       _box.read(dataModelAIFilePathKey) ?? '';

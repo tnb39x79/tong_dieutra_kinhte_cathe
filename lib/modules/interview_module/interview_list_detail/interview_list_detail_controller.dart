@@ -84,12 +84,7 @@ class InterviewListDetailController extends BaseController {
         InterviewListController.maDoiTuongDTKey: currentMaDoiTuongDT,
         InterviewListController.tenDoiTuongDTKey: currentTenDoiTuongDT,
       });
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_08.toString()) {
-      Get.toNamed(AppRoutes.interviewLocationList, parameters: {
-        InterviewLocationListController.maDoiTuongDTKey: currentMaDoiTuongDT,
-        InterviewLocationListController.tenDoiTuongDTKey: currentTenDoiTuongDT,
-      });
-    }
+    } 
   }
 
   startInterView(int index) async {

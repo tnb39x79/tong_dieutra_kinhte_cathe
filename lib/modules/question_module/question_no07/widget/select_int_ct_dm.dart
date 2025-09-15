@@ -108,11 +108,11 @@ class SelectIntCTDmState extends State<SelectIntCTDm> {
             itemDyn = item;
             maVal = item.ma!;
             tenVal = item.ten!;
-          } else if (widget.tenDanhMuc == tableDmCap) {
-            TableDmCap item = widget.listValue[index];
-            itemDyn = item;
-            maVal = item.ma!;
-            tenVal = item.ten!;
+          // } else if (widget.tenDanhMuc == tableDmCap) {
+          //   TableDmCap item = widget.listValue[index];
+          //   itemDyn = item;
+          //   maVal = item.ma!;
+          //   tenVal = item.ten!;
           } else if (widget.tenDanhMuc == tableCTDmHoatDongLogistic) {
             TableCTDmHoatDongLogistic item = widget.listValue[index];
             itemDyn = item;

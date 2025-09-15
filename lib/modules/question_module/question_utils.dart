@@ -25,9 +25,7 @@ mixin QuestionUtils {
         question = tableData.toCauHoiPhieu07Mau();
       } else if (AppDefine.maDoiTuongDT_07TB.toString() == maDoiTuongDT) {
         question = tableData.toCauHoiPhieu07TB();
-      } else if (AppDefine.maDoiTuongDT_08.toString() == maDoiTuongDT) {
-        question = tableData.toCauHoiPhieu08();
-      }
+      } 
       List<QuestionCommonModel> questionsTemp =
           QuestionCommonModel.listFromJson(jsonDecode(question));
       List<QuestionCommonModel> questionsTemp2 = [];

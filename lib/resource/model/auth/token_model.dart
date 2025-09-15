@@ -17,35 +17,36 @@ class TokenModel {
   String? suggestionVcpaUrl;
   String? domainAPI;
   String? portAPI;
+  String? iMei;
 
   String? ftpPublicUrl;
   String? ftpInternalUrl;
   String? ftpUserName;
   String? ftpPassword;
 
-  TokenModel({
-    this.accessToken,
-    this.tokenType,
-    this.expiresIn,
-    this.refreshToken,
-    this.clientId,
-    this.userName,
-    this.issued,
-    this.expires,
-    this.ftpPublicUrl,
-    this.ftpInternalUrl,
-    this.ftpUserName,
-    this.ftpPassword,
-    this.cuocDieuTra,
-    this.ngayKetThuc,
-    this.xacNhanKetThuc,
-    this.xoaDuLieu,
-    this.soNgayChoPhepXoaDL,
-    this.soNgayHHDN,
-    this.suggestionVcpaUrl,
-    this.domainAPI,
-    this.portAPI,
-  });
+  TokenModel(
+      {this.accessToken,
+      this.tokenType,
+      this.expiresIn,
+      this.refreshToken,
+      this.clientId,
+      this.userName,
+      this.issued,
+      this.expires,
+      this.ftpPublicUrl,
+      this.ftpInternalUrl,
+      this.ftpUserName,
+      this.ftpPassword,
+      this.cuocDieuTra,
+      this.ngayKetThuc,
+      this.xacNhanKetThuc,
+      this.xoaDuLieu,
+      this.soNgayChoPhepXoaDL,
+      this.soNgayHHDN,
+      this.suggestionVcpaUrl,
+      this.domainAPI,
+      this.portAPI,
+      this.iMei});
 
   TokenModel.fromJson(Map<String, dynamic> json) {
     accessToken = json['access_token'];
@@ -66,6 +67,7 @@ class TokenModel {
 
     domainAPI = json['DomainAPI'];
     portAPI = json['PortAPI'];
+    iMei = json['IMEI'];
 
     ftpPublicUrl = json['FtpPublicUrl'];
     ftpInternalUrl = json['FtpInternalUrl'];
@@ -96,7 +98,7 @@ class TokenModel {
     data['FtpPassword'] = ftpPassword;
     data['DomainAPI'] = domainAPI;
     data['PortAPI'] = portAPI;
-
+    data['IMEI'] = iMei;
     return data;
   }
 }

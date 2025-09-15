@@ -28,9 +28,8 @@ class AppDefine {
   static const int inputTypeString = 4;
   static const int ynQuetion = 1;
 
-  static const int maDoiTuongDT_07Mau = 1;
-  static const int maDoiTuongDT_07TB = 2;
-  static const int maDoiTuongDT_08 = 3;
+  static const int maDoiTuongDT_07Mau = 5;
+  static const int maDoiTuongDT_07TB = 0; 
 
   static const int loaiCauHoi_1 = 1;
   static const int loaiCauHoi_2 = 2;
