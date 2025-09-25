@@ -22,7 +22,7 @@ class InterviewListController extends BaseController {
   static const maXaKey = 'maXa';
   static const tenDoiTuongDTKey = "tenDoiTuongDT";
 
-  BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider(); 
+  BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider();
 
   final countOfUnInterviewed = 0.obs;
   final countOfInterviewed = 0.obs;
@@ -54,7 +54,7 @@ class InterviewListController extends BaseController {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       Get.toNamed(AppRoutes.interviewObjectList);
-    } 
+    }
   }
 
   void toInterViewListDetail(int maTinhTrangDT) async {
@@ -76,22 +76,22 @@ class InterviewListController extends BaseController {
 
   Future selectCountByType() async {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
-      countOfUnInterviewed.value =
-          await bkCoSoSXKDProvider.countOfUnInterviewed(
-                  int.parse(currentMaDoiTuongDT), currentMaDiaBan!) ??
-              0;
+      countOfUnInterviewed
+          .value = await bkCoSoSXKDProvider.countOfUnInterviewed(
+              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
+          0;
       countOfInterviewed.value = await bkCoSoSXKDProvider.countOfInterviewed(
-              int.parse(currentMaDoiTuongDT), currentMaDiaBan!) ??
+              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
           0;
     } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      countOfUnInterviewed.value =
-          await bkCoSoSXKDProvider.countOfUnInterviewed(
-                  int.parse(currentMaDoiTuongDT), currentMaDiaBan!) ??
-              0;
-      countOfInterviewed.value = await bkCoSoSXKDProvider.countOfInterviewed(
-              int.parse(currentMaDoiTuongDT), currentMaDiaBan!) ??
+      countOfUnInterviewed
+          .value = await bkCoSoSXKDProvider.countOfUnInterviewed(
+              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
           0;
-    }   else {
+      countOfInterviewed.value = await bkCoSoSXKDProvider.countOfInterviewed(
+              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
+          0;
+    } else {
       countOfUnInterviewed.value = 0;
       countOfInterviewed.value = 0;
     }

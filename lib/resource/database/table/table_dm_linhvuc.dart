@@ -1,4 +1,4 @@
-const String tableDmLinhVuc = 'DmLinhVuc';
+const String tableDmLinhVuc = 'CT_DM_LinhVuc';
 const String columnDmLinhVucId = '_id';
 const String columnDmLinhVucMaLV = 'MaLV';
 const String columnDmLinhVucTenLinhVuc = 'TenLinhVuc';

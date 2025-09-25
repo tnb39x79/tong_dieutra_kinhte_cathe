@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart'; 
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
@@ -38,16 +38,15 @@ class InterviewListDetailController extends BaseController {
   String? currentIdCoSoTG;
   String? currentIdCoSo;
 
-  //RX 
-  final danhSachDiaBanCoSoSXKD = <TableDmDiaBanCosoSxkd>[].obs; 
+  //RX
+  final danhSachDiaBanCoSoSXKD = <TableDmDiaBanCosoSxkd>[].obs;
   final danhSachBKCoSoSXXKD = <TableBkCoSoSXKD>[].obs;
-  
 
   // provider
-  final bkCoSoSXKDProvider = BKCoSoSXKDProvider(); 
-  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider(); 
+  final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
+  final diaBanCoSoSXKDProvider = DiaBanCoSoSXKDProvider();
   final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider();
-   
+
   @override
   void onInit() async {
     setLoading(true);
@@ -61,7 +60,7 @@ class InterviewListDetailController extends BaseController {
     // });
     super.onInit();
   }
- 
+
   @override
   void onReady() {
     super.onReady();
@@ -84,41 +83,45 @@ class InterviewListDetailController extends BaseController {
         InterviewListController.maDoiTuongDTKey: currentMaDoiTuongDT,
         InterviewListController.tenDoiTuongDTKey: currentTenDoiTuongDT,
       });
-    } 
+    }
   }
 
   startInterView(int index) async {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
       currentMaXa = danhSachBKCoSoSXXKD[index].maXa;
       currentIdCoSo = danhSachBKCoSoSXXKD[index].iDCoSo;
-      currentMaDiaBan= danhSachBKCoSoSXXKD[index].maDiaBan;
+      currentMaDiaBan = danhSachBKCoSoSXXKD[index].maDiaBan;
       await Get.toNamed(AppRoutes.activeStatus);
       await getSubjects();
     } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       currentMaXa = danhSachBKCoSoSXXKD[index].maXa;
       currentIdCoSo = danhSachBKCoSoSXXKD[index].iDCoSo;
-       currentMaDiaBan= danhSachBKCoSoSXXKD[index].maDiaBan;
+      currentMaDiaBan = danhSachBKCoSoSXXKD[index].maDiaBan;
       await Get.toNamed(AppRoutes.activeStatus);
       await getSubjects();
-    }  else {}
+    } else {}
   }
 
   Future getSubjects() async {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
       // => dieu tra theo địa bàn  (Cơ sở SXKD)
       if (currentMaTinhTrangDT == AppDefine.chuaPhongVan.toString()) {
-        await getListBkDiaBanCoSoSXKDUnInterviewed(int.parse(currentMaDoiTuongDT),currentMaDiaBan!);
+        await getListBkDiaBanCoSoSXKDUnInterviewed(
+            int.parse(currentMaDoiTuongDT), currentMaDiaBan!);
       } else {
-        await getListBkDiaBanCoSoSXKDInterviewed(int.parse(currentMaDoiTuongDT),currentMaDiaBan!);
+        await getListBkDiaBanCoSoSXKDInterviewed(
+            int.parse(currentMaDoiTuongDT), currentMaDiaBan!);
       }
     } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       // => dieu tra theo địa bàn  (Cơ sở SXKD)
       if (currentMaTinhTrangDT == AppDefine.chuaPhongVan.toString()) {
-        await getListBkDiaBanCoSoSXKDUnInterviewed(int.parse(currentMaDoiTuongDT),currentMaDiaBan!);
+        await getListBkDiaBanCoSoSXKDUnInterviewed(
+            int.parse(currentMaDoiTuongDT), currentMaDiaBan!);
       } else {
-        await getListBkDiaBanCoSoSXKDInterviewed(int.parse(currentMaDoiTuongDT),currentMaDiaBan!);
+        await getListBkDiaBanCoSoSXKDInterviewed(
+            int.parse(currentMaDoiTuongDT), currentMaDiaBan!);
       }
-    }  
+    }
   }
 
   onSearch(String search) async {
@@ -144,22 +147,20 @@ class InterviewListDetailController extends BaseController {
             int.parse(currentMaDoiTuongDT), currentMaDiaBan!,
             search: search);
       }
-    }  
+    }
   }
-
-  
 
   // danh sach BK CoSo SXKD chua phong van
   Future getListBkDiaBanCoSoSXKDUnInterviewed(int maDoiTuongDT, String maDB,
       {String? search}) async {
     if (search != null) {
       List<Map> map = await bkCoSoSXKDProvider.searchListUnInterviewedAll(
-          maDoiTuongDT, maDB, search);
+          maDoiTuongDT, maDB, search, currentMaXa!);
       danhSachBKCoSoSXXKD.clear();
       danhSachBKCoSoSXXKD.value = TableBkCoSoSXKD.listFromJson(map);
     }
     List<Map> map = await bkCoSoSXKDProvider.selectListUnInterviewedAll(
-        maDoiTuongDT, maDB!);
+        maDoiTuongDT, maDB!, currentMaXa!);
     danhSachBKCoSoSXXKD.clear();
     danhSachBKCoSoSXXKD.value = TableBkCoSoSXKD.listFromJson(map);
   }
@@ -169,17 +170,15 @@ class InterviewListDetailController extends BaseController {
       {String? search}) async {
     if (search != null) {
       List<Map> map = await bkCoSoSXKDProvider.searchListInterviewedAll(
-          maDoiTuongDT, maDB, search);
+          maDoiTuongDT, maDB, search, currentMaXa!);
       danhSachBKCoSoSXXKD.clear();
       danhSachBKCoSoSXXKD.value = TableBkCoSoSXKD.listFromJson(map);
     }
     List<Map> map =
-        await bkCoSoSXKDProvider.selectListInterviewedAll(maDoiTuongDT, maDB);
+        await bkCoSoSXKDProvider.selectListInterviewedAll(maDoiTuongDT, maDB,currentMaXa!);
     danhSachBKCoSoSXXKD.clear();
     danhSachBKCoSoSXXKD.value = TableBkCoSoSXKD.listFromJson(map);
   }
-
-  
 
   @override
   void onDetached() {

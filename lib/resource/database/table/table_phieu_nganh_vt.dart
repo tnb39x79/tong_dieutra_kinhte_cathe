@@ -1,6 +1,6 @@
 import 'table_p07mau.dart';
 
-const String tablePhieuNganhVT = 'CT_PhieuNganhVT';
+const String tablePhieuNganhVT = 'CT_Phieu_NganhVT';
 
 const String colPhieuNganhVTId = '_id';
 const String colPhieuNganhVTIDCoSo = 'IDCoSo';
@@ -58,11 +58,6 @@ const String colPhieuNganhVTA1_14_3 = 'A1_14_3';
 const String colPhieuNganhVTA1_14_4 = 'A1_14_4';
 const String colPhieuNganhVTA5 = 'A5';
 const String colPhieuNganhVTA6 = 'A6';
-const String colPhieuNganhVTA1M = 'A1_M';
-const String colPhieuNganhVTA2M = 'A2_M';
-const String colPhieuNganhVTA3M = 'A3_M';
-const String colPhieuNganhVTA4M = 'A4_M';
-const String colPhieuNganhVTA5M = 'A5_M';
 const String colPhieuNganhVTA7_1_1 = 'A7_1_1';
 const String colPhieuNganhVTA7_1_2 = 'A7_1_2';
 const String colPhieuNganhVTA7_1_3 = 'A7_1_3';
@@ -127,13 +122,18 @@ const String colPhieuNganhVTA7_16_1 = 'A7_16_1';
 const String colPhieuNganhVTA7_16_2 = 'A7_16_2';
 const String colPhieuNganhVTA7_16_3 = 'A7_16_3';
 const String colPhieuNganhVTA7_16_4 = 'A7_16_4';
-const String colPhieuNganhVTA8 = 'A8';
-const String colPhieuNganhVTA9 = 'A9';
-const String colPhieuNganhVTA6M = 'A6_M';
-const String colPhieuNganhVTA7M = 'A7_M';
-const String colPhieuNganhVTA8M = 'A8_M';
-const String colPhieuNganhVTA9M = 'A9_M';
-const String colPhieuNganhVTA10M = 'A10_M';
+const String colPhieuNganhVTA11 = 'A11';
+const String colPhieuNganhVTA12 = 'A12';
+const String colPhieuNganhVTA1_M = 'A1_M';
+const String colPhieuNganhVTA2_M = 'A2_M';
+const String colPhieuNganhVTA3_M = 'A3_M';
+const String colPhieuNganhVTA4_M = 'A4_M';
+const String colPhieuNganhVTA5_M = 'A5_M';
+const String colPhieuNganhVTA6_M = 'A6_M';
+const String colPhieuNganhVTA7_M = 'A7_M';
+const String colPhieuNganhVTA8_M = 'A8_M';
+const String colPhieuNganhVTA9_M = 'A9_M';
+const String colPhieuNganhVTA10_M = 'A10_M';
 
 const String colPhieuNganhVTCreatedAt = 'CreatedAt';
 const String colPhieuNganhVTpdatedAt = 'UpdatedAt';
@@ -249,11 +249,11 @@ List<String> fieldNamesPhan6HKMau = [
   colPhieuNganhVTA1_14_4,
   colPhieuNganhVTA5,
   colPhieuNganhVTA6,
-  colPhieuNganhVTA1M,
-  colPhieuNganhVTA2M,
-  colPhieuNganhVTA3M,
-  colPhieuNganhVTA4M,
-  colPhieuNganhVTA5M,
+  colPhieuNganhVTA1_M,
+  colPhieuNganhVTA2_M,
+  colPhieuNganhVTA3_M,
+  colPhieuNganhVTA4_M,
+  colPhieuNganhVTA5_M,
 ];
 
 ///Hàng hoá
@@ -322,8 +322,8 @@ List<String> fieldNamesPhan6HHTB = [
   colPhieuNganhVTA7_16_2,
   colPhieuNganhVTA7_16_3,
   colPhieuNganhVTA7_16_4,
-  colPhieuNganhVTA8,
-  colPhieuNganhVTA9,
+  colPhieuNganhVTA11,
+  colPhieuNganhVTA12,
 ];
 
 List<String> fieldNamesPhan6HHMau = [
@@ -391,13 +391,18 @@ List<String> fieldNamesPhan6HHMau = [
   colPhieuNganhVTA7_16_2,
   colPhieuNganhVTA7_16_3,
   colPhieuNganhVTA7_16_4,
-  colPhieuNganhVTA8,
-  colPhieuNganhVTA9,
-  colPhieuNganhVTA6M,
-  colPhieuNganhVTA7M,
-  colPhieuNganhVTA8M,
-  colPhieuNganhVTA9M,
-  colPhieuNganhVTA10M,
+  colPhieuNganhVTA11,
+  colPhieuNganhVTA12,
+  colPhieuNganhVTA1_M,
+  colPhieuNganhVTA2_M,
+  colPhieuNganhVTA3_M,
+  colPhieuNganhVTA4_M,
+  colPhieuNganhVTA5_M,
+  colPhieuNganhVTA6_M,
+  colPhieuNganhVTA7_M,
+  colPhieuNganhVTA8_M,
+  colPhieuNganhVTA9_M,
+  colPhieuNganhVTA10_M,
 ];
 
 class TablePhieuNganhVT {
@@ -457,11 +462,6 @@ class TablePhieuNganhVT {
   int? a1_14_4;
   int? a5;
   int? a6;
-  int? a1M;
-  int? a2M;
-  double? a3M;
-  int? a4M;
-  double? a5M;
   int? a7_1_1;
   int? a7_1_2;
   double? a7_1_3;
@@ -526,13 +526,18 @@ class TablePhieuNganhVT {
   int? a7_16_2;
   double? a7_16_3;
   double? a7_16_4;
-  int? a8;
-  double? a9;
-  int? a6M;
-  double? a7M;
-  double? a8M;
-  double? a9M;
-  double? a10M;
+  int? a11;
+  double? a12;
+  int? a1_M;
+  int? a2_M;
+  double? a3_M;
+  int? a4_M;
+  double? a5_M;
+  int? a6_M;
+  double? a7_M;
+  double? a8_M;
+  double? a9_M;
+  double? a10_M;
   String? maDTV;
   String? createdAt;
   String? updatedAt;
@@ -596,11 +601,6 @@ class TablePhieuNganhVT {
       this.a1_14_4,
       this.a5,
       this.a6,
-      this.a1M,
-      this.a2M,
-      this.a3M,
-      this.a4M,
-      this.a5M,
       this.a7_1_1,
       this.a7_1_2,
       this.a7_1_3,
@@ -665,13 +665,18 @@ class TablePhieuNganhVT {
       this.a7_16_2,
       this.a7_16_3,
       this.a7_16_4,
-      this.a8,
-      this.a9,
-      this.a6M,
-      this.a7M,
-      this.a8M,
-      this.a9M,
-      this.a10M,
+      this.a11,
+      this.a12,
+      this.a1_M,
+      this.a2_M,
+      this.a3_M,
+      this.a4_M,
+      this.a5_M,
+      this.a6_M,
+      this.a7_M,
+      this.a8_M,
+      this.a9_M,
+      this.a10_M,
       this.maDTV,
       this.tablePhieuNganhVTGhiRos,
       this.createdAt,
@@ -734,11 +739,6 @@ class TablePhieuNganhVT {
     a1_14_4 = json['A1_14_4'];
     a5 = json['A5'];
     a6 = json['A6'];
-    a1M = json['A1_M'];
-    a2M = json['A2_M'];
-    a3M = json['A3_M'];
-    a4M = json['A4_M'];
-    a5M = json['A5_M'];
     a7_1_1 = json['A7_1_1'];
     a7_1_2 = json['A7_1_2'];
     a7_1_3 = json['A7_1_3'];
@@ -803,13 +803,18 @@ class TablePhieuNganhVT {
     a7_16_2 = json['A7_16_2'];
     a7_16_3 = json['A7_16_3'];
     a7_16_4 = json['A7_16_4'];
-    a8 = json['A8'];
-    a9 = json['A9'];
-    a6M = json['A6_M'];
-    a7M = json['A7_M'];
-    a8M = json['A8_M'];
-    a9M = json['A9_M'];
-    a10M = json['A10_M'];
+    a11 = json['A11'];
+    a12 = json['A12'];
+    a1_M = json['A1_M'];
+    a2_M = json['A2_M'];
+    a3_M = json['A3_M'];
+    a4_M = json['A4_M'];
+    a5_M = json['A5_M'];
+    a6_M = json['A6_M'];
+    a7_M = json['A7_M'];
+    a8_M = json['A8_M'];
+    a9_M = json['A9_M'];
+    a10_M = json['A10_M'];
 
     maDTV = json['MaDTV'];
     tablePhieuNganhVTGhiRos = json['CT_Phieu_NganhVT_GhiRoDtos'] != null
@@ -879,11 +884,6 @@ class TablePhieuNganhVT {
     json['A1_14_4'] = a1_14_4;
     json['A5'] = a5;
     json['A6'] = a6;
-    json['A1_M'] = a1M;
-    json['A2_M'] = a2M;
-    json['A3_M'] = a3M;
-    json['A4_M'] = a4M;
-    json['A5_M'] = a5M;
     json['A7_1_1'] = a7_1_1;
     json['A7_1_2'] = a7_1_2;
     json['A7_1_3'] = a7_1_3;
@@ -948,13 +948,18 @@ class TablePhieuNganhVT {
     json['A7_16_2'] = a7_16_2;
     json['A7_16_3'] = a7_16_3;
     json['A7_16_4'] = a7_16_4;
-    json['A8'] = a8;
-    json['A9'] = a9;
-    json['A6_M'] = a6M;
-    json['A7_M'] = a7M;
-    json['A8_M'] = a8M;
-    json['A9_M'] = a9M;
-    json['A10_M'] = a10M;
+    json['A11'] = a11;
+    json['A12'] = a12;
+    json['A1_M'] = a1_M;
+    json['A2_M'] = a2_M;
+    json['A3_M'] = a3_M;
+    json['A4_M'] = a4_M;
+    json['A5_M'] = a5_M;
+    json['A6_M'] = a6_M;
+    json['A7_M'] = a7_M;
+    json['A8_M'] = a8_M;
+    json['A9_M'] = a9_M;
+    json['A10_M'] = a10_M;
 
     json['MaDTV'] = maDTV;
     json['CreatedAt'] = createdAt;

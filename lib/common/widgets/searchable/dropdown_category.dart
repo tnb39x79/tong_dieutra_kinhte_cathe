@@ -45,7 +45,7 @@ class DropdownCategoryState extends State<DropdownCategory> {
       elevation: 16,
       isExpanded: true,
       isDense: true,
-      iconSize: 40,
+    //  iconSize: 40,
       underline: Container(
         height: 2,
         color: primaryColor,

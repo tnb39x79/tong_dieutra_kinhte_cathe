@@ -4,11 +4,12 @@ import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart
 import 'package:gov_statistics_investigation_economic/resource/database/database_helper.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/base_db_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_lt.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_lt.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
-  static final PhieuNganhLTProvider _singleton = PhieuNganhLTProvider._internal();
+  static final PhieuNganhLTProvider _singleton =
+      PhieuNganhLTProvider._internal();
 
   factory PhieuNganhLTProvider() {
     return _singleton;
@@ -50,7 +51,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     CREATE TABLE IF NOT EXISTS $tablePhieuNganhLT
       ( 
       $colPhieuNganhLTId INTEGER PRIMARY KEY AUTOINCREMENT, 
-      $columnIDCoSo TEXT, 
+      $colPhieuNganhLTIDCoSo  TEXT,
       $colPhieuNganhLTA1_1_1  INTEGER,
       $colPhieuNganhLTA1_1_2  INTEGER,
       $colPhieuNganhLTA1_1_3  INTEGER,
@@ -139,8 +140,20 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
 
     log('UPDATE PHIEU MAU A61: $i');
   }
+ Future updateValByIdCoSo(String fieldName, value, idCoSo) async {
+    String createAt = AppPref.dateTimeSaveDB!;
+    Map<String, Object?> values = {
+      fieldName: value,
+      columnUpdatedAt: DateTime.now().toIso8601String(),
+    };
+    var i = await db!.update(tablePhieuNganhLT, values,
+        where:
+            '''$columnIDCoSo = '$idCoSo' AND $columnMaDTV = '${AppPref.uid}' AND  $columnCreatedAt = '$createAt'
+            ''');
 
-    Future updateValueByIdCoSo(String fieldName, value, columId) async {
+    log('UPDATE PHIEU 04: $i');
+  }
+  Future updateValueByIdCoSo(String fieldName, value, columId) async {
     Map<String, Object?> values = {
       fieldName: value,
       columnUpdatedAt: DateTime.now().toIso8601String(),
@@ -178,18 +191,40 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     return result;
   }
 
-  Future<List<Map>> selectByIdCoso(String idCoso) async {
+  Future updateMultiValues(String idCoSo,
+      {Map<String, Object?>? multiValue}) async {
+    String createdAt = AppPref.dateTimeSaveDB ?? "";
+    if (multiValue != null) {
+      multiValue['UpdatedAt'] = DateTime.now().toIso8601String();
+      await db!.update(tablePhieuNganhLT, multiValue,
+          where: '$columnIDCoSo= ? AND $columnCreatedAt = ? ',
+          whereArgs: [idCoSo, createdAt]);
+    }
+  }
+
+  Future<List<Map>> selectListByIdCoSo(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''
-          SELECT * FROM $tablePhieuNganhLT 
-          WHERE $columnIDCoSo = '$idCoso' 
+          SELECT * FROM $tablePhieuNganhLT
+          WHERE $columnIDCoSo = '$idCoso'
           AND $columnCreatedAt = '$createdAt' ORDER BY STT
         ''');
     return maps;
   }
 
-  Future<List<Map>> selectByIdCosoSync(String idCoso) async {
+  Future<Map> selectByIdCoSo(String idCoso) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    List<Map> map = await db!.rawQuery('''
+          SELECT * FROM $tablePhieuNganhLT 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND $columnCreatedAt = '$createdAt'
+        ''');
+    return map.isNotEmpty ? map[0] : {};
+  }
+
+  Future<List<Map>> selectByIdCoSoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''
@@ -227,8 +262,9 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     return 0;
     // return map.isNotEmpty ? map[0]['MaxSTT'] : 0;
   }
- Future<int> totalIntByMaCauHoi(
-      String idCoso ,int id, List<String> fieldNames,String tongVsTich) async {
+
+  Future<int> totalIntByMaCauHoi(
+      String idCoso, int id, List<String> fieldNames, String tongVsTich) async {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -249,8 +285,9 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     }
     return result;
   }
- Future<double> totalDoubleByMaCauHoi(
-      String idCoso ,int id, List<String> fieldNames) async {
+
+  Future<double> totalDoubleByMaCauHoi(
+      String idCoso, int id, List<String> fieldNames) async {
     double result = 0.0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -276,8 +313,10 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     var res = db!.delete(tablePhieuNganhLT, where: '''  $columnId = '$id'  ''');
     return res;
   }
- Future<int> deleteByCoSoId(String coSoId) {
-    var res = db!.delete(tablePhieuNganhLT, where: '''  $columnIDCoSo = '$coSoId'  ''');
+
+  Future<int> deleteByCoSoId(String coSoId) {
+    var res = db!
+        .delete(tablePhieuNganhLT, where: '''  $columnIDCoSo = '$coSoId'  ''');
     return res;
   }
 

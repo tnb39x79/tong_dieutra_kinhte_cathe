@@ -48,29 +48,45 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
                 textController: controller.tenTinhController,
                 textControllerEnd: controller.maTinhController),
             fieldGroup(
-                label: 'HUYỆN/QUẬN/THỊ XÃ',
-                textController: controller.tenHuyenController,
-                textControllerEnd: controller.maHuyenController),
-            fieldGroup(
-                label: 'XÃ/PHƯỜNG/THỊ TRẤN',
+                label: 'XÃ/PHƯỜNG/ĐẶC KHU',
                 textController: controller.tenXaController,
                 textControllerEnd: controller.maXaController),
-            field(
-              label: 'THÔN/ẤP/BẢN/TỔ DÂN PHỐ',
-              textController: controller.tenThonController,
-              enable: false,
-            ),
+            fieldGroup(
+                label: 'THÔN/ẤP/BẢN/TỔ DÂN PHỐ',
+                textController: controller.tenThonController,
+                textControllerEnd: controller.maThonController),
             fieldGroup(
                 label: 'ĐỊA BÀN ĐIỀU TRA',
                 textController: controller.tenDiaBanController,
                 textControllerEnd: controller.maDiaBanController),
             field(
-                label: 'TÊN CƠ SỞ SXKD',
+              label: 'MÃ CƠ SỞ',
+              textController: controller.maCoSoController,
+              enable: false,
+            ),
+            field(
+                label: 'TÊN CƠ SỞ (BIỂN HIỆU/ĐĂNG KÝ KINH DOANH)',
                 textController: controller.tenCoSoController,
                 txtTextStyle: styleMediumBold.copyWith(color: primaryColor),
-                maxLine: 3),
+                maxLine: 3,
+                enable: true),
             field(
-                label: 'MÃ NGÀNH',
+              label: 'ĐIA CHỈ CƠ SỞ (SỐ NHÀ, ĐƯỜNG PHỐ, NGÕ, XÓM)',
+              textController: controller.diaChiChuHoController,
+              enable: true,
+            ),
+            field(
+              label: 'TÊN CHỦ CƠ SỞ',
+              textController: controller.tenChuCoSoController,
+              enable: true,
+            ),
+            field(
+              label: 'SỐ ĐIỆN THOẠI LIÊN HỆ',
+              textController: controller.dienThoaiController,
+              enable: true,
+            ),
+            field(
+                label: 'MÃ NGÀNH SẢN PHẨM CỦA CƠ SỞ',
                 textController: controller.maNganhController,
                 txtTextStyle: styleMediumBold.copyWith(color: primaryColor)),
             field(
@@ -83,64 +99,8 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
           ],
         ),
       );
-    } else {
-      return SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.all(AppValues.padding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            field(
-                label: 'Tên cơ sở',
-                textController: controller.tenChuHoController,
-                txtTextStyle: styleMediumBold.copyWith(color: primaryColor),
-                maxLine: 3),
-            field(
-              label: 'Địa chỉ cơ sở',
-              textController: controller.diaChiChuHoController,
-              enable: false,
-            ),
-            fieldGroup(
-                label: ' Tỉnh/Thành phố',
-                textController: controller.tenTinhController,
-                textControllerEnd: controller.maTinhController),
-            fieldGroup(
-                label: ' Huyện/Quận/Thị xã',
-                textController: controller.tenHuyenController,
-                textControllerEnd: controller.maHuyenController),
-            fieldGroup(
-                label: ' Xã/Phường/Thị trấn',
-                textController: controller.tenXaController,
-                textControllerEnd: controller.maXaController),
-            fieldGroup(
-                label: ' Thôn/ấp/bản/tổ dân phố',
-                textController: controller.tenThonController,
-                textControllerEnd: controller.maThonController,
-                enable: false),
-            field(
-              label: 'Thành thị/Nông thôn',
-              textController: controller.ttNTController,
-              enable: false,
-            ),
-            field(
-              label: 'Cơ sở số',
-              textController: controller.coSoSoGiaTriController,
-              enable: false,
-            ),
-            // field(
-            //     label: 'A1.3 Số điện thoại',
-            //     textController: controller.dienThoaiController,
-            //     enable: true),
-            // field(
-            //     label: 'A1.4 Email',
-            //     textController: controller.emailController,
-            //     enable: true),
-            const SizedBox(height: 24),
-            WidgetButtonNext(onPressed: controller.onPressNext)
-          ],
-        ),
-      );
     }
+    return const SizedBox();
   }
 
 // Widget buildNganhSanPham(TableBkCoSoSXKDNganhSanPham bkSanPhams) {

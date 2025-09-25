@@ -262,15 +262,15 @@ class DatabaseHelper {
 
     // phieu ca mau
       await Future.wait([
-      phieuProvider.onCreateTable(db),
-      phieuMauTBProvider.onCreateTable(db),
-      phieuMauTBSanPhamProvider.onCreateTable(db),
-      phieuNganhCNProvider.onCreateTable(db),
-      phieuNganhLTProvider.onCreateTable(db),
-      phieuNganhTMProvider.onCreateTable(db),
-      phieuNganhTMSanphamProvider.onCreateTable(db),
-      phieuNganhVTProvider.onCreateTable(db),
-      phieuNganhVTGhiRoProvider.onCreateTable(db)
+      phieuProvider.deletedTable(db),
+      phieuMauTBProvider.deletedTable(db),
+      phieuMauTBSanPhamProvider.deletedTable(db),
+      phieuNganhCNProvider.deletedTable(db),
+      phieuNganhLTProvider.deletedTable(db),
+      phieuNganhTMProvider.deletedTable(db),
+      phieuNganhTMSanphamProvider.deletedTable(db),
+      phieuNganhVTProvider.deletedTable(db),
+      phieuNganhVTGhiRoProvider.deletedTable(db)
     ]);
 
     log('END::deleteAll table compelete');

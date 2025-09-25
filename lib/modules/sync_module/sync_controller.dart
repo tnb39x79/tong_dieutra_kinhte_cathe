@@ -26,7 +26,7 @@ class SyncController extends BaseController with SyncMixin {
   ///added by tuannb: Sử dụng cho hàm gửi datajson khi đồng bộ phát sinh lỗi
   final SendErrorRepository sendErrorRepository;
 
-  final MainMenuController mainMenuController = Get.find();
+  
 
   final bKCoSoSXKDProvider = BKCoSoSXKDProvider(); 
   final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider();

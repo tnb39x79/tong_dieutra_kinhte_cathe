@@ -2,6 +2,7 @@ import 'package:gov_statistics_investigation_economic/resource/database/table/ta
 
 import 'table_p07mau.dart';
 
+///Trường xác định cơ sở cá thể đó <3 tháng, và doanh thu <100triệu là không thoả mãn điều kiện là cơ sở sxkd: lưu gía trị=0 ngược lại thoả mãn lưu  =1
 const String tablePhieu = 'CT_Phieu';
 
 const String colPhieuID = '_id';
@@ -13,6 +14,7 @@ const String colPhieuMaXa = 'MaXa';
 const String colPhieuMaThon = 'MaThon';
 const String colPhieuIDDB = 'IDDB';
 const String colPhieuMaDiaBan = 'MaDiaBan';
+const String colPhieuTrangThaiCoSo = 'TrangThaiCoSo';
 const String colPhieuMaCoSo = 'MaCoSo';
 const String colPhieuTenCoSo = 'TenCoSo';
 const String colPhieuDiaChi = 'DiaChi';
@@ -31,7 +33,6 @@ const String colPhieuGiaiTrinhToaDo = 'GiaiTrinhToaDo';
 const String colPhieuGiaiTrinhThoiGianPV = 'GiaiTrinhThoiGianPV';
 const String colPhieuNgayCapNhat = 'NgayCapNhat';
 
- 
 const String colPhieuCreatedAt = 'CreatedAt';
 const String colPhieuUpdatedAt = 'UpdatedAt';
 
@@ -45,6 +46,7 @@ class TablePhieu {
   String? maThon;
   String? iDDB;
   String? maDiaBan;
+  int? trangThaiCoSo;
   int? maCoSo;
   String? tenCoSo;
   String? diaChi;
@@ -85,6 +87,7 @@ class TablePhieu {
       this.maThon,
       this.iDDB,
       this.maDiaBan,
+      this.trangThaiCoSo,
       this.maCoSo,
       this.tenCoSo,
       this.diaChi,
@@ -99,6 +102,8 @@ class TablePhieu {
       this.thoiGianBD,
       this.thoiGianKT,
       this.ghiChu,
+      this.giaiTrinhToaDo,
+      this.giaiTrinhThoiGianPV,
       this.ngayCapNhat,
       this.tablePhieuMauTB,
       this.tablePhieuMauTBSanPham,
@@ -120,6 +125,7 @@ class TablePhieu {
     maThon = json['MaThon'];
     iDDB = json['IDDB'];
     maDiaBan = json['MaDiaBan'];
+    trangThaiCoSo = json['TrangThaiCoSo'];
     maCoSo = json['MaCoSo'];
     tenCoSo = json['TenCoSo'];
     diaChi = json['DiaChi'];
@@ -177,6 +183,7 @@ class TablePhieu {
     json['MaThon'] = maThon;
     json['IDDB'] = iDDB;
     json['MaDiaBan'] = maDiaBan;
+    json['TrangThaiCoSo'] = trangThaiCoSo;
     json['MaCoSo'] = maCoSo;
     json['TenCoSo'] = tenCoSo;
     json['DiaChi'] = diaChi;

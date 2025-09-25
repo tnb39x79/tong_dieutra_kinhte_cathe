@@ -73,14 +73,13 @@ class DmTinhTrangHDProvider extends BaseDBProvider<TableDmTinhTrangHD> {
     throw UnimplementedError();
   }
 
-  Future<List<Map>> selectByMaDoiTuongDT(int maDT) async {
+  Future<List<Map>> selectByMaDoiTuongDT() async {
     String sql =
-        ' SELECT * FROM $tableDmTinhTrangHD WHERE $columnDmTinhTrangHDMaDoiTuongDT = '
-        '$maDT'
-        '';
+        ' SELECT * FROM $tableDmTinhTrangHD ';
     List<Map> maps = await db!.rawQuery(sql);
     return maps;
   }
+ 
 
   @override
   Future update(TableDmTinhTrangHD value, String id) {

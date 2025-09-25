@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,7 @@ import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/validation_no07.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/search_vcpa.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/search_vcpa_motasp.dart';
+import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/search_vcpa_tab.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_utils.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_dm.dart';
@@ -113,12 +115,12 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   final tblPhieuMauTB = TablePhieuMauTB().obs;
   final tblPhieuMauTBSanPham = <TablePhieuMauTBSanPham>[].obs;
   final tblPhieuNganhCN = <TablePhieuNganhCN>[].obs;
-  final tblPhieuNganhLT = <TablePhieuNganhLT>[].obs;
+  final tblPhieuNganhLT = TablePhieuNganhLT().obs;
 
-  final tblPhieuNganhTM = <TablePhieuNganhTM>[].obs;
+  final tblPhieuNganhTM = TablePhieuNganhTM().obs;
   final tblPhieuNganhTMSanPham = <TablePhieuNganhTMSanPham>[].obs;
 
-  final tblPhieuNganhVT = <TablePhieuNganhVT>[].obs;
+  final tblPhieuNganhVT = TablePhieuNganhVT().obs;
   final tblPhieuNganhVTGhiRos = <TablePhieuNganhVTGhiRo>[].obs;
 
   //final tblDmCap = <TableDmCap>[].obs;
@@ -150,15 +152,19 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   final searchResultCap5 = false.obs;
 
   ///Chọn search từ danh mục hay AI
+  final aIModeStatus = ''.obs;
   final searchVcpaType = 0.obs;
   final startSearch = true.obs;
   final limitNumSearchAI = 10.obs;
+  final limitNumSearchAIValue = 100;
   final responseMessageAI = ''.obs;
 
   final tblDmDanTocSearch = <TableDmDanToc>[].obs;
 
 //* Chứa các giá trị
   RxMap<dynamic, dynamic> answerTblPhieuMau = {}.obs;
+  RxMap<dynamic, dynamic> answerTblPhieuNganhVT = {}.obs;
+  RxMap<dynamic, dynamic> answerTblPhieuNganhLT = {}.obs;
 
   ///Chứa STT_Sanpham đầu tiên.
   final sttProduct = 0.obs;
@@ -297,14 +303,15 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
 
   /// Fetch Data các bảng của phiếu
   Future fetchData() async {
-    Map questionPhieuMap = await phieuProvider.selectByIdCoSo(currentIdCoSo!);
+    Map questionPhieuMap =
+        await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
     Map questionPhieuMauTBMap =
         await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
-    if (questionPhieuMap.isNotEmpty) {
-      answerTblPhieuMau.addAll(questionPhieuMap);
-      var hasFieldTenDanToc = answerTblPhieuMau.containsKey('A1_5_4_tendantoc');
+    if (questionPhieuMauTBMap.isNotEmpty) {
+      answerTblPhieuMau.addAll(questionPhieuMauTBMap);
+      var hasFieldTenDanToc = answerTblPhieuMau.containsKey('A1_3_3_tendantoc');
       if (!hasFieldTenDanToc) {
-        var maDanToc = answerTblPhieuMau['A1_5_4'];
+        var maDanToc = answerTblPhieuMau['A1_3_3'];
         if (maDanToc != null && maDanToc != '') {
           var danTocItems = await dmDanTocProvider.selectByMaDanToc(maDanToc);
           var result = danTocItems.map((e) => TableDmDanToc.fromJson(e));
@@ -313,16 +320,35 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
           var res = dtM.firstOrNull;
           if (res != null) {
             log('Ten Dan Toc: ${res.tenDanToc!}');
-            updateAnswerTblPhieuMau('A1_5_4_tendantoc', res.tenDanToc!);
+            updateAnswerTblPhieuMau(
+                'A1_3_3_tendantoc', res.tenDanToc!, tablePhieuMauTB);
           }
         }
       }
       tblPhieu.value = TablePhieu.fromJson(questionPhieuMap);
       tblPhieuMauTB.value = TablePhieuMauTB.fromJson(questionPhieuMauTBMap);
       await getThongTinNguoiPV();
-      // await getTablePhieuMauA61();
-      // await getTablePhieuMauA68();
-      // await getTablePhieuSanPham();
+
+      Map phieuNganhLTMap =
+          await phieuNganhLTProvider.selectByIdCoSo(currentIdCoSo!);
+      if (phieuNganhLTMap.isNotEmpty) {
+        answerTblPhieuNganhLT.addAll(phieuNganhLTMap);
+      }
+
+//
+      Map phieuNganhVTMap =
+          await phieuNganhVTProvider.selectByIdCoSo(currentIdCoSo!);
+      if (phieuNganhVTMap.isNotEmpty) {
+        answerTblPhieuNganhVT.addAll(phieuNganhVTMap);
+      }
+
+      await getTablePhieuMauTBSanPham();
+      await getTablePhieuNganhCN();
+      await getTablePhieuNganhLT();
+      await getTablePhieuNganhTM();
+      await getTablePhieuNganhTMSanPham();
+      await getTablePhieuNganhVT();
+      await getTablePhieuNganhVTGhiRo();
     }
   }
 
@@ -390,25 +416,42 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     tblPhieuNganhCN.refresh();
   }
 
-  Future getTablePhieuNganhLT() async {
-    List<Map> questionLTMap =
-        await phieuNganhLTProvider.selectByIdCoso(currentIdCoSo!);
+  Future getTablePhieuNganhVT() async {
+    Map questionVTMap =
+        await phieuNganhVTProvider.selectByIdCoSo(currentIdCoSo!);
 
-    tblPhieuNganhLT.assignAll(TablePhieuNganhLT.fromListJson(questionLTMap)!);
+    tblPhieuNganhLT.value = TablePhieuNganhLT.fromJson(questionVTMap)!;
     tblPhieuNganhLT.refresh();
   }
 
-  Future getTablePhieuNganhMT() async {
-    List<Map> questionTMMap =
-        await phieuNganhTMProvider.selectByIdCoso(currentIdCoSo!);
+  Future getTablePhieuNganhVTGhiRo() async {
+    List<Map> questionVTGhiRoMap =
+        await phieuNganhVTGhiRoProvider.selectByIdCoso(currentIdCoSo!);
 
-    tblPhieuNganhTM.assignAll(TablePhieuNganhTM.fromListJson(questionTMMap)!);
+    tblPhieuNganhVTGhiRos
+        .assignAll(TablePhieuNganhVTGhiRo.fromListJson(questionVTGhiRoMap)!);
+    tblPhieuNganhVTGhiRos.refresh();
+  }
+
+  Future getTablePhieuNganhLT() async {
+    Map questionLTMap =
+        await phieuNganhLTProvider.selectByIdCoSo(currentIdCoSo!);
+
+    tblPhieuNganhLT.value = TablePhieuNganhLT.fromJson(questionLTMap);
+    tblPhieuNganhLT.refresh();
+  }
+
+  Future getTablePhieuNganhTM() async {
+    Map questionTMMap =
+        await phieuNganhTMProvider.selectByIdCoSo(currentIdCoSo!);
+
+    tblPhieuNganhTM.value = TablePhieuNganhTM.fromJson(questionTMMap);
     tblPhieuNganhTM.refresh();
   }
 
   Future getTablePhieuNganhTMSanPham() async {
     List<Map> questionTMSanPhamMap =
-        await phieuNganhTMProvider.selectByIdCoso(currentIdCoSo!);
+        await phieuNganhTMProvider.selectListByIdCoSo(currentIdCoSo!);
 
     tblPhieuNganhTMSanPham.assignAll(
         TablePhieuNganhTMSanPham.fromListJson(questionTMSanPhamMap)!);
@@ -496,21 +539,21 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       }
 
       //kiểm tra VCPA cấp 1 không phải là H thì remove câu hỏi phần 6
-      if (currentScreenNo.value == 6 || currentScreenNo.value == 7) {
-        await danhDauSanPhamPhanVI();
-        await danhDauSanPhamPhanVI();
-        var questionByVcpa = await getQuestionContentFilterByVcpa(
-            questionsTemp2,
-            currentScreenNo.value,
-            isCap1HPhanVI.value,
-            isCap5VanTaiHanhKhachPhanVI.value,
-            isCap5DichVuHangHoaPhanVI.value,
-            isCap2_55PhanVII.value);
-        questions.addAll(questionByVcpa);
-      } else {
-        questions.addAll(questionsTemp2);
-      }
-
+      // if (currentScreenNo.value == 6 || currentScreenNo.value == 7) {
+      //   await danhDauSanPhamPhanVI();
+      //   await danhDauSanPhamPhanVI();
+      //   var questionByVcpa = await getQuestionContentFilterByVcpa(
+      //       questionsTemp2,
+      //       currentScreenNo.value,
+      //       isCap1HPhanVI.value,
+      //       isCap5VanTaiHanhKhachPhanVI.value,
+      //       isCap5DichVuHangHoaPhanVI.value,
+      //       isCap2_55PhanVII.value);
+      //   questions.addAll(questionByVcpa);
+      // } else {
+      //   questions.addAll(questionsTemp2);
+      // }
+      questions.addAll(questionsTemp2);
       return questions;
     } catch (e) {
       log('ERROR lấy danh sách câu hỏi phiếu: $e');
@@ -791,82 +834,83 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
 
   void onNext() async {
     await fetchData();
-    String validateResult = await validateAllFormV2();
+    onNextContinue();
+    // String validateResult = await validateAllFormV2();
 
-    ///
-    ///Kiểm tra màn hình để đến màn hình tiếp hoặc hiện màn hình kết thúc phỏng vấn
-    ///
-    // if (currentScreenNo.value == 0) {
-    //   currentScreenNo.value = generalInformationController.screenNos()[0];
+    // ///
+    // ///Kiểm tra màn hình để đến màn hình tiếp hoặc hiện màn hình kết thúc phỏng vấn
+    // ///
+    // // if (currentScreenNo.value == 0) {
+    // //   currentScreenNo.value = generalInformationController.screenNos()[0];
+    // // }
+    // if (validateResult != '') {
+    //   insertUpdateXacNhanLogicWithoutEnable(
+    //       currentScreenNo.value,
+    //       currentIdCoSo!,
+    //       int.parse(currentMaDoiTuongDT!),
+    //       0,
+    //       validateResult,
+    //       int.parse(currentMaTinhTrangDT!));
+    //   return showError(validateResult);
+    // } else {
+    //   ///Đã vượt qua validate xong thì update/add thông tin vào bảng tableXacNhanLogic
+    //   await insertUpdateXacNhanLogic(
+    //       currentScreenNo.value,
+    //       currentIdCoSo!,
+    //       int.parse(currentMaDoiTuongDT!),
+    //       1,
+    //       1,
+    //       '',
+    //       int.parse(currentMaTinhTrangDT!));
     // }
-    if (validateResult != '') {
-      insertUpdateXacNhanLogicWithoutEnable(
-          currentScreenNo.value,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          0,
-          validateResult,
-          int.parse(currentMaTinhTrangDT!));
-      return showError(validateResult);
-    } else {
-      ///Đã vượt qua validate xong thì update/add thông tin vào bảng tableXacNhanLogic
-      await insertUpdateXacNhanLogic(
-          currentScreenNo.value,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          1,
-          '',
-          int.parse(currentMaTinhTrangDT!));
-    }
-    if (currentScreenNo.value == 5 ||
-        currentScreenIndex.value ==
-            generalInformationController.screenNos().length - 1) {
-      await danhDauSanPhamPhanVI();
-      await danhDauSanPhamPhanVII();
-      var validSp = await validateNganhHPhanVI();
-      var validSpVII = await validateNganhHPhanVII();
-      if (validSp == "" && validSpVII == "") {
-        // await insertUpdateXacNhanLogic(
-        //     7,
-        //     currentIdCoSo!,
-        //     int.parse(currentMaDoiTuongDT!),
-        //     1,
-        //     0,
-        //     '',
-        //     int.parse(currentMaTinhTrangDT!));
-        // await insertUpdateXacNhanLogic(
-        //     6,
-        //     currentIdCoSo!,
-        //     int.parse(currentMaDoiTuongDT!),
-        //     1,
-        //     0,
-        //     '',
-        //     int.parse(currentMaTinhTrangDT!));
-        onNextContinue();
-      } else {
-        // 'Thông tin về nhóm sản phẩm không có hoạt động kinh doanh vận tải. Dữ liệu mục VI và mục VII sẽ bị xoá. Bạn có đồng ý?.';
-        if (validSp == "phan6hh") {
-          String warningMsg =
-              'Thông tin về nhóm sản phẩm không có hoạt động vận tải hàng hoá. Dữ liệu mục VI hoạt động vận tải hàng hoá sẽ bị xoá. Bạn có đồng ý?.';
-          await showDialogValidNganhHPhanVIPhanVII(validSp!, warningMsg);
-        } else if (validSp == "phan6hk") {
-          String warningMsg =
-              'Thông tin về nhóm sản phẩm không có hoạt động vận tải hành khách. Dữ liệu mục VI hoạt động vận tải hành khách sẽ bị xoá. Bạn có đồng ý?.';
-          await showDialogValidNganhHPhanVIPhanVII(validSp!, warningMsg);
-        } else if (validSp == "phan6") {
-          String warningMsg =
-              'Thông tin về nhóm sản phẩm không có hoạt động vận tải. Dữ liệu mục VI sẽ bị xoá. Bạn có đồng ý?.';
-          await showDialogValidNganhHPhanVIPhanVII(validSp!, warningMsg);
-        } else if (validSpVII == "phan7") {
-          String warningMsg =
-              'Thông tin về nhóm sản phẩm không có hoạt động kinh doanh dịch vụ lưu trú. Dữ liệu mục VII sẽ bị xoá. Bạn có đồng ý?.';
-          await showDialogValidNganhHPhanVIPhanVII(validSpVII!, warningMsg);
-        }
-      }
-    } else {
-      onNextContinue();
-    }
+    // if (currentScreenNo.value == 5 ||
+    //     currentScreenIndex.value ==
+    //         generalInformationController.screenNos().length - 1) {
+    //   await danhDauSanPhamPhanVI();
+    //   await danhDauSanPhamPhanVII();
+    //   var validSp = await validateNganhHPhanVI();
+    //   var validSpVII = await validateNganhHPhanVII();
+    //   if (validSp == "" && validSpVII == "") {
+    //     // await insertUpdateXacNhanLogic(
+    //     //     7,
+    //     //     currentIdCoSo!,
+    //     //     int.parse(currentMaDoiTuongDT!),
+    //     //     1,
+    //     //     0,
+    //     //     '',
+    //     //     int.parse(currentMaTinhTrangDT!));
+    //     // await insertUpdateXacNhanLogic(
+    //     //     6,
+    //     //     currentIdCoSo!,
+    //     //     int.parse(currentMaDoiTuongDT!),
+    //     //     1,
+    //     //     0,
+    //     //     '',
+    //     //     int.parse(currentMaTinhTrangDT!));
+    //     onNextContinue();
+    //   } else {
+    //     // 'Thông tin về nhóm sản phẩm không có hoạt động kinh doanh vận tải. Dữ liệu mục VI và mục VII sẽ bị xoá. Bạn có đồng ý?.';
+    //     if (validSp == "phan6hh") {
+    //       String warningMsg =
+    //           'Thông tin về nhóm sản phẩm không có hoạt động vận tải hàng hoá. Dữ liệu mục VI hoạt động vận tải hàng hoá sẽ bị xoá. Bạn có đồng ý?.';
+    //       await showDialogValidNganhHPhanVIPhanVII(validSp!, warningMsg);
+    //     } else if (validSp == "phan6hk") {
+    //       String warningMsg =
+    //           'Thông tin về nhóm sản phẩm không có hoạt động vận tải hành khách. Dữ liệu mục VI hoạt động vận tải hành khách sẽ bị xoá. Bạn có đồng ý?.';
+    //       await showDialogValidNganhHPhanVIPhanVII(validSp!, warningMsg);
+    //     } else if (validSp == "phan6") {
+    //       String warningMsg =
+    //           'Thông tin về nhóm sản phẩm không có hoạt động vận tải. Dữ liệu mục VI sẽ bị xoá. Bạn có đồng ý?.';
+    //       await showDialogValidNganhHPhanVIPhanVII(validSp!, warningMsg);
+    //     } else if (validSpVII == "phan7") {
+    //       String warningMsg =
+    //           'Thông tin về nhóm sản phẩm không có hoạt động kinh doanh dịch vụ lưu trú. Dữ liệu mục VII sẽ bị xoá. Bạn có đồng ý?.';
+    //       await showDialogValidNganhHPhanVIPhanVII(validSpVII!, warningMsg);
+    //     }
+    //   }
+    // } else {
+    //   onNextContinue();
+    // }
   }
 
   void onNextContinue() async {
@@ -913,26 +957,27 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       await getQuestionContent();
 
       ///Qua màn hình tiếp theo nếu câu hỏi màn hình đó rỗng;
-      if (currentScreenNo.value == 6 || currentScreenNo.value == 7) {
-        if (questions.isEmpty) {
-          if (currentScreenIndex.value <
-              generalInformationController.screenNos().length - 1) {
-            currentScreenNo(currentScreenNo.value + 1);
-            currentScreenIndex(currentScreenIndex.value + 1);
-            await getQuestionContent();
-            if (questions.isEmpty) {
-              if (currentScreenIndex.value <
-                  generalInformationController.screenNos().length - 1) {
-                currentScreenNo(currentScreenNo.value + 1);
-                currentScreenIndex(currentScreenIndex.value + 1);
-                await getQuestionContent();
-              }
-            }
-          }
-        }
-      }
+      // if (currentScreenNo.value == 6 || currentScreenNo.value == 7) {
+      //   if (questions.isEmpty) {
+      //     if (currentScreenIndex.value <
+      //         generalInformationController.screenNos().length - 1) {
+      //       currentScreenNo(currentScreenNo.value + 1);
+      //       currentScreenIndex(currentScreenIndex.value + 1);
+      //       await getQuestionContent();
+      //       if (questions.isEmpty) {
+      //         if (currentScreenIndex.value <
+      //             generalInformationController.screenNos().length - 1) {
+      //           currentScreenNo(currentScreenNo.value + 1);
+      //           currentScreenIndex(currentScreenIndex.value + 1);
+      //           await getQuestionContent();
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
 
       await setSelectedQuestionGroup();
+      snackBar('Man hinh', '${currentScreenNo.value}');
       scrollController.animateTo(0.0,
           duration: const Duration(milliseconds: 400),
           curve: Curves.fastOutSlowIn);
@@ -1066,13 +1111,15 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
           int.parse(currentMaTinhTrangDT!));
     }
 
-    ///Tính lại A5_7 và A7_10A7_11A7_13
+    ///Tính lại A5_7 và A7_10 A7_11 A7_13
+    ///"5T. TỔNG DOANH THU CỦA CÁC SẢN PHẨM NĂM 2025 (TỔNG CÁC CÂU A5.2 * CÂU A4.1)
     var total5TValue = await total5T();
     await updateAnswerToDB(tablePhieuMauTB, colPhieuMauTBA5T, total5TValue);
     if (hoatDong != "phan7") {
-      var a7_9Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA9);
+      //colPhieuMauTBA7_5_M: 5. Doanh thu từ khách ngủ qua đêm chiếm bao nhiêu phần trăm trong tổng doanh thu?
+      var a7_9Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA7_5_M);
       if (a7_9Value != null) {
-        await tinhCapNhatA7_10A7_11A7_13(a7_9Value);
+        await tinhCapNhatA8_M_A9_M_A10_M(a7_9Value);
       }
     }
     // var countRes =
@@ -1185,29 +1232,20 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
 
     try {
       updateAnswerToDB(table, fieldName ?? "", value);
-      if (maCauHoi == "A3_3") {
-        var fieldNameTotalA3_0 = "A3_0";
-        var fieldNamesA3_0 = [
-          'A3_2_1_1',
-          'A3_2_2_1',
-          'A3_2_3_1',
-          'A3_2_4_1',
-          'A3_3'
-        ];
+      if (maCauHoi == colPhieuMauTBA3_2) {
         await updateAnswerDongCotToDB(table, fieldName!, value,
-            fieldNames: fieldNamesA3_0,
-            fieldNameTotal: fieldNameTotalA3_0,
+            fieldNames: fieldNameA3T,
+            fieldNameTotal: colPhieuMauTBA3T,
             maCauHoi: maCauHoi);
       }
       if (maCauHoi == colPhieuTenCoSo) {
         await warningA1_1TenCoSo();
       }
       if (maCauHoi == "A4_1" || maCauHoi == "A4_2") {
-        var fieldNameTotalA4_0 = "A4_0";
-        var fieldNamesA4_0 = ['A4_1', 'A4_2'];
+        var fieldNamesA4T = ['A4_1', 'A4_2'];
         await updateAnswerDongCotToDB(table, fieldName!, value,
-            fieldNames: fieldNamesA4_0,
-            fieldNameTotal: fieldNameTotalA4_0,
+            fieldNames: fieldNamesA4T,
+            fieldNameTotal: colPhieuMauTBA4T,
             maCauHoi: maCauHoi);
 
         if (maCauHoi == "A4_1") {
@@ -1223,22 +1261,23 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       }
       //Van tai mẫu
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
-        if (maCauHoi == colPhieuNganhVTA1M || maCauHoi == colPhieuNganhVTA2M) {
-          var fieldNameTotalA6_6 = colPhieuNganhVTA4M;
-          var fieldNamesA6_3_6_4 = [colPhieuNganhVTA1M, colPhieuNganhVTA2M];
+        if (maCauHoi == colPhieuNganhVTA1_M ||
+            maCauHoi == colPhieuNganhVTA2_M) {
+          var fieldNameTotalA6_6 = colPhieuNganhVTA4_M;
+          var fieldNamesA6_3_6_4 = [colPhieuNganhVTA1_M, colPhieuNganhVTA2_M];
           await updateAnswerDongCotToDB(table, fieldName!, value,
               fieldNames: fieldNamesA6_3_6_4,
               fieldNameTotal: fieldNameTotalA6_6,
               maCauHoi: maCauHoi);
 
-          if (maCauHoi == colPhieuNganhVTA2M) {
+          if (maCauHoi == colPhieuNganhVTA2_M) {
             await warningA6_4SoKhachBQ();
           }
         }
 
-        if (maCauHoi == colPhieuNganhVTA3M) {
-          var fieldNameTotalA6_7 = colPhieuNganhVTA5M;
-          var fieldNamesA6_5 = [colPhieuNganhVTA3M, colPhieuNganhVTA4M];
+        if (maCauHoi == colPhieuNganhVTA3_M) {
+          var fieldNameTotalA6_7 = colPhieuNganhVTA5_M;
+          var fieldNamesA6_5 = [colPhieuNganhVTA3_M, colPhieuNganhVTA4_M];
           await updateAnswerDongCotToDB(table, fieldName!, value,
               fieldNames: fieldNamesA6_5,
               fieldNameTotal: fieldNameTotalA6_7,
@@ -1247,22 +1286,23 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
           await warningA6_5SoKmBQ();
         }
 
-        if (maCauHoi == colPhieuNganhVTA6M || maCauHoi == colPhieuNganhVTA7M) {
-          var fieldNameTotalA6_13 = colPhieuNganhVTA9M;
-          var fieldNamesA6_13 = [colPhieuNganhVTA6M, colPhieuNganhVTA7M];
+        if (maCauHoi == colPhieuNganhVTA6_M ||
+            maCauHoi == colPhieuNganhVTA7_M) {
+          var fieldNameTotalA6_13 = colPhieuNganhVTA9_M;
+          var fieldNamesA6_13 = [colPhieuNganhVTA6_M, colPhieuNganhVTA7_M];
           await updateAnswerDongCotToDB(table, fieldName!, value,
               fieldNames: fieldNamesA6_13,
               fieldNameTotal: fieldNameTotalA6_13,
               maCauHoi: maCauHoi);
 
-          if (maCauHoi == colPhieuNganhVTA7M) {
+          if (maCauHoi == colPhieuNganhVTA7_M) {
             await warningA6_11KhoiLuongHHBQ();
           }
           await tinhCapNhatA6_13_A6_14();
         }
-        if (maCauHoi == colPhieuNganhVTA8M) {
-          var fieldNameTotalA6_14 = colPhieuNganhVTA10M;
-          var fieldNamesA6_14 = [colPhieuNganhVTA8M, colPhieuNganhVTA9M];
+        if (maCauHoi == colPhieuNganhVTA8_M) {
+          var fieldNameTotalA6_14 = colPhieuNganhVTA10_M;
+          var fieldNamesA6_14 = [colPhieuNganhVTA8_M, colPhieuNganhVTA9_M];
           await updateAnswerDongCotToDB(table, fieldName!, value,
               fieldNames: fieldNamesA6_14,
               fieldNameTotal: fieldNameTotalA6_14,
@@ -1304,28 +1344,39 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     if (fieldName == '') return;
     if (table == tablePhieuMauTB) {
       await phieuMauTBProvider.updateValue(fieldName, value, currentIdCoSo);
-      await updateAnswerTblPhieuMau(fieldName, value);
-    } else if (table == tablePhieuNganhCN) {
-      await phieuNganhCNProvider.updateValue(fieldName, value, currentIdCoSo);
-      await updateAnswerTblPhieuMau(fieldName, value);
+      await updateAnswerTblPhieuMau(fieldName, value, table);
     } else if (table == tablePhieuNganhVT) {
       await phieuNganhVTProvider.updateValue(fieldName, value, currentIdCoSo);
-      await updateAnswerTblPhieuMau(fieldName, value);
+      await updateAnswerTblPhieuMau(fieldName, value, table);
     } else if (table == tablePhieuNganhLT) {
       await phieuNganhLTProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo);
-      await updateAnswerTblPhieuMau(fieldName, value);
+      await updateAnswerTblPhieuMau(fieldName, value, table);
     } else {
       snackBar("dialog_title_warning".tr, "data_table_undefine".tr);
     }
   }
 
 // * Update lại giá trị cho answerTblSanpham khi onchangexxx
-  Future updateAnswerTblPhieuMau(fieldName, value) async {
-    Map<String, dynamic> map = Map<String, dynamic>.from(answerTblPhieuMau);
-    map.update(fieldName, (val) => value, ifAbsent: () => value);
-    answerTblPhieuMau.value = map;
-    answerTblPhieuMau.refresh();
+  Future updateAnswerTblPhieuMau(fieldName, value, table) async {
+    if (table == tablePhieuMauTB) {
+      Map<String, dynamic> map = Map<String, dynamic>.from(answerTblPhieuMau);
+      map.update(fieldName, (val) => value, ifAbsent: () => value);
+      answerTblPhieuMau.value = map;
+      answerTblPhieuMau.refresh();
+    } else if (table == tablePhieuNganhLT) {
+      Map<String, dynamic> map =
+          Map<String, dynamic>.from(answerTblPhieuNganhLT);
+      map.update(fieldName, (val) => value, ifAbsent: () => value);
+      answerTblPhieuNganhLT.value = map;
+      answerTblPhieuNganhLT.refresh();
+    } else if (table == tablePhieuNganhVT) {
+      Map<String, dynamic> map =
+          Map<String, dynamic>.from(answerTblPhieuNganhVT);
+      map.update(fieldName, (val) => value, ifAbsent: () => value);
+      answerTblPhieuNganhVT.value = map;
+      answerTblPhieuNganhVT.refresh();
+    }
   }
 
 // * Update lại giá trị cho answerDanhDauSanPham khi onchangexxx
@@ -1430,6 +1481,9 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       int loaiCauHoi,
       int sttSanPham,
       bool typing) {
+    if (maCauHoi == colPhieuMauTBSanPhamA5_1_1) {
+    } else if (maCauHoi == colPhieuMauTBSanPhamA5_1_2) {
+    } else if (maCauHoi == colPhieuMauTBSanPhamA5_2) {}
     // if (fieldName == columnPhieuMauSanPhamA5_1_1) {
     //   if (valueInput == null || valueInput == '' || valueInput == 'null') {
     //     return 'Vui lòng nhập giá trị.';
@@ -1532,6 +1586,25 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     //     }
     //   }
     // }
+
+    return null;
+  }
+
+  onValidateMaVcpaCap5(String maVcpaCap5, bool typing) {
+    if (maVcpaCap5 == null || maVcpaCap5 == '' || maVcpaCap5 == 'null') {
+      return 'Vui lòng nhập giá trị.';
+    }
+    //- Chỉ có 1 ngành san phẩm và Mã VCPA cấp 2=68 và  C1.1=1|2|3|4|5;
+
+    //- Chỉ có 1 hoặc nhiều ngành sản phẩm nhưng có mã ngành san phẩm và Mã ngành sản phẩm >=47811
+    //và Mã ngành <=47899 mà Địa điểm cơ sở tại C1.1. Địa điểm khác mã 3. Tại chợ hoặc mã 6.Địa điểm không cố định;
+
+    //- Mã ngành=46492. Dịch vụ bán buôn dược phẩm và dụng cụ y tế hoặc mã ngành=47721.
+    //Bán lẻ dược phẩm, dụng cụ y tế trong các cửa hàng chuyên doanh & C1.4=2|6
+
+    // (Mã ngành sản phẩm>=86101 và Mã ngành<=86990.
+    //Hoạt động y tế) hoặc (Mã ngành= 96310. Dịch vụ cắt tóc gội đầu)  hoặc ( mã ngành>=71101
+    //và mã ngành<=71109. Hoạt động kiến trúc, kiểm tra và phân tích kỹ thuật) & C2.1_Tổng số =1 & C1.3.5=1. Chưa qua dào tạo?
 
     return null;
   }
@@ -1665,7 +1738,6 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     //   }
     // }
     // return null;
-    
   }
 
   ///
@@ -1833,7 +1905,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   }
 
   checkExistA6_8() async {
-   // return await phieuMauA68Provider.isExistQuestion(currentIdCoSo!);
+    // return await phieuMauA68Provider.isExistQuestion(currentIdCoSo!);
   }
 
   ///END:: A6_8 event
@@ -1847,14 +1919,14 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
 
     try {
       // updateAnswerToDB(table, fieldName ?? "", value);
-      // updateAnswerTblPhieuMau(fieldName, value);
+      // updateAnswerTblPhieuMau(fieldName, value,table);
       // if (maCauHoi == columnPhieuMauA4_4) {
       //   if (!value.toString().contains("1")) {
       //     updateAnswerToDB(table, "A4_4_1", null);
-      //     updateAnswerTblPhieuMau("A4_4_1", null);
+      //     updateAnswerTblPhieuMau("A4_4_1", null,table);
       //   } else if (!value.toString().contains("2")) {
       //     updateAnswerToDB(table, "A4_4_2", null);
-      //     updateAnswerTblPhieuMau("A4_4_2", null);
+      //     updateAnswerTblPhieuMau("A4_4_2", null,table);
       //   }
       // }
     } catch (e) {
@@ -1866,32 +1938,37 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       String? fieldName, value, dmItem) {
     log('ON CHANGE onSelectDm: $fieldName $value $dmItem');
     try {
-      // updateAnswerToDB(table, fieldName ?? "", value);
-      // updateAnswerTblPhieuMau(fieldName, value);
+      updateAnswerToDB(table, fieldName ?? "", value);
+      updateAnswerTblPhieuMau(fieldName, value, table);
       // if (question.bangChiTieu != null && question.bangChiTieu != '') {
       //   var hasGhiRo = hasDanhMucGhiRoByTenDm(question.bangChiTieu!);
       //   if (hasGhiRo != null && hasGhiRo == true) {
       //     if (value != 17 && fieldName == maCauHoi) {
       //       String fieldNameGhiRo = '${maCauHoi!}_GhiRo';
       //       updateAnswerToDB(table, fieldNameGhiRo, null);
-      //       updateAnswerTblPhieuMau(fieldNameGhiRo, null);
+      //       updateAnswerTblPhieuMau(fieldNameGhiRo, null,table);
       //     }
       //   }
       // }
-      // if (maCauHoi == columnPhieuMauA1_3) {
-      //   if (value != 5) {
-      //     String fieldNameGhiRo = '${maCauHoi!}_GhiRo';
-      //     updateAnswerToDB(table, fieldNameGhiRo, null);
-      //     updateAnswerTblPhieuMau(fieldNameGhiRo, null);
-      //   }
-      //   var a1_4Value = answerTblPhieuMau[columnPhieuMauA1_4];
-      //   if (a1_4Value == 2) {
-      //     if (value != 2 || value != 3) {
-      //       updateAnswerToDB(table, columnPhieuMauA1_4, null);
-      //       updateAnswerTblPhieuMau(columnPhieuMauA1_4, null);
-      //     }
-      //   }
-      // }
+      if (maCauHoi == colPhieuMauTBA1_1) {
+        if (value != 5) {
+          String fieldNameGhiRo = '${maCauHoi!}_GhiRo';
+          updateAnswerToDB(table, fieldNameGhiRo, null);
+          updateAnswerTblPhieuMau(fieldNameGhiRo, null, table);
+        }
+      }
+      if (maCauHoi == colPhieuMauTBA1_2) {
+        if (value != 1) {
+          updateAnswerToDB(table, colPhieuMauTBA4_3, null);
+          updateAnswerTblPhieuMau(colPhieuMauTBA4_3, null, table);
+        }
+      }
+      if (maCauHoi == colPhieuMauTBA1_5) {
+        if (value != 1) {
+          updateAnswerToDB(table, colPhieuMauTBA1_5_1, null);
+          updateAnswerTblPhieuMau(colPhieuMauTBA1_5_1, null, table);
+        }
+      }
       // if (maCauHoi == columnPhieuMauA1_4) {
       //   if (value == 2) {
       //     var a1_3Value = answerTblPhieuMau[columnPhieuMauA1_3];
@@ -1902,7 +1979,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       //             ? 'Câu 1.3 đã chọn chỉ tiêu 2 - Tại siêu thị, Trung tâm thương mại'
       //             : 'Câu 1.3 đã chọn chỉ tiêu 3 - Tại chợ';
       //         updateAnswerToDB(table, columnPhieuMauA1_4, null);
-      //         updateAnswerTblPhieuMau(columnPhieuMauA1_4, null);
+      //         updateAnswerTblPhieuMau(columnPhieuMauA1_4, null,table);
       //         return showError(
       //             '$msgText nên Câu 1.4 không thể chọn chỉ tiêu 2 - Địa điểm thuộc sở hữu của chủ cơ sở.');
       //       }
@@ -1914,27 +1991,21 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       //       updateAnswerToDB(table, columnPhieuMauA4_6,
       //           null); //Nên update null hay là 0? Nếu update null thì phải insert vào bảng xacnhanlogic câu A4.6 phải nhập giá trị
       //       updateAnswerTblPhieuMau(columnPhieuMauA4_6,
-      //           null); //Nên update null hay là 0? Nếu update null thì phải insert vào bảng xacnhanlogic câu A4.6 phải nhập giá trị
+      //           null,table); //Nên update null hay là 0? Nếu update null thì phải insert vào bảng xacnhanlogic câu A4.6 phải nhập giá trị
       //       //Câu 1.4 Địa điểm thuộc sở hữu của chủ cơ sở nên câu 4.6 Tiền thuê địa điểm SXKD phải = 0
       //       // insertUpdateXacNhanLogic(manHinh, idCoSoIdHo, maDoiTuongDT, isLogic, isEnableMenuItem, noiDungLogic, maTrangThaiDT)
       //     }
       //   }
       // }
-      // if (maCauHoi == columnPhieuMauA1_7) {
-      //   if (value != 1) {
-      //     String fieldNameGhiRo = '${maCauHoi!}_1';
-      //     updateAnswerToDB(table, fieldNameGhiRo, null);
-      //     updateAnswerTblPhieuMau(fieldNameGhiRo, null);
-      //   }
-      // }
+
       // if (maCauHoi == columnPhieuMauA4_3) {
       //   if (value != 1) {
       //     updateAnswerToDB(table, "A4_4", null);
-      //     updateAnswerTblPhieuMau("A4_4", null);
+      //     updateAnswerTblPhieuMau("A4_4", null,table);
       //     updateAnswerToDB(table, "A4_4_1", null);
-      //     updateAnswerTblPhieuMau("A4_4_1", null);
+      //     updateAnswerTblPhieuMau("A4_4_1", null,table);
       //     updateAnswerToDB(table, "A4_4_2", null);
-      //     updateAnswerTblPhieuMau("A4_4_2", null);
+      //     updateAnswerTblPhieuMau("A4_4_2", null,table);
       //   }
       // }
       // if (maCauHoi == "A4_5") {
@@ -1957,7 +2028,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       //     if (fieldName == fName) {
       //       if (value != 1) {
       //         updateAnswerToDB(table, fName2, null);
-      //         updateAnswerTblPhieuMau(fName2, null);
+      //         updateAnswerTblPhieuMau(fName2, null,table);
       //         // var fieldNameTotalA4_7_0 = "A4_7_0";
       //         // var fieldNamesA4_7_0 = [
       //         //   'A4_7_1_2',
@@ -1986,9 +2057,9 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       //     if (fieldName == fName) {
       //       if (value != 1) {
       //         updateAnswerToDB(table, fName2, null);
-      //         updateAnswerTblPhieuMau(fName2, null);
+      //         updateAnswerTblPhieuMau(fName2, null,table);
       //         updateAnswerToDB(table, fName3, null);
-      //         updateAnswerTblPhieuMau(fName3, null);
+      //         updateAnswerTblPhieuMau(fName3, null,table);
       //       }
       //       break;
       //     }
@@ -2000,9 +2071,9 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       //     if (fieldName == fName) {
       //       if (value != 1) {
       //         updateAnswerToDB(table, fName2, null);
-      //         updateAnswerTblPhieuMau(fName2, null);
+      //         updateAnswerTblPhieuMau(fName2, null,table);
       //         updateAnswerToDB(table, fName3, null);
-      //         updateAnswerTblPhieuMau(fName3, null);
+      //         updateAnswerTblPhieuMau(fName3, null,table);
       //       }
       //       break;
       //     }
@@ -2011,7 +2082,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       // if (maCauHoi == columnPhieuMauA9_1) {
       //   if (value != 1) {
       //     updateAnswerToDB(table, "A9_2", null);
-      //     updateAnswerTblPhieuMau("A9_2", null);
+      //     updateAnswerTblPhieuMau("A9_2", null,table);
       //   }
       // }
       // if (maCauHoi == "A9_4" && fieldName == columnPhieuMauA9_4_1) {
@@ -2023,22 +2094,22 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       // if (maCauHoi == "A9_4" && fieldName == columnPhieuMauA9_4_2) {
       //   if (value != 1) {
       //     updateAnswerToDB(table, "A9_8", null);
-      //     updateAnswerTblPhieuMau("A9_8", null);
+      //     updateAnswerTblPhieuMau("A9_8", null,table);
       //   }
       // }
       // if (maCauHoi == columnPhieuMauA9_7) {
       //   if (value != 1) {
       //     updateAnswerToDB(table, "A9_7_1", null);
-      //     updateAnswerTblPhieuMau("A9_7_1", null);
+      //     updateAnswerTblPhieuMau("A9_7_1", null,table);
       //     //Bỏ vì 9.8 luôn luôn hiển thị và phải luôn có giá trị vì 9.7 có chọn =1 hay =2 thì 9.8 luôn luôn hiện thị
       //     // updateAnswerToDB(table, "A9_8", null);
-      //     // updateAnswerTblPhieuMau("A9_8", null);
+      //     // updateAnswerTblPhieuMau("A9_8", null,table);
       //   }
       // }
       // if (maCauHoi == columnPhieuMauA9_9) {
       //   if (value != 1) {
       //     updateAnswerToDB(table, "A9_10", null);
-      //     updateAnswerTblPhieuMau("A9_10", null);
+      //     updateAnswerTblPhieuMau("A9_10", null,table);
       //     // onNext();
       //   }
       // }
@@ -2050,7 +2121,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   getDanhMucByTenDm(String tenDanhMuc) {
     // if (tenDanhMuc == tableDmCap) {
     //   return tblDmCap;
-    // } else 
+    // } else
     if (tenDanhMuc == tableCTDmDiaDiemSXKD) {
       return tblDmDiaDiemSXKD;
     } else if (tenDanhMuc == tableCTDmHoatDongLogistic) {
@@ -2093,7 +2164,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       fieldName = fieldNameGhiRo!;
     }
     updateAnswerToDB(question.bangDuLieu!, fieldName, value);
-    updateAnswerTblPhieuMau(fieldName, value);
+    updateAnswerTblPhieuMau(fieldName, value, question.bangDuLieu!);
   }
 
   Future<Iterable<TableDmDanToc?>> onSearchDmDanToc(String search) async {
@@ -2139,8 +2210,8 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
           tenDanToc = value;
         }
         updateAnswerToDB(table, fieldName!, maDanToc);
-        updateAnswerTblPhieuMau(fieldName, maDanToc);
-        updateAnswerTblPhieuMau('${fieldName}_tendantoc', tenDanToc);
+        updateAnswerTblPhieuMau(fieldName, maDanToc, table);
+        updateAnswerTblPhieuMau('${fieldName}_tendantoc', tenDanToc, table);
         log('ON onChangeInputDanToc ĐÃ cập nhật mã dan toc');
       }
     } catch (e) {
@@ -2244,7 +2315,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     log('onChangeChiTienDongGhiRo Mã câu hỏi ${question.maCauHoi} ${question.bangChiTieu}');
 
     updateAnswerToDB(question.bangDuLieu!, fieldName, value);
-    updateAnswerTblPhieuMau(fieldName, value);
+    updateAnswerTblPhieuMau(fieldName, value, question.bangDuLieu!);
   }
 
   onChangeInputChiTieuDongCot(
@@ -2255,57 +2326,49 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     log('ON onChangeInputChiTieuDongCot: $fieldName $value');
 
     try {
-      // if (table == tablePhieuMau) {
-      //   if (maCauHoi == "A3_2") {
-      //     var fieldNameTotalA3_2_0 = "A3_2_0";
-      //     var fieldNamesA3_2_0 = [
-      //       'A3_2_1_1',
-      //       'A3_2_2_1',
-      //       'A3_2_3_1',
-      //       'A3_2_4_1'
-      //     ];
-      //     await updateAnswerDongCotToDB(table, fieldName!, value,
-      //         fieldNames: fieldNamesA3_2_0,
-      //         fieldNameTotal: fieldNameTotalA3_2_0,
-      //         maCauHoi: maCauHoi);
+      if (table == tablePhieuMauTB) {
+        if (maCauHoi == "A3_1") {
+          await updateAnswerDongCotToDB(table, fieldName!, value,
+              fieldNames: fieldNameA3_1T,
+              fieldNameTotal: colPhieuMauTBA3_1T,
+              maCauHoi: maCauHoi);
 
-      //     var fieldNameTotalA3_0 = "A3_0";
-      //     var fieldNamesA3_0 = [fieldNameTotalA3_2_0, 'A3_3'];
+          var fieldNamesA3T = [colPhieuMauTBA3_1T, colPhieuMauTBA3_2];
 
-      //     await updateAnswerDongCotToDB(table, fieldName!, value,
-      //         fieldNames: fieldNamesA3_0,
-      //         fieldNameTotal: fieldNameTotalA3_0,
-      //         maCauHoi: maCauHoi);
-      //   }
-      //   // else if (maCauHoi == "A4_7") {
-      //   //   var fieldNameTotalA4_7_0 = "A4_7_0";
-      //   //   var fieldNamesA4_7_0 = [
-      //   //     'A4_7_1_2',
-      //   //     'A4_7_2_2',
-      //   //     'A4_7_3_2',
-      //   //     'A4_7_4_2',
-      //   //     'A4_7_5_2',
-      //   //     'A4_7_6_2',
-      //   //     'A4_7_7_2',
-      //   //     'A4_7_8_2'
-      //   //   ];
-      //   //   await updateAnswerDongCotToDB(table, fieldName!, value,
-      //   //       fieldNames: fieldNamesA4_7_0,
-      //   //       fieldNameTotal: fieldNameTotalA4_7_0,
-      //   //       maCauHoi: maCauHoi);
-      //   // }
-      //   if (maCauHoi == "A7_1") {
-      //     if (a7_1FieldWarning.contains(fieldName)) {
-      //       await warningA7_1_X3SoPhongTangMoi(chiTieuDong!.maSo!);
-      //     }
-      //   }
-      //   List<String> fieldNames = [];
-      //   String fieldNameTotal = "";
-      //   await updateAnswerDongCotToDB(table, fieldName!, value,
-      //       fieldNames: fieldNames,
-      //       fieldNameTotal: fieldNameTotal,
-      //       maCauHoi: maCauHoi);
-      // }
+          await updateAnswerDongCotToDB(table, fieldName!, value,
+              fieldNames: fieldNamesA3T,
+              fieldNameTotal: colPhieuMauTBA3T,
+              maCauHoi: maCauHoi);
+        }
+        //   // else if (maCauHoi == "A4_7") {
+        //   //   var fieldNameTotalA4_7_0 = "A4_7_0";
+        //   //   var fieldNamesA4_7_0 = [
+        //   //     'A4_7_1_2',
+        //   //     'A4_7_2_2',
+        //   //     'A4_7_3_2',
+        //   //     'A4_7_4_2',
+        //   //     'A4_7_5_2',
+        //   //     'A4_7_6_2',
+        //   //     'A4_7_7_2',
+        //   //     'A4_7_8_2'
+        //   //   ];
+        //   //   await updateAnswerDongCotToDB(table, fieldName!, value,
+        //   //       fieldNames: fieldNamesA4_7_0,
+        //   //       fieldNameTotal: fieldNameTotalA4_7_0,
+        //   //       maCauHoi: maCauHoi);
+        //   // }
+        //   if (maCauHoi == "A7_1") {
+        //     if (a7_1FieldWarning.contains(fieldName)) {
+        //       await warningA7_1_X3SoPhongTangMoi(chiTieuDong!.maSo!);
+        //     }
+        //   }
+        //   List<String> fieldNames = [];
+        //   String fieldNameTotal = "";
+        //   await updateAnswerDongCotToDB(table, fieldName!, value,
+        //       fieldNames: fieldNames,
+        //       fieldNameTotal: fieldNameTotal,
+        //       maCauHoi: maCauHoi);
+      }
     } catch (e) {
       printError(info: e.toString());
     }
@@ -2316,93 +2379,107 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       String? fieldNameTotal,
       String? maCauHoi}) async {
     if (fieldName == '') return;
-    // if (table == tablePhieuMau) {
-    //   await phieuMauProvider.updateValue(fieldName, value, currentIdCoSo);
-    //   await updateAnswerTblPhieuMau(fieldName, value);
-    //   if (fieldNameTotal != null &&
-    //       fieldNameTotal != '' &&
-    //       fieldNames != null &&
-    //       fieldNames.isNotEmpty) {
-    //     if (maCauHoi == "A6_3" || maCauHoi == "A6_4") {
-    //       var total = await phieuMauProvider.totalSubtractIntByMaCauHoi(
-    //           currentIdCoSo!, fieldNames!);
-    //       await phieuMauProvider.updateValue(
-    //           fieldNameTotal!, total, currentIdCoSo);
-    //       await updateAnswerTblPhieuMau(fieldNameTotal, total);
-    //     } else if (maCauHoi == "A4_1" ||
-    //         maCauHoi == "A4_2" ||
-    //         maCauHoi == "A6_10" ||
-    //         maCauHoi == "A6_11" ||
-    //         maCauHoi == "A6_12") {
-    //       var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
-    //           currentIdCoSo!, fieldNames!);
-    //       await phieuMauProvider.updateValue(
-    //           fieldNameTotal!, total, currentIdCoSo);
-    //       await updateAnswerTblPhieuMau(fieldNameTotal, total);
-    //     } else if (maCauHoi == "A6_5") {
-    //       var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
-    //           currentIdCoSo!, fieldNames!);
-    //       var totalRounded = AppUtils.roundDouble(total, 2);
-    //       await phieuMauProvider.updateValue(
-    //           fieldNameTotal!, totalRounded, currentIdCoSo);
-    //       await updateAnswerTblPhieuMau(fieldNameTotal, totalRounded);
-    //     } else if (maCauHoi == "A7_6" ||
-    //         maCauHoi == "A7_7" ||
-    //         maCauHoi == "A7_6_1" ||
-    //         maCauHoi == "A7_7_1") {
-    //       var total = await phieuMauProvider.totalIntByMaCauHoi(
-    //           currentIdCoSo!, fieldNames!);
-    //       await phieuMauProvider.updateValue(
-    //           fieldNameTotal!, total, currentIdCoSo);
-    //       await updateAnswerTblPhieuMau(fieldNameTotal, total);
-    //     } else {
-    //       var total = await phieuMauProvider.totalDoubleByMaCauHoi(
-    //           currentIdCoSo!, fieldNames!);
-    //       await phieuMauProvider.updateValue(
-    //           fieldNameTotal!, total, currentIdCoSo);
-    //       await updateAnswerTblPhieuMau(fieldNameTotal, total);
-    //     }
-    //   }
-    //   if (maCauHoi == "A7_9") {
-    //     await tinhCapNhatA7_10A7_11A7_13(value);
+    if (table == tablePhieuMauTB) {
+      await phieuMauTBProvider.updateValue(fieldName, value, currentIdCoSo);
+      await updateAnswerTblPhieuMau(fieldName, value, table);
+      if (fieldNameTotal != null &&
+          fieldNameTotal != '' &&
+          fieldNames != null &&
+          fieldNames.isNotEmpty) {
+        if (maCauHoi == "A3_1" || maCauHoi == "A3_2") {
+          var total = await phieuMauTBProvider.totalDoubleByMaCauHoi(
+              currentIdCoSo!, fieldNames!);
+          await phieuMauTBProvider.updateValue(
+              fieldNameTotal!, total, currentIdCoSo);
+          await updateAnswerTblPhieuMau(fieldNameTotal, total, table);
+        } else if (maCauHoi == colPhieuMauTBA4_1 ||
+            maCauHoi == colPhieuMauTBA4_2) {
+          var total = await phieuMauTBProvider.totalSubtractDoubleByMaCauHoi(
+              currentIdCoSo!, fieldNames!);
+          await phieuMauTBProvider.updateValue(
+              fieldNameTotal!, total, currentIdCoSo);
+          await updateAnswerTblPhieuMau(fieldNameTotal, total, table);
+        }
+        // if (maCauHoi == "A6_3" || maCauHoi == "A6_4") {
+        //   var total = await phieuMauProvider.totalSubtractIntByMaCauHoi(
+        //       currentIdCoSo!, fieldNames!);
+        //   await phieuMauProvider.updateValue(
+        //       fieldNameTotal!, total, currentIdCoSo);
+        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
+        // } else if (maCauHoi == "A4_1" ||
+        //     maCauHoi == "A4_2" ||
+        //     maCauHoi == "A6_10" ||
+        //     maCauHoi == "A6_11" ||
+        //     maCauHoi == "A6_12") {
+        //   var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
+        //       currentIdCoSo!, fieldNames!);
+        //   await phieuMauProvider.updateValue(
+        //       fieldNameTotal!, total, currentIdCoSo);
+        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
+        // } else if (maCauHoi == "A6_5") {
+        //   var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
+        //       currentIdCoSo!, fieldNames!);
+        //   var totalRounded = AppUtils.roundDouble(total, 2);
+        //   await phieuMauProvider.updateValue(
+        //       fieldNameTotal!, totalRounded, currentIdCoSo);
+        //   await updateAnswerTblPhieuMau(fieldNameTotal, totalRounded);
+        // } else if (maCauHoi == "A7_6" ||
+        //     maCauHoi == "A7_7" ||
+        //     maCauHoi == "A7_6_1" ||
+        //     maCauHoi == "A7_7_1") {
+        //   var total = await phieuMauProvider.totalIntByMaCauHoi(
+        //       currentIdCoSo!, fieldNames!);
+        //   await phieuMauProvider.updateValue(
+        //       fieldNameTotal!, total, currentIdCoSo);
+        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
+        // } else {
+        //   var total = await phieuMauTBProvider.totalDoubleByMaCauHoi(
+        //       currentIdCoSo!, fieldNames!);
+        //   await phieuMauTBProvider.updateValue(
+        //       fieldNameTotal!, total, currentIdCoSo);
+        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
+        // }
+      }
+      //   if (maCauHoi == "A7_9") {
+      //     await tinhCapNhatA8_M_A9_M_A10_M(value);
 
-    //     var a7_12Value = getValueDmByFieldName('A7_12') ?? 0;
-    //     await tinhUpdateA7_13(a7_12Value);
-    //     // var totalA5_2 = await phieuMauSanPhamProvider.totalA5_2ByMaVcpaCap2(
-    //     //     currentIdCoSo!, vcpaCap2PhanVII);
-    //     // //Tinh cho cau A7_10
-    //     // var totalA7_10 = (value * totalA5_2) / 100;
-    //     // if (totalA7_10 > 0) {
-    //     //   totalA7_10 = AppUtils.roundDouble(totalA7_10, 2);
-    //     // }
+      //     var a7_12Value = getValueDmByFieldName('A7_12') ?? 0;
+      //     await tinhUpdateA10M(a7_12Value);
+      //     // var totalA5_2 = await phieuMauSanPhamProvider.totalA5_2ByMaVcpaCap2(
+      //     //     currentIdCoSo!, vcpaCap2PhanVII);
+      //     // //Tinh cho cau A7_10
+      //     // var totalA7_10 = (value * totalA5_2) / 100;
+      //     // if (totalA7_10 > 0) {
+      //     //   totalA7_10 = AppUtils.roundDouble(totalA7_10, 2);
+      //     // }
 
-    //     // var fieldNameTotalA7_10 = "A7_10";
-    //     // await phieuMauProvider.updateValue(
-    //     //     fieldNameTotalA7_10!, totalA7_10, currentIdCoSo);
-    //     // await updateAnswerTblPhieuMau(fieldNameTotalA7_10, totalA7_10);
-    //     // //Tính cho câu A7_11
-    //     // var totalA7_11 = totalA5_2 - totalA7_10;
+      //     // var fieldNameTotalA7_10 = "A7_10";
+      //     // await phieuMauProvider.updateValue(
+      //     //     fieldNameTotalA7_10!, totalA7_10, currentIdCoSo);
+      //     // await updateAnswerTblPhieuMau(fieldNameTotalA7_10, totalA7_10);
+      //     // //Tính cho câu A7_11
+      //     // var totalA7_11 = totalA5_2 - totalA7_10;
 
-    //     // if (totalA7_11 > 0) {
-    //     //   totalA7_11 = AppUtils.roundDouble(totalA7_11, 2);
-    //     // }
-    //     // var fieldNameTotalA7_11 = "A7_11";
-    //     // await phieuMauProvider.updateValue(
-    //     //     fieldNameTotalA7_11!, totalA7_11, currentIdCoSo);
-    //     // await updateAnswerTblPhieuMau(fieldNameTotalA7_11, totalA7_11);
-    //   }
-    //   if (maCauHoi == "A7_12") {
-    //     await tinhUpdateA7_13(value);
-    //     // var a7_10Value = getValueDmByFieldName('A7_10');
-    //     // if (a7_10Value >= 0 && value > 0) {
-    //     //   var a7_13 = a7_10Value / value;
-    //     //   await phieuMauProvider.updateValue('A7_13', a7_13, currentIdCoSo);
-    //     //   await updateAnswerTblPhieuMau('A7_13', a7_13);
-    //     // }
-    //   }
-    // } else {
-    //   snackBar("dialog_title_warning".tr, "data_table_undefine".tr);
-    // }
+      //     // if (totalA7_11 > 0) {
+      //     //   totalA7_11 = AppUtils.roundDouble(totalA7_11, 2);
+      //     // }
+      //     // var fieldNameTotalA7_11 = "A7_11";
+      //     // await phieuMauProvider.updateValue(
+      //     //     fieldNameTotalA7_11!, totalA7_11, currentIdCoSo);
+      //     // await updateAnswerTblPhieuMau(fieldNameTotalA7_11, totalA7_11);
+      //   }
+      //   if (maCauHoi == "A7_12") {
+      //     await tinhUpdateA10M(value);
+      //     // var a7_10Value = getValueDmByFieldName('A7_10');
+      //     // if (a7_10Value >= 0 && value > 0) {
+      //     //   var a7_13 = a7_10Value / value;
+      //     //   await phieuMauProvider.updateValue('A7_13', a7_13, currentIdCoSo);
+      //     //   await updateAnswerTblPhieuMau('A7_13', a7_13);
+      //     // }
+      //   }
+      // } else {
+      //   snackBar("dialog_title_warning".tr, "data_table_undefine".tr);
+    }
   }
 
   tinhCapNhatA6_13_A6_14() async {
@@ -2416,40 +2493,52 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     // await updateAnswerTblPhieuMau(fieldNameTotalA6_14, total);
   }
 
-  tinhCapNhatA7_10A7_11A7_13(a7_9Value) async {
-    // var totalA5_2 = await phieuMauSanPhamProvider.totalA5_2ByMaVcpaCap2(
-    //     currentIdCoSo!, vcpaCap2PhanVII);
-    // //Tinh cho cau A7_10
-    // var totalA7_10 = (a7_9Value * totalA5_2) / 100;
-    // if (totalA7_10 > 0) {
-    //   totalA7_10 = AppUtils.roundDouble(totalA7_10, 2);
-    // }
+  ///A8_M, A9_M, A10_M
+  ///A8_M <=> A7_10
+  ///A9_M <=> A7_11
+  ///A10_M <=> A7_13
+  ///tinhCapNhatA8_M_A9_M_A10_M
+  tinhCapNhatA8_M_A9_M_A10_M(a8MValue) async {
+    var totalA5_2 = await phieuMauTBSanPhamProvider.totalA5_2ByMaVcpaCap2(
+        currentIdCoSo!, vcpaCap2PhanVII);
+    //Tinh cho cau A8 (cũ A7_10)
+    //8. DOANH THU KHÁCH NGỦ QUA ĐÊM (=CÂU 5.2 CỦA PHIẾU TB x Câu 5)/100)
+    var totalA8M = (a8MValue * totalA5_2) / 100;
+    if (totalA8M > 0) {
+      totalA8M = AppUtils.roundDouble(totalA8M, 2);
+    }
 
-    // var fieldNameTotalA7_10 = "A7_10";
-    // await phieuMauProvider.updateValue(
-    //     fieldNameTotalA7_10!, totalA7_10, currentIdCoSo);
-    // await updateAnswerTblPhieuMau(fieldNameTotalA7_10, totalA7_10);
-    // //Tính cho câu A7_11
-    // var totalA7_11 = totalA5_2 - totalA7_10;
+    // colPhieuNganhLTA8_M <=> var fieldNameTotalA7_10 = "A7_10";
+    await phieuNganhLTProvider.updateValByIdCoSo(
+        colPhieuNganhLTA8_M, totalA8M, currentIdCoSo);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA8_M, totalA8M, tablePhieuNganhLT);
+    //Tính cho câu A9_M <=> A7_11
+    //9. DOANH THU KHÁCH KHÔNG NGỦ QUA ĐÊM (= CÂU 5.2 CỦA PHIẾU TB - câu 8)
+    var totalA9M = totalA5_2 - totalA8M;
 
-    // if (totalA7_11 > 0) {
-    //   totalA7_11 = AppUtils.roundDouble(totalA7_11, 2);
-    // }
-    // var fieldNameTotalA7_11 = "A7_11";
-    // await phieuMauProvider.updateValue(
-    //     fieldNameTotalA7_11!, totalA7_11, currentIdCoSo);
-    // await updateAnswerTblPhieuMau(fieldNameTotalA7_11, totalA7_11);
+    if (totalA9M > 0) {
+      totalA9M = AppUtils.roundDouble(totalA9M, 2);
+    }
+
+    await phieuNganhLTProvider.updateValByIdCoSo(
+        colPhieuNganhLTA9_M!, totalA9M, currentIdCoSo);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA9_M, totalA9M, tablePhieuNganhLT);
   }
 
-  tinhUpdateA7_13(a7_12Value) async {
-    // var a7_10Value = getValueDmByFieldName('A7_10') ?? 0;
+  ///A10_M <=> A7_13
+  tinhUpdateA10M(a6MValue) async {
+    var a10MValue = getValueDmByFieldName('A7_10') ?? 0;
 
-    // var a7_12Val = a7_12Value ?? 0;
-    // if (a7_10Value >= 0 && a7_12Val >= 0) {
-    //   var a7_13 = a7_10Value / a7_12Val;
-    //   await phieuMauProvider.updateValue('A7_13', a7_13, currentIdCoSo);
-    //   await updateAnswerTblPhieuMau('A7_13', a7_13);
-    // }
+    var a6MVal = a6MValue ?? 0;
+    if (a10MValue >= 0 && a6MVal >= 0) {
+      var a10M = a10MValue / a6MVal;
+      await phieuNganhLTProvider.updateValByIdCoSo(
+          colPhieuNganhLTA10_M, a10M, currentIdCoSo);
+      await updateAnswerTblPhieuMau(
+          colPhieuNganhLTA10_M, a10M, tablePhieuNganhLT);
+    }
   }
 
   onValidateInputChiTieuDongCot(
@@ -2858,8 +2947,8 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     //     }
     //     // }
     //   }
-      return null;
-   // }
+    return null;
+    // }
   }
 
   ///END::::Chi tieu dong cot
@@ -3317,7 +3406,6 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
 
   String? onValidateA2_1(String table, String maCauHoi, String? fieldName,
       String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
-    
     // if (valueInput == null || valueInput == "null" || valueInput == "") {
     //   return 'Vui lòng nhập giá trị.';
     // }
@@ -3368,7 +3456,6 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     //   }
     // }
     return null;
-    
   }
 
   String? validateA2_1nA2_2(String maCauHoi, bool typing) {
@@ -4531,7 +4618,55 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   // }
   ///END::Kiểm tra ma ngành cho các phần III câu 3.1, Phần V, VI, VII
 /***********/
+
   ///BEGIN:: PHẦN V
+  // onOpenDialogSearchType(
+  //     QuestionCommonModel question,
+  //     String fieldName,
+  //     TablePhieuMauTBSanPham product,
+  //     int idValue,
+  //     int stt,
+  //     String motaSp,
+  //     value) async {
+  //   var sType = getSearchType();
+  //   Get.dialog(DialogCustomizeWidget(
+  //     onPressedNegative: () async {
+  //       Get.back();
+  //     },
+  //     onPressedPositive: () async {
+  //       if (searchVcpaType.value == 2) {
+  //         if (NetworkService.connectionType == Network.none) {
+  //           if (isInitializedEvaluator.value) {
+  //             Get.key.currentState?.pop();
+  //             await onFocusOpenDialogVcpa(
+  //                 question, fieldName, product, idValue, stt, motaSp, value);
+  //           } else {
+  //             snackBar(
+  //                 'Thông báo',
+  //                 responseMessageAI.value == ''
+  //                     ? 'Khởi tạo dữ liệu AI bị lỗi'
+  //                     : responseMessageAI.value,
+  //                 style: ToastSnackType.error);
+  //           }
+  //         } else {
+  //           Get.key.currentState?.pop();
+  //           await onFocusOpenDialogVcpa(
+  //               question, fieldName, product, idValue, stt, motaSp, value);
+  //         }
+  //       } else {
+  //         Get.key.currentState?.pop();
+  //         await onFocusOpenDialogVcpa(
+  //             question, fieldName, product, idValue, stt, motaSp, value);
+  //       }
+  //     },
+  //     title: 'Chọn hình thức tìm kiếm',
+  //     body: Obx(() => SelectOne(
+  //         onChange: onChangeSearhType,
+  //         listValue: sType,
+  //         value: searchVcpaType.value)),
+  //   ));
+  // }
+
   onOpenDialogSearchType(
       QuestionCommonModel question,
       String fieldName,
@@ -4541,55 +4676,14 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       String motaSp,
       value) async {
     var sType = getSearchType();
-    Get.dialog(DialogCustomizeWidget(
-      onPressedNegative: () async {
-        Get.back();
-      },
-      onPressedPositive: () async {
-        // Get.back();
-        // if (searchVcpaType.value == 1) {
-        //   await onFocusOpenDialogVcpa(
-        //       question, fieldName, product, idValue, stt, motaSp, value);
-        // }
-        if (searchVcpaType.value == 2) {
-          if (NetworkService.connectionType == Network.none) {
-            // snackBar('Thông báo', 'no_connect_internet'.tr,
-            //     style: ToastSnackType.error);
-            if (isInitializedEvaluator.value) {
-              Get.key.currentState?.pop();
-              await onFocusOpenDialogVcpa(
-                  question, fieldName, product, idValue, stt, motaSp, value);
-            } else {
-              snackBar(
-                  'Thông báo',
-                  responseMessageAI.value == ''
-                      ? 'Khởi tạo dữ liệu AI bị lỗi'
-                      : responseMessageAI.value,
-                  style: ToastSnackType.error);
-            }
-          } else {
-            Get.key.currentState?.pop();
-            await onFocusOpenDialogVcpa(
-                question, fieldName, product, idValue, stt, motaSp, value);
-          }
-        } else {
-          Get.key.currentState?.pop();
-          await onFocusOpenDialogVcpa(
-              question, fieldName, product, idValue, stt, motaSp, value);
-        }
-      },
-      title: 'Chọn hình thức tìm kiếm',
-      body: Obx(() => SelectOne(
-          onChange: onChangeSearhType,
-          listValue: sType,
-          value: searchVcpaType.value)),
-    ));
+    await onFocusOpenDialogVcpa(
+        question, fieldName, product, idValue, stt, motaSp, value);
   }
 
   onChangeSearhType(int value) async {
     debugPrint('Search type: $value');
     searchVcpaType.value = value;
-    if (searchVcpaType.value == 2) {
+    if (searchVcpaType.value == 0) {
       if (NetworkService.connectionType == Network.none) {
         // return snackBar('Thông báo', 'no_connect_internet'.tr,
         //     style: ToastSnackType.error);
@@ -4646,155 +4740,51 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     tblDmMoTaSanPhamSearch.refresh();
     sanPhamIdSelected.value = idValue;
     moTaSpSelected.value = motaSp;
-    await getLinhVucSelected(product.a5_1_2 ?? '');
+    await getLinhVucSelected(product.a5_1_1 ?? '');
+
     if (searchVcpaType.value == 1) {
-      await onSearchVcpaCap5(motaSp);
+      //  await onSearchVcpaCap5(motaSp);
+      await onStartSearchVcpaCap5(moTaSpSelected.value ?? '');
     } else {
       startSearch.value = false;
     }
     tblDmMoTaSanPhamSearch.refresh();
-    String searchTypeText = searchVcpaType.value == 2 ? 'AI' : 'Danh mục';
-
+    String searchTypeText = searchVcpaType.value == 1 ? 'AI' : 'Danh mục';
     Get.dialog(Dialog.fullscreen(
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(children: [
-              Container(
-                  //  width: Get.width,
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16.0),
-                  // decoration: const BoxDecoration(
-                  //   color: Colors.white70,
-                  // ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Expanded(
-                                flex: 4,
-                                child: Text(
-                                    'Tìm nhóm sản phẩm từ $searchTypeText',
-                                    style: styleMedium,
-                                    textAlign: TextAlign.center)),
-                            Expanded(
-                                flex: 1,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    onCloseSearch();
-                                  },
-                                  // styling the button
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      padding: const EdgeInsets.all(0),
-                                      // Button color
-                                      backgroundColor: Colors.white,
-                                      // Splash color
-                                      foregroundColor: primaryColor,
-                                      elevation: 1.0,
-                                      side: const BorderSide(
-                                          color: primaryColor)),
-                                  child: const Text('Đóng'),
-                                ))
-                          ]),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      Obx(() {
-                        try {
-                          tblDmMoTaSanPhamSearch.refresh();
-                        } catch (e) {}
-                        return Column(children: [
-                          Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const Expanded(
-                                    flex: 1,
-                                    child:
-                                        Text('Lĩnh vực', style: styleMedium)),
-                                Expanded(
-                                  flex: 4,
-                                  child: InputDecorator(
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 16.0,
-                                                vertical: 0.0),
-                                        enabledBorder: const OutlineInputBorder(
-                                          // width: 0.0 produces a thin "hairline" border
-                                          borderSide: BorderSide(
-                                              color: primaryColor, width: 1.0),
-                                        ),
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0)),
-                                      ),
-                                      isEmpty: value == null || value == '',
-                                      child: DropdownButtonHideUnderline(
-                                          child: DropdownCategory(
-                                        onLinhVucSelected: (item) =>
-                                            onLinhVucSelected(item),
-                                        danhSachLinhVuc: tblLinhVucSp,
-                                        linhVucItemSelected:
-                                            linhVucSelected.value,
-                                      ))),
-                                )
-                              ]),
-                          const SizedBox(
-                            height: 18,
-                          ),
-                          SearchSpVcpa(
-                            //  onSearch: (pattern) => onSearchVcpaCap5(pattern),
-                            onChangeListViewItem: (item, product) =>
-                                onChangeListViewItem(item, product),
-                            value: motaSp,
-                            onChangeText: (inputValue) =>
-                                onChangeSearchVCPACap5(
-                                    question.bangDuLieu!,
-                                    question.maCauHoi!,
-                                    fieldName,
-                                    idValue,
-                                    stt,
-                                    inputValue),
-                            onPressSearch: () => onPressSearch(),
-                            filteredList: tblDmMoTaSanPhamSearch,
-                            phieuMauSpItem: product,
-                            searchType: searchVcpaType.value,
-                            startSearch: startSearch.value,
-                            onChangeSlider: (value) => onChangeSlider(value),
-                            responseMessage: responseMessageAI.value,
-                          )
-                        ]);
-                      })
+          Container(
+              //  width: Get.width,
+              width: double.infinity,
+              padding: const EdgeInsets.all(16.0),
+              // decoration: const BoxDecoration(
+              //   color: Colors.white70,
+              // ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  dialogHeaderContent(searchTypeText),
+                  // const Divider(),
+                  // Obx(() {
+                  //   tblDmMoTaSanPhamSearch.refresh();
+                  //   return tabContent(question, fieldName, product, idValue,
+                  //       stt, motaSp, value);
+                  //   //return tabContent(question, fieldName, product, idValue,  stt, motaSp, value);
+                  // })
+                  Obx(() {
+                    tblDmMoTaSanPhamSearch.refresh();
 
-                      // SearchVcpaMotasp(
-                      //   // listValue: controller.tblDmVsicIO,
-                      //   onSearch: (pattern) => onSearchVcpaCap5(pattern),
-                      //   value: value,
-                      //   onChange: (inputValue) => onChangeInputVCPACap5(
-                      //       question.bangDuLieu!,
-                      //       question.maCauHoi!,
-                      //       fieldName,
-                      //       idValue,
-                      //       stt,
-                      //       inputValue),
-                      //   isError: searchResultCap5.value,
-                      // ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.all(15),
-                      //     child: sliverListViewBuilder(),
-                      //   ),
-                      // ),
-                    ],
-                  ))
-            ]))));
+                    return SearchVcpaTab(
+                        aiTab: tabContent(question, fieldName, product, idValue,
+                            stt, moTaSpSelected.value, value),
+                        dmTab: tabContent(question, fieldName, product, idValue,
+                            stt, moTaSpSelected.value, value),
+                        onTabPress: (index) => onTabPress(index));
+                  })
+                ],
+              ))
+        ]))));
   }
 
   getLinhVucSelected(String maSp) async {
@@ -4818,8 +4808,126 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     }
   }
 
+  dialogHeaderContent(String searchTypeText) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            'Tìm kiếm ngành sản phẩm',
+            style: styleMedium.copyWith(fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        // const Spacer(),
+        ElevatedButton(
+          onPressed: () {
+            onCloseSearch();
+          },
+          // styling the button
+          style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              padding: const EdgeInsets.all(0),
+              // Button color
+              backgroundColor: Colors.white,
+              // Splash color
+              foregroundColor: primaryColor,
+              elevation: 1.0,
+              side: const BorderSide(color: primaryColor)),
+          child: const Text('Đóng'),
+        ),
+      ],
+    );
+  }
+
+  tabContent(
+      QuestionCommonModel question,
+      String fieldName,
+      TablePhieuMauTBSanPham product,
+      int idValue,
+      int stt,
+      String motaSp,
+      value) {
+    // return Obx(() {
+    // tblDmMoTaSanPhamSearch.refresh();
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text('Lĩnh vực', style: styleMedium),
+        if (searchVcpaType.value == 0)
+          Text(
+            aIModeStatus.value,
+            style: TextStyle(
+                color: aIModeStatus.value == 'Online'
+                    ? Colors.green
+                    : Colors.grey),
+          ),
+      ]),
+      InputDecorator(
+          decoration: InputDecoration(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+            enabledBorder: const OutlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide: BorderSide(color: primaryColor, width: 1.0),
+            ),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+          ),
+          isEmpty: value == null || value == '',
+          child: DropdownButtonHideUnderline(
+              child: DropdownCategory(
+            onLinhVucSelected: (item) => onLinhVucSelected(item),
+            danhSachLinhVuc: tblLinhVucSp,
+            linhVucItemSelected: linhVucSelected.value,
+          ))),
+      const SizedBox(
+        height: 18,
+      ),
+      SearchSpVcpa(
+        onChangeListViewItem: (item, product) =>
+            onChangeListViewItem(item, product),
+        value: motaSp,
+        onChangeText: (inputValue) => onChangeSearchText(inputValue),
+        onPressSearch: () => onPressSearch(),
+        filteredList: tblDmMoTaSanPhamSearch,
+        phieuMauSpItem: product,
+        searchType: searchVcpaType.value,
+        startSearch: startSearch.value,
+        onChangeSlider: (value) => onChangeSlider(value),
+        responseMessage: responseMessageAI.value,
+      )
+    ]);
+    // });
+  }
+
   onChangeSlider(value) async {
     limitNumSearchAI.value = value;
+  }
+
+  onTabPress(idx) async {
+    debugPrint('Tab pressed $idx');
+    tblDmMoTaSanPhamSearch.clear();
+    tblDmMoTaSanPhamSearch.refresh();
+    searchVcpaType.value = idx ?? 0;
+    if (idx == 0) {
+      await showDialogForAI();
+    }
+    await onStartSearchVcpaCap5(moTaSpSelected.value ?? '');
+  }
+
+  showDialogForAI() async {
+    if (NetworkService.connectionType == Network.none) {
+      if (isInitializedEvaluator.value) {
+      } else {
+        snackBar(
+            'Thông báo',
+            responseMessageAI.value == ''
+                ? 'Khởi tạo dữ liệu AI bị lỗi'
+                : responseMessageAI.value,
+            style: ToastSnackType.error);
+      }
+    } else {}
   }
 
   onChangeListViewItem(
@@ -4828,59 +4936,62 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
         "onChangeListViewItem linh vuc ${item?.maSanPham} - ${item?.tenSanPham}");
     log('ON onChangeListViewItem id moTaSpSelected: $sanPhamIdSelected $moTaSpSelected');
     try {
-      // if (sanPhamIdSelected.value == phieuMauSpItem.id) {}
-      // String vcpaCapx = '';
-      // String donViTinh = '';
-      // int idVal = phieuMauSpItem.id!;
-      // int stt = phieuMauSpItem.sTTSanPham!;
-      // vcpaCapx = item.maSanPham!;
-      // donViTinh = item.donViTinh ?? '';
-      // String mota = moTaSpSelected.value;
-      // var res = kiemTraMaVCPACap5(vcpaCapx);
-      // if (res) {
-      //   // await updateToDbSanPham(
-      //   //     tablePhieuMauSanPham, columnPhieuMauSanPhamA5_1_1, idVal, mota);
-      //   await updateToDbSanPham(
-      //       tablePhieuMauSanPham, columnPhieuMauSanPhamA5_1_2, idVal, vcpaCapx);
-      //   await updateToDbSanPham(tablePhieuMauSanPham,
-      //       columnPhieuMauSanPhamDonViTinh, idVal, donViTinh);
+      if (sanPhamIdSelected.value == phieuMauSpItem.id) {}
+      String vcpaCapx = '';
+      String donViTinh = '';
+      int idVal = phieuMauSpItem.id!;
+      int stt = phieuMauSpItem.sTTSanPham!;
+      vcpaCapx = item.maSanPham!;
+      donViTinh = item.donViTinh ?? '';
+      String mota = moTaSpSelected.value;
+      var res = kiemTraMaVCPACap5(vcpaCapx);
+      if (res) {
+        await updateToDbSanPham(tablePhieuMauTBSanPham,
+            colPhieuMauTBSanPhamA5_1_2, idVal, vcpaCapx);
+        /**
+             * todo  KIỂM TRA MÃ SẢN PHẨM CẤP 1 LÀ B, C, D, E:
+             * => CT_Phieu_NganhCN phiếu 7.1 CN
+             * todo   - Phải cập nhật thông sản phẩm đó cho bảng CT_Phieu_NganhCN
+             * todo   - Ngược lại XOÁ thông tin sản phẩm đó ở bảng CT_Phieu_NganhCN
+             * 
+             */
+        var hasBCDE = await hasA5_3BCDE(vcpaCapx);
+        if (hasBCDE) {}
+        /**
+             * todo  KIỂM TRA MÃ SẢN PHẨM CẤP 1 LÀ G VÀ NGÀNH CẤP 4 LÀ 6810 (TRỪ CÁC MÃ 4513, 4520, 45413, 4542, 461)
+             *  => CT_Phieu_NganhTM_SanPham
+             * todo   - Phải cập nhật thông tin sản phẩm đó cho bảng CT_Phieu_NganhTM_Sanpham
+             * todo   - Ngược lại XOÁ thông tin sản phẩm đó ở bảng CT_Phieu_NganhTM_Sanpham
+             * 
+             */
+        ///Kiểm tra: [MÃ SẢN PHẨM CẤP 1 LÀ G VÀ NGÀNH L6810  (TRỪ CÁC MÃ 4513-4520-45413-4542-461)]
+        var hasVcpa = await hasA5_5G_L6810(vcpaCapx);
+        if (hasVcpa) {}
 
-      //   List<String> fields = [
-      //     columnPhieuMauSanPhamA5_3,
-      //     columnPhieuMauSanPhamA5_3_1,
-      //     columnPhieuMauSanPhamA5_4,
-      //     columnPhieuMauSanPhamA5_5,
-      //     columnPhieuMauSanPhamA5_6,
-      //     columnPhieuMauSanPhamA5_6_1
-      //   ];
-      //   await phieuMauSanPhamProvider.updateMultiFieldNullValueById(
-      //       fields, null, currentIdCoSo!, idVal);
+        Map<String, dynamic> ddSp = {
+          ddSpId: idVal,
+          ddSpMaSanPham: vcpaCapx,
+          ddSpSttSanPham: stt,
+          ddSpIsCap1GL: hasVcpa
+        };
+        await updateAnswerDanhDauSanPhamByMap(stt, ddSp);
+        var hasCap2PhanV = await hasCap2_56PhanV(vcpaCapx, vcpaCap2PhanV);
+        Map<String, dynamic> ddSpCap2PhanV = {
+          ddSpId: idVal,
+          ddSpMaSanPham: vcpaCapx,
+          ddSpSttSanPham: stt,
+          ddSpIsCap2_56: hasCap2PhanV
+        };
+        await updateAnswerDanhDauSanPhamByMap(stt, ddSpCap2PhanV);
+        //   await updateToDbSanPham(tablePhieuMauSanPham,  columnPhieuMauSanPhamDonViTinh, idVal, donViTinh);
 
-      //   await getTablePhieuSanPham();
+        await getTablePhieuMauTBSanPham();
 
-      //   ///Kiểm tra: [MÃ SẢN PHẨM CẤP 1 LÀ G VÀ NGÀNH L6810  (TRỪ CÁC MÃ 4513-4520-45413-4542-461)] => HỎI CÂU 5.5
-      //   var hasVcpa = await hasA5_5G_L6810(vcpaCapx);
-      //   Map<String, dynamic> ddSp = {
-      //     ddSpId: idVal,
-      //     ddSpMaSanPham: vcpaCapx,
-      //     ddSpSttSanPham: stt,
-      //     ddSpIsCap1GL: hasVcpa
-      //   };
-      //   await updateAnswerDanhDauSanPhamByMap(stt, ddSp);
-      //   var hasCap2PhanV = await hasCap2_56PhanV(vcpaCapx, vcpaCap2PhanV);
-      //   Map<String, dynamic> ddSpCap2PhanV = {
-      //     ddSpId: idVal,
-      //     ddSpMaSanPham: vcpaCapx,
-      //     ddSpSttSanPham: stt,
-      //     ddSpIsCap2_56: hasCap2PhanV
-      //   };
-      //   await updateAnswerDanhDauSanPhamByMap(stt, ddSpCap2PhanV);
-
-      //   snackBar('Thông báo', 'Đã cập nhật');
-      //   log('ON onChangeListViewItem ĐÃ cập nhật mã VCPA cấp 5 vào bảng $tablePhieuMauSanPham');
-      // } else {
-      //   log('ON onChangeListViewItem chưa cập nhật mã VCPA cấp 5 vào bảng $tablePhieuMauSanPham');
-      // }
+        snackBar('Thông báo', 'Đã cập nhật');
+        log('ON onChangeListViewItem ĐÃ cập nhật mã VCPA cấp 5 vào bảng $tablePhieuMauTBSanPham');
+      } else {
+        log('ON onChangeListViewItem chưa cập nhật mã VCPA cấp 5 vào bảng $tablePhieuMauTBSanPham');
+      }
     } catch (e) {
       printError(info: e.toString());
     }
@@ -4898,8 +5009,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
 
   void onPressSearch() async {
     debugPrint('onPressSearch ${moTaSpSelected.value}');
-
-    await onSearchVcpaCap5(moTaSpSelected.value ?? '');
+    await onStartSearchVcpaCap5(moTaSpSelected.value ?? '');
   }
 
   onCloseSearch() async {
@@ -4915,15 +5025,34 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     //
   }
 
-  Future<Iterable<TableDmMotaSanpham?>> onSearchVcpaCap5(String search) async {
-    debugPrint('onSearchVcpaCap5 $search');
+  Future onStartSearchVcpaCap5(String keyword) async {
+    debugPrint('onStartSearchVcpaCap5 $keyword');
+    tblDmMoTaSanPhamSearch.clear();
+    tblDmMoTaSanPhamSearch.refresh();
+    keywordVcpaCap5.value = keyword;
     startSearch.value = true;
     responseMessageAI.value = '';
-    keywordVcpaCap5.value = search;
-    if (search.length >= 1) {
+    EasyDebounce.debounce(
+      'search_debounce',
+      Duration(milliseconds: 400),
+      () => onSearchVcpaCap5(moTaSpSelected.value ?? ''),
+    );
+    //  return await onSearchVcpaCap5(keyword);
+  }
+
+  Future<Iterable<TableDmMotaSanpham?>> onSearchVcpaCap5(String keyword) async {
+    debugPrint('onSearchVcpaCap5 $keyword');
+    // keywordVcpaCap5.value = keyword;
+    // startSearch.value = true;
+    // responseMessageAI.value = '';
+    if (keyword.isEmpty) {
+      tblDmMoTaSanPhamSearch.clear();
+      tblDmMoTaSanPhamSearch.refresh();
+    }
+    if (keyword.isNotEmpty) {
       if (searchVcpaType.value == 1) {
         List<Map> vcpaCap5s = await dmMotaSanphamProvider
-            .searchVcpaCap5ByLinhVuc(search, maLVSelected.value);
+            .searchVcpaCap5ByLinhVuc(keyword, maLVSelected.value);
         var result = vcpaCap5s.map((e) => TableDmMotaSanpham.fromJson(e));
 
         tblDmMoTaSanPhamSearch.value = result.toList();
@@ -4932,14 +5061,14 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
         startSearch.value = false;
         responseMessageAI.value = '';
         return result;
-      } else if (searchVcpaType.value == 2) {
+      } else if (searchVcpaType.value == 0) {
         ///Tìm kiếm offline với AI
         print('NetworkService.connectionType ${NetworkService.connectionType}');
         if (NetworkService.connectionType == Network.none) {
-          debugPrint('OFFLINE onSearchVcpaCap5 $search');
+          debugPrint('OFFLINE onSearchVcpaCap5 $keyword');
           if (isInitializedEvaluator.value) {
             final predictions = await _evaluator
-                .predict([search], topK: limitNumSearchAI.value);
+                .predict([keyword], topK: limitNumSearchAIValue);
             List<PredictionResult> _results =
                 predictions.isNotEmpty ? predictions.first : [];
             List<Map> vcpaCap5s = await dmMotaSanphamProvider
@@ -4955,15 +5084,13 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
         } else {
           ///Tìm kiếm online với AI
           var response = await vcpaVsicAIRepository.searchVcpaVsicByAI(
-              'vcpa', search,
-              limitNum: limitNumSearchAI.value);
-          debugPrint('searchVcpaVsicByAI ${response.statusCode}');
+              'vcpa', keyword,
+              limitNum: limitNumSearchAIValue);
+          debugPrint('searchVcpaVsicByAI ${response.statusCode}.');
           if (response.statusCode == 200) {
             if (response.body != null) {
               if (response.body!.isNotEmpty) {
                 var res = response.body!;
-                debugPrint(
-                    'searchVcpaVsicByAI ${response.statusCode} - ${res.length}');
                 List<Map> vcpaCap5s = await dmMotaSanphamProvider
                     .mapResultAIToDmSanPham(res, maLVSelected.value);
                 var result =
@@ -4989,6 +5116,11 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     }
     startSearch.value = false;
     return [];
+  }
+
+  onChangeSearchText(text) async {
+    debugPrint('ON onChangeSearchText: $text');
+    moTaSpSelected.value = text;
   }
 
   onChangeSearchVCPACap5(String table, String maCauHoi, String? fieldName,
@@ -5146,15 +5278,16 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     log('ON onChangeInputPhanV: id= $idValue $fieldName $value');
 
     try {
-      // await updateToDbSanPham(table, fieldName!, idValue, value);
-      // if (maCauHoi == "A5_2") {
-      //   var total5TValue = await total5T();
-      //   await updateAnswerToDB(tablePhieuMau, "A5_7", total5TValue);
-      //   var a7_9Value = getValueByFieldName(tablePhieuMau, columnPhieuMauA7_9);
-      //   if (a7_9Value != null) {
-      //     await tinhCapNhatA7_10A7_11A7_13(a7_9Value);
-      //   }
-      // }
+      await updateToDbSanPham(table, fieldName!, idValue, value);
+      if (maCauHoi == "A5_2") {
+        var total5TValue = await total5T();
+        await updateAnswerToDB(tablePhieuMauTB, colPhieuMauTBA5T, total5TValue);
+        var a5MValue =
+            getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA5_M);
+        if (a5MValue != null) {
+          await tinhCapNhatA8_M_A9_M_A10_M(a5MValue);
+        }
+      }
     } catch (e) {
       printError(info: e.toString());
     }
@@ -5184,46 +5317,48 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
       title: 'dialog_title_warning'.tr,
       content: 'Bạn có chắc muốn xoá sản phẩm này?',
     ));
-    // await phieuMauSanPhamProvider.deleteById(id);
-
-    // ///Tính lại A5_7 và A7_10A7_11A7_13
-    // var total5TValue = await total5T();
-    // await updateAnswerToDB(tablePhieuMau, "A5_7", total5TValue);
-    // var a7_9Value = getValueByFieldName(tablePhieuMau, columnPhieuMauA7_9);
-    // if (a7_9Value != null) {
-    //   await tinhCapNhatA7_10A7_11A7_13(a7_9Value);
-    // }
-    // var countRes =
-    //     await phieuMauSanPhamProvider.countNotIsDefaultByIdCoso(currentIdCoSo!);
-    // if (countRes == 0) {
-    //   await phieuMauSanPhamProvider.updateValue(
-    //       columnPhieuMauSanPhamA5_0, 2, currentIdCoSo);
-    // }
-    // await getTablePhieuSanPham();
-    // await danhDauSanPhamPhanVI();
-    // await danhDauSanPhamPhanVII();
   }
 
   executeConfirmDeleteProduct(id) async {
-    // await xacNhanLogicProvider.deleteByIdHoManHinh(currentIdCoSo!, 5);
-    // await phieuMauTBSanPhamProvider.deleteById(id);
+    await xacNhanLogicProvider.deleteByIdHoManHinh(
+        currentIdCoSo!, currentScreenNo.value);
+    await phieuMauTBSanPhamProvider.deleteById(id);
 
-    // ///Tính lại A5_7 và A7_10A7_11A7_13
-    // var total5TValue = await total5T();
-    // await updateAnswerToDB(tablePhieuMau, "A5_7", total5TValue);
-    // var a7_9Value = getValueByFieldName(tablePhieuMauTB, columnPhieuMauA7_9);
-    // if (a7_9Value != null) {
-    //   await tinhCapNhatA7_10A7_11A7_13(a7_9Value);
-    // }
-    // var countRes =
-    //     await phieuMauSanPhamProvider.countNotIsDefaultByIdCoso(currentIdCoSo!);
-    // if (countRes == 0) {
-    //   await phieuMauSanPhamProvider.updateValue(
-    //       columnPhieuMauSanPhamA5_0, 2, currentIdCoSo);
-    // }
-    // await getTablePhieuSanPham();
-    // await danhDauSanPhamPhanVI();
-    // await danhDauSanPhamPhanVII();
+    ///Tính lại  A5T: 5T. Tổng doanh thu của các sản phẩm năm 2025 (Tổng các câu A5.2*A4.1)
+    ///Tính lại A8: Doanh thu khách ngủ qua đêm(= câu 5.2 của phiếu TB * câu 5: Doanh thu từ khách ngủ qua đêm chiếm bao nhiêu phần trăm trong tổng doanh thu?)
+    ///Tính lại A9: Doanh thu khách không ngủ qua đêm (=câu 5.2 - câu 8: doanh thu khách ngủ qua đêm)
+    ///Tính lại A10: Số ngày khách do cơ sở lưu trú phục vụ = A8/A6(Giá bình quân 1 đêm/khách là bao nhiêu?)
+    /// (cũ A5_7 và A7_10A7_11A7_13 )
+    var total5TValue = await total5T();
+    await updateAnswerToDB(tablePhieuMauTB, colPhieuMauTBA5T, total5TValue);
+    var a5MValue = getValueByFieldName(
+        tablePhieuMauTB, colPhieuNganhLTA5_M); //columnPhieuMauA7_9
+    if (a5MValue != null) {
+      await tinhCapNhatA8_M_A9_M_A10_M(a5MValue);
+    }
+
+    /**
+     * todo Kiểm tra lại 
+     * B,C,D,E => bảng ngàng NganhCN
+     *  => Delete record nếu không thoả điều kiện
+     * Vận tải hành khách, hàng hoá => Bảng NganhVT
+     *  => Delete record nếu không thoả điều kiện 
+     * Lưu trú => Bảng NganhLT
+     *  => Delete record nếu không thoả điều kiện
+     * Thương mại => NganhTM, NganhTMSanpham
+     *  => Delete record nếu không thoả điều kiện
+     * todo
+      **/
+
+    await getTablePhieuMauTBSanPham();
+    await getTablePhieuNganhCN();
+    await getTablePhieuNganhVT();
+    await getTablePhieuNganhLT();
+    await getTablePhieuNganhTM();
+    await getTablePhieuNganhTMSanPham();
+
+    await danhDauSanPhamPhanVI();
+    await danhDauSanPhamPhanVII();
   }
 
   addNewRowProduct() async {
@@ -5232,13 +5367,18 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   }
 
   updateToDbSanPham(String table, String fieldName, idValue, value) async {
-    // var res = await phieuMauSanPhamProvider.isExistProductById(
-    //     currentIdCoSo!, idValue);
-    // if (res) {
-    //   await phieuMauSanPhamProvider.updateValueByIdCoso(
-    //       fieldName, value, currentIdCoSo, idValue);
-    // }
-    // await getTablePhieuSanPham();
+    var res = await phieuMauTBSanPhamProvider.isExistProductById(
+        currentIdCoSo!, idValue);
+    if (res) {
+      await phieuMauTBSanPhamProvider.updateValueByIdCoso(
+          fieldName, value, currentIdCoSo, idValue);
+          if(value.toString().length>=5){
+            var cap5=value.toString().substring(0,5);
+             await phieuMauTBSanPhamProvider.updateValueByIdCoso(
+          colPhieuMauTBSanPhamMaNganhC5, cap5, currentIdCoSo, idValue);
+          }
+    }
+    await getTablePhieuMauTBSanPham();
   }
 
   Future<TablePhieuMauTBSanPham> createSanPhamItem() async {
@@ -5275,7 +5415,8 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
 
   getValueA5_0(String table, String fieldName) {
     if (table == tablePhieuMauTBSanPham) {
-      var item = tblPhieuMauTBSanPham.where((x) => x.isDefault == 1).firstOrNull;
+      var item =
+          tblPhieuMauTBSanPham.where((x) => x.isDefault == 1).firstOrNull;
       if (item != null) {
         var tbl = item.toJson();
         return tbl[fieldName];
@@ -5293,10 +5434,17 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   }
 
   countHasMoreProduct(String table) {
-    // if (table == tablePhieuMauTBSanPham) {
-    //   var countItem = tblPhieuMauTBSanPham.where((x) => x.a5_0 == 1).length;
-    //   return countItem;
-    // }
+    if (table == tablePhieuMauTBSanPham) {
+      var countItem = tblPhieuMauTBSanPham
+          .where((x) =>
+              x.maNganhC5 != null &&
+              x.a5_1_1 != null &&
+              x.a5_1_2 != null &&
+              x.a5_2 != null &&
+              x.iDCoSo == currentIdCoSo)
+          .length;
+      return countItem;
+    }
     return 0;
   }
 
@@ -5305,8 +5453,6 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     if (maSanPham == '') {
       return true;
     }
-    // var result =
-    //     await dmNhomNganhVcpaProvider.kiemTraMaNganhCap1BCDEByMaVCPA(maSanPham);
     var result =
         await dmMotaSanphamProvider.kiemTraMaNganhCap1BCDEByMaVCPA(maSanPham);
     return result;
@@ -5363,7 +5509,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     // var resMaSPs =
     //     await phieuMauSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
     // if (resMaSPs.isNotEmpty) {
-      
+
     //   return await dmMotaSanphamProvider.kiemTraMaNganhCap1ByMaSanPham5(
     //       resMaSPs.join(';'), 'H');
     // }
@@ -5454,6 +5600,37 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   //   await showDialogValidNganhHPhanVIPhanVII(validSpVII!, warningMsg, id);
   // }
 
+  ///Thêm mới record cho bảng CT_Phieu_NganhCN
+  Future insertNewRecordNganhCN(String maVCPACap5) async {
+    var maxStt = await phieuNganhCNProvider.getMaxSTTByIdCoso(currentIdCoSo!);
+    maxStt = maxStt + 1;
+    var tblSp = TablePhieuNganhCN(
+        iDCoSo: currentIdCoSo,
+        sTT_SanPham: maxStt,
+        maNganhC5: maVCPACap5,
+        maDTV: AppPref.uid);
+    List<TablePhieuNganhCN> tblSps = [];
+    tblSps.add(tblSp);
+
+    phieuNganhCNProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
+  }
+
+  ///Thêm mới record cho bảng CT_Phieu_NganhCN
+  Future insertNewRecordNganhTMSanpham(String maVCPACap5) async {
+    var maxStt =
+        await phieuNganhTMSanphamProvider.getMaxSTTByIdCoso(currentIdCoSo!);
+    maxStt = maxStt + 1;
+    var tblSp = TablePhieuNganhTMSanPham(
+        iDCoSo: currentIdCoSo,
+        sTT_SanPham: maxStt,
+        maNganhC5: maVCPACap5,
+        maDTV: AppPref.uid);
+    List<TablePhieuNganhTMSanPham> tblSps = [];
+    tblSps.add(tblSp);
+
+    phieuNganhTMSanphamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
+  }
+
   ///END:: PHẦN VI
   /***********/
   ///
@@ -5472,7 +5649,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
     log('ON CHANGE onSelectDmA7_1: $fieldName $value $dmItem');
     try {
       updateAnswerToDB(table, fieldName ?? "", value);
-      updateAnswerTblPhieuMau(fieldName, value);
+      updateAnswerTblPhieuMau(fieldName, value, table);
 
       if (maCauHoi == "A7_1") {
         if (value != 1) {
@@ -5500,7 +5677,7 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
   backYesValueForYesNoQuestionA7_1(
       String table, String? maCauHoi, String? fieldName, value, dmItem) async {
     updateAnswerToDB(table, fieldName!, 1);
-    updateAnswerTblPhieuMau(fieldName, value);
+    updateAnswerTblPhieuMau(fieldName, value, table);
     Get.back();
   }
 
@@ -5513,10 +5690,10 @@ class QuestionNo07Controller extends BaseController with QuestionUtils {
         for (int i = 1; i <= 5; i++) {
           var fieldNameDel = '${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_$i';
           updateAnswerToDB(table, fieldNameDel, null);
-          updateAnswerTblPhieuMau(fieldNameDel, null);
+          updateAnswerTblPhieuMau(fieldNameDel, null, table);
         }
         updateAnswerToDB(table, 'A7_1_5_GhiRo', null);
-        updateAnswerTblPhieuMau('A7_1_5_GhiRo', null);
+        updateAnswerTblPhieuMau('A7_1_5_GhiRo', null, table);
       }
     } catch (e) {
       printError(info: e.toString());

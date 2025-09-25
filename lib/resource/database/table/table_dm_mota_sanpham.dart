@@ -1,4 +1,4 @@
-const String tableDmMoTaSanPham = 'DmMoTaSanPham';
+const String tableDmMoTaSanPham = 'CT_DM_MoTaSanPham';
 const String columnDmMoTaSPId = '_id';
 const String columnDmMoTaSPMaSanPham = 'MaSanPham';
 const String columnDmMoTaSPTenSanPham = 'TenSanPham';

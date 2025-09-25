@@ -38,8 +38,8 @@ class GeneralInformationController extends BaseController {
   final tenHuyenController = TextEditingController();
   final maXaController = TextEditingController();
   final tenXaController = TextEditingController();
-  final coSoSoTextController = TextEditingController();
-  final coSoSoGiaTriController = TextEditingController();
+  //final coSoSoTextController = TextEditingController();
+  final maCoSoController = TextEditingController();
   final tenCoSoController = TextEditingController();
   final dienThoaiController = TextEditingController();
   final emailController = TextEditingController();
@@ -54,7 +54,7 @@ class GeneralInformationController extends BaseController {
   final maDiaBanController = TextEditingController();
   final tenDiaBanController = TextEditingController();
   final hoSoController = TextEditingController();
-  final tenChuHoController = TextEditingController();
+  final tenChuCoSoController = TextEditingController();
   final maDanTocController = TextEditingController();
   final tenDanTocController = TextEditingController();
   final diaChiChuHoController = TextEditingController();
@@ -151,10 +151,13 @@ class GeneralInformationController extends BaseController {
 
         maThonController.text = tblBkCoSoSXKD.value.maThon ?? '';
         tenThonController.text = tblBkCoSoSXKD.value.tenThon ?? '';
-        coSoSoTextController.text = tblBkCoSoSXKD.value.tenThon ?? '';
+        // coSoSoTextController.text = tblBkCoSoSXKD.value.tenThon ?? '';
         maDiaBanController.text = tblBkCoSoSXKD.value.maDiaBan ?? '';
         tenDiaBanController.text = tblBkCoSoSXKD.value.tenDiaBan ?? '';
-        coSoSoGiaTriController.text = '';
+        maCoSoController.text = tblBkCoSoSXKD.value.maCoSo != null
+            ? tblBkCoSoSXKD.value.maCoSo.toString()
+            : '';
+        tenChuCoSoController.text = tblBkCoSoSXKD.value.tenChuCoSo ?? '';
         tenCoSoController.text = tblBkCoSoSXKD.value.tenCoSo ?? '';
         diaChiChuHoController.text = tblBkCoSoSXKD.value.diaChi ?? '';
         dienThoaiController.text = tblBkCoSoSXKD.value.dienThoai ?? '';
@@ -217,7 +220,7 @@ class GeneralInformationController extends BaseController {
             QuestionCommonModel.listFromJson(jsonDecode(question04));
 
         screenNos.value = questionsTemp.map((e) => e.manHinh!).toSet().toList();
-      }  
+      }
       // return questionSceenNo;
     } catch (e) {
       log('ERROR lấy danh sách câu hỏi phiếu: $e');
@@ -226,27 +229,24 @@ class GeneralInformationController extends BaseController {
   }
 
   Future onPressNext() async {
-    // var phoneValidate = Valid.validateMobile(dienThoaiController.text);
-    // if (phoneValidate != null && phoneValidate != '') {
-    //   return showError(phoneValidate);
-    // }
+    var phoneValidate = Valid.validateMobile(dienThoaiController.text);
+    if (phoneValidate != null && phoneValidate != '') {
+      return showError(phoneValidate);
+    }
     // setLoading(true);
 
     /// ! HỎI LẠI: CÓ CẬP NHẬT CÁC THÔNG TIN NÀY KHÔNG? CÁC Ô NHẬP NÀO ĐƯỢC PHÉP NHẬP ?????
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      // await bkCoSoSXKDProvider.updateValues(currentIdCoSo!, multiValue: {
-      //   "DienThoai": dienThoaiController.text,
-      //   "TenThon": tenThonController.text,
-      //   "DiaChi": diaChiChuHoController.text
-      //});
-      // await phieuMauProvider
-      //     .updateValuesMultiFields('', 1, currentIdCoSo!, multiValue: {
-      //   "A1_1": tenChuHoController.text,
-      //   "A1_2": diaChiChuHoController.text
-      // });
+      await bkCoSoSXKDProvider.updateValues(currentIdCoSo!, multiValue: {
+        "TenCoSo": tenCoSoController.text,
+        "DiaChi": diaChiChuHoController.text,
+        "TenChuCoSo": tenChuCoSoController.text,
+        "DienThoai": dienThoaiController.text,
+      });
+     
       await insertNewRecordSanPham();
-    }  
+    }
     setLoading(false);
     if (screenNos.isEmpty) {
       String msgContent =
@@ -282,10 +282,34 @@ class GeneralInformationController extends BaseController {
         QuestionNo07Controller.idCoSoKey: currentIdCoSo!,
         QuestionNo07Controller.isNhomNganhCap1BCEKey: '',
       });
-    } 
+    }
   }
 
 /***********/
+
+Future insertNewRecord() async {
+    var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
+    if (res == false) {
+      //var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
+      //     .selectMaNganhByIdCoSo(tblBkCoSoSXKD.value.iDCoSo!);
+      // var maNganhVcpa = '';
+      // if (maNganhs.isNotEmpty) {
+      //   maNganhVcpa = maNganhs.first;
+      // }
+      var maxStt =
+          await phieuMauTBSanPhamProvider.getMaxSTTByIdCoso(currentIdCoSo!);
+      maxStt = maxStt + 1;
+      var tblSp = TablePhieuMauTBSanPham(
+          iDCoSo: currentIdCoSo,
+          sTTSanPham: maxStt,
+          isDefault: 1,
+          maDTV: AppPref.uid);
+      List<TablePhieuMauTBSanPham> tblSps = [];
+      tblSps.add(tblSp);
+
+      await phieuMauTBSanPhamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
+    }
+  }
   ///San pham
 
   ///

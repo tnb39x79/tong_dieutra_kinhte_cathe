@@ -62,7 +62,7 @@ class TableBkCoSoSXKD {
   String? tenCoSo;
   String? diaChi;
   String? tenChuCoSo;
-  String? maDiaDiem;
+  int? maDiaDiem;
   String? dienThoai;
   String? email;
   int? soLaoDong;

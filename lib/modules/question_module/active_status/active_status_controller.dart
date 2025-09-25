@@ -128,8 +128,7 @@ class ActiveStatusController extends BaseController {
   }
 
   getTinhTrangHD() async {
-    var tinhTrangs = await dmTinhTrangHDProvider
-        .selectByMaDoiTuongDT(int.parse(currentMaDoiTuongDT!));
+    var tinhTrangs = await dmTinhTrangHDProvider.selectByMaDoiTuongDT();
 
     if (tblBkCoSoSXKD.value.maTrangThaiDT == AppDefine.hoanThanhPhongVan) {
       var ttDTTemp = TableDmTinhTrangHD.listFromJson(tinhTrangs);
@@ -236,42 +235,20 @@ class ActiveStatusController extends BaseController {
     }
   }
 
-  // updatePhieu07Mau() async {
-  //   await insertNewPhieu07MauTBCxx();
-  //   var phieuMau = await phieuMauProvider.selectByIdCoso(currentIdCoSo!);
-  //   if (phieuMau.isNotEmpty) {
-  //     await phieuMauProvider.updateById(columnMaTinhTrangHD,
-  //         currentIndex.value + 1, TablePhieuMau.fromJson(phieuMau).id!);
-  //   }
-  // }
-
-  // updatePhieu08() async {
-  //   await insertNewPhieu07MauTBCxx();
-  //   var phieu08 = await phieuTonGiaoProvider.selectByIdCoSo(currentIdCoSoTG!);
-  //   if (phieu08.isNotEmpty) {
-  //     await phieuTonGiaoProvider.updateById(columnMaTinhTrangHD,
-  //         currentIndex.value + 1, TablePhieuTonGiao.fromJson(phieu08).id!);
-  //   }
-  // }
-
   insertNewPhieu07MauTBCxx() async {
     var maTrangThaiHD = currentIndex.value + 1;
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      // var map = await bKCoSoSXKDProvider.getInformation(currentIdCoSo!);
-      // var tableBkCoSoSXKD = TableBkCoSoSXKD.fromJson(map);
       var phieuMau = await phieuProvider.selectByIdCoSo(currentIdCoSo!);
       if (phieuMau.isNotEmpty) {
-        // await phieuMauProvider.updateById(columnMaTinhTrangHD,
-        //     currentIndex.value + 1, TablePhieuMau.fromJson(phieuMau).id!);
       } else {
         var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
             .selectMaNganhByIdCoSo(tblBkCoSoSXKD.value.iDCoSo!);
         var maNganhMau = '';
         if (maNganhs.isNotEmpty) {
           maNganhMau = maNganhs.first;
-          await initRecordPhieu07Mau(
-              tblBkCoSoSXKD.value, maNganhMau, maTrangThaiHD);
+          await initRecordPhieu(tblBkCoSoSXKD.value, maNganhMau, maTrangThaiHD);
+          await initRecordPhieuMauTB(tblBkCoSoSXKD.value);
         }
         //await initRecordPhieu07Mau(tblBkCoSoSXKD.value, maTrangThaiHD);
       }
@@ -279,7 +256,9 @@ class ActiveStatusController extends BaseController {
   }
 
   ///BEGIN:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
-  Future initRecordPhieu07Mau(TableBkCoSoSXKD tableBkCoSoSXKD, String maNganh,
+  ///
+
+  Future initRecordPhieu(TableBkCoSoSXKD tableBkCoSoSXKD, String maNganh,
       int maTrangThaiHD) async {
     List<TablePhieu> tableP07Maus = [];
 
@@ -299,8 +278,32 @@ class ActiveStatusController extends BaseController {
         sDTCoSo: tableBkCoSoSXKD.dienThoai,
         maNganhMau: maNganh,
         maDTV: AppPref.uid);
+
     tableP07Maus.add(tableP07);
     await phieuProvider.insert(tableP07Maus, AppPref.dateTimeSaveDB!);
+  }
+
+  Future initRecordPhieuMauTB(TableBkCoSoSXKD tableBkCoSoSXKD) async {
+    var phieuMauTB = await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
+    if (phieuMauTB.isEmpty) {
+      List<TablePhieuMauTB> tablePhieuMauTBs = [];
+
+      var tableP07 = TablePhieuMauTB(
+          iDCoSo: tableBkCoSoSXKD.iDCoSo,
+          loaiPhieu: tableBkCoSoSXKD.loaiPhieu,
+          maTinh: tableBkCoSoSXKD.maTinh!,
+          maTKCS: tableBkCoSoSXKD.maTKCS,
+          maXa: tableBkCoSoSXKD.maXa,
+          maThon: tableBkCoSoSXKD.maThon,
+          iDDB: tableBkCoSoSXKD.iDDB,
+          maDiaBan: tableBkCoSoSXKD.maDiaBan,
+          a1_1: tableBkCoSoSXKD.maDiaDiem,
+          maDTV: AppPref.uid);
+      tablePhieuMauTBs.add(tableP07);
+
+      await phieuMauTBProvider.insert(
+          tablePhieuMauTBs, AppPref.dateTimeSaveDB!);
+    }
   }
 
   ///END:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.

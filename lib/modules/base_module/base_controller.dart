@@ -60,8 +60,9 @@ abstract class BaseController extends FullLifeCycleController
       title,
       msg,
       colorText: colorTxt,
-      backgroundColor: Colors.white.withOpacity(0.9),
+      backgroundColor: Colors.grey.shade100,
       duration: durationSecond,
+      
     );
   }
 

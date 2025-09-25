@@ -109,37 +109,40 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
   }
 
   Future<List<Map>> searchVcpaCap5ByLinhVuc(String keyword, String maLV) async {
-    //if (keyword != '') {
-    //   List<String> kws = keyword.split(' ');
-    //   List<String> whs = [];
-    //   for (var item in kws) {
-    //     String s1 =
-    //         "$columnDmMoTaSPTenSanPham LIKE '%$item%'  $columnDmMoTaSPMoTaChiTiet LIKE '%$item%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$item%' OR $columnDmMoTaSPMaSanPham LIKE '%$item%'";
-    //     whs.add(s1);
-    //   }
-    //   String s2 =
-    //         "$columnDmMoTaSPTenSanPham LIKE '%$keyword%'  $columnDmMoTaSPMoTaChiTiet LIKE '%$keyword%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$keyword%' OR $columnDmMoTaSPMaSanPham LIKE '%$keyword%'";
-    //   if (whs.isNotEmpty) {
-    //     String wh = "(${whs.join(' OR')}  OR $s2) AND $columnDmMoTaSPMaLV = '$maLV'";
-    //     if(maLV=='' || maLV=='0'){
-    //       wh = "(${whs.join(' OR ')} OR $s2 ) ";
-    //     }
-    //     final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
-    //   $wh
-    //   ''');
-    //     return maps;
-    //   }
-    // }
-    String sWh =
-        "($columnDmMoTaSPTenSanPham LIKE '%$keyword%'  OR $columnDmMoTaSPTenSanPhamKoDau LIKE '%$keyword%'  OR  $columnDmMoTaSPMoTaChiTiet LIKE '%$keyword%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$keyword%'  OR $columnDmMoTaSPMaSanPham LIKE '%$keyword%')";
-    if (maLV != '' && maLV != '0') {
-      sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
-    }
-    final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
+    if (keyword != '') {
+      List<String> kws = keyword.split(' ');
+      List<String> whs = [];
+      //   for (var item in kws) {
+      //     String s1 =
+      //         "$columnDmMoTaSPTenSanPham LIKE '%$item%' OR $columnDmMoTaSPMoTaChiTiet LIKE '%$item%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$item%' OR $columnDmMoTaSPMaSanPham LIKE '%$item%'";
+      //     whs.add(s1);
+      //   }
+      //   String s2 =
+      //         "$columnDmMoTaSPTenSanPham LIKE '%$keyword%' OR  $columnDmMoTaSPMoTaChiTiet LIKE '%$keyword%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$keyword%' OR $columnDmMoTaSPMaSanPham LIKE '%$keyword%'";
+      //   if (whs.isNotEmpty) {
+      //     String wh = "(${whs.join(' OR')}  OR $s2) AND $columnDmMoTaSPMaLV = '$maLV'";
+      //     if(maLV=='' || maLV=='0'){
+      //       wh = "(${whs.join(' OR ')} OR $s2 ) ";
+      //     }
+      //     final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
+      //   $wh
+      //   ''');
+      //     return maps;
+      //   }
+      // }
+      // return    [];
+      String sWh =
+          "($columnDmMoTaSPTenSanPham LIKE '%$keyword%' OR $columnDmMoTaSPTenSanPham = '$keyword' OR $columnDmMoTaSPTenSanPhamKoDau = '$keyword' OR $columnDmMoTaSPTenSanPhamKoDau LIKE '%$keyword%' OR  $columnDmMoTaSPMoTaChiTiet LIKE '%$keyword%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$keyword%'  OR $columnDmMoTaSPMaSanPham LIKE '%$keyword%')";
+      if (maLV != '' && maLV != '0') {
+        sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
+      }
+      final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
       $sWh
       ''');
 
-    return maps;
+      return maps;
+    }
+    return    [];
   }
 
   Future<List<Map>> mapResultAIToDmSanPham(
@@ -392,7 +395,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
         }
       });
     }
-     print('kiemTraMaNganhCap2ByMaSanPham5result $result');
+    print('kiemTraMaNganhCap2ByMaSanPham5result $result');
     return result.isNotEmpty;
   }
 

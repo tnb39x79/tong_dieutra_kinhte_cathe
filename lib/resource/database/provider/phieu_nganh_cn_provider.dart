@@ -52,12 +52,12 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
       (
       $columnId INTEGER PRIMARY KEY AUTOINCREMENT, 
       $colPhieuNganhCNIDCoSo  TEXT,
-      $colPhieuNganhCNSTTSanPham  INTEGER,
+      $colPhieuNganhCNSTT_SanPham  INTEGER,
       $colPhieuNganhCNMaNganhC5  TEXT,
       $colPhieuNganhCNA1_1  TEXT,
       $colPhieuNganhCNA1_2  TEXT,
-      $colPhieuNganhCNA2_3  TEXT,
-      $colPhieuNganhCNA2_4  REAL,
+      $colPhieuNganhCNA2_1  TEXT,
+      $colPhieuNganhCNA2_2  REAL,
       $columnMaDTV  TEXT,
       $columnCreatedAt TEXT,
       $columnUpdatedAt TEXT
@@ -111,6 +111,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     log('UPDATE PHIEU 04_C32: ${i.toString()}');
   }
 
+
   Future<List<Map>> selectByIdCoso(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
@@ -122,6 +123,8 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     return maps;
   }
 
+  
+
   Future<List<Map>> selectByIdCosoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
@@ -130,8 +133,8 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
           WHERE $columnIDCoSo = '$idCoso' 
           AND $colPhieuNganhCNA1_1 is not null
           AND $colPhieuNganhCNA1_2 is not null
-          AND $colPhieuNganhCNA2_3 is not null
-          AND $colPhieuNganhCNA2_4 is not null 
+          AND $colPhieuNganhCNA2_1 is not null
+          AND $colPhieuNganhCNA2_2 is not null 
           AND $columnCreatedAt = '$createdAt' ORDER BY STT
         ''');
     return maps;

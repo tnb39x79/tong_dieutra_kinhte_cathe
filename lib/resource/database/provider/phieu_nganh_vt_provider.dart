@@ -107,11 +107,6 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
       $colPhieuNganhVTA1_14_4  INTEGER,
       $colPhieuNganhVTA5  INTEGER,
       $colPhieuNganhVTA6  INTEGER,
-      $colPhieuNganhVTA1M  INTEGER,
-      $colPhieuNganhVTA2M  INTEGER,
-      $colPhieuNganhVTA3M  REAL,
-      $colPhieuNganhVTA4M  INTEGER,
-      $colPhieuNganhVTA5M  REAL,
       $colPhieuNganhVTA7_1_1  INTEGER,
       $colPhieuNganhVTA7_1_2  INTEGER,
       $colPhieuNganhVTA7_1_3  REAL,
@@ -176,13 +171,18 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
       $colPhieuNganhVTA7_16_2  INTEGER,
       $colPhieuNganhVTA7_16_3  REAL,
       $colPhieuNganhVTA7_16_4  REAL,
-      $colPhieuNganhVTA8  INTEGER,
-      $colPhieuNganhVTA9  REAL,
-      $colPhieuNganhVTA6M  INTEGER,
-      $colPhieuNganhVTA7M  REAL,
-      $colPhieuNganhVTA8M  REAL,
-      $colPhieuNganhVTA9M  REAL,
-      $colPhieuNganhVTA10M  REAL,
+      $colPhieuNganhVTA11  INTEGER,
+      $colPhieuNganhVTA12  REAL,
+      $colPhieuNganhVTA1_M  INTEGER,
+      $colPhieuNganhVTA2_M  INTEGER,
+      $colPhieuNganhVTA3_M  REAL,
+      $colPhieuNganhVTA4_M  INTEGER,
+      $colPhieuNganhVTA5_M  REAL,
+      $colPhieuNganhVTA6_M  INTEGER,
+      $colPhieuNganhVTA7_M  REAL,
+      $colPhieuNganhVTA8_M  REAL,
+      $colPhieuNganhVTA9_M  REAL,
+      $colPhieuNganhVTA10_M  REAL,
       $columnMaDTV  TEXT,
       $columnCreatedAt TEXT,
       $columnUpdatedAt TEXT
@@ -251,18 +251,40 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     return result;
   }
 
-  Future<List<Map>> selectByIdCoso(String idCoso) async {
+  Future updateMultiValues(String idCoSo,
+      {Map<String, Object?>? multiValue}) async {
+    String createdAt = AppPref.dateTimeSaveDB ?? "";
+    if (multiValue != null) {
+      multiValue['UpdatedAt'] = DateTime.now().toIso8601String();
+      await db!.update(tablePhieuNganhVT, multiValue,
+          where: '$columnIDCoSo= ? AND $columnCreatedAt = ? ',
+          whereArgs: [idCoSo, createdAt]);
+    }
+  }
+
+  Future<List<Map>> selectListByIdCoSo(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''
-          SELECT * FROM $tablePhieuNganhVT 
-          WHERE $columnIDCoSo = '$idCoso' 
+          SELECT * FROM $tablePhieuNganhVT
+          WHERE $columnIDCoSo = '$idCoso'
           AND $columnCreatedAt = '$createdAt'
         ''');
     return maps;
   }
 
-  Future<List<Map>> selectByIdCosoSync(String idCoso) async {
+  Future<Map> selectByIdCoSo(String idCoso) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    List<Map> map = await db!.rawQuery('''
+          SELECT * FROM $tablePhieuNganhVT 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND $columnCreatedAt = '$createdAt'
+        ''');
+    return map.isNotEmpty ? map[0] : {};
+  }
+
+  Future<List<Map>> selectByIdCoSoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''

@@ -43,7 +43,7 @@ class SyncRepository {
 
 
   Future<ResponseToken<TokenModel>> getToken(
-      {required String userName, required String password}) async {
+      {required String userName, required String password,String? iMei}) async {
     if (NetworkService.connectionType == Network.none) {
       return ResponseToken.withDisconnect();
     }
@@ -51,6 +51,7 @@ class SyncRepository {
       'grant_type': 'password',
       'username': userName,
       'password': password,
+       'imei': iMei??''
     };
 
     final params = {'grant_type': 'refresh_token'};

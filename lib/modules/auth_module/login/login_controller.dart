@@ -141,8 +141,8 @@ class LoginController extends BaseController {
 
         final response0 = await authRepository
             .getExtraToken(
-                userName: getEditingController(keyUserName).text.trim(),
-                password: getEditingController(keyPass).text.trim(),
+                userName: userName.trim(),
+                password: password.trim(),
                 url:
                     'http://${response.body!.domainAPI}:${response.body!.portAPI}/',
                 iMei: imei)

@@ -109,7 +109,7 @@ class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPha
     log('UPDATE PHIEU 04_C32: ${i.toString()}');
   }
 
-  Future<List<Map>> selectByIdCoso(String idCoso) async {
+  Future<List<Map>> selectByIdCoSo(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''
@@ -120,7 +120,7 @@ class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPha
     return maps;
   }
 
-  Future<List<Map>> selectByIdCosoSync(String idCoso) async {
+  Future<List<Map>> selectByIdCoSoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''

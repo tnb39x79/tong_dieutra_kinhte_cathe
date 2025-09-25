@@ -77,7 +77,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
         $colBkCoSoSXKDTenCoSo  TEXT,
         $colBkCoSoSXKDDiaChi  TEXT,
         $colBkCoSoSXKDTenChuCoSo  TEXT,
-        $colBkCoSoSXKDMaDiaDiem  TEXT,
+        $colBkCoSoSXKDMaDiaDiem  INTEGER,
         $colBkCoSoSXKDDienThoai  TEXT,
         $colBkCoSoSXKDEmail  TEXT,
         $colBkCoSoSXKDSoLaoDong  INTEGER,
@@ -116,7 +116,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     throw UnimplementedError();
   }
 
-  Future<int?> countOfUnInterviewed(int maDoiTuongDT, String maDiaBan) async {
+  Future<int?> countOfUnInterviewed(int maDoiTuongDT, String maDiaBan,String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
@@ -125,6 +125,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       AND $columnMaDTV = '${AppPref.uid}'
       AND $columnMaPhieu = '$maDoiTuongDT' 
       AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
+      AND $colBkCoSoSXKDMaXa = '$maXa'
       '''));
 
     return count;
@@ -143,7 +144,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return count;
   }
 
-  Future<int?> countOfInterviewed(int maDoiTuongDT, String maDiaBan) async {
+  Future<int?> countOfInterviewed(int maDoiTuongDT, String maDiaBan,String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
@@ -151,6 +152,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       AND $columnCreatedAt = '$createdAt'
       AND $colBkCoSoSXKDLoaiPhieu = $maDoiTuongDT
       AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
+      AND $colBkCoSoSXKDMaXa = '$maXa'
       AND $columnMaDTV = '${AppPref.uid}'
       '''));
     return count;
@@ -194,7 +196,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   }
 
   Future<List<Map>> selectListUnInterviewedAll(
-      int maDoiTuongDT, String maDiaBan) async {
+      int maDoiTuongDT, String maDiaBan,String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     return await db!.rawQuery('''
@@ -204,11 +206,12 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     AND $columnMaDTV = '${AppPref.uid}'
     AND $colBkCoSoSXKDLoaiPhieu = $maDoiTuongDT
     AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
+    AND $colBkCoSoSXKDMaXa = '$maXa'
     ''');
   }
 
   Future<List<Map>> searchListUnInterviewedAll(
-      int maDoiTuongDT, String maDiaBan, String search) async {
+      int maDoiTuongDT, String maDiaBan,String maXa, String search) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     return await db!.rawQuery('''
@@ -217,6 +220,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     AND $colBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
     AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
     AND $colBkCoSoSXKDLoaiPhieu = '$maDoiTuongDT'
+    AND $colBkCoSoSXKDMaXa = '$maXa'
     AND $columnMaDTV = '${AppPref.uid}'
     AND $colBkCoSoSXKDTenCoSo LIKE '%$search%'
     OR $colBkCoSoSXKDTenCoSo LIKE '%$search'
@@ -224,7 +228,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   }
 
   Future<List<Map>> selectListInterviewedAll(
-      int maDoiTuongDT, String maDiaBan) async {
+      int maDoiTuongDT, String maDiaBan,String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
 
     return await db!.rawQuery('''
@@ -234,11 +238,12 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
      AND $columnMaDTV = '${AppPref.uid}'
     AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
     AND $colBkCoSoSXKDLoaiPhieu = '$maDoiTuongDT'
+    AND $colBkCoSoSXKDMaXa = '$maXa'
     ''');
   }
 
   Future<List<Map>> searchListInterviewedAll(
-      int maDoiTuongDT, String maDiaBan, String search) async {
+      int maDoiTuongDT, String maDiaBan,String maXa, String search) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     return await db!.rawQuery('''
@@ -247,6 +252,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
     AND $colBkCoSoSXKDMaDiaBan = '$maDiaBan'
     AND $colBkCoSoSXKDLoaiPhieu = '$maDoiTuongDT'
+    AND $colBkCoSoSXKDMaXa = '$maXa'
     AND $columnMaDTV = '${AppPref.uid}'
     AND $colBkCoSoSXKDTenCoSo LIKE '%$search%'
     OR $colBkCoSoSXKDTenCoSo LIKE '%$search'

@@ -1,6 +1,6 @@
 import 'table_p07mau.dart';
 
-const String tablePhieuNganhLT = 'CT_PhieuNganhLT';
+const String tablePhieuNganhLT = 'CT_Phieu_NganhLT';
 
 const String colPhieuNganhLTId = '_id';
 const String colPhieuNganhLTIDCoSo = 'IDCoSo';
@@ -43,8 +43,12 @@ const String colPhieuNganhLTA1_M = 'A1_M';
 const String colPhieuNganhLTA1_1_M = 'A1_1_M';
 const String colPhieuNganhLTA2_M = 'A2_M';
 const String colPhieuNganhLTA2_1_M = 'A2_1_M';
+
+///3. Số ngày sử dụng phòng bình quân 1 tháng trong năm 2025?
 const String colPhieuNganhLTA3_M = 'A3_M';
 const String colPhieuNganhLTA4_M = 'A4_M';
+
+///5. Doanh thu từ khách ngủ qua đêm chiếm bao nhiêu phần trăm trong tổng doanh thu?																					
 const String colPhieuNganhLTA5_M = 'A5_M';
 const String colPhieuNganhLTA6_M = 'A6_M';
 const String colPhieuNganhLTA7_M = 'A7_M';
@@ -142,7 +146,7 @@ List<String> fieldNamesPhan7LTMau = [
   colPhieuNganhLTA7_1_M,
   colPhieuNganhLTA8_M,
   colPhieuNganhLTA9_M,
-  colPhieuNganhLTA10_M
+  colPhieuNganhLTA10_M,
 ];
 
 class TablePhieuNganhLT {

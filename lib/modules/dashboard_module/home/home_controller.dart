@@ -607,12 +607,12 @@ class HomeController extends BaseController with SyncMixin {
   onInterViewScreen() async {
     Map? isHad = await hasGetDataPv();
     if (isHad != null) {
-      if (isDefaultUserType()) {
+      //if (isDefaultUserType()) {
         AppPref.dateTimeSaveDB = isHad['CreatedAt'];
         Get.toNamed(AppRoutes.interviewObjectList);
-      } else {
-        await goToGeneralInformation();
-      }
+      // } else {
+      //   await goToGeneralInformation();
+      // }
     } else {
       snackBar(
         'not_had_db'.tr,

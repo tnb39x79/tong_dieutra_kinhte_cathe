@@ -1,6 +1,6 @@
 import 'table_p07mau.dart';
 
-const String tablePhieuNganhTMSanPham = 'CT_PhieuNganhTMSanPham';
+const String tablePhieuNganhTMSanPham = 'CT_Phieu_NganhTM_SanPham';
 
 const String colPhieuNganhTMSanPhamId = '_id';
 const String colPhieuNganhTMSanPhamIDCoSo = 'IDCoSo';
@@ -28,6 +28,7 @@ class TablePhieuNganhTMSanPham {
       this.sTT_SanPham,
       this.maNganhC5,
       this.a1_2,
+      this.maDTV,
       this.createdAt,
       this.updatedAt});
 

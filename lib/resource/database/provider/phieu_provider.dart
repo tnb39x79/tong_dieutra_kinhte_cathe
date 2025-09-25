@@ -56,6 +56,7 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
         $colPhieuMaThon  TEXT,
         $colPhieuIDDB  TEXT,
         $colPhieuMaDiaBan  TEXT,
+        $colPhieuTrangThaiCoSo  INTEGER,
         $colPhieuMaCoSo  INTEGER,
         $colPhieuTenCoSo  TEXT,
         $colPhieuDiaChi  TEXT,

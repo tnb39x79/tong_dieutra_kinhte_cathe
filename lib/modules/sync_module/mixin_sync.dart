@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart';
+import 'package:gov_statistics_investigation_economic/modules/dashboard_module/main_menu/main_menu_controller.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/database_helper.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
@@ -26,6 +27,8 @@ import 'package:archive/archive_io.dart';
 
 mixin SyncMixin {
   Map body = {};
+
+   final MainMenuController mainMenuController = Get.find();
 
   final bkCoSoSXKDMixProvider = BKCoSoSXKDProvider();
   final diaBanCoSoSXKDMixProvider = DiaBanCoSoSXKDProvider();
@@ -119,14 +122,14 @@ mixin SyncMixin {
     List<Map> phieuNganhCNs =
         await phieuNganhCNMixProvider.selectByIdCosoSync(iDCoSo);
     List<Map> phieuNganhLTs =
-        await phieuNganhLTMixProvider.selectByIdCosoSync(iDCoSo);
+        await phieuNganhLTMixProvider.selectByIdCoSoSync(iDCoSo);
 
     List<Map> phieuNganhTMs =
-        await phieuNganhTMMixProvider.selectByIdCosoSync(iDCoSo);
+        await phieuNganhTMMixProvider.selectByIdCoSoSync(iDCoSo);
     List<Map> phieuNganhTMSanPhams =
-        await phieuNganhTMSanphamMixProvider.selectByIdCosoSync(iDCoSo);
+        await phieuNganhTMSanphamMixProvider.selectByIdCoSoSync(iDCoSo);
     List<Map> phieuNganhVTs =
-        await phieuNganhVTMixProvider.selectByIdCosoSync(iDCoSo);
+        await phieuNganhVTMixProvider.selectByIdCoSoSync(iDCoSo);
     List<Map> phieuNganhVTGhiRos =
         await phieuNganhVTGhiRoMixProvider.selectByIdCosoSync(iDCoSo);
 
@@ -163,7 +166,7 @@ mixin SyncMixin {
     developer.log('SYNC SUCCESS: ${request.body}');
     // if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
     //   var resp = await syncRepository.getToken(
-    //       userName: AppPref.userName ?? '', password: AppPref.password ?? '');
+    //       userName: AppPref.userName ?? '', password: AppPref.password ?? '',iMei: mainMenuController.userModel.value.iMei);
     //   AppPref.extraToken = resp.body?.accessToken;
     //   uploadDataMixin(syncRepository, sendErrorRepository, progress,
     //       isRetryWithSignIn: true);
@@ -263,7 +266,7 @@ mixin SyncMixin {
 
     if (_request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
       var resp = await syncRepository.getToken(
-          userName: AppPref.userName, password: AppPref.password);
+          userName: AppPref.userName, password: AppPref.password,iMei: mainMenuController.userModel.value.iMei);
       AppPref.accessToken = resp.body?.accessToken;
       uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: true);
@@ -347,7 +350,7 @@ mixin SyncMixin {
 
     if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
       var resp = await syncRepository.getToken(
-          userName: AppPref.userName, password: AppPref.password);
+          userName: AppPref.userName, password: AppPref.password,iMei: mainMenuController.userModel.value.iMei);
       AppPref.accessToken = resp.body?.accessToken;
       uploadFullDataJson(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: true);

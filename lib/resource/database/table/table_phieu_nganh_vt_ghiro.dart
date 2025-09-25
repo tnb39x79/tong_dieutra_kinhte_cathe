@@ -1,6 +1,6 @@
 import 'table_p07mau.dart';
 
-const String tablePhieuNganhVTGhiRo = 'CT_PhieuNganhVTGhiRo';
+const String tablePhieuNganhVTGhiRo = 'CT_Phieu_NganhVT_GhiRo';
 
 const String colPhieuNganhVTGhiRoId = '_id';
 const String colPhieuNganhVTGhiRoIDCoSo = 'IDCoSo';

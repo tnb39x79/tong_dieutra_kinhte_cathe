@@ -1,4 +1,4 @@
-const String tableDmCoKhong = 'KT_DM_CoKhong'; 
+const String tableDmCoKhong = 'CT_DM_CoKhong'; 
 const String columnDmCoKhongId = '_id';
 const String columnDmCoKhongMa = 'Ma';
 const String columnDmCoKhongTen= 'Ten';  
