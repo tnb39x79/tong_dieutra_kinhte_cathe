@@ -50,7 +50,7 @@ class CTDmLinhVucProvider extends BaseDBProvider<TableCTDmLinhVuc> {
       (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
         $columnMa INTEGER,
-        $columnTen TEXT 
+        $columnTen TEXT
       )
       ''');
   }

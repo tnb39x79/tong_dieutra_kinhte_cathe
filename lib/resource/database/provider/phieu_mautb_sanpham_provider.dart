@@ -59,7 +59,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
       $colPhieuMauTBSanPhamA5_1_2  TEXT,
       $colPhieuMauTBSanPhamA5_2  REAL,
       $columnPhieuMauSanPhamDefault INTEGER, 
-      $columnPhieuMauSanPhamIsSync INTEGER,
+      $columnPhieuMauSanPhamIsSync INTEGER, 
       $columnMaDTV  TEXT,
       $columnCreatedAt TEXT,
       $columnUpdatedAt TEXT
@@ -90,7 +90,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
     ''');
   }
 
-  Future updateValue(String fieldName, value, idCoSo) async {
+  Future updateValue(String fieldName, value, columnId) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     Map<String, Object?> values = {
       fieldName: value,
@@ -99,7 +99,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
 
     var i = await db!.update(tablePhieuMauTBSanPham, values,
         where:
-            "$columnIDCoSo = '$idCoSo'  AND $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'");
+            "$columnId = '$columnId'  AND $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'");
 
     log('UPDATE PHIEU 04: $i');
   }
@@ -326,7 +326,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT_SanPham) as MaxSTT FROM $tablePhieuMauTBSanPham 
+          SELECT MAX($colPhieuMauTBSanPhamSTTSanPham) as MaxSTT FROM $tablePhieuMauTBSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
         ''');
@@ -470,6 +470,43 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
           AND $columnCreatedAt = '$createdAt'
         ''');
 
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result.add(value);
+        }
+      });
+    }
+    return result;
+  }
+
+  ///
+  ///dsSPs: masanpham cach nhau dau ;
+  Future<List<Map>> getSanPhamsByIdCosoSps(String idCoso, String dsSPs) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    var vcpa5Inputs = dsSPs.split(';');
+    List<Map> maps = await db!.rawQuery('''
+          SELECT * FROM $tablePhieuMauTBSanPham 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND $columnMaDTV='${AppPref.uid}'
+          AND $colPhieuMauTBSanPhamA5_1_2 in (${vcpa5Inputs.map((e) => "'$e'").join(', ')}) 
+          AND $columnCreatedAt = '$createdAt' ORDER BY STT_SanPham
+        ''');
+    return maps;
+  }
+
+  Future<List<String>> getMaSanPhamsByIdCosoSps(
+      String idCoso, String dsSPs) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<String> result = [];
+    var vcpa5Inputs = dsSPs.split(';');
+    List<Map> maps = await db!.rawQuery('''
+          SELECT $colPhieuMauTBSanPhamA5_1_2  FROM $tablePhieuMauTBSanPham 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND $columnMaDTV='${AppPref.uid}'
+          AND $colPhieuMauTBSanPhamA5_1_2 in (${vcpa5Inputs.map((e) => "'$e'").join(', ')}) 
+          AND $columnCreatedAt = '$createdAt' ORDER BY STT_SanPham
+        ''');
     for (var item in maps) {
       item.forEach((key, value) {
         if (value != null) {

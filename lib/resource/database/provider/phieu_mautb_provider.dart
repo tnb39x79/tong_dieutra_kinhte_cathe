@@ -213,7 +213,19 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
 
     log('UPDATE PHIEU 04: $i');
   }
+  Future updateValueByIdCoSo(String fieldName, value, idCoSo) async {
+    String createAt = AppPref.dateTimeSaveDB!;
+    Map<String, Object?> values = {
+      fieldName: value,
+      columnUpdatedAt: DateTime.now().toIso8601String(),
+    };
+    var i = await db!.update(tablePhieuMauTB, values,
+        where:
+            '''$columnIDCoSo = '$idCoSo' AND $columnMaDTV = '${AppPref.uid}' AND  $columnCreatedAt = '$createAt'
+            ''');
 
+    log('UPDATE PHIEU 04: $i');
+  }
   ///update multi field
   Future updateValuesMultiFields(fieldName, value, String idCoSo,
       {Map<String, Object?>? multiValue}) async {
@@ -364,44 +376,28 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     }
     return result;
   }
+ 
+  // Future<bool> kiemTraPhanVIVIIValues(
+  //     String idCoso, List<String> fieldNames) async {
+  //   List<int> result = [];
 
-  Future<bool> getLocation(String idCoso) async {
-    String createdAt = AppPref.dateTimeSaveDB!;
-    double result = 0;
-    String sql =
-        "SELECT $columnKinhDo,$columnViDo FROM $tablePhieuMauTB  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
-    List<Map> map = await db!.rawQuery(sql);
-    for (var item in map) {
-      item.forEach((key, value) {
-        if (value != null) {
-          result = value;
-        }
-      });
-    }
-    return result > 0;
-  }
-
-  Future<bool> kiemTraPhanVIVIIValues(
-      String idCoso, List<String> fieldNames) async {
-    List<int> result = [];
-
-    String createdAt = AppPref.dateTimeSaveDB!;
-    List<String> fields = [];
-    for (var item in fieldNames) {
-      fields.add(" $item ");
-    }
-    String sql =
-        "SELECT ${fields.join(',')}  FROM $tablePhieuMauTB WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
-    List<Map> map = await db!.rawQuery(sql);
-    for (var item in map) {
-      item.forEach((key, value) {
-        if (value != null) {
-          result.add(1);
-        }
-      });
-    }
-    return result.isNotEmpty;
-  }
+  //   String createdAt = AppPref.dateTimeSaveDB!;
+  //   List<String> fields = [];
+  //   for (var item in fieldNames) {
+  //     fields.add(" $item ");
+  //   }
+  //   String sql =
+  //       "SELECT ${fields.join(',')}  FROM $tablePhieuMauTB WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+  //   List<Map> map = await db!.rawQuery(sql);
+  //   for (var item in map) {
+  //     item.forEach((key, value) {
+  //       if (value != null) {
+  //         result.add(1);
+  //       }
+  //     });
+  //   }
+  //   return result.isNotEmpty;
+  // }
 
   Future<int> updateNullValues(String idCoso, List<String> fieldNames) async {
     int result = 0;

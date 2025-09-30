@@ -23,9 +23,13 @@ abstract class AppRoutes {
   static const generalInformation = '/general-information';
   static const sync = '/sync';
   static const intervieweeInformation = '/interviewee-information';
- 
-  static const question07 = '/question-07';
-  static const question08 = '/question-08'; 
+
+  static const questionTB = '/question-tb';
+  static const questionPhieuCN = '/question-phieu-cn';
+  static const questionPhieuVT = '/question-phieu-vt';
+  static const questionPhieuLT = '/question-phieu-lt';
+  static const questionPhieuTM = '/question-phieu-tm';
+  static const questionPhieuMau = '/question-phieu-mau';
 
   //progress
   static const progress = '/progress';
@@ -36,4 +40,5 @@ abstract class AppRoutes {
   //check ky dieu tra
   static const checkkydieutra = '/check-kydieutra';
   static const downloadModelAI = '/download-model-ai';
+   static const downloadModelAI_V2 = '/download-model-ai-v2';
 }

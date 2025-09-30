@@ -1,10 +1,11 @@
 import 'dart:convert';
 
-import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart'; 
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_phieu.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_quoctich.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_cokhong.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dantoc.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_gioitinh.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_linhvuc.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_mota_sanpham.dart';
@@ -21,7 +22,7 @@ import 'package:gov_statistics_investigation_economic/resource/model/store/inves
 import 'package:gov_statistics_investigation_economic/resource/model/store/nhomnhanh_vcpa_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/subject/subject_model.dart';
 
-import 'table_dm07mau.dart'; 
+import 'table_dm07mau.dart';
 
 ///Chưa danh sánh câu hỏi của mỗi phiếu
 ///
@@ -29,7 +30,8 @@ const String tableData = 'DataInfo';
 const String columnDataId = '_id';
 const String columnDataMaDTV = 'MaDTV';
 const String columnDataQuestionMau = 'CauHoiPhieu07Maus';
-const String columnDataQuestionTB = 'CauHoiPhieu07TBs'; 
+const String columnDataQuestionTB = 'CauHoiPhieu07TBs';
+const String columnDataMaSpLoaiTruCoSoCT = 'MaSanPhamLoaiTruCoSoCT';
 const String columnDataCreatedAt = 'CreatedAt';
 const String columnDataUpdatedAt = 'UpdatedAt';
 
@@ -37,7 +39,8 @@ class TableData {
   int? id;
   String? maDTV;
   String? questionNo07Mau;
-  String? questionNo07TB; 
+  String? questionNo07TB;
+  String? maSanPhamLoaiTruCoSoCT;
   String? createdAt;
   String? updatedAt;
 
@@ -45,7 +48,8 @@ class TableData {
     this.id,
     this.maDTV,
     this.questionNo07Mau,
-    this.questionNo07TB, 
+    this.questionNo07TB,
+    this.maSanPhamLoaiTruCoSoCT,
     this.createdAt,
     this.updatedAt,
   });
@@ -55,14 +59,16 @@ class TableData {
     updatedAt = dataJson['UpdatedAt'];
     maDTV = dataJson['MaDTV'];
     questionNo07Mau = jsonEncode(dataJson['CauHoiPhieu07Maus']);
-    questionNo07TB = jsonEncode(dataJson['CauHoiPhieu07TBs']); 
+    questionNo07TB = jsonEncode(dataJson['CauHoiPhieu07TBs']);
+    maSanPhamLoaiTruCoSoCT = dataJson['MaSanPhamLoaiTruCoSoCT'];
   }
 
   Map<String, Object?> toJson() {
     var map = <String, Object?>{};
     map['MaDTV'] = maDTV;
     map['CauHoiPhieu07Maus'] = questionNo07Mau;
-    map['CauHoiPhieu07TBs'] = questionNo07TB; 
+    map['CauHoiPhieu07TBs'] = questionNo07TB;
+    map['MaSanPhamLoaiTruCoSoCT'] = maSanPhamLoaiTruCoSoCT;
     map['CreatedAt'] = createdAt;
     map['UpdatedAt'] = updatedAt;
     return map;
@@ -75,7 +81,6 @@ class TableData {
   dynamic toCauHoiPhieu07TB() {
     return jsonDecode(questionNo07TB!);
   }
- 
 
   dynamic toCauHoiPhieu07(String maDoiTuongDT) {
     if (maDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
@@ -120,7 +125,6 @@ class TableData {
   }
 
   ///Danh sách xã/phường thị trấn
-  
 
   static List<TableDmTinhTrangHD> toListTinhTrangHDs(dynamic json) {
     List<ActiveStatusModel> subject = ActiveStatusModel.listFromJson(json);
@@ -187,7 +191,6 @@ class TableData {
 
   /*************/
   ///BEGIN::Danh mục cho phiếu 07 mẫu
-   
 
   static List<TableCTDmHoatDongLogistic> toListCTDmHoatDongLogistics(
       dynamic json) {
@@ -257,6 +260,12 @@ class TableData {
           tenQuocTich: element.tenQuocTich));
     }
     return dsDiaDiem;
+  }
+
+    static List<TableCTDmPhieu> toListCTDmPhieus(dynamic json) {
+    List<TableCTDmPhieu> subject = TableCTDmPhieu.listFromJson(json);
+     
+    return subject;
   }
 
   static List<TableCTDmTinhTrangDKKD> toListCTDmTinhTrangSXKDs(dynamic json) {
@@ -329,5 +338,5 @@ class TableData {
 
   ///END::Danh mục cho phiếu 07 mẫu
   ///
-/*************/ 
+/*************/
 }

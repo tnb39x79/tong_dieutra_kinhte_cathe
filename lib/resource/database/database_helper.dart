@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:gov_statistics_investigation_economic/resource/database/provider/ct_dm_phieu_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau_dm.dart';
@@ -17,6 +18,7 @@ class DatabaseHelper {
   static const _databaseName = 'DTKinhTeCaThe.db';
   final dataProvider = DataProvider();
   final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider();
+  final dmPhieuProvider = DmPhieuProvider();
   final bkCoSoSXKDProvider = BKCoSoSXKDProvider();
   final bkCoSoSXKDNganhSanPhamProvider = BKCoSoSXKDNganhSanPhamProvider();
   final dmMotaSanphamProvider = DmMotaSanphamProvider();
@@ -125,6 +127,7 @@ class DatabaseHelper {
     await Future.wait([
       dataProvider.onCreateTable(db),
       doiTuongDieuTraProvider.onCreateTable(db),
+      dmPhieuProvider.onCreateTable(db),
       userInfoProvider.onCreateTable(db),
       bkCoSoSXKDProvider.onCreateTable(db),
       bkCoSoSXKDNganhSanPhamProvider.onCreateTable(db),
@@ -174,6 +177,7 @@ class DatabaseHelper {
 
     await dataProvider.deletedTable(db);
     await doiTuongDieuTraProvider.deletedTable(db);
+    await dmPhieuProvider.deletedTable(db);
     await userInfoProvider.deletedTable(db);
     await bkCoSoSXKDNganhSanPhamProvider.deletedTable(db);
     await dmMotaSanphamProvider.deletedTable(db);
@@ -261,7 +265,7 @@ class DatabaseHelper {
     await xacNhanLogicProvider.deletedTable(db);
 
     // phieu ca mau
-      await Future.wait([
+    await Future.wait([
       phieuProvider.deletedTable(db),
       phieuMauTBProvider.deletedTable(db),
       phieuMauTBSanPhamProvider.deletedTable(db),

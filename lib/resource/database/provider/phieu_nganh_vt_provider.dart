@@ -214,24 +214,24 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     // ''');
   }
 
-  Future updateValue(String fieldName, value, columId) async {
+  Future updateValue(String fieldName, value, columnId) async {
     Map<String, Object?> values = {
       fieldName: value,
       columnUpdatedAt: DateTime.now().toIso8601String(),
     };
     var i = await db!.update(tablePhieuNganhVT, values,
-        where: '$columnId = ?', whereArgs: [columId]);
+        where: '$columnId = ?', whereArgs: [columnId]);
 
     log('UPDATE PHIEU 04_C32: $i');
   }
 
-  Future updateValueByIdCoso(String fieldName, value, iDCoSo, id) async {
+  Future updateValueByIdCoSo(String fieldName, value, iDCoSo) async {
     Map<String, Object?> values = {
       fieldName: value,
       columnUpdatedAt: DateTime.now().toIso8601String(),
     };
     var i = await db!.update(tablePhieuNganhVT, values,
-        where: '$columnId = ? AND $columnIDCoSo = ?', whereArgs: [id, iDCoSo]);
+        where: '$columnIDCoSo = ?', whereArgs: [iDCoSo]);
 
     log('UPDATE PHIEU 04_C32: ${i.toString()}');
   }
@@ -296,23 +296,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
         ''');
     return maps;
   }
-
-  Future<int> getMaxSTTByIdCoso(String idCoso) async {
-    String createdAt = AppPref.dateTimeSaveDB!;
-
-    List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT) as MaxSTT FROM $tablePhieuNganhVT 
-          WHERE $columnIDCoSo = '$idCoso' 
-          AND $columnCreatedAt = '$createdAt'
-        ''');
-    if (map.isNotEmpty) {
-      if (map[0] != null) {
-        return map[0]['MaxSTT'] ?? 0;
-      }
-    }
-    return 0;
-    // return map.isNotEmpty ? map[0]['STT'] : 0;
-  }
+ 
 
   Future<bool> isExistQuestion(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -323,16 +307,15 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     return map.isNotEmpty;
   }
 
-  Future<int> getMaxSTTByIDCoso(String idCoso) async {
+  Future<bool> isExistProduct(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT) as STT FROM $tablePhieuNganhVT 
-          WHERE $columnIDCoSo = '$idCoso' 
-         
-          AND $columnCreatedAt = '$createdAt'
-        ''');
-    return map.isNotEmpty ? map[0]['STT'] : 0;
+    List<Map> map = await db!.query(tablePhieuNganhVT, where: '''
+      $columnCreatedAt = '$createdAt'
+      AND $columnIDCoSo = '$idCoso' AND $columnMaDTV='${AppPref.uid}'
+    ''');
+    return map.isNotEmpty;
   }
+ 
 
   Future<int> totalIntByMaCauHoi(
       String idCoso, int id, List<String> fieldNames) async {
@@ -378,6 +361,28 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
       });
     }
     return result;
+  }
+
+  Future<bool> kiemTraPhanVIVIIValues(
+      String idCoso, List<String> fieldNames) async {
+    List<int> result = [];
+
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<String> fields = [];
+    for (var item in fieldNames) {
+      fields.add(" $item ");
+    }
+    String sql =
+        "SELECT ${fields.join(',')}  FROM $tablePhieuNganhVT WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+    List<Map> map = await db!.rawQuery(sql);
+    for (var item in map) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result.add(1);
+        }
+      });
+    }
+    return result.isNotEmpty;
   }
 
   Future<int> deleteById(int id) {

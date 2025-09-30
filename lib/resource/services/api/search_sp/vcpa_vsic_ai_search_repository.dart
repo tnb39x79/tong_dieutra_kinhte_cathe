@@ -21,9 +21,23 @@ class VcpaVsicAIRepository {
       final data = await provider.searchVcpaVsicByAI(codeType, query,
           limitNum: limitNum);
       if (data.statusCode == ApiConstants.success) {
-        return ResponseModel(
-            statusCode: data.statusCode,
-            body: ProductAiModel.listFromJson(data.body));
+        final bodyString = await data.body;
+        final bodyDecoder = jsonDecode(bodyString);
+
+        if (bodyDecoder is List) {
+          print('decoder is a List (JSON array).');
+          return ResponseModel(
+              statusCode: data.statusCode,
+              body: ProductAiModel.listFromJson(data.body));
+        } else if (bodyDecoder is Map) {
+          print('decoder is a Map (JSON object).');
+          final dataDecoded = bodyDecoder['codes'] as List;
+          var result =
+              dataDecoded.map((e) => ProductAiModel.fromJson(e)).toList();
+          return ResponseModel(statusCode: data.statusCode, body: result);
+        } else {
+          return ResponseModel.withError(data);
+        }
       } else if (data.statusCode == HttpStatus.requestTimeout) {
         return ResponseModel.withRequestTimeout();
       } else {

@@ -37,6 +37,8 @@ class DataModel {
   dynamic tgDmXepHang;
   dynamic tgDmXepHangDiTich;
   dynamic tgDmLoaiTonGiao;
+  String? maSanPhamLoaiTruCoSoCT;
+    dynamic dmPhieu;
 
   DataModel(
       {this.responseCode,
@@ -68,7 +70,9 @@ class DataModel {
       this.tgDmTrinhDoChuyenMon,
       this.tgDmXepHang,
       this.tgDmXepHangDiTich,
-      this.tgDmLoaiTonGiao});
+      this.tgDmLoaiTonGiao,
+      this.maSanPhamLoaiTruCoSoCT,
+      this.dmPhieu});
 
   DataModel.fromJson(dynamic json) {
     responseCode = json['ResponseCode'];
@@ -105,6 +109,8 @@ class DataModel {
     tgDmXepHang = json['TG_DM_XepHang'];
     tgDmXepHangDiTich = json['TG_DM_XepHangDiTich'];
     tgDmLoaiTonGiao = json['TG_DM_LoaiTonGiao'];
+    maSanPhamLoaiTruCoSoCT = json['MaSanPhamLoaiTruCoSoCT'];
+    dmPhieu = json['CT_DM_Phieu'];
   }
 
   dynamic toJson() {
@@ -147,6 +153,8 @@ class DataModel {
     map['TG_DM_XepHang'] = tgDmXepHang;
     map['TG_DM_XepHangDiTich'] = tgDmXepHangDiTich;
     map['TG_DM_LoaiTonGiaoss'] = tgDmLoaiTonGiao;
+    map['MaSanPhamLoaiTruCoSoCT'] = maSanPhamLoaiTruCoSoCT;
+     map['CT_DM_Phieu'] = dmPhieu;
     return map;
   }
 }

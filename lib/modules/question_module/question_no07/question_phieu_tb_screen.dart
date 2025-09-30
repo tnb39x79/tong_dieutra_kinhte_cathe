@@ -9,6 +9,7 @@ import 'package:gov_statistics_investigation_economic/common/widgets/question/in
 
 import 'package:gov_statistics_investigation_economic/common/widgets/question/input_string.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/question/select_int.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/question/text_string.dart';
 
 import 'package:gov_statistics_investigation_economic/common/widgets/sidebar/sidebar.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/widgets.dart';
@@ -23,15 +24,15 @@ import 'package:gov_statistics_investigation_economic/modules/question_module/qu
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_diadiem_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm07mau.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/question/danh_dau_sanpham_model.dart';
 
-import '../../../resource/database/table/table_dm07mau.dart';
-import '../../../resource/database/table/table_p07mau.dart';
-import 'question_no07_controller.dart';
+import 'question_phieu_tb_controller.dart';
 
-class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
-  const QuestionNo07Screen({super.key});
+class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
+  const QuestionPhieuTBScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +43,9 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
         child: Scaffold(
           key: controller.scaffoldKey,
           endDrawerEnableOpenDragGesture: false,
-          appBar: AppBarHeader(
-            title: '${controller.currentTenDoiTuongDT}',
+          appBar:   AppBarHeader(
+            title:
+                '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}',
             questionCode: 4,
             onPressedLeading: () => {},
             subTitle: controller.subTitleBar,
@@ -60,11 +62,11 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
               controller.questionGroupList,
               drawerTitle: controller.subTitleBar,
               controller.onMenuPress,
-              hasPhanVI: ((controller.isCap1HPhanVI.value &&
-                      controller.isCap5DichVuHangHoaPhanVI.value) ||
-                  (controller.isCap1HPhanVI.value &&
-                      controller.isCap5VanTaiHanhKhachPhanVI.value)),
-              hasPhanVII: controller.isCap2_55PhanVII.value),
+              hasNganhVT: ((controller.isCap1H_VT.value &&
+                      controller.isCap5VanTaiHangHoa.value) ||
+                  (controller.isCap1H_VT.value &&
+                      controller.isCap5VanTaiHanhKhach.value)),
+              hasNganhLT: controller.isCap2_55LT.value),
         ),
       ),
     );
@@ -82,36 +84,30 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
                 minHeight: viewportConstraints.maxHeight - kToolbarHeight,
               ),
               child: Obx(() {
-                if (controller.questions.isEmpty) return const SizedBox();
+                if (controller.questions.isEmpty) {
+                  return Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox(),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: WidgetButtonPrevious(
+                                    onPressed: controller.onBack)),
+                            const SizedBox(width: 16),
+                            Expanded(
+                                child: WidgetButtonNext(
+                                    onPressed: controller.onNext)),
+                          ],
+                        )
+                      ]);
+                }
                 return Column(
                   // mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     buildQuestionByManHinh(),
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [
-                    //     RichTextQuestion(
-                    //         controller.questions[controller.questionIndex.value]
-                    //                 .tenCauHoi ??
-                    //             '',
-                    //         level: controller
-                    //             .questions[controller.questionIndex.value].cap!,
-                    //         notes: controller
-                    //                 .questions[controller.questionIndex.value]
-                    //                 .giaiThich ??
-                    //             ''),
-                    //     // const SizedBox(height: 50),
-                    //     if (controller.questions[controller.questionIndex.value]
-                    //             .maCauHoi ==
-                    //         "A_V")
-                    //       buildPhanV(controller
-                    //           .questions[controller.questionIndex.value])
-                    //     else
-                    //       _buildQuestion(controller
-                    //           .questions[controller.questionIndex.value]),
-                    //   ],
-                    // ),
                     const SizedBox(height: 10),
                     Row(
                       children: [
@@ -153,6 +149,13 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
         // const SizedBox(height: 50),
         if (question.maCauHoi == "A_V")
           buildPhanV(question)
+        // else if (question.maCauHoi == "A_I" && question.maPhieu == 1)
+        //   // RichTextQuestion(question.tenCauHoi ?? '',
+        //   //     level: question.cap!, notes: question.giaiThich ?? '')
+
+        //   buildNganhCN(question)
+        // else if (question.maCauHoi == "A_I" && question.maPhieu == 4)
+        //   buildNganhTM(question)
         //else  if (question.maCauHoi == "A1" && question.maPhieu==4)
         //   buildPhanV(question)
         else
@@ -228,16 +231,16 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
                       ));
                 } else if (question.loaiCauHoi == 0 &&
                     question.bangChiTieu == '2') {
-                  return const SizedBox();
-                  // return Obx(() => Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [buildQuestionChiTieuDongCot(question)],
-                  // ));
+                  //return const SizedBox();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [buildQuestionChiTieuDongCot(question)],
+                  );
                 } else {
                   return const SizedBox();
                 }
               case 2:
-                return _renderQuestionType2(question, product: product);
+                return _renderQuestionType2WithSub(question, product: product);
               case 3:
                 return _renderQuestionType3(question, product: product);
               case 4:
@@ -289,7 +292,7 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
   _questionItem(QuestionCommonModel question,
       {QuestionCommonModel? parentQuestion}) {
     switch (question.loaiCauHoi) {
-      case 0:
+      case 0 || null:
         // if (question.bangChiTieu == '1') {
         //   return Column(
         //     crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +310,48 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
         // if (question.maCauHoi == "A_V") {
         //   return buildPhanV(question);
         // } else
-        if (question.bangChiTieu == "2") {
+        if (question.maCauHoi == "A_I_0" && question.maPhieu == 1) {
+          String moTaSanPhamCau5_1 =
+              controller.tblPhieuNganhCNDistinctCap5.isNotEmpty
+                  ? controller.tblPhieuNganhCNDistinctCap5!
+                      .map((p) => p.moTaSanPham!)
+                      .toList()
+                      .join('; ')
+                  : '';
+
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichTextQuestion(
+                  question.tenCauHoi ?? '',
+                  level: question.cap!,
+                  notes: question.giaiThich ?? '',
+                  moTaSanPham: moTaSanPhamCau5_1,
+                ),
+                buildNganhCN(question)
+              ]);
+        } else if (question.maCauHoi == maCauHoiTMGL6810 &&
+            question.maPhieu == 4) {
+          String moTaSanPhamCau5_1 =
+              controller.tblPhieuNganhTMSanPham.isNotEmpty
+                  ? controller.tblPhieuNganhTMSanPham!
+                      .map((p) => p.moTaSanPham!)
+                      .toList()
+                      .join('; ')
+                  : '';
+
+          return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichTextQuestion(
+                  question.tenCauHoi ?? '',
+                  level: question.cap!,
+                  notes: question.giaiThich ?? '',
+                  moTaSanPham: moTaSanPhamCau5_1,
+                ),
+                buildNganhTM(question)
+              ]);
+        } else if (question.bangChiTieu == "2") {
           return buildQuestionChiTieuDongCot(question);
         } else {
           //Bỏ không kiểm tra B, C, E
@@ -361,12 +405,55 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
 
   _renderQuestionType0(QuestionCommonModel question,
       {ProductModel? product, QuestionCommonModel? parentQuestion}) {
+    String moTaSanPhamCaux = '';
+    if (question.maCauHoi == maCauHoiVTHK &&
+        question.maPhieu == AppDefine.maPhieuVT) {
+      moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamVTHanhKhach.isNotEmpty
+          ? controller.tblPhieuMauTBSanPhamVTHanhKhach
+              .map((p) => p.a5_1_1!)
+              .toList()
+              .join('; ')
+          : '';
+    } else if (question.maCauHoi == maCauHoiVTHH &&
+        question.maPhieu == AppDefine.maPhieuVT) {
+      moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamVTHangHoa.isNotEmpty
+          ? controller.tblPhieuMauTBSanPhamVTHangHoa
+              .map((p) => p.a5_1_1!)
+              .toList()
+              .join('; ')
+          : '';
+    } else if (question.maCauHoi == maCauHoiLT &&
+        question.maPhieu == AppDefine.maPhieuLT) {
+      moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamLT.isNotEmpty
+          ? controller.tblPhieuMauTBSanPhamLT
+              .map((p) => p.a5_1_1!)
+              .toList()
+              .join('; ')
+          : '';
+    } else if (question.maCauHoi == maCauHoiTMGL6810 &&
+        question.maPhieu == AppDefine.maPhieuTM) {
+      moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTMGL6810.isNotEmpty
+          ? controller.tblPhieuMauTBSanPhamTMGL6810
+              .map((p) => p.a5_1_1!)
+              .toList()
+              .join('; ')
+          : '';
+    } else if (question.maCauHoi == maCauHoiTM56 &&
+        question.maPhieu == AppDefine.maPhieuTM) {
+      moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTM56.isNotEmpty
+          ? controller.tblPhieuMauTBSanPhamTM56
+              .map((p) => p.a5_1_1!)
+              .toList()
+              .join('; ')
+          : '';
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichTextQuestion(
           question.tenCauHoi ?? '',
           level: question.cap ?? 2,
+          moTaSanPham: moTaSanPhamCaux,
         ),
         _buildQuestion2(question,
             product: product, parentQuestion: parentQuestion)
@@ -441,6 +528,7 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
         value: val,
       );
     }
+
     if (question.maCauHoi == "A6_6" || question.maCauHoi == "A7_8_1") {
       return Obx(() {
         var valA6_6_6_7 = controller.getValueByFieldName(
@@ -484,6 +572,7 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
         );
       });
     }
+
     // return Obx(() {
     var val2 = controller.getValueByFieldName(
         question.bangDuLieu!, question.maCauHoi!);
@@ -537,21 +626,21 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     var val = controller.getValueByFieldName(
         question.bangDuLieu!, question.maCauHoi!);
     var wFilterInput = RegExp('[0-9]');
-    if (question.maCauHoi == "A7_8") {
+    if (question.maCauHoi == "A7_M") {
       //  return Obx(() {
-      var valA7_8 = controller.getValueByFieldName(
+      var aValue = controller.getValueByFieldName(
           question.bangDuLieu!, question.maCauHoi!);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InputInt(
             key: ValueKey(
-                '${question.maPhieu}${question.maCauHoi}${question.cauHoiUUID}_$valA7_8'),
+                '${question.maPhieu}${question.maCauHoi}${question.cauHoiUUID}'),
             question: question,
             onChange: (value) => (),
             enable: false,
             subName: subName,
-            value: valA7_8,
+            value: aValue,
           ),
           if (question.danhSachCauHoiCon!.isNotEmpty)
             Container(
@@ -566,44 +655,44 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
       );
       //   });
     }
-    //return Obx(() {
-    var val2 = controller.getValueByFieldName(
-        question.bangDuLieu!, question.maCauHoi!);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InputInt(
-          key: ValueKey(
-              '${question.maPhieu}${question.maCauHoi}${question.cauHoiUUID}'),
-          question: question,
-          onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
-              question.maCauHoi, question.maCauHoi, value),
-          enable: true,
-          subName: subName,
-          value: val2,
-          validator: (String? value) => controller.onValidate(
-              question.bangDuLieu!,
-              question.maCauHoi!,
-              question.maCauHoi,
-              value,
-              question.giaTriNN,
-              question.giaTriLN,
-              question.loaiCauHoi!,
-              true),
-          flteringTextInputFormatterRegExp: wFilterInput,
-        ),
-        if (question.danhSachCauHoiCon!.isNotEmpty)
-          Container(
-              margin: const EdgeInsets.all(0.0),
-              padding: const EdgeInsets.all(15.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: greyDarkBorder, width: 1),
-                borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-              ),
-              child: _buildQuestion3(question))
-      ],
-    );
-    //});
+    return Obx(() {
+      var val2 = controller.getValueByFieldName(
+          question.bangDuLieu!, question.maCauHoi!);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InputInt(
+            key: ValueKey(
+                '${question.maPhieu}${question.maCauHoi}${question.cauHoiUUID}'),
+            question: question,
+            onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
+                question.maCauHoi, question.maCauHoi, value),
+            enable: true,
+            subName: subName,
+            value: val2,
+            validator: (String? value) => controller.onValidate(
+                question.bangDuLieu!,
+                question.maCauHoi!,
+                question.maCauHoi,
+                value,
+                question.giaTriNN,
+                question.giaTriLN,
+                question.loaiCauHoi!,
+                true),
+            flteringTextInputFormatterRegExp: wFilterInput,
+          ),
+          if (question.danhSachCauHoiCon!.isNotEmpty)
+            Container(
+                margin: const EdgeInsets.all(0.0),
+                padding: const EdgeInsets.all(15.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: greyDarkBorder, width: 1),
+                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                ),
+                child: _buildQuestion3(question))
+        ],
+      );
+    });
   }
 
   // _questionSubType2(QuestionCommonModel question,
@@ -638,18 +727,64 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     String? subName,
     ProductModel? product,
   }) {
-    if (question.maCauHoi == colPhieuMauTBA3_1T ||
-        question.maCauHoi == colPhieuMauTBA3T ||
-        question.maCauHoi == colPhieuMauTBA4T) {
+    if ((question.maCauHoi == colPhieuMauTBA3_1T &&
+            question.bangDuLieu == tablePhieuMauTB) ||
+        (question.maCauHoi == colPhieuMauTBA3T &&
+            question.bangDuLieu == tablePhieuMauTB) ||
+        question.maCauHoi == colPhieuMauTBA4T &&
+            question.bangDuLieu == tablePhieuMauTB) {
       return Obx(() {
         var valA32 = controller.getValueByFieldName(
             question.bangDuLieu!, question.maCauHoi!);
 
+        var valRep = valA32 ?? 0;
+        var vkey =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.cauHoiUUID}_1_$valRep';
+        if (valA32 == null) {}
+
         return InputIntView(
-          key: ValueKey('${question.maPhieu}_${question.cauHoiUUID}_$valA32'),
+          key: ValueKey(vkey),
           question: question,
           onChange: (value) => {},
           value: valA32,
+          enable: false,
+          type: "double",
+          txtStyle: styleMediumBold.copyWith(color: primaryColor),
+          hintText: "Tự động tính.",
+          decimalDigits: 2,
+        );
+      });
+    } else if (question.maCauHoi == colPhieuNganhTMA3T &&
+        question.bangDuLieu == tablePhieuNganhTM) {
+      var valA3T = controller.getValueByFieldName(
+          question.bangDuLieu!, question.maCauHoi!);
+      if (valA3T == null) {
+        var vkey1 =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.cauHoiUUID}_1_$valA3T';
+        return InputIntView(
+          key: ValueKey(vkey1),
+          question: question,
+          onChange: (value) => {},
+          value: valA3T,
+          enable: false,
+          type: "double",
+          txtStyle: styleMediumBold.copyWith(color: primaryColor),
+          hintText: "Tự động tính.",
+          decimalDigits: 2,
+        );
+      }
+      return Obx(() {
+        var valA3T = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+
+        var vkey =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.cauHoiUUID}_1_$valA3T';
+
+        return InputIntView(
+          key: ValueKey(vkey),
+          question: question,
+          onChange: (value) => {},
+          value: valA3T,
           enable: false,
           type: "double",
           txtStyle: styleMediumBold.copyWith(color: primaryColor),
@@ -2166,6 +2301,11 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
       //     question, chiTieuDong, chiTieuCot, tableDmCoKhong);
     }
     switch (chiTieuCot.loaiCauHoi) {
+      case 0:
+        RichTextQuestionChiTieu(
+          chiTieuCot.tenChiTieu ?? '',
+          level: 2,
+        );
       case 2:
         return renderChiTieuDongCotQuestionType2(
             question, chiTieuDong, chiTieuCot);
@@ -2566,6 +2706,45 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
       ChiTieuDongModel chiTieuDong,
       ChiTieuModel chiTieuCot,
       String tenDanhMuc) {
+    if (question.maCauHoi == "A1" && question.maPhieu == 2) {
+      return Obx(() {
+        var wFilterInput = RegExp('[0-9]');
+        int decimalDigits = 0;
+        var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
+            chiTieuCot, chiTieuDong);
+        //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
+        var xVal =
+            controller.getValueByFieldName(question.bangDuLieu!, fieldName);
+        var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
+        return Column(
+          children: [
+            SelectIntCTDm(
+              key: ValueKey(
+                  '${question.maPhieu}${question.cauHoiUUID}_${chiTieuDong.maSo}_${chiTieuCot.maChiTieu}_$xVal'),
+              question: question,
+              listValue: dmChiTieu,
+              tenDanhMuc: tenDanhMuc,
+              onChange: (value, dmItem) => controller.onSelectDmA7_1(
+                  question,
+                  question.bangDuLieu!,
+                  question.maCauHoi,
+                  fieldName,
+                  value,
+                  dmItem,
+                  chiTieuDong: chiTieuDong,
+                  chiTieuCot: chiTieuCot),
+              value: xVal,
+              onChangeGhiRo: (value, dmItem) =>
+                  controller.onChangeGhiRoDm(question, value, dmItem),
+              hienThiTenCauHoi: false,
+            ),
+            if (chiTieuCot.maChiTieu == '0')
+              buildGhiRoPhanVIA7_1(
+                  question, chiTieuDong, chiTieuCot, fieldName, xVal),
+          ],
+        );
+      });
+    }
     // if (question.maCauHoi == "A4_7" && chiTieuDong.maSo == "0") {
     //   return Obx(() {
     //     var wFilterInput = RegExp('[0-9]');
@@ -2612,44 +2791,44 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     //     );
     //   });
     // }
-    if (question.maCauHoi == "A7_1") {
-      return Obx(() {
-        var wFilterInput = RegExp('[0-9]');
-        int decimalDigits = 0;
-        var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
-            chiTieuCot, chiTieuDong);
-        //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
-        var xVal = controller.getValueDmByFieldName(fieldName);
-        var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
-        return Column(
-          children: [
-            SelectIntCTDm(
-              key: ValueKey(
-                  '${question.maPhieu}${question.cauHoiUUID}_${chiTieuDong.maSo}_${chiTieuCot.maChiTieu}_$xVal'),
-              question: question,
-              listValue: dmChiTieu,
-              tenDanhMuc: tenDanhMuc,
-              onChange: (value, dmItem) => controller.onSelectDmA7_1(
-                  question,
-                  question.bangDuLieu!,
-                  question.maCauHoi,
-                  fieldName,
-                  value,
-                  dmItem,
-                  chiTieuDong: chiTieuDong,
-                  chiTieuCot: chiTieuCot),
-              value: xVal,
-              onChangeGhiRo: (value, dmItem) =>
-                  controller.onChangeGhiRoDm(question, value, dmItem),
-              hienThiTenCauHoi: false,
-            ),
-            if (chiTieuCot.maChiTieu == '0')
-              buildGhiRoPhanVIA7_1(
-                  question, chiTieuDong, chiTieuCot, fieldName, xVal),
-          ],
-        );
-      });
-    }
+    // if (question.maCauHoi == "A7_1") {
+    //   return Obx(() {
+    //     var wFilterInput = RegExp('[0-9]');
+    //     int decimalDigits = 0;
+    //     var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
+    //         chiTieuCot, chiTieuDong);
+    //     //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
+    //     var xVal = controller.getValueDmByFieldName(fieldName);
+    //     var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
+    //     return Column(
+    //       children: [
+    //         SelectIntCTDm(
+    //           key: ValueKey(
+    //               '${question.maPhieu}${question.cauHoiUUID}_${chiTieuDong.maSo}_${chiTieuCot.maChiTieu}_$xVal'),
+    //           question: question,
+    //           listValue: dmChiTieu,
+    //           tenDanhMuc: tenDanhMuc,
+    //           onChange: (value, dmItem) => controller.onSelectDmA7_1(
+    //               question,
+    //               question.bangDuLieu!,
+    //               question.maCauHoi,
+    //               fieldName,
+    //               value,
+    //               dmItem,
+    //               chiTieuDong: chiTieuDong,
+    //               chiTieuCot: chiTieuCot),
+    //           value: xVal,
+    //           onChangeGhiRo: (value, dmItem) =>
+    //               controller.onChangeGhiRoDm(question, value, dmItem),
+    //           hienThiTenCauHoi: false,
+    //         ),
+    //         if (chiTieuCot.maChiTieu == '0')
+    //           buildGhiRoPhanVIA7_1(
+    //               question, chiTieuDong, chiTieuCot, fieldName, xVal),
+    //       ],
+    //     );
+    //   });
+    // }
     // if (question.maCauHoi == "A8_1" &&
     //     (chiTieuDong.maSo == "4" || chiTieuDong.maSo == "5"|| chiTieuDong.maSo == "7")) {
     //   return Column(
@@ -2682,7 +2861,8 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
       var fieldName =
           controller.getFieldNameByMaCauChiTieuDongCot(chiTieuCot, chiTieuDong);
       //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
-      var xVal = controller.getValueDmByFieldName(fieldName);
+      var xVal =
+          controller.getValueByFieldName(question.bangDuLieu!, fieldName);
       var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
       return Column(
         children: [
@@ -2909,7 +3089,7 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         QuestionCommonModel questionC = questionsCon[index];
-                        return questionItemPhanV(questionC, product);
+                        return questionPhanVItem(questionC, product);
                       })
                 else
                   Obx(() {
@@ -3002,7 +3182,7 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
                                   itemBuilder: (context, index) {
                                     QuestionCommonModel questionC =
                                         questionsCon[index];
-                                    return questionItemPhanV(
+                                    return questionPhanVItem(
                                         questionC, product);
                                   }),
                             )
@@ -3054,7 +3234,7 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     });
   }
 
-  questionItemPhanV(
+  questionPhanVItem(
       QuestionCommonModel question, TablePhieuMauTBSanPham product,
       {QuestionCommonModel? parentQestion}) {
     var wFilterInput = RegExp('[0-9]');
@@ -3075,10 +3255,10 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
         );
       case "A5_2":
         decimalDigits = 2;
-        var val = product.a5_2;
+        var a5_2Val = product.a5_2;
         return InputInt(
           key: ValueKey(
-              '${question.maPhieu}${question.maCauHoi}-${product.id}-${product.sTTSanPham}-$a5_1_2Val'),
+              '${question.maPhieu}${question.maCauHoi}-${product.id}-${product.sTTSanPham}'),
           question: question,
           onChange: (value) => controller.onChangeInputPhanV(
               question.bangDuLieu!,
@@ -3086,7 +3266,7 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
               question.maCauHoi,
               product.id!,
               value),
-          value: val,
+          value: a5_2Val,
           type: 'double',
           validator: (String? value) => controller.onValidateInputA5(
               question.bangDuLieu!,
@@ -3328,14 +3508,8 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
       }
       return InkWell(
         onTap: () {
-          controller.onOpenDialogSearchType(
-              question,
-              question.maCauHoi!,
-              product,
-              product.id!,
-              product.sTTSanPham!,
-              product.a5_1_1 ?? '',
-              a5_1_2);
+          controller.onOpenDialogSearch(question, question.maCauHoi!, product,
+              product.id!, product.sTTSanPham!, product.a5_1_1 ?? '', a5_1_2);
         },
         child: IgnorePointer(
             child: InputStringVcpa(
@@ -3378,52 +3552,52 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     int decimalDigits = 0;
     var val;
     var dvt = '';
-    if (product != null) {
-      if (question.maCauHoi == "A5_3") {
-        //   val = product.a5_3;
-        // } else if (question.maCauHoi == "A5_3_1") {
-        //   val = product.a5_3_1;
-        //   dvt = product.donViTinh != null &&
-        //           product.donViTinh != '' &&
-        //           question.dVT != null &&
-        //           question.dVT != ''
-        //       ? question.dVT!
-        //           .replaceAll('[ĐVT]', '${product.donViTinh!} ')
-        //           .replaceAll('  ', ' ')
-        //       : '';
-      } else if (question.maCauHoi == "A5_4") {
-        val = product.a5_2;
-      }
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InputInt(
-          question: question,
-          onChange: (value) => controller.onChangeInputPhanV(
-              question.bangDuLieu!,
-              question.maCauHoi,
-              question.maCauHoi,
-              product.id!,
-              value),
-          value: val,
-          validator: (String? value) => controller.onValidate(
-              question.bangDuLieu!,
-              question.maCauHoi!,
-              question.maCauHoi,
-              value,
-              question.giaTriNN,
-              question.giaTriLN,
-              question.loaiCauHoi!,
-              true),
-          flteringTextInputFormatterRegExp: wFilterInput,
-          decimalDigits: decimalDigits,
-          showDtv: true,
-          rightString: dvt,
-        ),
-        renderPhanVType2Sub(question, product)
-      ],
-    );
+    // if (product != null) {
+    //   if (question.maCauHoi == "A5_3") {
+    //     //   val = product.a5_3;
+    //     // } else if (question.maCauHoi == "A5_3_1") {
+    //     //   val = product.a5_3_1;
+    //     //   dvt = product.donViTinh != null &&
+    //     //           product.donViTinh != '' &&
+    //     //           question.dVT != null &&
+    //     //           question.dVT != ''
+    //     //       ? question.dVT!
+    //     //           .replaceAll('[ĐVT]', '${product.donViTinh!} ')
+    //     //           .replaceAll('  ', ' ')
+    //     //       : '';
+    //   } else if (question.maCauHoi == "A5_4") {
+    //     val = product.a5_2;
+    //   }
+    // }
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     InputInt(
+    //       question: question,
+    //       onChange: (value) => controller.onChangeInputPhanV(
+    //           question.bangDuLieu!,
+    //           question.maCauHoi,
+    //           question.maCauHoi,
+    //           product.id!,
+    //           value),
+    //       value: val,
+    //       validator: (String? value) => controller.onValidate(
+    //           question.bangDuLieu!,
+    //           question.maCauHoi!,
+    //           question.maCauHoi,
+    //           value,
+    //           question.giaTriNN,
+    //           question.giaTriLN,
+    //           question.loaiCauHoi!,
+    //           true),
+    //       flteringTextInputFormatterRegExp: wFilterInput,
+    //       decimalDigits: decimalDigits,
+    //       showDtv: true,
+    //       rightString: dvt,
+    //     ),
+    //     renderPhanVType2Sub(question, product)
+    //   ],
+    // );
   }
 
   renderPhanVType3(
@@ -3643,6 +3817,719 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     // });
   }
 
+/*****Begin NganhCN***/
+  buildNganhCN(QuestionCommonModel mainQuestion, {String? subName}) {
+    return Obx(() {
+      if (controller.tblPhieuNganhCNDistinctCap5 != null &&
+          controller.tblPhieuNganhCNDistinctCap5.isNotEmpty) {
+        var lastProduct = controller.tblPhieuNganhCNDistinctCap5.lastOrNull;
+        // int lastStt = 0;
+        // if (lastProduct != null) {
+        //   lastStt = lastProduct.sTT_SanPham!;
+        // }
+        return Column(
+            children: controller.tblPhieuNganhCNDistinctCap5
+                .asMap()
+                .entries
+                .map((entry) {
+          int idx = entry.key;
+          idx += 1;
+          TablePhieuNganhCNCap5 productCap5 = entry.value;
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            margin: const EdgeInsets.only(top: 24),
+            decoration: BoxDecoration(
+              border: Border.all(color: greyDarkBorder, width: 1),
+              borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+            ),
+            child: Column(children: [
+              IntrinsicHeight(
+                child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    margin: const EdgeInsets.only(top: 0),
+                    decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color.fromARGB(255, 240, 212, 154),
+                            Color.fromARGB(255, 234, 232, 226),
+                            Color.fromARGB(255, 234, 232, 226),
+                            Color.fromARGB(255, 240, 212, 154),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            topRight: Radius.circular(
+                                5.0))), // Adds a gradient background and rounded corners to the container
+                    child: Text(
+                      "$idx. Sản phẩm ${productCap5.maNganhC5} - ${productCap5.moTaSanPham}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: primaryColor,
+                      ),
+                    )),
+              ),
+              buildNganhCNDetail(mainQuestion, productCap5, subName: subName),
+              // if (lastStt > 0 && lastStt == productCap5.sTT_SanPham!) ...[
+
+              if (controller.countHasMoreProductNganhCN(
+                      tablePhieuNganhCN, productCap5.maNganhC5 ?? '') >
+                  0) ...[
+                const SizedBox(
+                  height: 15,
+                ),
+                Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.add_outlined),
+                      label: Text("Thêm sản phẩm cấp 8"),
+                      onPressed: () =>
+                          controller.addNewRowProductNganhCN(productCap5),
+                      style: ElevatedButton.styleFrom(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          side: const BorderSide(
+                              width: 1.0, color: primaryLightColor),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppValues.borderLv5),
+                          ),
+                          foregroundColor: primaryColor),
+                    )),
+                const SizedBox(height: 16)
+              ]
+            ]
+                //  ]
+                ),
+          );
+        }).toList());
+      }
+      return const SizedBox();
+    });
+  }
+
+  buildNganhCNDetail(
+      QuestionCommonModel mainQuestion, TablePhieuNganhCNCap5 productCap5,
+      {String? subName}) {
+    return Obx(() {
+      if (controller.tblPhieuNganhCN != null &&
+          controller.tblPhieuNganhCN.isNotEmpty) {
+        if (mainQuestion.danhSachCauHoiCon != null &&
+            mainQuestion.danhSachCauHoiCon!.isNotEmpty) {
+          var tblNganhCN = controller.tblPhieuNganhCN
+              .where((x) => x.maNganhC5 == productCap5.maNganhC5)
+              .toList();
+          // var lastProduct = controller.tblPhieuNganhCN.lastOrNull;
+          // int lastStt = 0;
+          // if (lastProduct != null) {
+          //   lastStt = lastProduct.sTT_SanPham!;
+          // }
+          return Column(
+              children: tblNganhCN.asMap().entries.map((entry) {
+            int idxSp = entry.key;
+            idxSp += 1;
+            TablePhieuNganhCN product = entry.value;
+            List<QuestionCommonModel> questionsCon =
+                mainQuestion.danhSachCauHoiCon!;
+
+            return Column(
+              children: [
+                if (product.sTT_SanPham! == controller.sttProduct.value)
+                  ListView.builder(
+                      //   key: ValueKey(product),
+                      itemCount: questionsCon.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        QuestionCommonModel questionC = questionsCon[index];
+                        return questionNganhCNItem(questionC, product);
+                      })
+                else
+                  Obx(() {
+                    return Container(
+                        margin: const EdgeInsets.fromLTRB(8, 20, 8, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color.fromARGB(255, 4, 116, 228),
+                              width: 1),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5.0)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (product.sTT_SanPham! !=
+                                controller.sttProduct.value)
+                              Container(
+                                  width: double.infinity,
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                                  decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Color.fromARGB(255, 234, 232, 226),
+                                          Color.fromARGB(255, 234, 232, 226),
+                                          Color.fromARGB(255, 234, 232, 226),
+                                          Color.fromARGB(255, 234, 232, 226),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5.0),
+                                          topRight: Radius.circular(
+                                              5.0))), // Adds a gradient background and rounded corners to the container
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Sản phẩm thứ ${idxSp}",
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromARGB(
+                                                    255, 62, 65, 68),
+                                              ),
+                                            ),
+                                            if (controller
+                                                    .allowDeleteProductNganhCN(
+                                                        product) ==
+                                                true)
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    controller
+                                                        .onDeleteProductNganhCN(
+                                                            product.id);
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                      foregroundColor:
+                                                          Colors.red,
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      surfaceTintColor:
+                                                          Colors.white,
+                                                      shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius
+                                                              .circular(AppValues
+                                                                  .borderLv5)),
+                                                      elevation: 1.0,
+                                                      side: const BorderSide(
+                                                          color: Colors.red)),
+                                                  child: const Text('Xoá')),
+                                          ],
+                                        ),
+                                      ])),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                              child: ListView.builder(
+                                  key: ValueKey<QuestionCommonModel>(
+                                      mainQuestion),
+                                  itemCount: questionsCon.length,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    QuestionCommonModel questionC =
+                                        questionsCon[index];
+                                    return questionNganhCNItem(
+                                        questionC, product);
+                                  }),
+                            )
+                          ],
+                        ));
+                  }),
+              ],
+            );
+          }).toList());
+        }
+        return const SizedBox();
+      }
+      return const SizedBox();
+    });
+  }
+
+  questionNganhCNItem(QuestionCommonModel question, TablePhieuNganhCN product,
+      {QuestionCommonModel? parentQestion}) {
+    var wFilterInput = RegExp('[0-9]');
+    int decimalDigits = 0;
+    var a5_1_2Val =
+        controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichTextQuestion(
+          question.tenCauHoi ?? '',
+          level: question.cap ?? 2,
+        ),
+        buildNganhCNType0Sub(question, product)
+      ],
+    );
+  }
+
+  buildNganhCNType0Sub(
+      QuestionCommonModel question, TablePhieuNganhCN product) {
+    if (question.danhSachCauHoiCon!.isNotEmpty) {
+      List<QuestionCommonModel> questionCon = question.danhSachCauHoiCon!;
+
+      return ListView.builder(
+          itemCount: questionCon.length,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            QuestionCommonModel questionConItem = questionCon[index];
+            switch (questionConItem.loaiCauHoi) {
+              case 0:
+                return buildNganhCNType0Sub2(questionConItem, product);
+              case 3:
+                return renderNganhCNType4(questionConItem, product);
+              case 4:
+                return renderNganhCNType4(questionConItem, product);
+              default:
+                return Container();
+            }
+          });
+    }
+    return const SizedBox();
+  }
+
+  buildNganhCNType0Sub2(
+      QuestionCommonModel question, TablePhieuNganhCN product) {
+    if (question.danhSachCauHoiCon!.isNotEmpty) {
+      List<QuestionCommonModel> questionCon = question.danhSachCauHoiCon!;
+
+      return ListView.builder(
+          itemCount: questionCon.length,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            QuestionCommonModel questionConItem = questionCon[index];
+            switch (questionConItem.loaiCauHoi) {
+              case 0:
+                return buildNganhCNType0Sub2(questionConItem, product);
+              case 3:
+                return renderNganhCNType4(questionConItem, product);
+              case 4:
+                return renderNganhCNType4(questionConItem, product);
+              default:
+                return Container();
+            }
+          });
+    }
+    return const SizedBox();
+  }
+
+  renderNganhCNType4(QuestionCommonModel question, TablePhieuNganhCN product) {
+    if (question.maCauHoi == "A1_1") {
+      return Obx(() {
+        var a1_1 = controller.getValueSanPham(
+            question.bangDuLieu!, colPhieuNganhCNA1_1, product.id!);
+
+        String vkey =
+            '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.maNganhC5}_${product.sTT_SanPham}_1';
+
+        return InputString(
+          key: ValueKey(vkey),
+          onChange: (value) => controller.onChangeInputPhanV(
+              question.bangDuLieu!,
+              question.maCauHoi,
+              question.maCauHoi,
+              product.id!,
+              value),
+          question: question,
+          value: a1_1,
+          validator: (String? value) => controller.onValidateInputA5(
+              question.bangDuLieu!,
+              question.maCauHoi!,
+              question.maCauHoi,
+              product.id!,
+              value ?? value!.replaceAll(' ', ''),
+              0,
+              0,
+              question.giaTriNN,
+              question.giaTriLN,
+              question.loaiCauHoi!,
+              product.sTT_SanPham!,
+              true),
+          maxLine: 5,
+        );
+      });
+    } else if (question.maCauHoi == "A1_2") {
+      var a1_2;
+      if (product != null) {
+        a1_2 = product.a1_2;
+      }
+      return InkWell(
+        onTap: () {
+          controller.onOpenDialogSearchCap8(
+              question,
+              question.maCauHoi!,
+              product,
+              product.id!,
+              product.sTT_SanPham!,
+              product.a1_1 ?? '',
+              a1_2);
+        },
+        child: IgnorePointer(
+            child: InputStringVcpa(
+          key: ValueKey(
+              '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTT_SanPham}_2$a1_2'),
+          onChange: (value) => controller.onChangeInputPhanV(
+              question.bangDuLieu!,
+              question.maCauHoi,
+              question.maCauHoi,
+              product.id!,
+              value),
+          question: question,
+          value: a1_2,
+          validator: (String? value) => controller.onValidateNganhCN(
+              question.bangDuLieu!,
+              question.maCauHoi!,
+              question.maCauHoi,
+              product.id!,
+              value ?? value!.replaceAll(' ', ''),
+              0,
+              0,
+              question.giaTriNN,
+              question.giaTriLN,
+              question.loaiCauHoi!,
+              product.sTT_SanPham!,
+              true),
+          readOnly: false,
+          suffix: const Icon(
+            Icons.arrow_drop_down,
+            color: primaryColor,
+          ),
+        )),
+      );
+    } else if (question.maCauHoi == "A2_1") {
+      return Obx(() {
+        var a2_1 = controller.getValueSanPham(
+            question.bangDuLieu!, colPhieuNganhCNA2_1, product.id!);
+
+        String vkey =
+            '${question.maPhieu}_${question.maCauHoi}_${product.id}-${product.maNganhC5}_${product.sTT_SanPham}_3_$a2_1';
+
+        return InputString(
+          key: ValueKey(vkey),
+          onChange: (value) => controller.onChangeInputPhanV(
+              question.bangDuLieu!,
+              question.maCauHoi,
+              question.maCauHoi,
+              product.id!,
+              value),
+          question: question,
+          value: a2_1,
+          validator: (String? value) => controller.onValidateInputA5(
+              question.bangDuLieu!,
+              question.maCauHoi!,
+              question.maCauHoi,
+              product.id!,
+              value ?? value!.replaceAll(' ', ''),
+              0,
+              0,
+              question.giaTriNN,
+              question.giaTriLN,
+              question.loaiCauHoi!,
+              product.sTT_SanPham!,
+              true),
+          maxLine: 5,
+        );
+      });
+    } else if (question.maCauHoi == "A2_2") {
+      return renderNganhCNType3(question, product);
+    }
+    return const SizedBox();
+  }
+
+  renderNganhCNType3(QuestionCommonModel question, TablePhieuNganhCN product) {
+    var wFilterInput = RegExp('[0-9]');
+    int decimalDigits = 2;
+    return Obx(() {
+      var val;
+      var dvt = '';
+      var a2_1Val = controller.getValueSanPham(
+          question.bangDuLieu!, colPhieuNganhCNA2_2, product.id!);
+      if (product != null) {
+        if (question.maCauHoi == "A2_2") {
+          val = product.a2_2;
+          dvt = product.a2_1 ?? '';
+        }
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InputInt(
+            key: ValueKey(
+                '${question.maPhieu}_${question.maCauHoi}-${product.id}-${product.maNganhC5}-${product.sTT_SanPham}-${question.sTT}'),
+            question: question,
+            onChange: (value) => controller.onChangeInputPhanV(
+                question.bangDuLieu!,
+                question.maCauHoi,
+                question.maCauHoi,
+                product.id!,
+                value),
+            value: val,
+            type: "double",
+            validator: (String? value) => controller.onValidate(
+                question.bangDuLieu!,
+                question.maCauHoi!,
+                question.maCauHoi,
+                value,
+                question.giaTriNN,
+                question.giaTriLN,
+                question.loaiCauHoi!,
+                true),
+            flteringTextInputFormatterRegExp: wFilterInput,
+            decimalDigits: decimalDigits,
+            showDtv: true,
+            rightString: dvt,
+          ),
+        ],
+      );
+    });
+  }
+
+/*****End: NganhCN***/
+  buildNganhTM(QuestionCommonModel question, {String? subName}) {
+    return Obx(() {
+      if (question.danhSachCauHoiCon != null &&
+          question.danhSachCauHoiCon!.isNotEmpty) {
+        List<QuestionCommonModel> questionsCon = question.danhSachCauHoiCon!;
+        return Column(children: [
+          ListView.builder(
+              //   key: ValueKey(product),
+              itemCount: questionsCon.length,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                QuestionCommonModel questionC = questionsCon[index];
+                return buildNganhTMDetail(questionC, parentQuestion: question);
+              })
+        ]);
+      }
+
+      return const SizedBox();
+    });
+  }
+
+  buildNganhTMDetail(QuestionCommonModel mainQuestion,
+      {QuestionCommonModel? parentQuestion, String? subName}) {
+    return Obx(() {
+      var a1TValue =
+          controller.getValueByFieldName(tablePhieuNganhTM, colPhieuNganhTMA1T);
+      if (controller.tblPhieuNganhTMSanPham != null &&
+          controller.tblPhieuNganhTMSanPham.isNotEmpty) {
+        if (mainQuestion.danhSachCauHoiCon != null &&
+            mainQuestion.danhSachCauHoiCon!.isNotEmpty) {
+          var lastProduct = controller.tblPhieuNganhTMSanPham.lastOrNull;
+          int lastStt = 0;
+          if (lastProduct != null) {
+            lastStt = lastProduct.sTT_SanPham!;
+          }
+          var questionA1T = parentQuestion!.danhSachCauHoiCon!
+              .where((x) => x.maCauHoi == colPhieuNganhTMA1T)
+              .first;
+          return Column(
+              children: controller.tblPhieuNganhTMSanPham
+                  .asMap()
+                  .entries
+                  .map((entry) {
+            var idx = entry.key;
+            idx = idx + 1;
+            var product = entry.value;
+            List<QuestionCommonModel> questionsCon =
+                mainQuestion.danhSachCauHoiCon!;
+
+            return Column(
+              children: [
+                Obx(() {
+                  return Container(
+                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: greyDarkBorder, width: 1),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5.0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (product.sTT_SanPham! !=
+                              controller.sttProduct.value)
+                            Container(
+                                width: double.infinity,
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color.fromARGB(255, 240, 212, 154),
+                                        Color.fromARGB(255, 234, 232, 226),
+                                        Color.fromARGB(255, 234, 232, 226),
+                                        Color.fromARGB(255, 240, 212, 154),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(5.0),
+                                        topRight: Radius.circular(
+                                            5.0))), // Adds a gradient background and rounded corners to the container
+                                child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Sản phẩm thứ ${idx}",
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color.fromARGB(
+                                                  255, 62, 65, 68),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ])),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                            child: ListView.builder(
+                                key:
+                                    ValueKey<QuestionCommonModel>(mainQuestion),
+                                itemCount: questionsCon.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  QuestionCommonModel questionC =
+                                      questionsCon[index];
+                                  return buildNganhTMItem(questionC, product);
+                                }),
+                          )
+                        ],
+                      ));
+                }),
+                if (lastStt > 0 && lastStt == product.sTT_SanPham!) ...[
+                  InputIntView(
+                    key: ValueKey(
+                        '${questionA1T.maPhieu}${questionA1T.maCauHoi}_$a1TValue'),
+                    question: questionA1T,
+                    onChange: (value) => (),
+                    value: a1TValue,
+                    enable: false,
+                    type: "double",
+                    hintText: "Tự động tính",
+                    decimalDigits: 2,
+                    txtStyle: styleMedium.copyWith(color: primaryColor),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                ]
+              ],
+            );
+          }).toList());
+        }
+        return const SizedBox();
+      }
+      return const SizedBox();
+    });
+  }
+
+  buildNganhTMItem(
+      QuestionCommonModel question, TablePhieuNganhTMSanPham product,
+      {QuestionCommonModel? parentQestion}) {
+    controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
+    //  switch (question.maCauHoi) {
+    //  case "A1":
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [renderNganhTMType(question, product)],
+    );
+
+    //  default:
+    //     return Container();
+    //   }
+  }
+
+  renderNganhTMType(
+      QuestionCommonModel question, TablePhieuNganhTMSanPham product) {
+    if (question.maCauHoi == "A1_1") {
+      var a1_1Val = controller.getValueSanPham(tablePhieuMauTBSanPham,
+          colPhieuMauTBSanPhamA5_1_1, product.sTT_SanPham!);
+      String vkey =
+          '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTT_SanPham}';
+
+      return TextString(
+        //  key: ValueKey<TablePhieuMauTBSanPham>(product),
+        key: ValueKey(vkey),
+        question: question,
+        value: a1_1Val,
+        enable: false,
+        textStyle: styleMedium.copyWith(color: primaryDarkColor),
+      );
+      // });
+    } else if (question.maCauHoi == 'A1_2') {
+      var wFilterInput = RegExp('[0-9]');
+      int decimalDigits = 2;
+      var val;
+      var dvt = '';
+      // var a5_1_2Val = controller.getValueSanPham(
+      //     question.bangDuLieu!, 'A1_2', product.id!);
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InputInt(
+            key: ValueKey(
+                '${question.maPhieu}_${question.maCauHoi}-${product.id}-${product.sTT_SanPham}-${question.sTT}'),
+            question: question,
+            onChange: (value) => controller.onChangeInputPhanV(
+                question.bangDuLieu!,
+                question.maCauHoi,
+                question.maCauHoi,
+                product.id!,
+                value),
+            value: val,
+            type: "double",
+            validator: (String? value) => controller.onValidate(
+                question.bangDuLieu!,
+                question.maCauHoi!,
+                question.maCauHoi,
+                value,
+                question.giaTriNN,
+                question.giaTriLN,
+                question.loaiCauHoi!,
+                true),
+            flteringTextInputFormatterRegExp: wFilterInput,
+            decimalDigits: decimalDigits,
+            showDtv: true,
+            rightString: dvt,
+          ),
+        ],
+      );
+    }
+    return const SizedBox();
+  }
+
   buildWarningText(QuestionCommonModel question, selectedValue) {
     // if (question.maCauHoi == columnPhieuMauA1_4) {
     //   if (selectedValue == 2) {
@@ -3722,9 +4609,9 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
   buildWarningTextA8_1(QuestionCommonModel question,
       ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot, String fieldName) {
     // if (chiTieuDong.maSo == '4') {
-    //   if (controller.isCap1HPhanVI.value &&
-    //       (controller.isCap5VanTaiHanhKhachPhanVI.value ||
-    //           controller.isCap5DichVuHangHoaPhanVI.value)) {
+    //   if (controller.isCap1H_VT.value &&
+    //       (controller.isCap5VanTaiHanhKhach.value ||
+    //           controller.isCap5DichVuHangHoa.value)) {
     //     var selectedValue = controller.getValueByFieldName(
     //         question.bangDuLieu!, columnPhieuMauA8_1_4_1);
     //     if (selectedValue == 1) {
@@ -3737,9 +4624,9 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     //     }
     //   }
     // } else if (chiTieuDong.maSo == '5') {
-    //   if (controller.isCap1HPhanVI.value &&
-    //       (controller.isCap5VanTaiHanhKhachPhanVI.value ||
-    //           controller.isCap5DichVuHangHoaPhanVI.value)) {
+    //   if (controller.isCap1H_VT.value &&
+    //       (controller.isCap5VanTaiHanhKhach.value ||
+    //           controller.isCap5DichVuHangHoa.value)) {
     //     var selectedValue = controller.getValueByFieldName(
     //         question.bangDuLieu!, columnPhieuMauA8_1_5_1);
     //     if (selectedValue == 1) {
@@ -3752,9 +4639,9 @@ class QuestionNo07Screen extends GetView<QuestionNo07Controller> {
     //     }
     //   }
     // } else if (chiTieuDong.maSo == '7') {
-    //   if (controller.isCap1HPhanVI.value &&
-    //       (controller.isCap5VanTaiHanhKhachPhanVI.value ||
-    //           controller.isCap5DichVuHangHoaPhanVI.value)) {
+    //   if (controller.isCap1H_VT.value &&
+    //       (controller.isCap5VanTaiHanhKhach.value ||
+    //           controller.isCap5DichVuHangHoa.value)) {
     //     var selectedValue = controller.getValueByFieldName(
     //         question.bangDuLieu!, columnPhieuMauA8_1_7_1);
     //     if (selectedValue == 1) {

@@ -17,9 +17,11 @@ class AppBarHeader extends StatelessWidget implements PreferredSizeWidget {
       this.questionCode = 0,
       this.actions,
       this.backAction,
-      this.subTitle})
+      this.subTitle,
+      this.wTitle})
       : super(key: key);
 
+  final Widget? wTitle;
   final String? title;
   final String? titleEnd;
   final String? subTitle;
@@ -31,20 +33,22 @@ class AppBarHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    var currentTitle = (subTitle == null || subTitle == "")
+        ? Text(title!, style: styleMediumBold)
+        : ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+            title: Text(title!, style: styleMediumBoldAppBarHeader),
+            subtitle:
+                Text(subTitle!, style: const TextStyle(color: Colors.white)),
+            titleAlignment: ListTileTitleAlignment.center,
+          );
+    
     return AppBar(
       automaticallyImplyLeading: false,
       centerTitle: true,
       actions: [actions ?? actionDefault()],
       // title: Text(getTitleAppBar(), style: styleMediumBold),
-      title: (subTitle == null || subTitle == "")
-          ? Text(title!, style: styleMediumBold)
-          : ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-              title: Text(title!, style: styleMediumBoldAppBarHeader),
-              subtitle:
-                  Text(subTitle!, style: const TextStyle(color: Colors.white)),
-              titleAlignment: ListTileTitleAlignment.center,
-            ),
+      title: currentTitle,
       leading: IconButton(
           onPressed: () {
             if (backAction != null) {

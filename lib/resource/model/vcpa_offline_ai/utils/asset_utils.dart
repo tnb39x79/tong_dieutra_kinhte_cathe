@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:get/get.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,40 @@ abstract class AssetPaths {
 
 abstract class AssetUtils {
   static final Logger _logger = Logger('AssetUtils');
+
+  /// Get the current Documents directory path (iOS-safe)
+  static Future<String> _getDocumentsDirectoryPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  /// Convert relative path to absolute path using current Documents directory
+  static Future<String> _getAbsolutePath(String relativePath) async {
+    // If already absolute, return as-is
+    if (relativePath.startsWith('/')) {
+      return relativePath;
+    }
+
+    final documentsPath = await _getDocumentsDirectoryPath();
+    return '$documentsPath/$relativePath';
+  }
+
+  /// Get absolute path from stored relative path (iOS-safe)
+  static Future<String?> _getStoredAbsolutePath(String prefKey) async {
+    String? relativePath;
+
+    switch (prefKey) {
+      case 'dataModelSuggestionsPath':
+        relativePath = AppPref.dataModelSuggestionsPath;
+        break;
+    }
+
+    if (relativePath == null || relativePath.isEmpty) {
+      return null;
+    }
+
+    return await _getAbsolutePath(relativePath);
+  }
 
   static Future<String> _readFile(String fileName) async {
     try {
@@ -175,11 +210,56 @@ abstract class AssetUtils {
   }
 
   static Future<Uint8List> loadIndustryOnnxModel() async {
-    final file = await localFile;
-    final rawAssetFile = await file.readAsBytes();
+    // Try to load from local storage first (iOS-safe path resolution)
+    final suggestionsAbsolutePath =
+        await _getStoredAbsolutePath('dataModelSuggestionsPath');
 
-    final bytes = rawAssetFile.buffer.asUint8List();
-    return bytes;
+    debugPrint(
+        'Relative suggestions path: ${AppPref.dataModelSuggestionsPath}');
+    debugPrint('Resolved absolute suggestions path: $suggestionsAbsolutePath');
+
+    if (suggestionsAbsolutePath != null && suggestionsAbsolutePath.isNotEmpty) {
+      final file = File(suggestionsAbsolutePath);
+      if (await file.exists()) {
+        debugPrint(
+            'Loading suggestions model from local storage: ${file.path}');
+        final rawAssetFile = await file.readAsBytes();
+        final bytes = rawAssetFile.buffer.asUint8List();
+        return bytes;
+      } else {
+        debugPrint(
+            'Suggestions model not found in local storage: $suggestionsAbsolutePath');
+      }
+    }
+
+    // Fallback to the old method using AppPref paths
+    final file = await localFile;
+    if (file.existsSync()) {
+      debugPrint('Loading suggestions model from fallback path: ${file.path}');
+      final rawAssetFile = await file.readAsBytes();
+      final bytes = rawAssetFile.buffer.asUint8List();
+      return bytes;
+    } else {
+      Get.dialog(AlertDialog(
+        title: const Text('File not found'),
+        content: const Text(
+            'The suggestions model file does not exist. Please download the AI models first.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ));
+      throw Exception('Suggestions model file not found');
+    }
+    // final file = await localFile;
+    // final rawAssetFile = await file.readAsBytes();
+
+    // final bytes = rawAssetFile.buffer.asUint8List();
+    // return bytes;
   }
 
   // static Future<Uint8List> loadIndustryOnnxModel() async {
@@ -199,9 +279,10 @@ abstract class AssetUtils {
   }
 
   static Future<File> get localFile async {
-    final path = '${AppPref.dataModelAIFilePath}/${AppPref.dataModelAIVersionFileName}';//await localPath;
+    final path =
+        '${AppPref.dataModelAIFilePath}/${AppPref.dataModelAIVersionFileName}'; //await localPath;
     debugPrint('Load from path $path');
-       return File(path);
-  //  return File('$path/models/model_v4.onnx');
+    return File(path);
+    //  return File('$path/models/model_v4.onnx');
   }
 }

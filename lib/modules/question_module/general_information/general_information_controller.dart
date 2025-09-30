@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
-import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_no07_controller.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart'; 
+import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_phieu_tb_controller.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/phieu_provider.dart';
@@ -272,15 +272,15 @@ class GeneralInformationController extends BaseController {
   getNextScreen(int screenNoValue) async {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
       var isCap1BCE = await checkMaNganhCap1BCEByMaVCPA();
-      Get.toNamed(AppRoutes.question07, parameters: {
-        QuestionNo07Controller.idCoSoKey: currentIdCoSo!,
-        QuestionNo07Controller.isNhomNganhCap1BCEKey: isCap1BCE ? '1' : '0',
+      Get.toNamed(AppRoutes.questionTB, parameters: {
+        QuestionPhieuTBController.idCoSoKey: currentIdCoSo!,
+        QuestionPhieuTBController.isNhomNganhCap1BCEKey: isCap1BCE ? '1' : '0',
       });
     }
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      Get.toNamed(AppRoutes.question07, parameters: {
-        QuestionNo07Controller.idCoSoKey: currentIdCoSo!,
-        QuestionNo07Controller.isNhomNganhCap1BCEKey: '',
+      Get.toNamed(AppRoutes.questionTB, parameters: {
+        QuestionPhieuTBController.idCoSoKey: currentIdCoSo!,
+        QuestionPhieuTBController.isNhomNganhCap1BCEKey: '',
       });
     }
   }

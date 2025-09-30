@@ -4,105 +4,92 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:gov_statistics_investigation_economic/common/common.dart';
+import '/common/common.dart';
 
-///
-///https://pub.dev/packages/connectivity_plus
 class NetworkService extends GetxController {
   //this variable none = No Internet, wifi = connected to WIFI ,mobile = connected to Mobile Data.
   static Network connectionType = Network.wifi;
+
+  // Reactive connection type for real-time updates
+  final Rx<Network> _connectionTypeRx = Network.wifi.obs;
+
   //Instance of Flutter Connectivity
-  //final Connectivity _connectivity = Connectivity();
+  final Connectivity _connectivity = Connectivity();
   //Stream to keep listening to network change state
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  late final StreamSubscription<List<ConnectivityResult>>
+      _connectivitySubscription;
 
-  // @override
-  // void onInit() {
-  //  Future.delayed(const Duration(seconds: 2), () {
-  //     initConnectionType();
+  /// Get reactive connection type
+  Network get connectionTypeRx => _connectionTypeRx.value;
 
-  //     _connectivitySubscription =
-  //         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-  //   });
-  // }
+  /// Get reactive connection type observable
+  Rx<Network> get connectionTypeObservable => _connectionTypeRx;
+
+  /// Check if device is connected to internet (reactive)
+  bool get isConnected => _connectionTypeRx.value != Network.none;
+
+  /// Get reactive stream of connection status
+  Stream<bool> get connectionStream => _connectionTypeRx.map((type) => type != Network.none);
 
   @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
-    Future.delayed(const Duration(seconds: 2), () {
-      _connectivitySubscription =
-          Connectivity()
-              .onConnectivityChanged
-              .listen((List<ConnectivityResult> result) {
-        // Received changes in available connectivity types!
-        _updateConnectionStatus(result);
-      });
+  void onInit() async {
+    await initConnectionType();
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    // _connectivitySubscription =
+    //     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((v) {
+      _updateConnectionStatus(v.first);
     });
+
+    super.onInit();
   }
 
-  // a method to get which connection result, if you we connected to internet or no if yes then which network
-  // Future<void> initConnectionType() async {
-  //   //late ConnectivityResult result;
-  //   final List<ConnectivityResult> result;
-  //   try {
-  //     result = await (_connectivity.checkConnectivity());
-  //   } on PlatformException catch (e) {
-  //     log('$e');
-  //     return;
-  //   }
-  //   return _updateConnectionStatus(result);
-  // }
-
-  // state update, of network, if you are connected to WIFI connectionType will get set to 1,
-  // and update the state to the consumer of that variable.
-  _updateConnectionStatus(List<ConnectivityResult> connectivityResult) {
-    log('$connectivityResult');
-    // This condition is for demo purposes only to explain every connection type.
-    // Use conditions which work for your requirements.
-    if (connectivityResult.contains(ConnectivityResult.mobile)) {
-      // Mobile network available.
-      connectionType = Network.mobile;
-    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
-      // Wi-fi is available.
-      // Note for Android:
-      // When both mobile and Wi-Fi are turned on system will return Wi-Fi only as active network type
-      connectionType = Network.wifi;
-    } else if (connectivityResult.contains(ConnectivityResult.ethernet)) {
-      // Ethernet connection available.
-    } else if (connectivityResult.contains(ConnectivityResult.vpn)) {
-      // Vpn connection active.
-      // Note for iOS and macOS:
-      // There is no separate network interface type for [vpn].
-      // It returns [other] on any device (also simulator)
-    } else if (connectivityResult.contains(ConnectivityResult.bluetooth)) {
-      // Bluetooth connection available.
-    } else if (connectivityResult.contains(ConnectivityResult.other)) {
-      // Connected to a network which is not in the above mentioned networks.
-    } else if (connectivityResult.contains(ConnectivityResult.none)) {
-      // No available network types
-      connectionType = Network.none;
-    } else {
-      Get.snackbar('Network Error', 'Failed to get Network Status');
+  Future<void> initConnectionType() async {
+    late ConnectivityResult result;
+    try {
+      result = (await _connectivity.checkConnectivity()).first;
+    } on PlatformException catch (e) {
+      log('$e');
+      return;
     }
+    return _updateConnectionStatus(result);
+  }
+
+  _updateConnectionStatus(ConnectivityResult result) async {
+    log('$result');
+    Network newConnectionType;
+    switch (result) {
+      case ConnectivityResult.wifi:
+        newConnectionType = Network.wifi;
+        break;
+      case ConnectivityResult.mobile:
+        newConnectionType = Network.mobile;
+        break;
+      case ConnectivityResult.none:
+        newConnectionType = Network.none;
+        break;
+      default:
+        newConnectionType = Network.none;
+        // Get.snackbar('Network Error', 'Failed to get Network Status');
+        break;
+    }
+
+    // Update both static and reactive variables
+    connectionType = newConnectionType;
+    _connectionTypeRx.value = newConnectionType;
 
     update();
-    if (connectionType == Network.none) {
-      Get.snackbar('Network Error', 'No network connection',
-          colorText: Colors.redAccent);
-    }
+    // if (connectionType == Network.none) {
+    //   Get.snackbar('Network Error', 'No network connection',
+    //       colorText: Colors.redAccent);
+    // }
   }
 
-  // @override
-  // void onClose() {
-  //   //stop listening to network state when app is closed
-  //   _connectivitySubscription.cancel();
-  // }
-
-  // Be sure to cancel subscription after you are done
   @override
-  dispose() {
+  void onClose() {
+    //stop listening to network state when app is closed
     _connectivitySubscription.cancel();
-    super.dispose();
   }
 }

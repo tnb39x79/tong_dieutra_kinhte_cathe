@@ -58,7 +58,8 @@ class DmLinhvucProvider extends BaseDBProvider<TableDmLinhvuc> {
       (
         $columnDmLinhVucId INTEGER PRIMARY KEY AUTOINCREMENT,
         $columnDmLinhVucMaLV TEXT,
-        $columnDmLinhVucTenLinhVuc TEXT 
+        $columnDmLinhVucTenLinhVuc TEXT ,
+         $columnDmLinhVucTuKhoa TEXT 
       )
       ''');
   }

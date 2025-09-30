@@ -22,7 +22,9 @@ class InputDataProvider extends GetConnect {
     Map<String, String>? headers = {
       'Authorization': 'Bearer ${AppPref.accessToken}'
     };
-    String versionDm =  AppPref.versionDanhMuc == "" ? AppValues.versionDanhMuc : AppPref.versionDanhMuc;
+    String versionDm = AppPref.versionDanhMuc == ""
+        ? AppValues.versionDanhMuc
+        : AppPref.versionDanhMuc;
     return get(
       'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getData}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}&versionDm=$versionDm',
       headers: headers,
@@ -94,13 +96,45 @@ class InputDataProvider extends GetConnect {
     }
   }
 
-   Future<Response> getModelVersion() async {
+  Future<Response> getModelVersion() async {
     Map<String, String>? headers = {
       'Authorization': 'Bearer ${AppPref.accessToken}'
     };
     httpClient.timeout = const Duration(seconds: 15);
     String modelUrl =
         '${ApiConstants.baseUrl}${ApiConstants.getModelVersion}?uid=${AppPref.uid}&mVersion=${AppPref.dataModelAIVersionFileName}';
+    try {
+      var response = await get(
+        modelUrl,
+        headers: headers,
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return const Response(
+              statusCode: HttpStatus.requestTimeout,
+              statusText: "Request timeout");
+        },
+      );
+      return response;
+    } on TimeoutException catch (e) {
+      // catch timeout here..
+      return Response(
+          statusCode: HttpStatus.requestTimeout, statusText: e.message);
+    } catch (e) {
+      return Response(
+          statusCode: ApiConstants.errorException, statusText: e.toString());
+    }
+  }
+
+  Future<Response> getModelSpeech() async {
+    Map<String, String>? headers = {
+      'Authorization': 'Bearer ${AppPref.accessToken}'
+    };
+    httpClient.timeout = const Duration(seconds: 15);
+    final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
+    String modelUrl =
+        '$baseUrl${ApiConstants.getModelSpeech}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}';
     try {
       var response = await get(
         modelUrl,

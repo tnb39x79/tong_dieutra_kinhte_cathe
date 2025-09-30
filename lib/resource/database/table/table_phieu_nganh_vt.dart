@@ -138,6 +138,11 @@ const String colPhieuNganhVTA10_M = 'A10_M';
 const String colPhieuNganhVTCreatedAt = 'CreatedAt';
 const String colPhieuNganhVTpdatedAt = 'UpdatedAt';
 
+String maCauHoiVTHK="A_I_0";
+String maCauHoiVTHKMau="A_I_M_0";
+String maCauHoiVTHH="A_II_0";
+String maCauHoiHHMau="A_II_M_0";
+
 List<String> fieldNamesPhan6HKTB = [
   colPhieuNganhVTA1_1_1,
   colPhieuNganhVTA1_1_2,

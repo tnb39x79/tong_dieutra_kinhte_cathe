@@ -11,7 +11,7 @@ class InputDataRepository {
   InputDataRepository({required this.provider});
   final InputDataProvider provider;
 
- Future<ResponseModel<DataModel>> getData() async {
+  Future<ResponseModel<DataModel>> getData() async {
     if (NetworkService.connectionType == Network.none) {
       return ResponseModel.withDisconnect();
     }
@@ -96,7 +96,7 @@ class InputDataRepository {
       final data = await provider.getModelVersion();
       if (data.statusCode == ApiConstants.success) {
         var res = ResponseCmmModel.fromJson(data.body);
-        ModelAIVersionModel dm =ModelAIVersionModel.fromJson(res.objectData) ;
+        ModelAIVersionModel dm = ModelAIVersionModel.fromJson(res.objectData);
         return ResponseCmmModel(
           responseCode: res.responseCode,
           responseMessage: res.responseMessage,
@@ -112,5 +112,19 @@ class InputDataRepository {
     } catch (e) {
       return ResponseCmmModel.withRequestException(e);
     }
+  }
+
+  Future<ResponseModel<ModelAIVersionModel?>> getModelSpeech() async {
+    if (NetworkService.connectionType == Network.none) {
+      return ResponseModel.withDisconnect();
+    }
+    final data = await provider.getModelSpeech();
+    if (data.statusCode == ApiConstants.success) {
+      return ResponseModel(
+        statusCode: ApiConstants.success,
+        body: ModelAIVersionModel.fromJson(data.body['ObjectData']),
+      );
+    }
+    return ResponseModel.withError(data.body);
   }
 }

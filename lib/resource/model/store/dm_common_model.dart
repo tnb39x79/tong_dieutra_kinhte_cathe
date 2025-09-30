@@ -159,18 +159,21 @@ class TGDmTrinhDoChuyenMonModel {
 class DmLinhVucModel {
   String? ma;
   String? ten;
+  String? tuKhoa;
 
-  DmLinhVucModel({this.ma, this.ten});
+  DmLinhVucModel({this.ma, this.ten,this.tuKhoa});
 
   DmLinhVucModel.fromJson(dynamic json) {
     ma = json['Ma'];
     ten = json['Ten'];
+    tuKhoa = json['TuKhoa'];
   }
 
   Map toJson() {
     var map = <String, dynamic>{};
     map['Ma'] = ma;
     map['Ten'] = ten;
+    map['TuKhoa'] = tuKhoa;
     return map;
   }
 

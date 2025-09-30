@@ -245,24 +245,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     ''');
     return map.isNotEmpty;
   }
-
-  Future<int> getMaxSTTByIdCoso(String idCoso) async {
-    String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.rawQuery('''
-          SELECT IFNULL(MAX(STT), 0) as MaxSTT FROM $tablePhieuNganhLT 
-          WHERE $columnIDCoSo = '$idCoso' 
-        
-          AND $columnCreatedAt = '$createdAt'
-        ''');
-    if (map.isNotEmpty) {
-      if (map[0] != null) {
-        return map[0]['MaxSTT'] ?? 0;
-      }
-    }
-    return 0;
-    // return map.isNotEmpty ? map[0]['MaxSTT'] : 0;
-  }
-
+ 
   Future<int> totalIntByMaCauHoi(
       String idCoso, int id, List<String> fieldNames, String tongVsTich) async {
     int result = 0;
@@ -308,7 +291,8 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     }
     return result;
   }
-
+ 
+  
   Future<int> deleteById(int id) {
     var res = db!.delete(tablePhieuNganhLT, where: '''  $columnId = '$id'  ''');
     return res;

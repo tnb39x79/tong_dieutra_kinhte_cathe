@@ -7,11 +7,13 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/modules/sync_module/mixin_sync.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/ct_dm_phieu_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider_p07mau_dm.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/xacnhan_logic_provider.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_phieu.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_data.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm07mau.dart';
@@ -68,6 +70,7 @@ class HomeController extends BaseController with SyncMixin {
   final dmGioiTinhProvider = DmGioiTinhProvider();
 
   final doiTuongDieuTraProvider = DmDoiTuongDieuTraProvider();
+  final dmPhieuProvider = DmPhieuProvider();
   final userInfoProvider = UserInfoProvider();
 
   //final dmVsicIOProvider = DmVsicIOProvider();
@@ -132,7 +135,7 @@ class HomeController extends BaseController with SyncMixin {
         onGetDuLieuPhieu();
       }
     }
-
+    
     mainMenuController.setLoading(false);
     super.onInit();
 
@@ -360,6 +363,7 @@ class HomeController extends BaseController with SyncMixin {
         maDTV: AppPref.uid,
         questionNo07Mau: jsonEncode(data.body!.cauHoiPhieu07Maus),
         questionNo07TB: jsonEncode(data.body!.cauHoiPhieu07TBs),
+        maSanPhamLoaiTruCoSoCT: data.body!.maSanPhamLoaiTruCoSoCT,
         createdAt: dtSaveDB,
         updatedAt: dtSaveDB,
       );
@@ -395,7 +399,6 @@ class HomeController extends BaseController with SyncMixin {
   Future insertDoiTuongDT(dynamic bodyData, String dtSaveDB) async {
     List<TableDoiTuongDieuTra> dsDoiTuongDT =
         TableData.toListDoiTuongDieuTras(bodyData);
-
     await doiTuongDieuTraProvider.insert(dsDoiTuongDT, dtSaveDB);
   }
 
@@ -509,7 +512,7 @@ class HomeController extends BaseController with SyncMixin {
       ..maDangNhap = userModel.maDangNhap
       ..tenNguoiDung = userModel.tenNguoiDung
       ..matKhau = userModel.matKhau
-      ..maTinh=userModel.maTinh
+      ..maTinh = userModel.maTinh
       ..maTKCS = userModel.maTKCS
       ..diaChi = userModel.diaChi
       ..sdt = userModel.sDT
@@ -523,6 +526,8 @@ class HomeController extends BaseController with SyncMixin {
   }
 
   Future insertDanhMucChung(DataModel bodyData, String dtSaveDB) async {
+    List<TableCTDmPhieu> dmPhieu = TableData.toListCTDmPhieus(bodyData.dmPhieu);
+
     // if (AppPref.isFistInstall == 0) {
     List<TableDmTinhTrangHD> dmTinhTrangHD =
         TableData.toListTinhTrangHDs(bodyData.danhSachTinhTrangHD);
@@ -536,6 +541,7 @@ class HomeController extends BaseController with SyncMixin {
         TableData.toListDmGioiTinhs(bodyData.dmGioiTinh);
     List<TableDmDanToc> dmDanToc = TableData.toListDmDanTocs(bodyData.dmDanToc);
 
+    await dmPhieuProvider.insert(dmPhieu, dtSaveDB);
     await dmTinhTrangHDProvider.insert(dmTinhTrangHD, dtSaveDB);
     await dmTrangThaiDTProvider.insert(dmTrangThaiDT, dtSaveDB);
     await dmCoKhongProvider.insert(dmCoKhong, dtSaveDB);
@@ -608,8 +614,8 @@ class HomeController extends BaseController with SyncMixin {
     Map? isHad = await hasGetDataPv();
     if (isHad != null) {
       //if (isDefaultUserType()) {
-        AppPref.dateTimeSaveDB = isHad['CreatedAt'];
-        Get.toNamed(AppRoutes.interviewObjectList);
+      AppPref.dateTimeSaveDB = isHad['CreatedAt'];
+      Get.toNamed(AppRoutes.interviewObjectList);
       // } else {
       //   await goToGeneralInformation();
       // }
@@ -633,6 +639,7 @@ class HomeController extends BaseController with SyncMixin {
   Future initProvider() async {
     await dataProvider.init();
     await doiTuongDieuTraProvider.init();
+    await dmPhieuProvider.init();
     await bkCoSoSXKDProvider.init();
     await bkCoSoSXKDNganhSanPhamProvider.init();
     await diaBanCoSoSXKDProvider.init();
@@ -729,7 +736,8 @@ class HomeController extends BaseController with SyncMixin {
 
   ///Tải model AI
   onDownloadModelAI() async {
-    Get.toNamed(AppRoutes.downloadModelAI);
+    // Get.toNamed(AppRoutes.downloadModelAI);
+    Get.toNamed(AppRoutes.downloadModelAI_V2);
   }
 
   Future syncData() async {

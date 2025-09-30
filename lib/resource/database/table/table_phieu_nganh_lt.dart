@@ -60,6 +60,9 @@ const String colPhieuNganhLTA10_M = 'A10_M';
 const String colPhieuNganhLTCreatedAt = 'CreatedAt';
 const String colPhieuNganhLTUpdatedAt = 'UpdatedAt';
 
+String maCauHoiLT="A_I_0";
+String maCauHoiLTMau="A_I_M_0";
+
 List<String> fieldNamesPhan7LTTB = [
   colPhieuNganhLTA1_1_1,
   colPhieuNganhLTA1_1_2,

@@ -64,6 +64,14 @@ class AppPref {
       'dataModelAIVersionFileNameKey';
   static const String dataModelDownResultKey = 'dataModelDownResultKey';
 
+  // New keys for individual model file paths
+  static const String dataModelSuggestionsPathKey =
+      'dataModelSuggestionsPathKey';
+  static const String dataModelSTTEncoderPathKey = 'dataModelSTTEncoderPathKey';
+  static const String dataModelSTTDecoderPathKey = 'dataModelSTTDecoderPathKey';
+  static const String dataModelSTTJoinerPathKey = 'dataModelSTTJoinerPathKey';
+  static const String dataModelSTTTokensPathKey = 'dataModelSTTTokensPathKey';
+
   static final GetStorage _box = GetStorage(storageName);
 
   static initListener() async {
@@ -213,4 +221,30 @@ class AppPref {
       _box.write(dataModelDownResultKey, downloadResult);
   static String get dataModelDownResult =>
       _box.read(dataModelDownResultKey) ?? '';
+
+  // New getters and setters for individual model file paths
+  static set dataModelSuggestionsPath(String value) =>
+      _box.write(dataModelSuggestionsPathKey, value);
+  static String get dataModelSuggestionsPath =>
+      _box.read(dataModelSuggestionsPathKey) ?? '';
+
+  static set dataModelSTTEncoderPath(String value) =>
+      _box.write(dataModelSTTEncoderPathKey, value);
+  static String get dataModelSTTEncoderPath =>
+      _box.read(dataModelSTTEncoderPathKey) ?? '';
+
+  static set dataModelSTTDecoderPath(String value) =>
+      _box.write(dataModelSTTDecoderPathKey, value);
+  static String get dataModelSTTDecoderPath =>
+      _box.read(dataModelSTTDecoderPathKey) ?? '';
+
+  static set dataModelSTTJoinerPath(String value) =>
+      _box.write(dataModelSTTJoinerPathKey, value);
+  static String get dataModelSTTJoinerPath =>
+      _box.read(dataModelSTTJoinerPathKey) ?? '';
+
+  static set dataModelSTTTokensPath(String value) =>
+      _box.write(dataModelSTTTokensPathKey, value);
+  static String get dataModelSTTTokensPath =>
+      _box.read(dataModelSTTTokensPathKey) ?? '';
 }

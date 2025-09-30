@@ -4,13 +4,16 @@ import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart
 import 'package:gov_statistics_investigation_economic/resource/database/database_helper.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/base_db_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_mautb_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_tm.dart';
-import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_tm_sanpham.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_tm_sanpham.dart';
 
 import 'package:sqflite/sqflite.dart';
 
-class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPham> {
-  static final PhieuNganhTMSanPhamProvider _singleton = PhieuNganhTMSanPhamProvider._internal();
+class PhieuNganhTMSanPhamProvider
+    extends BaseDBProvider<TablePhieuNganhTMSanPham> {
+  static final PhieuNganhTMSanPhamProvider _singleton =
+      PhieuNganhTMSanPhamProvider._internal();
 
   factory PhieuNganhTMSanPhamProvider() {
     return _singleton;
@@ -55,6 +58,7 @@ class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPha
       $colPhieuNganhTMSanPhamIDCoSo  TEXT,
       $colPhieuNganhTMSanPhamSTT_SanPham  INTEGER,
       $colPhieuNganhTMSanPhamMaNganhC5  TEXT,
+      $colPhieuNganhTMSanPhamMoTaSanPham  TEXT,
       $colPhieuNganhTMSanPhamA1_2  REAL,
       $columnMaDTV  TEXT,
       $columnCreatedAt TEXT,
@@ -120,6 +124,18 @@ class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPha
     return maps;
   }
 
+  Future<List<Map>> selectByIdMaNganhC5(String idCoso, String maNganhC5) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    List<Map> maps = await db!.rawQuery('''
+          SELECT * FROM $tablePhieuNganhTMSanPham 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND  $colPhieuNganhTMSanPhamMaNganhC5 = '$maNganhC5' 
+          AND $columnCreatedAt = '$createdAt'
+        ''');
+    return maps;
+  }
+
   Future<List<Map>> selectByIdCoSoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
@@ -135,11 +151,37 @@ class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPha
     return maps;
   }
 
+  Future<List<Map>> selectCap1GL8610ByIdCoSo(
+      String idCoso, List<String> maSanPhamCap1GL8610B) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    var sql = "  SELECT distinct $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamIDCoSo, ";
+    sql +=
+        " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham AS STT_SanPham, ";
+    sql +=
+        " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2 as MaNganhC5, ";
+    sql +=
+        " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_1 as MoTaSanPham, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamA1_2, ";
+    sql += " '${AppPref.uid}' as MADTV ";
+    sql += " FROM $tablePhieuMauTBSanPham ";
+    sql +=
+        " LEFT JOIN $tablePhieuNganhTMSanPham  ON $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2=$tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5 ";
+    sql +=
+        " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham=$tablePhieuNganhTMSanPham.$colPhieuMauTBSanPhamSTTSanPham ";
+    sql += " WHERE $tablePhieuMauTBSanPham.$columnIDCoSo = '$idCoso'  ";
+    sql += " AND $tablePhieuMauTBSanPham.$columnCreatedAt = '$createdAt' ";
+    sql +=
+        " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2 in (${maSanPhamCap1GL8610B.map((e) => "'$e'").join(', ')})";
+    List<Map> maps = await db!.rawQuery(sql);
+    return maps;
+  }
+
   Future<int> getMaxSTTByIdCoso(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT) as MaxSTT FROM $tablePhieuNganhTMSanPham 
+          SELECT MAX($colPhieuNganhTMSanPhamSTT_SanPham) as MaxSTT FROM $tablePhieuNganhTMSanPham 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
         ''');
@@ -159,17 +201,6 @@ class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPha
       AND $columnIDCoSo = '$idCoso'
     ''');
     return map.isNotEmpty;
-  }
-
-  Future<int> getMaxSTTByIDCoso(String idCoso) async {
-    String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT) as STT FROM $tablePhieuNganhTMSanPham 
-          WHERE $columnIDCoSo = '$idCoso' 
-         
-          AND $columnCreatedAt = '$createdAt'
-        ''');
-    return map.isNotEmpty ? map[0]['STT'] : 0;
   }
 
   Future<int> totalIntByMaCauHoi(
@@ -195,8 +226,8 @@ class PhieuNganhTMSanPhamProvider extends BaseDBProvider<TablePhieuNganhTMSanPha
     return result;
   }
 
-Future<double> totalDoubleByMaCauHoi(
-      String idCoso, int id, List<String> fieldNames,String tongVsTich) async {
+  Future<double> totalDoubleByMaCauHoi(
+      String idCoso, int id, List<String> fieldNames, String tongVsTich) async {
     double result = 0.0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -219,17 +250,35 @@ Future<double> totalDoubleByMaCauHoi(
   }
 
   Future<int> deleteById(int id) {
-    var res = db!.delete(tablePhieuNganhTMSanPham, where: '''  $columnId = '$id'  ''');
-    return res;
-  }
- Future<int> deleteByCoSoId(String coSoId) {
-    var res = db!.delete(tablePhieuNganhTMSanPham, where: '''  $columnIDCoSo = '$coSoId'  ''');
+    var res = db!
+        .delete(tablePhieuNganhTMSanPham, where: '''  $columnId = '$id'  ''');
     return res;
   }
 
+  Future<int> deleteByCoSoId(String coSoId) {
+    var res = db!.delete(tablePhieuNganhTMSanPham,
+        where: '''  $columnIDCoSo = '$coSoId'  ''');
+    return res;
+  }
+
+  Future<int> deleteByIdMaNganhC5(String idCoso, String maNganhC5) async {
+    var res = db!.delete(tablePhieuNganhTMSanPham,
+        where:
+            '''  $columnIDCoSo = '$idCoso' AND  $colPhieuNganhTMSanPhamMaNganhC5 = '$maNganhC5' ''');
+    return res;
+  }
+
+  Future<int> deleteByListMaNganhC5(
+      String idCoso, List<String> maNganhC5) async {
+    var res = db!.delete(tablePhieuNganhTMSanPham,
+        where:
+            '''  $columnIDCoSo = '$idCoso' AND  $colPhieuNganhTMSanPhamMaNganhC5 not in (${maNganhC5.map((e) => "'$e'").join(', ')})  ''');
+    return res;
+  }
 
   @override
   Future deletedTable(Database database) async {
-    return await database.rawQuery('DROP TABLE IF EXISTS $tablePhieuNganhTMSanPham');
+    return await database
+        .rawQuery('DROP TABLE IF EXISTS $tablePhieuNganhTMSanPham');
   }
 }

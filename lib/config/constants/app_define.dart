@@ -34,6 +34,30 @@ class AppDefine {
   ///0
   static const int maDoiTuongDT_07TB = 0; 
 
+///0
+   static const int maPhieuTB = 0; 
+   ///1
+   static const int maPhieuCN = 1;
+
+   ///2
+   static const int maPhieuVT = 2;
+
+   ///3
+   static const int maPhieuLT = 3;
+
+   ///4
+   static const int maPhieuTM = 4;  
+
+   ///5  
+   static const int maPhieuMau = 5;
+
+   ///6
+   static const int maPhieuVTMau = 6; 
+
+   ///7
+   static const int maPhieuLTMau = 7;  
+
+
   static const int loaiCauHoi_1 = 1;
   static const int loaiCauHoi_2 = 2;
   static const int loaiCauHoi_3 = 3;

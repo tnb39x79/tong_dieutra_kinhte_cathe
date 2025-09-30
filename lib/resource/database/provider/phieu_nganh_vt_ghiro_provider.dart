@@ -144,7 +144,7 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT) as MaxSTT FROM $tablePhieuNganhVTGhiRo 
+          SELECT MAX($colPhieuNganhVTGhiRoSTT) as MaxSTT FROM $tablePhieuNganhVTGhiRo 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $columnCreatedAt = '$createdAt'
         ''');
@@ -165,17 +165,7 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
     ''');
     return map.isNotEmpty;
   }
-
-  Future<int> getMaxSTTByIDCoso(String idCoso) async {
-    String createdAt = AppPref.dateTimeSaveDB!;
-    List<Map> map = await db!.rawQuery('''
-          SELECT MAX(STT) as STT FROM $tablePhieuNganhVTGhiRo 
-          WHERE $columnIDCoSo = '$idCoso' 
-         
-          AND $columnCreatedAt = '$createdAt'
-        ''');
-    return map.isNotEmpty ? map[0]['STT'] : 0;
-  }
+ 
 
   Future<int> totalIntByMaCauHoi(
       String idCoso, int id, List<String> fieldNames) async {

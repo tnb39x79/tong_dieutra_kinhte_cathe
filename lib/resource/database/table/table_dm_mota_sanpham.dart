@@ -6,6 +6,8 @@ const String columnDmMoTaSPTenSanPhamKoDau = 'TenSanPhamKoDau';
 const String columnDmMoTaSPMoTaChiTiet = 'MoTaChiTiet';
 const String columnDmMoTaSPMoTaChiTietKoDau = 'MoTaChiTietKoDau';
 const String columnDmMoTaSPDonViTinh = 'DonViTinh';
+const String columnDmMoTaSPMaVSIC = 'MaVSIC';
+const String columnDmMoTaSPTenVSIC = 'TenVSIC';
 const String columnDmMoTaSPMaLV = 'MaLV';
 const String columnDmMoTaSPTenLinhVuc = 'TenLinhVuc';
 
@@ -17,6 +19,8 @@ class TableDmMotaSanpham {
   String? moTaChiTiet;
   String? moTaChiTietKoDau;
   String? donViTinh;
+  String? maVSIC;
+  String? tenVSIC;
   String? maLV;
   String? tenLinhVuc;
 
@@ -28,6 +32,8 @@ class TableDmMotaSanpham {
       this.moTaChiTiet,
       this.moTaChiTietKoDau,
       this.donViTinh,
+      this.maVSIC,
+      this.tenVSIC,
       this.maLV,
       this.tenLinhVuc});
 
@@ -39,6 +45,8 @@ class TableDmMotaSanpham {
     moTaChiTiet = json['MoTaChiTiet'];
     moTaChiTietKoDau = json['MoTaChiTietKoDau'];
     donViTinh = json['DonViTinh'];
+    maVSIC = json['MaVSIC'];
+    tenVSIC = json['TenVSIC'];
     maLV = json['MaLV'];
     tenLinhVuc = json['TenLinhVuc'];
   }
@@ -51,6 +59,8 @@ class TableDmMotaSanpham {
     data['MoTaChiTiet'] = moTaChiTiet;
     data['MoTaChiTietKoDau'] = moTaChiTietKoDau;
     data['DonViTinh'] = donViTinh;
+    data['MaVSIC'] = maVSIC;
+    data['TenVSIC'] = tenVSIC;
     data['MaLV'] = maLV;
     data['TenLinhVuc'] = tenLinhVuc;
     return data;

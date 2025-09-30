@@ -1,3 +1,7 @@
 export 'download_model_ai_binding.dart';
 export 'download_model_ai_controller.dart';
 export 'download_model_ai_screen.dart';
+export 'enhanced_ai_download_binding.dart';
+export 'enhanced_ai_download_controller.dart';
+export 'enhanced_ai_download_screen.dart';
+export 'widgets/ai_model_section_widget.dart';

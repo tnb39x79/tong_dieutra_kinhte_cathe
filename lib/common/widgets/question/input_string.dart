@@ -12,6 +12,7 @@ class InputString extends StatefulWidget {
       this.subName,
       this.maxLine = 1,
       this.warningText,
+      this.textStyle,
       super.key});
 
   final QuestionCommonModel question;
@@ -22,6 +23,7 @@ class InputString extends StatefulWidget {
   final String? subName;
   final int maxLine;
   final String? warningText;
+  final TextStyle? textStyle;
 
   @override
   InputIntState createState() => InputIntState();
@@ -55,26 +57,15 @@ class InputIntState extends State<InputString> {
         ),
         const SizedBox(height: 4),
         WidgetFieldInput(
-          controller: _controller,
-          enable: widget.enable,
-          hint: 'Nhập vào đây',
-          validator: widget.validator,
-          onChanged: (String? value) =>
-              widget.onChange!(value != "" ? value : null),
-          maxLine: widget.maxLine,
-          suffix: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  widget.question.dVT ?? '',
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
-              ],
-            ),
-          ),
-        ),
+            controller: _controller,
+            enable: widget.enable,
+            hint: 'Nhập vào đây',
+            validator: widget.validator,
+            onChanged: (String? value) =>
+                widget.onChange!(value != "" ? value : null),
+            maxLine: widget.maxLine,
+            txtStyle: widget.textStyle,
+            suffix: buildSuffix()),
         wWarningText(),
         const SizedBox(height: 12),
       ],
@@ -94,6 +85,25 @@ class InputIntState extends State<InputString> {
     }
 
     return mainName;
+  }
+
+  Widget buildSuffix() {
+    var suff = widget.question.dVT ?? '';
+    if (suff != '') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              widget.question.dVT ?? '',
+              style: TextStyle(color: Theme.of(context).hintColor),
+            ),
+          ],
+        ),
+      );
+    }
+    return const SizedBox();
   }
 
   Widget wWarningText() {

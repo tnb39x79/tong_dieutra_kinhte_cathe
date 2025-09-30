@@ -12,15 +12,17 @@ class RichTextQuestion extends StatelessWidget {
       this.enable = true,
       this.stt,
       this.subText,
+      this.moTaSanPham,
       super.key});
 
   final String text;
   final int level; // the level question, is have range = [1,2,3,4,5,6,7,8]
-  final ProductModel? product;
+  final dynamic product;
   final String? notes;
   final bool? enable;
   final int? stt;
   final String? subText;
+  final String? moTaSanPham;
 
   final GeneralInformationController generalInformationController = Get.find();
 
@@ -51,6 +53,7 @@ class RichTextQuestion extends StatelessWidget {
     // return Text(_handleText(), style: _getStyle());
     String textTmp = text;
     var hasSubText = text.toLowerCase().contains('[...]');
+
     if (hasSubText) {
       textTmp = textTmp.replaceAll('[...]', '#');
       var arr = textTmp.split('#');
@@ -106,6 +109,91 @@ class RichTextQuestion extends StatelessWidget {
             ),
             TextSpan(
               text: secondPart,
+              style: (level == 1 || level == 2)
+                  ? const TextStyle(
+                      fontSize: fontLarge,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black)
+                  : const TextStyle(
+                      fontSize: fontMedium,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
+            ),
+          ]));
+    } else {
+      if (moTaSanPham != null && moTaSanPham != '') {
+         return richTextMoTaSanpham();
+      }
+    }
+    return Text(_handleText(), style: _getStyle());
+  }
+
+Widget richTextMoTaSanpham() { 
+    String textTmp = text;
+    var hasSubText = text.toLowerCase().contains('[');
+    if (hasSubText) {
+      textTmp = textTmp.replaceAll('[', '#').replaceAll(']', '#');
+      var arr = textTmp.split('#');
+      String firstPart = '${arr[0]}[';
+      String secondPart = arr[1];
+      String thirdPart = '] ${arr[2]}';
+      if (moTaSanPham != null && moTaSanPham != '') { 
+          secondPart = moTaSanPham ?? ''; 
+      }
+      return RichText(
+          text: TextSpan(
+              style: (level == 1 || level == 2)
+                  ? const TextStyle(
+                      fontSize: fontLarge,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black)
+                  : const TextStyle(
+                      fontSize: fontMedium,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
+              children: [
+            TextSpan(
+              text: firstPart,
+              style: (level == 1 || level == 2)
+                  ? const TextStyle(
+                      fontSize: fontLarge,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black)
+                  : const TextStyle(
+                      fontSize: fontMedium,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
+            ),
+            TextSpan(
+              text: secondPart,
+              style: (level == 1 || level == 2)
+                  ? const TextStyle(
+                      fontSize: fontLarge,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w700,
+                      color: primaryColor)
+                  : const TextStyle(
+                      fontSize: fontMedium,
+                      height: textHeight,
+                      fontFamily: inter,
+                      fontWeight: FontWeight.w500,
+                      color: primaryColor),
+            ),
+            TextSpan(
+              text: thirdPart,
               style: (level == 1 || level == 2)
                   ? const TextStyle(
                       fontSize: fontLarge,

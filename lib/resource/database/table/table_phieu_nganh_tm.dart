@@ -12,6 +12,10 @@ const String colPhieuNganhTMA3T = 'A3T';
 const String colPhieuNganhTMCreatedAt = 'CreatedAt';
 const String colPhieuNganhTMUpdatedAt = 'UpdatedAt';
 
+
+String maCauHoiTMGL6810="A_I_0";
+String maCauHoiTM56="A_II_0";
+
 class TablePhieuNganhTM {
   int? id;
   String? iDCoSo;

@@ -2,11 +2,13 @@ const String tableDmLinhVuc = 'CT_DM_LinhVuc';
 const String columnDmLinhVucId = '_id';
 const String columnDmLinhVucMaLV = 'MaLV';
 const String columnDmLinhVucTenLinhVuc = 'TenLinhVuc';
+const String columnDmLinhVucTuKhoa = 'TuKhoa';
 
 class TableDmLinhvuc {
   int? id;
   String? maLV;
   String? tenLinhVuc;
+  String? tuKhoa;
 
   TableDmLinhvuc({this.id, this.maLV, this.tenLinhVuc});
   factory TableDmLinhvuc.defaultLinhVuc() {
@@ -19,12 +21,14 @@ class TableDmLinhvuc {
     id = json['_id'];
     maLV = json['MaLV'];
     tenLinhVuc = json['TenLinhVuc'];
+    tuKhoa = json['TuKhoa'];
   }
 
   Map<String, Object?> toJson() {
     final data = <String, Object?>{};
     data['MaLV'] = maLV;
     data['TenLinhVuc'] = tenLinhVuc;
+    data['TuKhoa'] = tuKhoa;
     return data;
   }
 
@@ -38,5 +42,6 @@ class TableDmLinhvuc {
     return list;
   }
 
-  bool operator ==(o) => o is TableDmLinhvuc && o.tenLinhVuc == tenLinhVuc && o.maLV == maLV;
+  bool operator ==(o) =>
+      o is TableDmLinhvuc && o.tenLinhVuc == tenLinhVuc && o.maLV == maLV;
 }

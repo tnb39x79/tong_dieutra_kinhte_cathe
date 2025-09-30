@@ -12,8 +12,8 @@ class SideBar extends StatelessWidget {
       {this.isSelected = false,
       this.drawerTitle,
       this.selectedIndex = 0,
-      this.hasPhanVI,
-      this.hasPhanVII,
+      this.hasNganhVT,
+      this.hasNganhLT,
       super.key});
 
   //final GlobalKey<NavigatorState> navigator;
@@ -21,8 +21,8 @@ class SideBar extends StatelessWidget {
   final bool? isSelected;
   final String? drawerTitle;
   final Function(int) onPressed;
-  final bool? hasPhanVI;
-  final bool? hasPhanVII;
+  final bool? hasNganhVT;
+  final bool? hasNganhLT;
 
   final int selectedIndex;
 
@@ -94,9 +94,9 @@ class SideBar extends StatelessWidget {
               }
               bool enableMnu = questionGroups[index].enable!;
               // if (questionGroups[index].fromQuestion == "6.1") {
-              //   enableMnu = hasPhanVI != null && hasPhanVI == true;
+              //   enableMnu = hasNganhVT != null && hasNganhVT == true;
               // } else if (questionGroups[index].fromQuestion == "7.1") {
-              //   enableMnu = hasPhanVII != null && hasPhanVII == true;
+              //   enableMnu = hasNganhLT != null && hasNganhLT == true;
               // }
 
               return Column(
