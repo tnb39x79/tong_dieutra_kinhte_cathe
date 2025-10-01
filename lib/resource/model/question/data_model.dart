@@ -9,6 +9,8 @@ class DataModel {
 
   dynamic cauHoiPhieu07Maus;
   dynamic cauHoiPhieu07TBs;
+  dynamic cauHoiPhieu07MauMenu;
+  dynamic cauHoiPhieu07TBMenu;
   dynamic cauHoiPhieu08s;
   dynamic dmCoKhong;
   dynamic dmGioiTinh;
@@ -38,7 +40,7 @@ class DataModel {
   dynamic tgDmXepHangDiTich;
   dynamic tgDmLoaiTonGiao;
   String? maSanPhamLoaiTruCoSoCT;
-    dynamic dmPhieu;
+  dynamic dmPhieu;
 
   DataModel(
       {this.responseCode,
@@ -48,6 +50,8 @@ class DataModel {
       this.data,
       this.cauHoiPhieu07Maus,
       this.cauHoiPhieu07TBs,
+      this.cauHoiPhieu07MauMenu,
+      this.cauHoiPhieu07TBMenu,
       this.cauHoiPhieu08s,
       this.danhSachTinhTrangHD,
       this.danhSachTrangThaiDT,
@@ -82,6 +86,8 @@ class DataModel {
     data = json['Datas'];
     cauHoiPhieu07Maus = json['CauHoiPhieu07Maus'];
     cauHoiPhieu07TBs = json['CauHoiPhieu07TBs'];
+    cauHoiPhieu07MauMenu = json['CauHoiPhieu07MauMenu'];
+    cauHoiPhieu07TBMenu = json['CauHoiPhieu07TBMenu'];
     cauHoiPhieu08s = json['CauHoiPhieu08TonGiaos'];
     dmCoKhong = json['DM_CoKhong'];
     dmGioiTinh = json['DM_GioiTinh'];
@@ -154,7 +160,7 @@ class DataModel {
     map['TG_DM_XepHangDiTich'] = tgDmXepHangDiTich;
     map['TG_DM_LoaiTonGiaoss'] = tgDmLoaiTonGiao;
     map['MaSanPhamLoaiTruCoSoCT'] = maSanPhamLoaiTruCoSoCT;
-     map['CT_DM_Phieu'] = dmPhieu;
+    map['CT_DM_Phieu'] = dmPhieu;
     return map;
   }
 }

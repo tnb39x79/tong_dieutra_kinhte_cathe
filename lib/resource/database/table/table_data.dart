@@ -31,6 +31,8 @@ const String columnDataId = '_id';
 const String columnDataMaDTV = 'MaDTV';
 const String columnDataQuestionMau = 'CauHoiPhieu07Maus';
 const String columnDataQuestionTB = 'CauHoiPhieu07TBs';
+const String columnDataQuestionMauMenu = 'CauHoiPhieu07MauMenu';
+const String columnDataQuestionTBMenu = 'CauHoiPhieu07TBMenu';
 const String columnDataMaSpLoaiTruCoSoCT = 'MaSanPhamLoaiTruCoSoCT';
 const String columnDataCreatedAt = 'CreatedAt';
 const String columnDataUpdatedAt = 'UpdatedAt';
@@ -40,6 +42,8 @@ class TableData {
   String? maDTV;
   String? questionNo07Mau;
   String? questionNo07TB;
+  String? questionNo07MauMenu;
+  String? questionNo07TBMenu;
   String? maSanPhamLoaiTruCoSoCT;
   String? createdAt;
   String? updatedAt;
@@ -49,6 +53,8 @@ class TableData {
     this.maDTV,
     this.questionNo07Mau,
     this.questionNo07TB,
+    this.questionNo07MauMenu,
+    this.questionNo07TBMenu,
     this.maSanPhamLoaiTruCoSoCT,
     this.createdAt,
     this.updatedAt,
@@ -60,6 +66,8 @@ class TableData {
     maDTV = dataJson['MaDTV'];
     questionNo07Mau = jsonEncode(dataJson['CauHoiPhieu07Maus']);
     questionNo07TB = jsonEncode(dataJson['CauHoiPhieu07TBs']);
+    questionNo07MauMenu = jsonEncode(dataJson['CauHoiPhieu07MauMenu']);
+    questionNo07TBMenu = jsonEncode(dataJson['CauHoiPhieu07TBMenu']);
     maSanPhamLoaiTruCoSoCT = dataJson['MaSanPhamLoaiTruCoSoCT'];
   }
 
@@ -68,6 +76,8 @@ class TableData {
     map['MaDTV'] = maDTV;
     map['CauHoiPhieu07Maus'] = questionNo07Mau;
     map['CauHoiPhieu07TBs'] = questionNo07TB;
+    map['CauHoiPhieu07MauMenu'] = questionNo07MauMenu;
+    map['CauHoiPhieu07TBMenu'] = questionNo07TBMenu;
     map['MaSanPhamLoaiTruCoSoCT'] = maSanPhamLoaiTruCoSoCT;
     map['CreatedAt'] = createdAt;
     map['UpdatedAt'] = updatedAt;
@@ -80,6 +90,14 @@ class TableData {
 
   dynamic toCauHoiPhieu07TB() {
     return jsonDecode(questionNo07TB!);
+  }
+
+   dynamic toCauHoiPhieu07MauMenu() {
+    return jsonDecode(questionNo07MauMenu!);
+  }
+
+  dynamic toCauHoiPhieu07TBMenu() {
+    return jsonDecode(questionNo07TBMenu!);
   }
 
   dynamic toCauHoiPhieu07(String maDoiTuongDT) {
@@ -262,9 +280,9 @@ class TableData {
     return dsDiaDiem;
   }
 
-    static List<TableCTDmPhieu> toListCTDmPhieus(dynamic json) {
+  static List<TableCTDmPhieu> toListCTDmPhieus(dynamic json) {
     List<TableCTDmPhieu> subject = TableCTDmPhieu.listFromJson(json);
-     
+
     return subject;
   }
 

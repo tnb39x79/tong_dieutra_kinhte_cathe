@@ -63,9 +63,9 @@ class DmPhieuProvider extends BaseDBProvider<TableCTDmPhieu> {
     return await db!.query(tableCTDmPhieu);
   }
 
-  Future<Map> getByMaPhieu(String maPhieu) async {
+  Future<Map> getByMaPhieu(int maPhieu) async {
     final List<Map> maps = await db!.query(tableCTDmPhieu, where: '''
-      $colPhieuMaPhieu = '$maPhieu' 
+      $colPhieuMaPhieu = $maPhieu
       ''');
 
     if (maps.isNotEmpty) {

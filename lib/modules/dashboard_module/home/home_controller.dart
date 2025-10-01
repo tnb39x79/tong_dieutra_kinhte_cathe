@@ -363,6 +363,8 @@ class HomeController extends BaseController with SyncMixin {
         maDTV: AppPref.uid,
         questionNo07Mau: jsonEncode(data.body!.cauHoiPhieu07Maus),
         questionNo07TB: jsonEncode(data.body!.cauHoiPhieu07TBs),
+        questionNo07MauMenu: jsonEncode(data.body!.cauHoiPhieu07MauMenu),
+        questionNo07TBMenu: jsonEncode(data.body!.cauHoiPhieu07TBMenu),
         maSanPhamLoaiTruCoSoCT: data.body!.maSanPhamLoaiTruCoSoCT,
         createdAt: dtSaveDB,
         updatedAt: dtSaveDB,

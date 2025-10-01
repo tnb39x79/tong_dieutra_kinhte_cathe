@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:gov_statistics_investigation_economic/common/utils/utils.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/appbars/appbar_customize.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/input/search_dantoc.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/input/search_vcpa_cap5.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/question/input_int%20view.dart';
@@ -43,9 +44,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         child: Scaffold(
           key: controller.scaffoldKey,
           endDrawerEnableOpenDragGesture: false,
-          appBar:   AppBarHeader(
-            title:
-                '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}',
+          appBar: CustomAppBar(
+            title: '${controller.currentTenDoiTuongDT!}',
             questionCode: 4,
             onPressedLeading: () => {},
             subTitle: controller.subTitleBar,
@@ -56,6 +56,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 onPressed: controller.onOpenDrawerQuestionGroup,
                 icon: const Icon(Icons.menu_rounded)),
             backAction: controller.onBackStart,
+            wTitle: Obx(() => appBarTitle()),
           ),
           body: _buildBody(),
           drawer: SideBar(
@@ -70,6 +71,20 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         ),
       ),
     );
+  }
+
+  Widget appBarTitle() {
+    var t =
+        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
+    return (controller.subTitleBar == null || controller.subTitleBar == "")
+        ? Text(t, style: styleMediumBold)
+        : ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+            title: Text(t, style: styleMediumBoldAppBarHeader),
+            subtitle: Text(controller.subTitleBar,
+                style: const TextStyle(color: Colors.white)),
+            titleAlignment: ListTileTitleAlignment.center,
+          );
   }
 
   Widget _buildBody() {
@@ -4303,7 +4318,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
 /*****End: NganhCN***/
   buildNganhTM(QuestionCommonModel question, {String? subName}) {
-    return Obx(() {
+  //  return Obx(() {
       if (question.danhSachCauHoiCon != null &&
           question.danhSachCauHoiCon!.isNotEmpty) {
         List<QuestionCommonModel> questionsCon = question.danhSachCauHoiCon!;
@@ -4321,7 +4336,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       }
 
       return const SizedBox();
-    });
+  // });
   }
 
   buildNganhTMDetail(QuestionCommonModel mainQuestion,

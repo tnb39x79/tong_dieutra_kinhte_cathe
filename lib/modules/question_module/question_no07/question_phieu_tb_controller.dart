@@ -188,7 +188,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   final tblPhieuMauTBSanPhamTM56 = <TablePhieuMauTBSanPham>[].obs;
 
 //* Chứa danh sách nhóm câu hỏi
-  final questionGroupList = <QuestionGroup>[].obs;
+  final questionGroupList = <QuestionGroupByMaPhieu>[].obs;
 //* Chứa thông tin hoàn thành phiếu
   final completeInfo = {}.obs;
   String subTitleBar = '';
@@ -786,23 +786,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-  // Future assignAllQuestionGroup() async {
-  //   var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
-  //   questionGroupList.assignAll(qGroups);
-  // }
+   
   Future assignAllQuestionGroup() async {
-    var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
-    for (var item in qGroups) {
-      if (item.fromQuestion == "6.1") {
-        item.enable = (isCap1H_VT.value == true &&
-                isCap5VanTaiHangHoa.value == true) ||
-            (isCap1H_VT.value == true && isCap5VanTaiHanhKhach.value == true);
-      } else if (item.fromQuestion == "7.1") {
-        // if (isCap2_55LT.value == true) {
-        item.enable = isCap2_55LT.value;
-        // }
-      }
-    }
+   // var s= await getQuestionGroupsV2(currentMaDoiTuongDT!, currentIdCoSo!,tblDmPhieu);
+   // var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
+    var qGroups = await getQuestionGroupsV2(currentMaDoiTuongDT!, currentIdCoSo!,tblDmPhieu);
+      for (var item in qGroups) {
+    //   if (item.fromQuestion == "6.1") {
+    //     item.enable = (isCap1H_VT.value == true &&
+    //             isCap5VanTaiHangHoa.value == true) ||
+    //         (isCap1H_VT.value == true && isCap5VanTaiHanhKhach.value == true);
+    //   } else if (item.fromQuestion == "7.1") {
+    //     // if (isCap2_55LT.value == true) {
+    //     item.enable = isCap2_55LT.value;
+    //     // }
+    //   }
+     }
     questionGroupList.assignAll(qGroups);
   }
 
@@ -810,7 +809,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     scaffoldKey.currentState?.openDrawer();
   }
 
-  Future onMenuPress(int id) async {
+  Future onMenuPress(int idPhieus, int idManHinh) async {
     await fetchData();
     String validateResult = await validateAllFormV2();
     if (validateResult != '') {
@@ -824,7 +823,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       return showError(validateResult);
     }
     await clearSelectedQuestionGroup();
-    var qItem = questionGroupList.where((x) => x.id == id).first;
+    QuestionGroupByManHinh? qItem;
+    var questionGroups = questionGroupList.where((x) => x.id == idPhieus).first;
+    if (questionGroups.questionGroupByManHinh != null) {
+      qItem = questionGroups.questionGroupByManHinh!
+          .where((x) => x.id == idManHinh)
+          .first;
+    }
+
     if (qItem != null) {
       if (qItem.enable!) {
         qItem.isSelected = true;
@@ -849,7 +855,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   Future clearSelectedQuestionGroup() async {
     for (var item in questionGroupList) {
-      item.isSelected = false;
+      if (item.questionGroupByManHinh != null) {
+        for (var subItem in item.questionGroupByManHinh!) {
+          subItem.isSelected = false;
+        }
+      }
     }
     questionGroupList.refresh();
   }
@@ -857,13 +867,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   Future setSelectedQuestionGroup() async {
     if (currentScreenNo.value > 0) {
       await clearSelectedQuestionGroup();
-      var questionGroupItem = questionGroupList
-          .where((x) => x.manHinh == currentScreenNo.value)
-          .firstOrNull;
-      if (questionGroupItem != null) {
-        if (questionGroupItem.enable!) {
-          questionGroupItem.isSelected = true;
-          questionGroupList.refresh();
+      for (var item in questionGroupList) {
+        if (item.questionGroupByManHinh != null) {
+          var questionGroupItem = item.questionGroupByManHinh!
+              .where((x) => x.manHinh == currentScreenNo.value)
+              .firstOrNull;
+          if (questionGroupItem != null) {
+            if (questionGroupItem.enable!) {
+              questionGroupItem.isSelected = true;
+              questionGroupList.refresh();
+            }
+          }
         }
       }
     }
@@ -1084,7 +1098,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
 
       await setSelectedQuestionGroup();
-      snackBar('Man hinh', '${currentScreenNo.value}');
+
       scrollController.animateTo(0.0,
           duration: const Duration(milliseconds: 400),
           curve: Curves.fastOutSlowIn);

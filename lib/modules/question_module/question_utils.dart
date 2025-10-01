@@ -1,14 +1,18 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'package:collection/collection.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/ct_dm_phieu_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/data_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/xacnhan_logic_provider.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_phieu.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_data.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_xacnhan_logic.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/question/question.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/question/question_group.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/question/question_menu_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/store/dm_common_model.dart';
 
 mixin QuestionUtils {
@@ -25,7 +29,7 @@ mixin QuestionUtils {
         question = tableData.toCauHoiPhieu07Mau();
       } else if (AppDefine.maDoiTuongDT_07TB.toString() == maDoiTuongDT) {
         question = tableData.toCauHoiPhieu07TB();
-      } 
+      }
       List<QuestionCommonModel> questionsTemp =
           QuestionCommonModel.listFromJson(jsonDecode(question));
       List<QuestionCommonModel> questionsTemp2 = [];
@@ -35,7 +39,9 @@ mixin QuestionUtils {
         List<int> manHinhs = [];
 
         for (var item in questionsTemp2) {
-          manHinhs.add(item.manHinh!);
+          if (!manHinhs.contains(item.manHinh)) {
+            manHinhs.add(item.manHinh!);
+          }
         }
         int i = 1;
         for (var item in manHinhs) {
@@ -112,17 +118,139 @@ mixin QuestionUtils {
     return questionGroups;
   }
 
-  Future<List<QuestionGroup>> updateXacNhanLogicByMaTrangThaiDT(
-      List<QuestionGroup> questionGroups,
+  Future<List<QuestionGroupByMaPhieu>> getQuestionGroupsV2(String maDoiTuongDT,
+      String idCoSo, List<TableCTDmPhieu> tlbDmPhieu) async {
+    List<QuestionGroupByMaPhieu> questionGroups = [];
+    try {
+      final dataProvider = DataProvider();
+      dynamic map = await dataProvider.selectTop1();
+      TableData tableData = TableData.fromJson(map);
+      dynamic question;
+      if (AppDefine.maDoiTuongDT_07Mau.toString() == maDoiTuongDT) {
+        question = tableData.toCauHoiPhieu07MauMenu();
+      } else if (AppDefine.maDoiTuongDT_07TB.toString() == maDoiTuongDT) {
+        question = tableData.toCauHoiPhieu07TBMenu();
+      }
+      List<QuestionMenuModel> questionsTemp =
+          QuestionMenuModel.listFromJson(jsonDecode(question));
+
+      if (questionsTemp.isNotEmpty) {
+        questionGroups.clear();
+
+        Map<int, List<QuestionMenuModel>> questionByMaPhieu =
+            groupBy(questionsTemp, (q) => q.maPhieu!);
+
+        for (var entry in questionByMaPhieu.entries) {
+          var mPhieu = entry.key;
+          var dsQuestion = entry.value;
+          var id = mPhieu + 1;
+          var tenPhieu =
+              tlbDmPhieu.where((x) => x.maPhieu == mPhieu).first.tenPhieu;
+          QuestionGroupByMaPhieu questionGroupByMaPhieu =
+              QuestionGroupByMaPhieu(
+                  id: id, maPhieu: mPhieu, tenPhieu: tenPhieu, enable: false);
+          if (dsQuestion.isNotEmpty) {
+            List<QuestionGroupByManHinh> questionGroupByManHinhs = [];
+            Map<int, List<QuestionMenuModel>> questionByManHinh =
+                groupBy(dsQuestion, (q) => q.manHinh!);
+            for (var entryMH in questionByManHinh.entries) {
+              var mh = entryMH.key;
+              var dsQuestionMH = entryMH.value;
+              var idMh = mh + 1;
+              var fromQuestion = '';
+              var toQuestion = '';
+
+              if (dsQuestionMH.isNotEmpty) {
+                var fromQuestionItem = dsQuestionMH.firstOrNull;
+                if (fromQuestionItem != null) {
+                  fromQuestion =
+                      fromQuestionItem.maSo ?? fromQuestionItem.maCauHoi ?? '';
+                  if (fromQuestionItem.loaiCauHoi == 0 &&
+                      fromQuestionItem.cap == 1) {
+                    if (dsQuestionMH.length > 1) {
+                      var fromQuestionItem2 = dsQuestionMH[1];
+                      fromQuestion = fromQuestionItem2.maSo ??
+                          fromQuestionItem2.maCauHoi ??
+                          '';
+                    }
+                  }
+                }
+
+                var toQuestionItem = dsQuestionMH.lastOrNull;
+                if (toQuestionItem != null) {
+                  toQuestion =
+                      toQuestionItem.maSo ?? toQuestionItem.maCauHoi ?? '';
+                }
+
+                QuestionGroupByManHinh questionGroupByManHinh =
+                    QuestionGroupByManHinh(
+                        id: idMh,
+                        maPhieu: mPhieu,
+                        manHinh: mh,
+                        tenNhomCauHoi: tenPhieu,
+                        fromQuestion: fromQuestion,
+                        toQuestion: toQuestion,
+                        isSelected: false,
+                        enable: false);
+                questionGroupByManHinhs.add(questionGroupByManHinh);
+              }
+            }
+            questionGroupByMaPhieu.questionGroupByManHinh =
+                questionGroupByManHinhs;
+            questionGroups.add(questionGroupByMaPhieu);
+          }
+
+          //  QuestionGroupByMaPhieu qMaPhieu=QuestionGroupByMaPhieu(id: id,maPhieu: mPhieu,enable: false, );
+        }
+      }
+    } catch (e) {
+      log('ERROR lấy danh sách nhóm câu hỏi: $e');
+      return [];
+    }
+
+    List<QuestionGroupByMaPhieu> questionGroupsFinal = [];
+    if (questionGroups.isNotEmpty) {
+      final xacNhanLogicProvider = XacNhanLogicProvider();
+      var xnLogics = await xacNhanLogicProvider.selectByIdDoiTuongDT(
+          maDoiTuongDT: maDoiTuongDT, idDoiTuongDT: idCoSo);
+      var tblXacNhans = TableXacnhanLogic.listFromJson(xnLogics);
+      if (tblXacNhans.isNotEmpty) {
+        for (var item in questionGroups) {
+          List<QuestionGroupByManHinh> questionGroupsManHinhFinal = [];
+          if (item.questionGroupByManHinh != null) {
+            for (var subItem in item.questionGroupByManHinh!) {
+              for (var xn in tblXacNhans) {
+                if (subItem.manHinh == xn.manHinh) {
+                  subItem.enable = xn.isEnableMenuItem == 1;
+                }
+              }
+              questionGroupsManHinhFinal.add(subItem);
+            }
+          }
+          item.questionGroupByManHinh = questionGroupsManHinhFinal;
+          questionGroupsFinal.add(item);
+        }
+        return questionGroupsFinal;
+      }
+    }
+    return questionGroups;
+  }
+
+  Future<List<QuestionGroupByMaPhieu>> updateXacNhanLogicByMaTrangThaiDT(
+      List<QuestionGroupByMaPhieu> questionGroups,
       int maDoiTuongDT,
       String idCoSoIdHo,
       int maTrangThaiDT,
       {String? noiDungLogic}) async {
     if (questionGroups.isNotEmpty) {
       for (var item in questionGroups) {
-        await insertUpdateXacNhanLogic(item.manHinh!, idCoSoIdHo, maDoiTuongDT,
-            1, 1, noiDungLogic ?? '', maTrangThaiDT);
-        item.enable = true;
+        if (item.questionGroupByManHinh != null) {
+          for (var subItem in item.questionGroupByManHinh!) {
+            await insertUpdateXacNhanLogic(subItem.manHinh!, idCoSoIdHo,
+                maDoiTuongDT, 1, 1, noiDungLogic ?? '', maTrangThaiDT);
+            item.enable = true;
+          }
+        }
       }
     }
     return questionGroups;
@@ -367,8 +495,10 @@ mixin QuestionUtils {
 
   List<SearchTypeModel> getSearchType() {
     List<SearchTypeModel> result = [];
-    SearchTypeModel cmDm = SearchTypeModel(ma: 1, ten: 'Tìm kiếm trong danh mục',selected: false);
-    SearchTypeModel cmAI = SearchTypeModel(ma: 2, ten: 'Tìm kiếm bằng AI',selected: false);
+    SearchTypeModel cmDm =
+        SearchTypeModel(ma: 1, ten: 'Tìm kiếm trong danh mục', selected: false);
+    SearchTypeModel cmAI =
+        SearchTypeModel(ma: 2, ten: 'Tìm kiếm bằng AI', selected: false);
     result.add(cmDm);
     result.add(cmAI);
     return result;

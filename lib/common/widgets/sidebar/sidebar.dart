@@ -17,10 +17,10 @@ class SideBar extends StatelessWidget {
       super.key});
 
   //final GlobalKey<NavigatorState> navigator;
-  final List<QuestionGroup> questionGroups;
+  final List<QuestionGroupByMaPhieu> questionGroups;
   final bool? isSelected;
   final String? drawerTitle;
-  final Function(int) onPressed;
+  final Function(int, int) onPressed;
   final bool? hasNganhVT;
   final bool? hasNganhLT;
 
@@ -54,29 +54,22 @@ class SideBar extends StatelessWidget {
             ),
           ),
           if (drawerTitle != '')
-            Container(
-              decoration: const BoxDecoration(color: Colors.transparent),
-              margin: const EdgeInsets.all(0),
-              padding: const EdgeInsets.only(top: 6),
-              height: 60,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Center(
-                    child: Text(
-                      drawerTitle!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: warningColor,
-                          fontSize: fontMedium,
-                          height: textHeight,
-                          fontFamily: inter,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            Row(children: [
+              Expanded(
+                  child: Center(
+                      child: Container(
+                          padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                          child: Text(
+                            drawerTitle!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: warningColor,
+                                fontSize: fontMedium,
+                                height: textHeight,
+                                fontFamily: inter,
+                                fontWeight: FontWeight.normal),
+                          ))))
+            ]),
           Expanded(
               child: ListView.builder(
             itemCount: questionGroups.length,
@@ -84,80 +77,191 @@ class SideBar extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.only(top: 0),
             itemBuilder: (context, index) {
-              var tl =
-                  'Câu ${questionGroups[index].fromQuestion} - câu ${questionGroups[index].toQuestion}';
-              if (questionGroups[index].toQuestion == '') {
-                tl = 'Câu ${questionGroups[index].fromQuestion} ';
-              }
-              if (questionGroups[index].fromQuestion == '') {
-                tl = 'Câu ${questionGroups[index].toQuestion} ';
-              }
-              bool enableMnu = questionGroups[index].enable!;
-              // if (questionGroups[index].fromQuestion == "6.1") {
-              //   enableMnu = hasNganhVT != null && hasNganhVT == true;
-              // } else if (questionGroups[index].fromQuestion == "7.1") {
-              //   enableMnu = hasNganhLT != null && hasNganhLT == true;
-              // }
-
+              bool enableTenPhieu = questionGroups[index].enable ?? false;
+              String tenPhieu = questionGroups[index].tenPhieu ?? '';
+              int idPhieu = questionGroups![index].id!;
+              var questionGroupByManHinhs =
+                  questionGroups[index].questionGroupByManHinh;
               return Column(
-                children: [
-                  const SizedBox(height: AppValues.padding / 2),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      margin: const EdgeInsets.fromLTRB(
-                        AppValues.padding / 2,
-                        0,
-                        AppValues.padding / 2,
-                        0,
-                      ),
-                      padding: const EdgeInsets.all(0),
-                      width: Get.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(AppValues.borderLv2),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: InkWell(
-                                //  color: Colors.lightBlue,
-                                child: ListTile(
-                              leading: Icon(Icons.help,
-                                  color: questionGroups[index].isSelected!
-                                      ? primaryLightColor
-                                      : questionGroups[index].enable!
-                                          ? greyColor
-                                          : greyBulliet),
-                              title: Text(tl),
-                              selected: questionGroups[index].isSelected!,
-                              selectedColor: primaryLightColor,
-                              enabled: enableMnu,
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: questionGroups[index].isSelected!
-                                    ? primaryLightColor
-                                    : questionGroups[index].enable!
-                                        ? blackText
-                                        : greyColor,
-                              ),
-                              onTap: () {
-                                onPressed(questionGroups[index].id!);
-                              },
-                            )),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              );
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildDetail(idPhieu, tenPhieu, questionGroupByManHinhs!)
+                  ]);
             },
           ))
         ],
       ),
+    );
+  }
+
+  Widget buildDetail(int idPhieu, String tenPhieu,
+      List<QuestionGroupByManHinh> questionGroupByManHinhs) {
+    return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+        margin: const EdgeInsets.only(left: 0, top: 8, right: 0, bottom: 8),
+        decoration: const BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppValues.borderLv2),
+                topRight: Radius.circular(AppValues
+                    .borderLv2))), // Adds a gradient background and rounded corners to the container
+        child: Column(
+          children: [
+            Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.only(top: 0),
+                decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            backgroundColor, // White shadow with some transparency
+                        spreadRadius: 5, // How much the shadow spreads
+                        blurRadius: 10, // How blurry the shadow is
+                        offset: Offset(0, 5), // X and Y offset of the shadow
+                      ),
+                    ],
+                    color: Color.fromARGB(255, 241, 241, 242),
+                    border: Border(
+                      left: BorderSide(color: backgroundColor),
+                      top: BorderSide(color: backgroundColor),
+                      right: BorderSide(color: backgroundColor),
+                    ),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(AppValues.borderLv2),
+                        topRight: Radius.circular(AppValues.borderLv2))),
+                // Adds a gradient background and rounded corners to the container
+                child: buildTenPhieu(tenPhieu)),
+            Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 8),
+                margin: const EdgeInsets.only(top: 0),
+                decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            backgroundColor, // White shadow with some transparency
+                        spreadRadius: 5, // How much the shadow spreads
+                        blurRadius: 10, // How blurry the shadow is
+                        offset: Offset(0, 5), // X and Y offset of the shadow
+                      ),
+                    ],
+                    color: Color.fromARGB(255, 241, 241, 242),
+                    border: Border(
+                      left: BorderSide(color: backgroundColor),
+                      bottom: BorderSide(color: backgroundColor),
+                      right: BorderSide(color: backgroundColor),
+                    ),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(AppValues.borderLv2),
+                        bottomRight: Radius.circular(AppValues
+                            .borderLv2))), // Adds a gradient background and rounded corners to the container
+                child: buildNhomCauHoi(idPhieu, questionGroupByManHinhs!))
+          ],
+        ));
+  }
+
+  Widget buildTenPhieu(String tenPhieu) {
+    return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(16, 16, 0, 0),
+        margin: const EdgeInsets.only(top: 0),
+        decoration: const BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                topRight: Radius.circular(
+                    5.0))), // Adds a gradient background and rounded corners to the container
+        child: Text(
+          tenPhieu,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black54,
+          ),
+        ));
+  }
+
+  Widget buildNhomCauHoi(
+      int idPhieu, List<QuestionGroupByManHinh> questionGroupByManHinhs) {
+    return ListView.builder(
+      itemCount: questionGroupByManHinhs!.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(top: 0),
+      itemBuilder: (context, index) {
+        var tl =
+            'Câu ${questionGroupByManHinhs![index].fromQuestion} - câu ${questionGroupByManHinhs![index].toQuestion}';
+        if (questionGroupByManHinhs![index].toQuestion == '') {
+          tl = 'Câu ${questionGroupByManHinhs![index].fromQuestion} ';
+        }
+        if (questionGroupByManHinhs![index].fromQuestion == '') {
+          tl = 'Câu ${questionGroupByManHinhs![index].toQuestion} ';
+        }
+        bool enableMnu = questionGroupByManHinhs![index].enable!;
+        bool isSelected = questionGroupByManHinhs![index].isSelected!;
+        int idManHinh = questionGroupByManHinhs![index].id!;
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: AppValues.padding / 2),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(
+                  AppValues.padding / 2,
+                  0,
+                  AppValues.padding / 2,
+                  0,
+                ),
+                padding: const EdgeInsets.all(0),
+                width: Get.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppValues.borderLv2),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                          //  color: Colors.lightBlue,
+                          child: ListTile(
+                        leading: Icon(Icons.help,
+                            color: isSelected
+                                ? primaryLightColor
+                                : enableMnu
+                                    ? greyColor
+                                    : greyBulliet),
+                        title: Text(tl),
+                        selected: isSelected,
+                        selectedColor: primaryLightColor,
+                        enabled: enableMnu,
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: questionGroupByManHinhs![index].isSelected!
+                              ? primaryLightColor
+                              : enableMnu!
+                                  ? blackText
+                                  : greyColor,
+                        ),
+                        onTap: () {
+                          onPressed(idPhieu, idManHinh);
+                        },
+                      )),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }

@@ -176,7 +176,7 @@ class QuestionPhieuCNController extends BaseController with QuestionUtils {
   final isCap2_55PhanVII = false.obs;
 
 //* Chứa danh sách nhóm câu hỏi
-  final questionGroupList = <QuestionGroup>[].obs;
+  final questionGroupList = <QuestionGroupByMaPhieu>[].obs;
 //* Chứa thông tin hoàn thành phiếu
   final completeInfo = {}.obs;
   String subTitleBar = '';
@@ -676,27 +676,27 @@ class QuestionPhieuCNController extends BaseController with QuestionUtils {
   //   questionGroupList.assignAll(qGroups);
   // }
   Future assignAllQuestionGroup() async {
-    var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
-    for (var item in qGroups) {
-      if (item.fromQuestion == "6.1") {
-        item.enable = (isCap1HPhanVI.value == true &&
-                isCap5DichVuHangHoaPhanVI.value == true) ||
-            (isCap1HPhanVI.value == true &&
-                isCap5VanTaiHanhKhachPhanVI.value == true);
-      } else if (item.fromQuestion == "7.1") {
-        // if (isCap2_55PhanVII.value == true) {
-        item.enable = isCap2_55PhanVII.value;
-        // }
-      }
-    }
-    questionGroupList.assignAll(qGroups);
+    // var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
+    // for (var item in qGroups) {
+    //   if (item.fromQuestion == "6.1") {
+    //     item.enable = (isCap1HPhanVI.value == true &&
+    //             isCap5DichVuHangHoaPhanVI.value == true) ||
+    //         (isCap1HPhanVI.value == true &&
+    //             isCap5VanTaiHanhKhachPhanVI.value == true);
+    //   } else if (item.fromQuestion == "7.1") {
+    //     // if (isCap2_55PhanVII.value == true) {
+    //     item.enable = isCap2_55PhanVII.value;
+    //     // }
+    //   }
+    // }
+    // questionGroupList.assignAll(qGroups);
   }
 
   Future onOpenDrawerQuestionGroup() async {
     scaffoldKey.currentState?.openDrawer();
   }
 
-  Future onMenuPress(int id) async {
+  Future onMenuPress(int id,int idManhinh) async {
     await fetchData();
     String validateResult = await validateAllFormV2();
     if (validateResult != '') {
@@ -711,46 +711,46 @@ class QuestionPhieuCNController extends BaseController with QuestionUtils {
     }
     await clearSelectedQuestionGroup();
     var qItem = questionGroupList.where((x) => x.id == id).first;
-    if (qItem != null) {
-      if (qItem.enable!) {
-        qItem.isSelected = true;
-        currentScreenNo.value = qItem.manHinh!;
-        if (currentScreenNo.value > 0) {
-          currentScreenIndex.value = currentScreenNo.value - 1;
-        }
-        await danhDauSanPhamPhanVI();
-        await danhDauSanPhamPhanVII();
-        await getQuestionContent();
-        if (currentScreenIndex.value ==
-            generalInformationController.screenNos().length - 1) {}
-      } else {
-        snackBar('Thông báo', 'Danh sách cấu hỏi này chưa nhập');
-      }
-    }
+    // if (qItem != null) {
+    //   if (qItem.enable!) {
+    //     qItem.isSelected = true;
+    //     currentScreenNo.value = qItem.manHinh!;
+    //     if (currentScreenNo.value > 0) {
+    //       currentScreenIndex.value = currentScreenNo.value - 1;
+    //     }
+    //     await danhDauSanPhamPhanVI();
+    //     await danhDauSanPhamPhanVII();
+    //     await getQuestionContent();
+    //     if (currentScreenIndex.value ==
+    //         generalInformationController.screenNos().length - 1) {}
+    //   } else {
+    //     snackBar('Thông báo', 'Danh sách cấu hỏi này chưa nhập');
+    //   }
+    // }
     questionGroupList.refresh();
     scaffoldKey.currentState?.closeDrawer();
   }
 
   Future clearSelectedQuestionGroup() async {
-    for (var item in questionGroupList) {
-      item.isSelected = false;
-    }
-    questionGroupList.refresh();
+    // for (var item in questionGroupList) {
+    //   item.isSelected = false;
+    // }
+    // questionGroupList.refresh();
   }
 
   Future setSelectedQuestionGroup() async {
-    if (currentScreenNo.value > 0) {
-      await clearSelectedQuestionGroup();
-      var questionGroupItem = questionGroupList
-          .where((x) => x.manHinh == currentScreenNo.value)
-          .firstOrNull;
-      if (questionGroupItem != null) {
-        if (questionGroupItem.enable!) {
-          questionGroupItem.isSelected = true;
-          questionGroupList.refresh();
-        }
-      }
-    }
+    // if (currentScreenNo.value > 0) {
+    //   await clearSelectedQuestionGroup();
+    //   var questionGroupItem = questionGroupList
+    //       .where((x) => x.manHinh == currentScreenNo.value)
+    //       .firstOrNull;
+    //   if (questionGroupItem != null) {
+    //     if (questionGroupItem.enable!) {
+    //       questionGroupItem.isSelected = true;
+    //       questionGroupList.refresh();
+    //     }
+    //   }
+    // }
   }
 
   Future onBackStart() async {

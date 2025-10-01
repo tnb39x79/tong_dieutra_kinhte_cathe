@@ -58,6 +58,7 @@ dependencies:
   device_info_plus: ^11.2.1
   #uuid: ^4.4.2
   built_collection: ^5.1.1
+  collection: ^1.19.1
   onnxruntime: ^1.4.1
   json_annotation: ^4.8.1
   stream_transform: ^2.1.1
