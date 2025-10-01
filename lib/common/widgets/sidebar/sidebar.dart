@@ -123,7 +123,7 @@ class SideBar extends StatelessWidget {
                         offset: Offset(0, 5), // X and Y offset of the shadow
                       ),
                     ],
-                    color: Color.fromARGB(255, 241, 241, 242),
+                    color: Color(0xFFf0f4f9),
                     border: Border(
                       left: BorderSide(color: backgroundColor),
                       top: BorderSide(color: backgroundColor),
@@ -149,7 +149,7 @@ class SideBar extends StatelessWidget {
                         offset: Offset(0, 5), // X and Y offset of the shadow
                       ),
                     ],
-                    color: Color.fromARGB(255, 241, 241, 242),
+                    color: Color(0xFFf0f4f9),
                     border: Border(
                       left: BorderSide(color: backgroundColor),
                       bottom: BorderSide(color: backgroundColor),
