@@ -318,7 +318,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
  
 
   Future<int> totalIntByMaCauHoi(
-      String idCoso, int id, List<String> fieldNames) async {
+      String idCoso, List<String> fieldNames) async {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -327,7 +327,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
       fields.add("IFNULL($item,0)");
     }
     String sql =
-        "SELECT ${fields.join('+')} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso' AND $columnId=$id  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "SELECT ${fields.join('+')} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso'  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {
@@ -341,7 +341,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
   }
 
   Future<double> totalDoubleByMaCauHoi(
-      String idCoso, int id, List<String> fieldNames, String tongVsTich) async {
+      String idCoso,   List<String> fieldNames, String tongVsTich) async {
     double result = 0.0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -350,7 +350,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
       fields.add("IFNULL($item,0)");
     }
     String sql =
-        "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso' AND $columnId=$id  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso'    AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {

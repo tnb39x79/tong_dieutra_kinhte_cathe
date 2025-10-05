@@ -199,6 +199,8 @@ List<String> fieldNamesPhan6HKTB = [
   colPhieuNganhVTA5,
   colPhieuNganhVTA6,
 ];
+ 
+
 List<String> fieldNamesPhan6HKMau = [
   colPhieuNganhVTA1_1_1,
   colPhieuNganhVTA1_1_2,

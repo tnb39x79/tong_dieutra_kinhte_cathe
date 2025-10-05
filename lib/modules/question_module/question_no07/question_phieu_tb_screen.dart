@@ -673,6 +673,26 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         ],
       );
       //   });
+    } else if ((question.maCauHoi == "A5" ||
+            question.maCauHoi == "A6" ||
+            question.maCauHoi == "A11") &&
+        question.maPhieu == AppDefine.maPhieuVT) {
+      return Obx(() {
+        var a11VTVal = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+        var vkey =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}}_${question.cauHoiUUID}_1_$a11VTVal';
+        return InputIntView(
+          key: ValueKey(vkey),
+          question: question,
+          onChange: (value) => {},
+          value: a11VTVal,
+          enable: false,
+          type: "int",
+          txtStyle: styleMediumBold.copyWith(color: primaryColor),
+          hintText: "Tự động tính.",
+        );
+      });
     }
     return Obx(() {
       var val2 = controller.getValueByFieldName(
@@ -751,7 +771,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         (question.maCauHoi == colPhieuMauTBA3T &&
             question.bangDuLieu == tablePhieuMauTB) ||
         question.maCauHoi == colPhieuMauTBA4T &&
-            question.bangDuLieu == tablePhieuMauTB) {
+            question.bangDuLieu == tablePhieuMauTB ||
+        (question.maCauHoi == "A12" &&
+            question.maPhieu == AppDefine.maPhieuVT)) {
       return Obx(() {
         var valA32 = controller.getValueByFieldName(
             question.bangDuLieu!, question.maCauHoi!);
@@ -2074,7 +2096,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (chitieuCot.loaiChiTieu.toString() ==
-                                AppDefine.loaiChiTieu_1)
+                                    AppDefine.loaiChiTieu_1 ||
+                                chitieuCot.loaiChiTieu.toString() ==
+                                    AppDefine.loaiChiTieu_2)
                               renderChiTieuDongCotQuestionByType(
                                   mainQuestion, chiTieuDong, chitieuCot)
                             else
@@ -2392,10 +2416,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Obx(() {
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-      if ((question.maCauHoi == "A1" &&
-              question.maPhieu == AppDefine.maPhieuVT) ||
-          question.maCauHoi == "A1" &&
-              question.maPhieu == AppDefine.maPhieuLT) {
+      if (controller.isA1NganhVT(question, chiTieuDong, chiTieuCot) ||
+          controller.isA7NganhVT(question, chiTieuDong, chiTieuCot) ||
+          (question.maCauHoi == "A1" &&
+              question.maPhieu == AppDefine.maPhieuLT)) {
         return renderChiTieuDongCotType2ByMaChiTieu(
             question, chiTieuDong, chiTieuCot,
             value: value);
@@ -2421,14 +2445,22 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question.maPhieu == AppDefine.maPhieuVT) {
         //  13. Xe ô tô khác 1 (GHI RÕ ______________) 15. Phương tiện chở khách khác (ghi rõ__)
         if (chiTieuDong.maSo == "13" || chiTieuDong.maSo == "15") {
-          //   String a1MaSoFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}';
-          // var a1MaSoVal = controller.getValueVTGhiByFieldNameFromDB(
-          //     tablePhieuNganhVTGhiRo,
-          //     colPhieuNganhVTGhiRoC1,
-          //     a1MaSoFieldName,
-          //     1); //stt=1 là Giá trị Có của mã số 13 hoặc 15
-          // return renderChiTieuDongCotType2NganhVTGhiRo(
-          //     question, chiTieuDong, chiTieuCot, a1MaSoFieldName, a1MaSoVal);
+          return const SizedBox();
+        } else {
+          var a1_Maso_CotFieldName =
+              '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_1';
+          var a1MaSoCotVal = controller.getValueByFieldName(
+              question.bangDuLieu!, a1_Maso_CotFieldName);
+          if (a1MaSoCotVal == 1) {
+            return renderChiTieuDongCotType2(question, chiTieuDong, chiTieuCot);
+          } else {
+            return const SizedBox();
+          }
+        }
+      } else if (question.maCauHoi == "A7" &&
+          question.maPhieu == AppDefine.maPhieuVT) {
+        //  13. Xe ô tô khác 1 (GHI RÕ ______________) 15. Phương tiện chở khách khác (ghi rõ__)
+        if (chiTieuDong.maSo == "17" || chiTieuDong.maSo == "18") {
           return const SizedBox();
         } else {
           var a1_Maso_CotFieldName =
@@ -2645,7 +2677,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       return Obx(() {
         var fieldName = colPhieuNganhVTGhiRoC1;
 
-        var xVal = controller.getValueVTGhiByFieldNameFromDB(
+        var xVal = controller.getValueVTGhiRoByFieldNameFromDB(
             tablePhieuNganhVTGhiRo,
             fieldName,
             ghiRoItem.maCauHoi!,
@@ -2706,7 +2738,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (chitieuCot.loaiChiTieu.toString() ==
-                        AppDefine.loaiChiTieu_1) ...[
+                            AppDefine.loaiChiTieu_1 ||
+                        chitieuCot.loaiChiTieu.toString() ==
+                            AppDefine.loaiChiTieu_2) ...[
                       renderChiTieuDongCotQuestionByTypeNganhVTGhiRo(
                           mainQuestion, chiTieuDong, chitieuCot, ghiRoItem),
                     ] else
@@ -2755,20 +2789,27 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       TablePhieuNganhVTGhiRo ghiRoItem) {
     var fieldNameMaCauHoiMaSo = 'C_${chiTieuCot.maChiTieu}';
     var maCauHoiMaSo = '${chiTieuCot.maCauHoi}_${chiTieuDong.maSo}';
-    if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuVT) {
+    if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuVT ||
+        question.maCauHoi == "A7" && question.maPhieu == AppDefine.maPhieuVT) {
       return Obx(() {
-        var a1Val = controller.getValueVTGhiByFieldNameFromDB(
+        var a1Val = controller.getValueVTGhiRoByFieldNameFromDB(
             tablePhieuNganhVTGhiRo,
             fieldNameMaCauHoiMaSo,
             ghiRoItem.maCauHoi!,
             ghiRoItem.sTT,
             id: ghiRoItem.id);
+        String vKey =
+            '${question.maPhieu}_${question.maCauHoi}_${fieldNameMaCauHoiMaSo}_${ghiRoItem.maCauHoi}_${ghiRoItem.sTT}_${ghiRoItem.id}';
+        if (question.maCauHoi == "A1" &&
+            question.maPhieu == AppDefine.maPhieuVT &&
+            chiTieuCot.maChiTieu == "4") {
+          vKey = '${vKey}_$a1Val';
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             InputIntChiTieu(
-              key: ValueKey(
-                  '${question.maPhieu}_${question.maCauHoi}_${fieldNameMaCauHoiMaSo}_${ghiRoItem.maCauHoi}_${ghiRoItem.sTT}_${ghiRoItem.id}'),
+              key: ValueKey(vKey),
               type: 'int',
               onChange: (value) =>
                   controller.onChangeInputChiTieuDongCotNganhVTGhiRo(
@@ -2777,7 +2818,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               chiTieuDong: chiTieuDong,
               showDvtTheoChiTieuDong:
                   question.buocNhay == 'exit' ? true : false,
-              enable: true,
+              enable: (question.maCauHoi == "A1" &&
+                      question.maPhieu == AppDefine.maPhieuVT &&
+                      chiTieuCot.maChiTieu == "4")
+                  ? false
+                  : true,
               value: a1Val,
               validator: (inputValue) =>
                   controller.onValidateInputChiTieuDongCot(
@@ -2809,20 +2854,23 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       var fieldNameMaCauHoiMaSo = 'C_${chiTieuCot.maChiTieu}';
       var maCauHoiMaSo = '${chiTieuCot.maCauHoi}_${chiTieuDong.maSo}';
 
-      var a1Val = controller.getValueVTGhiByFieldNameFromDB(
+      var a1Val = controller.getValueVTGhiRoByFieldNameFromDB(
           tablePhieuNganhVTGhiRo,
           fieldNameMaCauHoiMaSo,
           ghiRoItem.maCauHoi!,
           ghiRoItem.sTT,
           id: ghiRoItem.id);
-      //return Obx(() {
+      String vKey =
+          '${question.maPhieu}${question.maCauHoi}_${fieldNameMaCauHoiMaSo}_${ghiRoItem.maCauHoi}_${ghiRoItem.sTT}_${ghiRoItem.id}';
+      if (chiTieuCot.maChiTieu == "4") {
+        vKey = '${vKey}_$a1Val';
+      }
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InputIntChiTieu(
-            key: ValueKey(
-                '${question.maPhieu}${question.maCauHoi}_${fieldNameMaCauHoiMaSo}_${ghiRoItem.maCauHoi}_${ghiRoItem.sTT}_${ghiRoItem.id}'),
+            key: ValueKey(vKey),
             type: 'double',
             onChange: (value) =>
                 controller.onChangeInputChiTieuDongCotNganhVTGhiRo(
@@ -2830,7 +2878,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             chiTieuCot: chiTieuCot,
             chiTieuDong: chiTieuDong,
             subName: subName,
-            enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9)
+            enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
+                    (chiTieuCot.maChiTieu == "4"))
                 ? false
                 : true,
             value: a1Val,
@@ -2854,7 +2903,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Obx(() {
       var fieldNameMaCauHoiMaSo = 'C_GhiRo';
       var maCauHoiMaSo = '${chiTieuCot.maCauHoi}_${chiTieuDong.maSo}';
-      var a1GhiRoVal = controller.getValueVTGhiByFieldNameFromDB(
+      var a1GhiRoVal = controller.getValueVTGhiRoByFieldNameFromDB(
           tablePhieuNganhVTGhiRo,
           fieldNameMaCauHoiMaSo,
           ghiRoItem.maCauHoi!,
@@ -2912,24 +2961,29 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   renderChiTieuDongCotType2(QuestionCommonModel question,
       ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot,
       {String? subName, String? value}) {
-    var fieldNameMaCauHoiMaSo =
-        controller.getFieldNameByMaCauChiTieuDongCot(chiTieuCot, chiTieuDong)!;
     // var wFilterInput = chiTieuCot.maChiTieu == AppDefine.maChiTieu_2
     //     ? RegExp(r'(^\d*\.?\d{0,1})')
     //     : RegExp('[0-9]');
     var wFilterInput = RegExp('[0-9]');
     return Obx(() {
+      var fieldNameMaCauHoiMaSo = controller.getFieldNameByMaCauChiTieuDongCot(
+          chiTieuCot, chiTieuDong)!;
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
+      String vKey =
+          '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo';
+      if (controller.isA1NganhVT(question, chiTieuDong, chiTieuCot)) {
+        if (chiTieuCot.maChiTieu == "4") {
+          vKey =
+              '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo$val';
+        }
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InputIntChiTieu(
-            key: ValueKey(
-                '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo'),
-            // key: ValueKey<ChiTieuModel>(chiTieuCot),
-            // key: ValueKey(
-            //     '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuDong.maIO}-${chiTieuCot.maChiTieu}-$fieldNameIO'),
+            key: ValueKey(vKey),
             type: 'int',
             onChange: (value) => controller.onChangeInputChiTieuDongCot(
                 question.bangDuLieu!,
@@ -2987,14 +3041,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   renderChiTieuDongCotType3ByMaChiTieu(QuestionCommonModel question,
       ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot,
       {String? subName, String? value}) {
-    var fieldNameMaCauHoiMaSo =
-        controller.getFieldNameByMaCauChiTieuDongCot(chiTieuCot, chiTieuDong)!;
     // var wFilterInput = chiTieuCot.maChiTieu == AppDefine.maChiTieu_2
     //     ? RegExp(r'(^\d*\.?\d{0,1})')
     //     : RegExp('[0-9]');
     var wFilterInput = RegExp('[0-9]');
 
     return Obx(() {
+      var fieldNameMaCauHoiMaSo = controller.getFieldNameByMaCauChiTieuDongCot(
+          chiTieuCot, chiTieuDong)!;
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
       if ((question.maCauHoi == "A7_4" &&
@@ -3080,18 +3134,23 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       wFilterInput = RegExp(r'(^\d*\.?\d{0,2})');
       decimalDigits = 2;
     }
-    var fieldNameMaCauHoiMaSo =
-        controller.getFieldNameByMaCauChiTieuDongCot(chiTieuCot, chiTieuDong)!;
+
     return Obx(() {
+      var fieldNameMaCauHoiMaSo = controller.getFieldNameByMaCauChiTieuDongCot(
+          chiTieuCot, chiTieuDong)!;
       var xVal = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-
+      String vKey =
+          '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo';
+      if (controller.isA7NganhVT(question, chiTieuDong, chiTieuCot)) {
+        vKey =
+            '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo$xVal';
+      }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InputIntChiTieu(
-            key: ValueKey(
-                '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo'),
+            key: ValueKey(vKey),
             type: 'double',
             onChange: (value) => controller.onChangeInputChiTieuDongCot(
                 question.bangDuLieu!,
@@ -3131,7 +3190,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       ChiTieuDongModel chiTieuDong,
       ChiTieuModel chiTieuCot,
       String tenDanhMuc) {
-    if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuVT) {
+    if ((question.maCauHoi == "A1" &&
+            question.maPhieu == AppDefine.maPhieuVT) ||
+        (question.maCauHoi == "A7" &&
+            question.maPhieu == AppDefine.maPhieuVT)) {
       return Obx(() {
         var wFilterInput = RegExp('[0-9]');
         int decimalDigits = 0;

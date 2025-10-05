@@ -2516,9 +2516,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         //       fieldNameTotal: fieldNameTotal,
         //       maCauHoi: maCauHoi);
       } else if (table == tablePhieuNganhVT) {
-        await updateAnswerDongCotToDB(table, fieldName!, value,
-            maCauHoi: maCauHoi);
-               tinhTongTaiTrongA1NganhVT(question!, table, chiTieuDong, chiTieuCot);
+        if (isA1NganhVT(question!, chiTieuDong!, chiTieuCot!)) {
+          await updateAnswerDongCotToDB(table, fieldName!, value,
+              maCauHoi: maCauHoi);
+          await tinhTongTaiTrongA1NganhVT(
+              question, table, chiTieuDong, chiTieuCot);
+        } else if (isA7NganhVT(question, chiTieuDong, chiTieuCot)) {
+          await updateAnswerDongCotToDB(table, fieldName!, value,
+              maCauHoi: maCauHoi);
+          await tinhTongTaiTrongA7NganhVT(
+              question, table, chiTieuDong, chiTieuCot);
+        }
       }
     } catch (e) {
       printError(info: e.toString());
@@ -3203,7 +3211,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   ///maCauHoiMaSo: MaSo=13 or 15 or 17 or 18
-  getValueVTGhiByFieldNameFromDB(
+  getValueVTGhiRoByFieldNameFromDB(
       String table, String fieldName, String maCauHoiMaSo, int? stt,
       {int? id}) {
     if (fieldName == null || fieldName == '') return null;
@@ -5944,24 +5952,54 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         if (chiTieuDong.maSo == "13" || chiTieuDong.maSo == "15") {
           updateAnswerPhieuVTGhiRoToDB(
               colPhieuNganhVTGhiRoC1, value, ghiRoItem!.id!);
-        } else {}
-      }
-      if (isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+          if (value == 1 || value == "1") {
+            tinhTongTaiTrongA1GhiRoNganhVT(
+                question, table, chiTieuDong, chiTieuCot, ghiRoItem);
+          }
+          if (value == 2 || value == "2") {
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoC2, null, ghiRoItem!.id!);
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoC3, null, ghiRoItem!.id!);
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoC4, null, ghiRoItem!.id!);
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoCGhiRo, null, ghiRoItem!.id!);
+          }
+          tinhTongA5A6NganhVT(question);
+        }
+      } else if (isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
         if (chiTieuDong.maSo == "17" || chiTieuDong.maSo == "18") {
           updateAnswerPhieuVTGhiRoToDB(
               colPhieuNganhVTGhiRoC1, value, ghiRoItem!.id!);
-        } else {}
+          if (value == 1 || value == "1") {
+            tinhTongTaiTrongA7GhiRoNganhVT(
+                question, table, chiTieuDong, chiTieuCot, ghiRoItem);
+          }
+          if (value == 2 || value == "2") {
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoC2, null, ghiRoItem!.id!);
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoC3, null, ghiRoItem!.id!);
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoC4, null, ghiRoItem!.id!);
+            updateAnswerPhieuVTGhiRoToDB(
+                colPhieuNganhVTGhiRoCGhiRo, null, ghiRoItem!.id!);
+          }
+          tinhTongA5A6NganhVT(question);
+        }
       } else if (isA1NganhVT(question, chiTieuDong, chiTieuCot)) {
         String soLuongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_2';
         String taiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_3';
-         String tongTaiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_4';
-        if (value == 1) {
+        String tongTaiTrongFieldName =
+            '${question.maCauHoi}_${chiTieuDong.maSo}_4';
+        if (value == 1 || value == "1") {
           //update co/khong
           updateAnswerToDB(table, fieldName ?? "", value);
           updateAnswerTblPhieuMau(fieldName, value, table);
           //Lấy trọng tải
           var trongTai =
-              tinhTaiTrongA1NganhVT(question, table, chiTieuDong, chiTieuCot);
+              layTaiTrongA1NganhVT(question, table, chiTieuDong, chiTieuCot);
 
           updateAnswerToDB(table, taiTrongFieldName, trongTai);
           updateAnswerTblPhieuMau(taiTrongFieldName, trongTai, table);
@@ -5974,12 +6012,44 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           updateAnswerTblPhieuMau(soLuongFieldName, null, table);
           updateAnswerToDB(table, taiTrongFieldName, null);
           updateAnswerTblPhieuMau(taiTrongFieldName, null, table);
-            updateAnswerToDB(table, tongTaiTrongFieldName, null);
+          updateAnswerToDB(table, tongTaiTrongFieldName, null);
           updateAnswerTblPhieuMau(tongTaiTrongFieldName, null, table);
         }
 
         updateAnswerToDB(table, fieldName ?? "", value);
         updateAnswerTblPhieuMau(fieldName, value, table);
+        tinhTongA5A6NganhVT(question);
+      } else if (isA7NganhVT(question, chiTieuDong, chiTieuCot)) {
+        String soLuongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_2';
+        String taiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_3';
+        String tongTaiTrongFieldName =
+            '${question.maCauHoi}_${chiTieuDong.maSo}_4';
+        if (value == 1) {
+          //update co/khong
+          updateAnswerToDB(table, fieldName ?? "", value);
+          updateAnswerTblPhieuMau(fieldName, value, table);
+          //Lấy trọng tải
+          var trongTai =
+              layTaiTrongA7NganhVT(question, table, chiTieuDong, chiTieuCot);
+
+          updateAnswerToDB(table, taiTrongFieldName, trongTai);
+          updateAnswerTblPhieuMau(taiTrongFieldName, trongTai, table);
+          tinhTongTaiTrongA7NganhVT(question, table, chiTieuDong, chiTieuCot);
+        } else {
+          updateAnswerToDB(table, fieldName ?? "", value);
+          updateAnswerTblPhieuMau(fieldName, value, table);
+
+          updateAnswerToDB(table, soLuongFieldName, null);
+          updateAnswerTblPhieuMau(soLuongFieldName, null, table);
+          updateAnswerToDB(table, taiTrongFieldName, null);
+          updateAnswerTblPhieuMau(taiTrongFieldName, null, table);
+          updateAnswerToDB(table, tongTaiTrongFieldName, null);
+          updateAnswerTblPhieuMau(tongTaiTrongFieldName, null, table);
+        }
+
+        updateAnswerToDB(table, fieldName ?? "", value);
+        updateAnswerTblPhieuMau(fieldName, value, table);
+        tinhTongA11A12NganhVT(question);
       } else {
         updateAnswerToDB(table, fieldName ?? "", value);
         updateAnswerTblPhieuMau(fieldName, value, table);
@@ -5989,7 +6059,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-  int tinhTaiTrongA1NganhVT(QuestionCommonModel question, String table,
+  int layTaiTrongA1NganhVT(QuestionCommonModel question, String table,
       ChiTieuDongModel? chiTieuDong, ChiTieuModel? chiTieuCot) {
     int result = 0;
     if (chiTieuDong!.giaTriLN != null) {
@@ -5998,8 +6068,20 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return result;
   }
 
-  int tinhTongTaiTrongA1NganhVT(QuestionCommonModel question, String table,
+  double layTaiTrongA7NganhVT(QuestionCommonModel question, String table,
       ChiTieuDongModel? chiTieuDong, ChiTieuModel? chiTieuCot) {
+    double result = 0.0;
+    if (chiTieuDong!.giaTriLN != null) {
+      result = chiTieuDong!.giaTriLN!;
+    }
+    return result;
+  }
+
+  Future<int> tinhTongTaiTrongA1NganhVT(
+      QuestionCommonModel question,
+      String table,
+      ChiTieuDongModel? chiTieuDong,
+      ChiTieuModel? chiTieuCot) async {
     int result = 0;
     if (chiTieuDong!.giaTriLN != null) {}
     String soLuongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_2';
@@ -6010,11 +6092,152 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     var taiTrong = getValueByFieldName(table, taiTrongFieldName);
     taiTrong = AppUtils.convertStringToInt(taiTrong);
     result = soluong * taiTrong;
-      updateAnswerToDB(table, tongTaiTrongFieldName, result);
-          updateAnswerTblPhieuMau(tongTaiTrongFieldName, result, table);
+    await updateAnswerToDB(table, tongTaiTrongFieldName, result);
+    await updateAnswerTblPhieuMau(tongTaiTrongFieldName, result, table);
     return result;
   }
 
+  Future<double> tinhTongTaiTrongA1GhiRoNganhVT(
+      QuestionCommonModel question,
+      String table,
+      ChiTieuDongModel? chiTieuDong,
+      ChiTieuModel? chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem) async {
+    double result = 0.0;
+
+    var soluong = getValueVTGhiRoByFieldNameFromDB(
+        table, colPhieuNganhVTGhiRoC2, ghiRoItem.maCauHoi!, ghiRoItem.sTT!,
+        id: ghiRoItem.id!);
+    soluong = AppUtils.convertStringAndFixedToDouble(soluong);
+    var taiTrong = getValueVTGhiRoByFieldNameFromDB(
+        table, colPhieuNganhVTGhiRoC3, ghiRoItem.maCauHoi!, ghiRoItem.sTT!,
+        id: ghiRoItem.id!);
+    taiTrong = AppUtils.convertStringAndFixedToDouble(taiTrong);
+    result = soluong * taiTrong;
+    await updateAnswerPhieuVTGhiRoToDB(
+        colPhieuNganhVTGhiRoC4, result, ghiRoItem.id!);
+    return result;
+  }
+
+  Future tinhTongA5A6NganhVT(QuestionCommonModel question) async {
+    int tongSoLuong = 0;
+    int tongTaiTrong = 0;
+    var dsChiTieuDong = question.danhSachChiTieuIO;
+    if (dsChiTieuDong != null) {
+      List<String> soLuongFieldNames = [];
+      List<String> taiTrongFieldNames = [];
+      for (var chiTieuDong in dsChiTieuDong) {
+        if (chiTieuDong.maSo != "13" && chiTieuDong.maSo != "15") {
+          String soLuongFieldName =
+              '${question.maCauHoi}_${chiTieuDong.maSo}_2';
+          String taiTrongFieldName =
+              '${question.maCauHoi}_${chiTieuDong.maSo}_3';
+          soLuongFieldNames.add(soLuongFieldName);
+          taiTrongFieldNames.add(taiTrongFieldName);
+        }
+      }
+      tongSoLuong = await phieuNganhVTProvider.totalIntByMaCauHoi(
+          currentIdCoSo!, soLuongFieldNames);
+      tongTaiTrong = await phieuNganhVTProvider.totalIntByMaCauHoi(
+          currentIdCoSo!, taiTrongFieldNames);
+    }
+    int tongSoLuongA1_1315 =
+        await phieuNganhVTGhiRoProvider.tongSoLuongA1_1315(currentIdCoSo!);
+
+    int tongTaiTrongA1_1315 =
+        await phieuNganhVTGhiRoProvider.tongTaiTrongA1_1315(currentIdCoSo!);
+    tongSoLuong = tongSoLuong + tongSoLuongA1_1315;
+    tongTaiTrong = tongTaiTrong + tongTaiTrongA1_1315;
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA5, tongSoLuong);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhVTA5, tongSoLuong, tablePhieuNganhVT);
+    //Tong tai trong
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA6, tongTaiTrong);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhVTA6, tongTaiTrong, tablePhieuNganhVT);
+  }
+
+  Future<double> tinhTongTaiTrongA7NganhVT(
+      QuestionCommonModel question,
+      String table,
+      ChiTieuDongModel? chiTieuDong,
+      ChiTieuModel? chiTieuCot) async {
+    double result = 0.0;
+    if (chiTieuDong!.giaTriLN != null) {}
+    String soLuongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_2';
+    String taiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_3';
+    String tongTaiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_4';
+    var soluong = getValueByFieldName(table, soLuongFieldName);
+    soluong = AppUtils.convertStringAndFixedToDouble(soluong);
+    var taiTrong = getValueByFieldName(table, taiTrongFieldName);
+    taiTrong = AppUtils.convertStringAndFixedToDouble(taiTrong);
+    result = soluong * taiTrong;
+    await updateAnswerToDB(table, tongTaiTrongFieldName, result);
+    await updateAnswerTblPhieuMau(tongTaiTrongFieldName, result, table);
+    return result;
+  }
+
+  Future tinhTongA11A12NganhVT(QuestionCommonModel question) async {
+    double tongSoLuong = 0.0;
+    double tongTaiTrong = 0.0;
+    var dsChiTieuDong = question.danhSachChiTieuIO;
+    if (dsChiTieuDong != null) {
+      List<String> soLuongFieldNames = [];
+      List<String> taiTrongFieldNames = [];
+      for (var chiTieuDong in dsChiTieuDong) {
+        if (chiTieuDong.maSo != "17" && chiTieuDong.maSo != "18") {
+          String soLuongFieldName =
+              '${question.maCauHoi}_${chiTieuDong.maSo}_2';
+          String taiTrongFieldName =
+              '${question.maCauHoi}_${chiTieuDong.maSo}_3';
+          soLuongFieldNames.add(soLuongFieldName);
+          taiTrongFieldNames.add(taiTrongFieldName);
+        }
+      }
+      tongSoLuong = await phieuNganhVTProvider.totalDoubleByMaCauHoi(
+          currentIdCoSo!, soLuongFieldNames,'+');
+      tongTaiTrong = await phieuNganhVTProvider.totalDoubleByMaCauHoi(
+          currentIdCoSo!, taiTrongFieldNames,'+');
+    }
+    double tongSoLuongA7_1718 =
+        await phieuNganhVTGhiRoProvider.tongSoLuongA7_1718(currentIdCoSo!);
+
+    double tongTaiTrongA7_1718 =
+        await phieuNganhVTGhiRoProvider.tongTaiTrongA7_1718(currentIdCoSo!);
+    tongSoLuong = tongSoLuong + tongSoLuongA7_1718;
+    tongTaiTrong = tongTaiTrong + tongTaiTrongA7_1718;
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA5, tongSoLuong);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhVTA5, tongSoLuong, tablePhieuNganhVT);
+    //Tong tai trong
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA6, tongTaiTrong);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhVTA6, tongTaiTrong, tablePhieuNganhVT);
+  }
+
+  Future<double> tinhTongTaiTrongA7GhiRoNganhVT(
+      QuestionCommonModel question,
+      String table,
+      ChiTieuDongModel? chiTieuDong,
+      ChiTieuModel? chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem) async {
+    double result = 0.0;
+
+    var soluong = getValueVTGhiRoByFieldNameFromDB(
+        table, colPhieuNganhVTGhiRoC2, ghiRoItem.maCauHoi!, ghiRoItem.sTT!,
+        id: ghiRoItem.id!);
+    soluong = AppUtils.convertStringAndFixedToDouble(soluong);
+    var taiTrong = getValueVTGhiRoByFieldNameFromDB(
+        table, colPhieuNganhVTGhiRoC3, ghiRoItem.maCauHoi!, ghiRoItem.sTT!,
+        id: ghiRoItem.id!);
+    taiTrong = AppUtils.convertStringAndFixedToDouble(taiTrong);
+    result = soluong * taiTrong;
+    await updateAnswerPhieuVTGhiRoToDB(
+        colPhieuNganhVTGhiRoC4, result, ghiRoItem.id!);
+    return result;
+  }
+
+//
   onChangePhieuNganhVTGhiRoDm(QuestionCommonModel question, String table,
       String? maCauHoi, String? fieldName, value, dmItem,
       {ChiTieuDongModel? chiTieuDong,
@@ -6049,6 +6272,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           fieldName = fieldNameVTGhiRo;
         }
         await updateAnswerPhieuVTGhiRoToDB(fieldName, value, ghiRoItem!.id!);
+        if (isA1GhiRoF(question, chiTieuDong, chiTieuCot)) {
+          if (fieldName == colPhieuNganhVTGhiRoC2 ||
+              fieldName == colPhieuNganhVTGhiRoC3) {
+            await tinhTongTaiTrongA1GhiRoNganhVT(question,
+                tablePhieuNganhVTGhiRo, chiTieuDong, chiTieuCot, ghiRoItem);
+            await tinhTongA5A6NganhVT(question);
+             
+          }
+        } else if (isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+          if (fieldName == colPhieuNganhVTGhiRoC2 ||
+              fieldName == colPhieuNganhVTGhiRoC3) {
+            await tinhTongTaiTrongA7GhiRoNganhVT(question,
+                tablePhieuNganhVTGhiRo, chiTieuDong, chiTieuCot, ghiRoItem);
+            await tinhTongA11A12NganhVT(question);
+          }
+        }
       }
 
       //   if (maCauHoi == "A7_1") {
