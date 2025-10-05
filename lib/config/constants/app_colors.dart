@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 //const Color primaryColor = Color.fromARGB(255, 2, 73, 173); 
 //const Color primaryLightColor = Color.fromARGB(255, 10, 109, 248);
-const Color primaryColor =Color.fromARGB(255,248, 165, 1);//Color(0xFFF8A501); //Color.fromARGB(255, 209, 141, 5);// Color(0xFFF8A501);
-const Color primaryLightColor = Color.fromARGB(255, 237, 160, 7);
+const Color primaryColor =Color(0xFFF8A501);//Color(0xFFF8A501); //Color.fromARGB(255, 209, 141, 5);// Color(0xFFF8A501);
+const Color primaryLightColor = Color(0xFFEDA007);
 const Color primaryDarkColor =  Color.fromARGB(255, 213, 143, 2);
+const Color primary1LighterColor = Color(0xFFfdedcc);
 
 const Color backgroundWhiteColor = Color.fromARGB(255, 255, 255, 255);
 const Color backgroundColor = Color(0xFFF9F9FB);
@@ -40,4 +41,5 @@ const Color disabledblackText = Color(0xFF3C3D37);
 const Color blackText = Color(0xFF3D4756);
 const Color defaultText = Color(0xFF1E232A);
 const Color textFieldColor = Color(0xFFF1F5FA);
+const Color splashColorButton = Color.fromARGB(255, 215, 153, 27);
 

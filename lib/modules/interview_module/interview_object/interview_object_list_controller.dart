@@ -60,12 +60,7 @@ class InterviewObjectListController extends BaseController {
     });
   }
 
-  Future toTonGiao(int maDT, String? tenDoiTuongDT) async {
-    Get.toNamed(AppRoutes.interviewList, parameters: {
-      InterviewListController.maDoiTuongDTKey: maDT.toString(),
-      InterviewListController.tenDoiTuongDTKey: tenDoiTuongDT.toString(),
-    });
-  }
+
 
   @override
   void onDetached() {

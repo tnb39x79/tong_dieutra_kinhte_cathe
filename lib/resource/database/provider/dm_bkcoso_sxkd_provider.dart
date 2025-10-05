@@ -116,7 +116,37 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     throw UnimplementedError();
   }
 
-  Future<int?> countOfUnInterviewed(int maDoiTuongDT, String maDiaBan,String maXa) async {
+  Future<Map> selectByIdCoSo(String idCoSo) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<Map> map = await db!.rawQuery('''
+          SELECT * FROM $tablebkCoSoSXKD 
+          WHERE $colBkCoSoSXKDIDCoSo = '$idCoSo' 
+          AND $columnCreatedAt = '$createdAt'
+        ''');
+    return map.isNotEmpty ? map[0] : {};
+  }
+
+  Future<String> selectTenXaByIdCoSo(String maXa) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    String result = '';
+    List<Map> map = await db!.rawQuery('''
+          SELECT TenXa FROM $tablebkCoSoSXKD 
+          WHERE $colBkCoSoSXKDMaXa = '$maXa' 
+          AND $columnCreatedAt = '$createdAt'
+          LIMIT 1
+        ''');
+    for (var item in map) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result = value;
+        }
+      });
+    }
+    return result;
+  }
+
+  Future<int?> countOfUnInterviewed(
+      int maDoiTuongDT, String maDiaBan, String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
@@ -144,7 +174,8 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return count;
   }
 
-  Future<int?> countOfInterviewed(int maDoiTuongDT, String maDiaBan,String maXa) async {
+  Future<int?> countOfInterviewed(
+      int maDoiTuongDT, String maDiaBan, String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
@@ -196,7 +227,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   }
 
   Future<List<Map>> selectListUnInterviewedAll(
-      int maDoiTuongDT, String maDiaBan,String maXa) async {
+      int maDoiTuongDT, String maDiaBan, String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     return await db!.rawQuery('''
@@ -211,7 +242,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   }
 
   Future<List<Map>> searchListUnInterviewedAll(
-      int maDoiTuongDT, String maDiaBan,String maXa, String search) async {
+      int maDoiTuongDT, String maDiaBan, String maXa, String search) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     return await db!.rawQuery('''
@@ -228,7 +259,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   }
 
   Future<List<Map>> selectListInterviewedAll(
-      int maDoiTuongDT, String maDiaBan,String maXa) async {
+      int maDoiTuongDT, String maDiaBan, String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
 
     return await db!.rawQuery('''
@@ -243,7 +274,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   }
 
   Future<List<Map>> searchListInterviewedAll(
-      int maDoiTuongDT, String maDiaBan,String maXa, String search) async {
+      int maDoiTuongDT, String maDiaBan, String maXa, String search) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     return await db!.rawQuery('''

@@ -19,6 +19,7 @@ import 'package:gov_statistics_investigation_economic/common/widgets/searchable/
 import 'package:gov_statistics_investigation_economic/config/config.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
+import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/complete_interview.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/dialog_search_vcpa_tab.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/phieu_nganh/question_phieu_cn_controller.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/validation_no07.dart';
@@ -192,6 +193,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 //* Chứa thông tin hoàn thành phiếu
   final completeInfo = {}.obs;
   String subTitleBar = '';
+  String silderTitleBar = '';
 
   ///56
   String vcpaCap2TM = "56";
@@ -283,9 +285,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     if (currentScreenNo.value == 0) {
       currentScreenNo.value = generalInformationController.screenNos()[0];
     }
-    subTitleBar =
-        'Mã địa bàn: ${generalInformationController.tblBkCoSoSXKD.value.maDiaBan} - ${generalInformationController.tblBkCoSoSXKD.value.tenCoSo}';
 
+    subTitleBar =
+        '${generalInformationController.tblBkCoSoSXKD.value.tenCoSo} ĐB.$currentMaDiaBan - ${generalInformationController.tblBkCoSoSXKD.value.tenDiaBan}'; // ${AppUtils.getXaPhuong(generalInformationController.tblBkCoSoSXKD.value.tenXa??'')}.$currentMaXa - ${generalInformationController.tblBkCoSoSXKD.value.tenXa}';
+    silderTitleBar =
+        '${generalInformationController.tblBkCoSoSXKD.value.tenCoSo}\nĐB.$currentMaDiaBan - ${generalInformationController.tblBkCoSoSXKD.value.tenDiaBan}'; //\n${AppUtils.getXaPhuong(generalInformationController.tblBkCoSoSXKD.value.tenXa ?? '')}.$currentMaXa - ${generalInformationController.tblBkCoSoSXKD.value.tenXa}';
     log('Màn hình ${currentScreenNo.value}');
     await getDanhMuc();
     await fetchData();
@@ -786,22 +790,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-   
   Future assignAllQuestionGroup() async {
-   // var s= await getQuestionGroupsV2(currentMaDoiTuongDT!, currentIdCoSo!,tblDmPhieu);
-   // var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
-    var qGroups = await getQuestionGroupsV2(currentMaDoiTuongDT!, currentIdCoSo!,tblDmPhieu);
-      for (var item in qGroups) {
-    //   if (item.fromQuestion == "6.1") {
-    //     item.enable = (isCap1H_VT.value == true &&
-    //             isCap5VanTaiHangHoa.value == true) ||
-    //         (isCap1H_VT.value == true && isCap5VanTaiHanhKhach.value == true);
-    //   } else if (item.fromQuestion == "7.1") {
-    //     // if (isCap2_55LT.value == true) {
-    //     item.enable = isCap2_55LT.value;
-    //     // }
-    //   }
-     }
+    // var s= await getQuestionGroupsV2(currentMaDoiTuongDT!, currentIdCoSo!,tblDmPhieu);
+    // var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
+    var qGroups = await getQuestionGroupsV2(
+        currentMaDoiTuongDT!, currentIdCoSo!, tblDmPhieu);
+    for (var item in qGroups) {
+      //   if (item.fromQuestion == "6.1") {
+      //     item.enable = (isCap1H_VT.value == true &&
+      //             isCap5VanTaiHangHoa.value == true) ||
+      //         (isCap1H_VT.value == true && isCap5VanTaiHanhKhach.value == true);
+      //   } else if (item.fromQuestion == "7.1") {
+      //     // if (isCap2_55LT.value == true) {
+      //     item.enable = isCap2_55LT.value;
+      //     // }
+      //   }
+    }
     questionGroupList.assignAll(qGroups);
   }
 
@@ -1595,7 +1599,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           fieldName, value, currentIdCoSo);
       await updateAnswerTblPhieuMau(fieldName, value, table);
     } else if (table == tablePhieuNganhTM) {
-      await phieuNganhTMProvider.updateValue(fieldName, value, currentIdCoSo!);
+      await phieuNganhTMProvider.updateValueByIdCoSo(
+          fieldName, value, currentIdCoSo!);
       await getTablePhieuNganhTM();
     } else {
       snackBar("dialog_title_warning".tr, "data_table_undefine".tr);
@@ -1866,34 +1871,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       maxValue,
       int loaiCauHoi,
       int sttSanPham,
-      bool typing) {
-    // if (fieldName == columnPhieuMauSanPhamA5_2) {
-    //   if (valueInput == null || valueInput == '' || valueInput == 'null') {
-    //     return 'Vui lòng nhập giá trị.';
-    //   }
-    //   var tblPhieuCT;
-    //   // tblPhieuTonGiao.value.toJson();
-    //   if (typing == false) {
-    //     tblPhieuCT = tblPhieuMau.value.toJson();
-    //   } else {
-    //     tblPhieuCT = answerTblPhieuMau;
-    //   }
-    //   double a5_2Value =
-    //       AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-
-    //   var a4_2Value = tblPhieuCT[columnPhieuMauA4_2] != null
-    //       ? AppUtils.convertStringToDouble(
-    //           tblPhieuCT[columnPhieuMauA4_2].toString())
-    //       : 0;
-    //   // if (a4_2Value != null) {
-    //   //   double a4_2Val = AppUtils.convertStringToDouble(a4_2Value);
-    //   if (a5_2Value > a4_2Value) {
-    //     return 'Doanh thu câu 5.2 ($a5_2Value) phải <= doanh thu ở câu 4.2 ($a4_2Value). Vui lòng kiểm tra lại.';
-    //   }
-    //   // }
-    //   return null;
-    // }
-  }
+      bool typing) {}
   onValidateNganhCN(
       String table,
       String maCauHoi,
@@ -2200,16 +2178,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     try {
       updateAnswerToDB(table, fieldName ?? "", value);
       updateAnswerTblPhieuMau(fieldName, value, table);
-      // if (question.bangChiTieu != null && question.bangChiTieu != '') {
-      //   var hasGhiRo = hasDanhMucGhiRoByTenDm(question.bangChiTieu!);
-      //   if (hasGhiRo != null && hasGhiRo == true) {
-      //     if (value != 17 && fieldName == maCauHoi) {
-      //       String fieldNameGhiRo = '${maCauHoi!}_GhiRo';
-      //       updateAnswerToDB(table, fieldNameGhiRo, null);
-      //       updateAnswerTblPhieuMau(fieldNameGhiRo, null,table);
-      //     }
-      //   }
-      // }
+
       if (maCauHoi == colPhieuMauTBA1_1) {
         if (value != 5) {
           String fieldNameGhiRo = '${maCauHoi!}_GhiRo';
@@ -2227,6 +2196,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         if (value != 1) {
           updateAnswerToDB(table, colPhieuMauTBA1_5_1, null);
           updateAnswerTblPhieuMau(colPhieuMauTBA1_5_1, null, table);
+        }
+      }
+      if (table == tablePhieuNganhTM && maCauHoi == colPhieuNganhTMA2) {
+        if (value == 2) {
+          //updateAnswerToDB(table, fieldName ?? '', 1);
+
+          onKetThucPhongVan();
         }
       }
       // if (maCauHoi == columnPhieuMauA1_4) {
@@ -2289,21 +2265,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       //       if (value != 1) {
       //         updateAnswerToDB(table, fName2, null);
       //         updateAnswerTblPhieuMau(fName2, null,table);
-      //         // var fieldNameTotalA4_7_0 = "A4_7_0";
-      //         // var fieldNamesA4_7_0 = [
-      //         //   'A4_7_1_2',
-      //         //   'A4_7_2_2',
-      //         //   'A4_7_3_2',
-      //         //   'A4_7_4_2',
-      //         //   'A4_7_5_2',
-      //         //   'A4_7_6_2',
-      //         //   'A4_7_7_2',
-      //         //   'A4_7_8_2'
-      //         // ];
-      //         // updateAnswerDongCotToDB(table, fieldName!, value,
-      //         //     fieldNames: fieldNamesA4_7_0,
-      //         //     fieldNameTotal: fieldNameTotalA4_7_0,
-      //         //     maCauHoi: maCauHoi);
+
       //       }
       //       break;
       //     }
@@ -2420,7 +2382,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       {String? fieldNameGhiRo}) {
     log('onChangeGhiRoDm Mã câu hỏi ${question.maCauHoi} ${question.bangChiTieu}');
     String fieldName = '${question.maCauHoi}_GhiRo';
-    if (question.maCauHoi == "A1_7" || question.maCauHoi == "A7_1") {
+    if (question.maCauHoi == "A1_7" ||
+        (question.maCauHoi == "A7_1" &&
+            question.maPhieu == AppDefine.maPhieuLT)) {
       fieldName = fieldNameGhiRo!;
     }
     updateAnswerToDB(question.bangDuLieu!, fieldName, value);
@@ -2509,16 +2473,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-  getValueDm(QuestionCommonModel question) {
-    var res = answerTblPhieuMau[question.maCauHoi];
-    return res;
-  }
-
-  getValueDmByFieldName(String fieldName) {
-    var res = answerTblPhieuMau[fieldName];
-    return res;
-  }
-
   onChangeChiTieuDongGhiRo(
       QuestionCommonModel question, String? value, fieldName) {
     log('onChangeChiTienDongGhiRo Mã câu hỏi ${question.maCauHoi} ${question.bangChiTieu}');
@@ -2549,23 +2503,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               fieldNameTotal: colPhieuMauTBA3T,
               maCauHoi: maCauHoi);
         }
-        //   // else if (maCauHoi == "A4_7") {
-        //   //   var fieldNameTotalA4_7_0 = "A4_7_0";
-        //   //   var fieldNamesA4_7_0 = [
-        //   //     'A4_7_1_2',
-        //   //     'A4_7_2_2',
-        //   //     'A4_7_3_2',
-        //   //     'A4_7_4_2',
-        //   //     'A4_7_5_2',
-        //   //     'A4_7_6_2',
-        //   //     'A4_7_7_2',
-        //   //     'A4_7_8_2'
-        //   //   ];
-        //   //   await updateAnswerDongCotToDB(table, fieldName!, value,
-        //   //       fieldNames: fieldNamesA4_7_0,
-        //   //       fieldNameTotal: fieldNameTotalA4_7_0,
-        //   //       maCauHoi: maCauHoi);
-        //   // }
+
         //   if (maCauHoi == "A7_1") {
         //     if (a7_1FieldWarning.contains(fieldName)) {
         //       await warningA7_1_X3SoPhongTangMoi(chiTieuDong!.maSo!);
@@ -2577,6 +2515,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         //       fieldNames: fieldNames,
         //       fieldNameTotal: fieldNameTotal,
         //       maCauHoi: maCauHoi);
+      } else if (table == tablePhieuNganhVT) {
+        await updateAnswerDongCotToDB(table, fieldName!, value,
+            maCauHoi: maCauHoi);
+               tinhTongTaiTrongA1NganhVT(question!, table, chiTieuDong, chiTieuCot);
       }
     } catch (e) {
       printError(info: e.toString());
@@ -2688,6 +2630,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       //   }
       // } else {
       //   snackBar("dialog_title_warning".tr, "data_table_undefine".tr);
+    } else if (table == tablePhieuNganhVT) {
+      await phieuNganhVTProvider.updateValueByIdCoSo(
+          fieldName, value, currentIdCoSo);
+      await updateAnswerTblPhieuMau(fieldName, value, table);
     }
   }
 
@@ -2718,7 +2664,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
 
     // colPhieuNganhLTA8_M <=> var fieldNameTotalA7_10 = "A7_10";
-    await phieuNganhLTProvider.updateValByIdCoSo(
+    await phieuNganhLTProvider.updateValueByIdCoSo(
         colPhieuNganhLTA8_M, totalA8M, currentIdCoSo);
     await updateAnswerTblPhieuMau(
         colPhieuNganhLTA8_M, totalA8M, tablePhieuNganhLT);
@@ -2730,7 +2676,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       totalA9M = AppUtils.roundDouble(totalA9M, 2);
     }
 
-    await phieuNganhLTProvider.updateValByIdCoSo(
+    await phieuNganhLTProvider.updateValueByIdCoSo(
         colPhieuNganhLTA9_M!, totalA9M, currentIdCoSo);
     await updateAnswerTblPhieuMau(
         colPhieuNganhLTA9_M, totalA9M, tablePhieuNganhLT);
@@ -2738,12 +2684,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   ///A10_M <=> A7_13
   tinhUpdateA10M(a6MValue) async {
-    var a10MValue = getValueDmByFieldName('A7_10') ?? 0;
+    var a10MValue =
+        getValueByFieldName(tablePhieuMauTB, colPhieuNganhLTA10_M) ?? 0;
 
     var a6MVal = a6MValue ?? 0;
     if (a10MValue >= 0 && a6MVal >= 0) {
       var a10M = a10MValue / a6MVal;
-      await phieuNganhLTProvider.updateValByIdCoSo(
+      await phieuNganhLTProvider.updateValueByIdCoSo(
           colPhieuNganhLTA10_M, a10M, currentIdCoSo);
       await updateAnswerTblPhieuMau(
           colPhieuNganhLTA10_M, a10M, tablePhieuNganhLT);
@@ -2762,7 +2709,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     // // var minValue =chiTieuCot!=null? chiTieuCot!.giaTriNN;
     // // var maxValue = chiTieuCot!=null? chiTieuCot!.giaTriLN ;
     // var tblPhieuCT;
-    // // tblPhieuTonGiao.value.toJson();
+
     // if (typing == false) {
     //   tblPhieuCT = tblPhieuMau.value.toJson();
     // } else {
@@ -2936,7 +2883,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   }
     // }
     // var tblPhieuCT;
-    // // tblPhieuTonGiao.value.toJson();
+
     // if (typing == false) {
     //   tblPhieuCT = tblPhieuMau.value.toJson();
     // } else {
@@ -3192,6 +3139,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       //   return AppUtils.convertStringAndFixed2ToString(res.toString());
       // }
       return res;
+    } else if (table == tablePhieuNganhTM) {
+      var res = getValueByFieldNameFromDB(table, fieldName);
+      // if (valueDataType == "double") {
+      //   AppUtils.convertStringToDouble(res.toString());
+      // }
+      // if (fieldName == "A7_11" || fieldName == "A7_13") {
+      //   return AppUtils.convertStringAndFixed2ToString(res.toString());
+      // }
+      return res;
     } else {
       return null;
     }
@@ -3222,6 +3178,42 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       } else if (stt != null) {
         tbl = tblPhieuNganhTMSanPham
             .where((x) => x.sTT_SanPham == stt)
+            .firstOrNull;
+      }
+      if (tbl != null) {
+        var tblJson = tbl.toJson();
+        var res = tblJson[fieldName];
+        return res;
+      }
+    } else if (table == tablePhieuNganhVTGhiRo) {
+      TablePhieuNganhVTGhiRo? tbl;
+      if (id != null) {
+        tbl = tblPhieuNganhVTGhiRos.where((x) => x.id == id).firstOrNull;
+      } else if (stt != null) {
+        tbl = tblPhieuNganhVTGhiRos.where((x) => x.sTT == stt).firstOrNull;
+      }
+      if (tbl != null) {
+        var tblJson = tbl.toJson();
+        var res = tblJson[fieldName];
+        return res;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  ///maCauHoiMaSo: MaSo=13 or 15 or 17 or 18
+  getValueVTGhiByFieldNameFromDB(
+      String table, String fieldName, String maCauHoiMaSo, int? stt,
+      {int? id}) {
+    if (fieldName == null || fieldName == '') return null;
+    if (table == tablePhieuNganhVTGhiRo) {
+      TablePhieuNganhVTGhiRo? tbl;
+      if (id != null) {
+        tbl = tblPhieuNganhVTGhiRos.where((x) => x.id == id).firstOrNull;
+      } else if (stt != null) {
+        tbl = tblPhieuNganhVTGhiRos
+            .where((x) => x.sTT == stt && x.maCauHoi == maCauHoiMaSo)
             .firstOrNull;
       }
       if (tbl != null) {
@@ -4322,7 +4314,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   ///VALIDATE KHI NHẤN NÚT Tiếp tục V2
   Future<String> validateAllFormV2() async {
     String result = '';
-// ? Tỷ lệ gia công Câu 11 thêm giá trị lớn nhất nhỏ nhất vì nó tính %
+
     // var fieldNames = await getListFieldToValidate();
     // var tblP08 = tblPhieuMau.value.toJson();
 
@@ -4510,52 +4502,87 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   void onKetThucPhongVan() async {
-    handleCompletedQuestion(
-        tableThongTinNPV: completeInfo,
-        onChangeName: (value) {
-          onChangeCompleted(nguoiTraLoiBase, value);
-        },
-        onChangePhone: (value) {
-          onChangeCompleted(soDienThoaiBase, value);
-        },
-        onChangeNameDTV: (value) {
-          onChangeCompleted(hoTenDTVBase, value);
-        },
-        onChangePhoneDTV: (value) {
-          onChangeCompleted(soDienThoaiDTVBase, value);
-        },
-        onUpdate: (Map updateValues) async {
-          setLoading(true);
-          await Future.wait(completeInfo.keys
-              .map((e) => updateAnswerCompletedToDb(e, completeInfo[e])));
-          await Future.wait(updateValues.keys
-              .map((e) => updateAnswerCompletedToDb(e, updateValues[e])));
-          if (glat == null && glng == null) {
-            setLoading(false);
-            var res = handleNoneLocation();
-            return;
-          }
+    final resultRoute = await Get.to(
+      () => CompleteInterviewScreen(),
+      fullscreenDialog: true,
+    );
+    if (resultRoute != null && resultRoute is CompletedResult) {
+      final result = resultRoute.completeInfo;
+      if (generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT != 9) {
+        await onChangeCompleted(ThoiGianBD, startTime.toIso8601String());
+        await onChangeCompleted(ThoiGianKT, DateTime.now().toIso8601String());
+      }
+      await bkCoSoSXKDProvider.updateTrangThai(currentIdCoSo!);
+      AppPref.setQuestionNoStartTime = '';
 
-          ///BEGIN::added by tuannb 06/082024: Cập nhật lại thời gian bắt đầu và kết thúc phỏng vấn phiếu
-          if (generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT !=
-              9) {
-            await onChangeCompleted(ThoiGianBD, startTime.toIso8601String());
-            await onChangeCompleted(
-                ThoiGianKT, DateTime.now().toIso8601String());
-          }
-          bkCoSoSXKDProvider.updateTrangThai(currentIdCoSo!);
-          AppPref.setQuestionNoStartTime = '';
-          final sTimeLog = AppPref.getQuestionNoStartTime;
-          log('AppPref.getQuestionNoStartTime $sTimeLog');
+      if (resultRoute.isEdited) {
+        await Future.wait(completeInfo.keys
+            .map((e) => updateAnswerCompletedToDb(e, completeInfo[e])));
+      }
+      setLoading(false);
+      Get.offAllNamed(AppRoutes.mainMenu);
+    }
+    // handleCompletedQuestion(
+    //     tableThongTinNPV: completeInfo,
+    //     onChangeName: (value) {
+    //       onChangeCompleted(nguoiTraLoiBase, value);
+    //     },
+    //     onChangePhone: (value) {
+    //       onChangeCompleted(soDienThoaiBase, value);
+    //     },
+    //     onChangeNameDTV: (value) {
+    //       onChangeCompleted(hoTenDTVBase, value);
+    //     },
+    //     onChangePhoneDTV: (value) {
+    //       onChangeCompleted(soDienThoaiDTVBase, value);
+    //     },
+    //     onUpdate: (Map updateValues) async {
+    //       setLoading(true);
+    //       await Future.wait(completeInfo.keys
+    //           .map((e) => updateAnswerCompletedToDb(e, completeInfo[e])));
+    //       await Future.wait(updateValues.keys
+    //           .map((e) => updateAnswerCompletedToDb(e, updateValues[e])));
+    //       if (glat == null && glng == null) {
+    //         setLoading(false);
+    //         var res = handleNoneLocation();
+    //         return;
+    //       }
 
-          ///END:: added
-          ///
-          setLoading(false);
-          Get.offAllNamed(AppRoutes.mainMenu);
-          //  onBackInterviewListDetail();
-        });
+    //       ///BEGIN::added by tuannb 06/082024: Cập nhật lại thời gian bắt đầu và kết thúc phỏng vấn phiếu
+    //       if (generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT !=
+    //           9) {
+    //         await onChangeCompleted(ThoiGianBD, startTime.toIso8601String());
+    //         await onChangeCompleted(
+    //             ThoiGianKT, DateTime.now().toIso8601String());
+    //       }
+    //       bkCoSoSXKDProvider.updateTrangThai(currentIdCoSo!);
+    //       AppPref.setQuestionNoStartTime = '';
+    //       final sTimeLog = AppPref.getQuestionNoStartTime;
+    //       log('AppPref.getQuestionNoStartTime $sTimeLog');
+
+    //       ///END:: added
+    //       ///
+    //       setLoading(false);
+    //       Get.offAllNamed(AppRoutes.mainMenu);
+    //       //  onBackInterviewListDetail();
+    //     });
   }
 
+  confirmKetThucPhongVan(String table, String fieldName) {
+    return Get.dialog(DialogBarrierWidget(
+      onPressedNegative: () async {
+        updateAnswerToDB(table, fieldName, 1);
+        updateAnswerTblPhieuMau(fieldName, 1, table);
+        Get.back();
+      },
+      onPressedPositive: () async {
+        onKetThucPhongVan();
+        Get.back();
+      },
+      title: 'dialog_title_warning'.tr,
+      content: 'Bạn có chắc chắn kết thúc phỏng vấn?',
+    ));
+  }
 /***********/
   ///
   ///BEGIN::Kiểm tra ma ngành cho các phần III câu 3.1, Phần V, VI, VII
@@ -4599,7 +4626,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       int idValue,
       int stt,
       String motaSp,
-      value) async {
+      value,
+      TablePhieuNganhCNCap5 productCap5) async {
     final result = await Get.dialog(DialogSearchVcpaTab(
       keyword: motaSp ?? '',
       initialValue: product.a1_2 ?? '',
@@ -4607,6 +4635,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           onChangeListViewItem(item, productItem, selectedIndex),
       productItem: product,
       capSo: 8,
+      maNganhCap5: productCap5.maNganhC5,
+      moTaMaNganhCap5: productCap5.moTaSanPham,
     ));
   }
 
@@ -5398,7 +5428,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   ///
 /***********/
   ///BEGIN::PHẦN VII
-  onSelectDmA7_1(
+  onSelectDmLTA1(
     QuestionCommonModel question,
     String table,
     String? maCauHoi,
@@ -5408,21 +5438,21 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     ChiTieuDongModel? chiTieuDong,
     ChiTieuModel? chiTieuCot,
   }) {
-    log('ON CHANGE onSelectDmA7_1: $fieldName $value $dmItem');
+    log('ON CHANGE onSelectDmLTA1: $fieldName $value $dmItem');
     try {
       updateAnswerToDB(table, fieldName ?? "", value);
       updateAnswerTblPhieuMau(fieldName, value, table);
 
-      if (maCauHoi == "A7_1") {
+      if (maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuLT) {
         if (value != 1) {
           Get.dialog(DialogBarrierWidget(
             onPressedNegative: () async {
-              await backYesValueForYesNoQuestionA7_1(
+              await backYesValueForYesNoQuestionLTA1(
                   table, maCauHoi, fieldName, 1, question);
             },
             onPressedPositive: () async {
               updateAnswerToDB(table, fieldName!, value);
-              await executeOnChangeYesNoQuestionA7_1(
+              await executeOnChangeYesNoQuestionLTA1(
                   table, value, chiTieuDong!, chiTieuCot!);
               Get.back();
             },
@@ -5436,14 +5466,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-  backYesValueForYesNoQuestionA7_1(
+  backYesValueForYesNoQuestionLTA1(
       String table, String? maCauHoi, String? fieldName, value, dmItem) async {
     updateAnswerToDB(table, fieldName!, 1);
     updateAnswerTblPhieuMau(fieldName, value, table);
     Get.back();
   }
 
-  executeOnChangeYesNoQuestionA7_1(table, value, ChiTieuDongModel chiTieuDong,
+  executeOnChangeYesNoQuestionLTA1(table, value, ChiTieuDongModel chiTieuDong,
       ChiTieuModel chiTieuCot) async {
     log('ON executeOnChangeYesNoQuestionA4_2:  $value');
 
@@ -5503,15 +5533,66 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   bool allowDeleteProductNganhCN(TablePhieuNganhCN product) {
-    if (product != null) {
-      if (product.sTT_SanPham != sttProduct.value) {
+    // if (product != null) {
+    //   var countCap5=await phieuNganhCNProvider.countMaNganhCap5ByIdCoso(currentIdCoSo!,product.maNganhC5!);
+    //   return countCap5>1;
+    // }
+    // return false;
+    return true;
+  }
+
+  onDeleteProductNganhCN(
+      TablePhieuNganhCN phieuNganhCN, TablePhieuNganhCNCap5 productCap5) async {
+    var maC5 = phieuNganhCN.maNganhC5 ?? '';
+    if (maC5 == '') {
+      Get.dialog(DialogBarrierWidget(
+        isCancelButton: false,
+        onPressedNegative: () async {
+          Get.back();
+        },
+        onPressedPositive: () async {
+          Get.back();
+        },
+        title: 'dialog_title_warning'.tr,
+        content: 'Không tìm thấy mã cấp 5 của mục này?',
+      ));
+      return;
+    }
+    var res =
+        await kiemtraXoaSanPham(phieuNganhCN.id!, phieuNganhCN.maNganhC5!);
+    if (res == false) {
+      Get.dialog(DialogBarrierWidget(
+        onPressedNegative: () async {
+          Get.back();
+        },
+        onPressedPositive: () async {
+          //await executeConfirmDeleteProductNganhCN(phieuNganhCN.id);
+
+          Get.back();
+        },
+        title: 'dialog_title_warning'.tr,
+        content: 'Phải có ít nhất một sản phẩm cấp 8 của mã cấp 5:',
+        content2: '${phieuNganhCN.maNganhC5} - ${productCap5.moTaSanPham}.',
+        content2Color: warningColor,
+        isCancelButton: false,
+      ));
+    } else {
+      await onConfirmDeleteProductNganhCN(phieuNganhCN.id!);
+    }
+  }
+
+  Future<bool> kiemtraXoaSanPham(int id, String maNganhC5) async {
+    var res =
+        await phieuNganhCNProvider.getByMaNganhC5(currentIdCoSo!, maNganhC5);
+    if (res.isNotEmpty) {
+      if (res.length > 1) {
         return true;
       }
     }
     return false;
   }
 
-  onDeleteProductNganhCN(id) async {
+  onConfirmDeleteProductNganhCN(int id) async {
     Get.dialog(DialogBarrierWidget(
       onPressedNegative: () async {
         Get.back();
@@ -5542,7 +5623,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               x.maNganhC5 == maNganhC5 &&
               x.a1_1 != null &&
               x.a1_2 != null &&
-              x.a2_2 != null &&
+              (x.a2_2 != null && x.a2_2! > 0) &&
               x.iDCoSo == currentIdCoSo)
           .length;
       return countItem;
@@ -5671,6 +5752,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
         await phieuNganhVTProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
       }
+      //Ghi ro
+      if (hasC1VT && hasC5VTHK) {
+        await insertNganhVTGhiRoDefaultA1_A7("A1_13");
+        await insertNganhVTGhiRoDefaultA1_A7("A1_15");
+      }
+      if (hasC1VT && hasC5VTHH) {
+        await insertNganhVTGhiRoDefaultA1_A7("A7_17");
+        await insertNganhVTGhiRoDefaultA1_A7("A7_18");
+      }
     } else {
       // if (res) {
       //   phieuNganhVTProvider.deleteByCoSoId(currentIdCoSo!);
@@ -5679,6 +5769,303 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await getTablePhieuNganhVT();
     await getTablePhieuNganhVTGhiRo();
     return (hasC1VT, hasC5VTHK, hasC5VTHH);
+  }
+
+  Future insertNganhVTGhiRoDefaultA1_A7(String maCauHoiMaSo) async {
+    var resChkA1_13 = await phieuNganhVTGhiRoProvider.isExistQuestionByMaCauHoi(
+        currentIdCoSo!, maCauHoiMaSo);
+    if (!resChkA1_13) {
+      TablePhieuNganhVTGhiRo vtGhiRo = TablePhieuNganhVTGhiRo(
+          iDCoSo: currentIdCoSo!,
+          maCauHoi: maCauHoiMaSo,
+          sTT: 1,
+          maDTV: AppPref.uid);
+      List<TablePhieuNganhVTGhiRo> tablePhieuNganhVTGhiRos = [];
+      tablePhieuNganhVTGhiRos.add(vtGhiRo);
+      phieuNganhVTGhiRoProvider.insert(
+          tablePhieuNganhVTGhiRos, AppPref.dateTimeSaveDB!);
+    }
+  }
+
+  bool isA1NganhVT(QuestionCommonModel question, ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot) {
+    return (question.maCauHoi == "A1" &&
+        question.maPhieu == AppDefine.maPhieuVT);
+  }
+
+  bool isA7NganhVT(QuestionCommonModel question, ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot) {
+    return (question.maCauHoi == "A7" &&
+        question.maPhieu == AppDefine.maPhieuVT);
+  }
+
+  bool isA1GhiRoF(QuestionCommonModel question, ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot) {
+    return (question.maCauHoi == "A1" &&
+            question.maPhieu == AppDefine.maPhieuVT) &&
+        (chiTieuDong.maSo == "13" || chiTieuDong.maSo == "15");
+  }
+
+  bool isA7GhiRoF(QuestionCommonModel question, ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot) {
+    return (question.maCauHoi == "A7" &&
+            question.maPhieu == AppDefine.maPhieuVT) &&
+        (chiTieuDong.maSo == "17" || chiTieuDong.maSo == "18");
+  }
+
+  ///Check có/không chi cũng gọi hàm này::
+  ///* TODO Chỉ dùng cho stt=1
+  Future insertUpdateGhiRoNganhVT(QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot, coKhongVal) async {
+    var isA1GhiRo = isA1GhiRoF(question, chiTieuDong, chiTieuCot);
+    var isA7GhiRo = isA7GhiRoF(question, chiTieuDong, chiTieuCot);
+
+    if (isA1GhiRo || isA7GhiRo) {
+      String maCauHoiMaSo = '${question.maCauHoi}_${chiTieuDong.maSo}';
+      var resChk = await phieuNganhVTGhiRoProvider.isExistQuestionByMaCauHoiSTT(
+          currentIdCoSo!, maCauHoiMaSo, 1);
+      if (coKhongVal == 1 || coKhongVal == "1") {
+        if (!resChk) {
+          await insertVTGhiRo(question, chiTieuDong, chiTieuCot, coKhongVal);
+        }
+      } else if (coKhongVal == 2 || coKhongVal == "2") {
+        if (!resChk) {
+          Get.dialog(DialogBarrierWidget(
+            onPressedNegative: () async {
+              Get.back();
+            },
+            onPressedPositive: () async {
+              await executeConfirmDeleteVTGhiRo(
+                  question, chiTieuDong, chiTieuCot, coKhongVal);
+              Get.back();
+            },
+            title: 'dialog_title_warning'.tr,
+            content: 'Bạn có chắc muốn xoá thông tin ghi rõ mục này?',
+          ));
+        }
+      }
+    }
+  }
+
+  Future executeConfirmDeleteVTGhiRo(QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot, coKhongVal) async {
+    if (coKhongVal == 2 || coKhongVal == "2") {
+      var res = await phieuNganhVTGhiRoProvider.deleteByCoSoId(currentIdCoSo!);
+      if (res > 0) {
+        await insertVTGhiRo(question, chiTieuDong, chiTieuCot, coKhongVal);
+      }
+    }
+  }
+
+  Future insertVTGhiRo(QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot, coKhongVal) async {
+    var isA1GhiRo = isA1GhiRoF(question, chiTieuDong, chiTieuCot);
+
+    if (isA1GhiRo || isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+      String maCauHoiMaSo = '${question.maCauHoi}_${chiTieuDong.maSo}';
+      // var resChk = await phieuNganhVTGhiRoProvider.isExistQuestionByMaCauHoi(/currentIdCoSo!, maCauHoiMaSo);
+
+      // if (!resChk) {
+      int sttMax = await phieuNganhVTGhiRoProvider.getMaxSTTByIdCoSoByMaCauHoi(
+          currentIdCoSo!, maCauHoiMaSo);
+      sttMax = sttMax + 1;
+      TablePhieuNganhVTGhiRo vtGhiRo = TablePhieuNganhVTGhiRo(
+          iDCoSo: currentIdCoSo!,
+          maCauHoi: maCauHoiMaSo,
+          sTT: sttMax,
+          maDTV: AppPref.uid);
+      List<TablePhieuNganhVTGhiRo> tablePhieuNganhVTGhiRos = [];
+      tablePhieuNganhVTGhiRos.add(vtGhiRo);
+      phieuNganhVTGhiRoProvider.insert(
+          tablePhieuNganhVTGhiRos, AppPref.dateTimeSaveDB!);
+      await getTablePhieuNganhVTGhiRo();
+      //  }
+    }
+  }
+
+  Future deleteGhiRoNganhVTById(QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot, int id) async {
+    var isA1GhiRo = isA1GhiRoF(question, chiTieuDong, chiTieuCot);
+
+    String maCauHoiMaSo = '${question.maCauHoi}_${chiTieuDong.maSo}';
+    var resChk = await phieuNganhVTGhiRoProvider.isExistQuestionByMaCauHoiId(
+        currentIdCoSo!, maCauHoiMaSo, id);
+    if (resChk) {
+      var res = await phieuNganhVTGhiRoProvider.deleteById(id);
+      await getTablePhieuNganhVTGhiRo();
+    }
+  }
+
+  Future onDeletePhieuNganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem) async {
+    await deleteGhiRoNganhVTById(
+        question, chiTieuDong, chiTieuCot, ghiRoItem.id!);
+  }
+
+  Future addNewRowonPhieuNganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem) async {
+    await insertVTGhiRo(question, chiTieuDong, chiTieuCot, null);
+  }
+
+  countHasMorePhieuNganhVTGhiRo(
+      String table, TablePhieuNganhVTGhiRo ghiRoItem) {
+    if (table == tablePhieuNganhVTGhiRo) {
+      var countItem = tblPhieuNganhVTGhiRos
+          .where((x) =>
+              x.maCauHoi != null &&
+              x.c_1 != null &&
+              x.c_2 != null &&
+              x.c_3 != null &&
+              x.c_4 != null &&
+              x.cGhiRo != null &&
+              x.sTT == 1 &&
+              x.maCauHoi == ghiRoItem.maCauHoi &&
+              x.iDCoSo == currentIdCoSo)
+          .length;
+      return countItem;
+    }
+    return 0;
+  }
+
+  onSelectDmA1_A7(QuestionCommonModel question, String table, String? maCauHoi,
+      String? fieldName, value, dmItem,
+      {ChiTieuDongModel? chiTieuDong,
+      ChiTieuModel? chiTieuCot,
+      TablePhieuNganhVTGhiRo? ghiRoItem}) {
+    log('ON CHANGE onSelectDmA1_A7: $fieldName $value $dmItem');
+    try {
+      if (isA1GhiRoF(question, chiTieuDong!, chiTieuCot!)) {
+        if (chiTieuDong.maSo == "13" || chiTieuDong.maSo == "15") {
+          updateAnswerPhieuVTGhiRoToDB(
+              colPhieuNganhVTGhiRoC1, value, ghiRoItem!.id!);
+        } else {}
+      }
+      if (isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+        if (chiTieuDong.maSo == "17" || chiTieuDong.maSo == "18") {
+          updateAnswerPhieuVTGhiRoToDB(
+              colPhieuNganhVTGhiRoC1, value, ghiRoItem!.id!);
+        } else {}
+      } else if (isA1NganhVT(question, chiTieuDong, chiTieuCot)) {
+        String soLuongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_2';
+        String taiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_3';
+         String tongTaiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_4';
+        if (value == 1) {
+          //update co/khong
+          updateAnswerToDB(table, fieldName ?? "", value);
+          updateAnswerTblPhieuMau(fieldName, value, table);
+          //Lấy trọng tải
+          var trongTai =
+              tinhTaiTrongA1NganhVT(question, table, chiTieuDong, chiTieuCot);
+
+          updateAnswerToDB(table, taiTrongFieldName, trongTai);
+          updateAnswerTblPhieuMau(taiTrongFieldName, trongTai, table);
+          tinhTongTaiTrongA1NganhVT(question, table, chiTieuDong, chiTieuCot);
+        } else {
+          updateAnswerToDB(table, fieldName ?? "", value);
+          updateAnswerTblPhieuMau(fieldName, value, table);
+
+          updateAnswerToDB(table, soLuongFieldName, null);
+          updateAnswerTblPhieuMau(soLuongFieldName, null, table);
+          updateAnswerToDB(table, taiTrongFieldName, null);
+          updateAnswerTblPhieuMau(taiTrongFieldName, null, table);
+            updateAnswerToDB(table, tongTaiTrongFieldName, null);
+          updateAnswerTblPhieuMau(tongTaiTrongFieldName, null, table);
+        }
+
+        updateAnswerToDB(table, fieldName ?? "", value);
+        updateAnswerTblPhieuMau(fieldName, value, table);
+      } else {
+        updateAnswerToDB(table, fieldName ?? "", value);
+        updateAnswerTblPhieuMau(fieldName, value, table);
+      }
+    } catch (e) {
+      printError(info: e.toString());
+    }
+  }
+
+  int tinhTaiTrongA1NganhVT(QuestionCommonModel question, String table,
+      ChiTieuDongModel? chiTieuDong, ChiTieuModel? chiTieuCot) {
+    int result = 0;
+    if (chiTieuDong!.giaTriLN != null) {
+      result = chiTieuDong!.giaTriLN!.toInt();
+    }
+    return result;
+  }
+
+  int tinhTongTaiTrongA1NganhVT(QuestionCommonModel question, String table,
+      ChiTieuDongModel? chiTieuDong, ChiTieuModel? chiTieuCot) {
+    int result = 0;
+    if (chiTieuDong!.giaTriLN != null) {}
+    String soLuongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_2';
+    String taiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_3';
+    String tongTaiTrongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_4';
+    var soluong = getValueByFieldName(table, soLuongFieldName);
+    soluong = AppUtils.convertStringToInt(soluong);
+    var taiTrong = getValueByFieldName(table, taiTrongFieldName);
+    taiTrong = AppUtils.convertStringToInt(taiTrong);
+    result = soluong * taiTrong;
+      updateAnswerToDB(table, tongTaiTrongFieldName, result);
+          updateAnswerTblPhieuMau(tongTaiTrongFieldName, result, table);
+    return result;
+  }
+
+  onChangePhieuNganhVTGhiRoDm(QuestionCommonModel question, String table,
+      String? maCauHoi, String? fieldName, value, dmItem,
+      {ChiTieuDongModel? chiTieuDong,
+      ChiTieuModel? chiTieuCot,
+      TablePhieuNganhVTGhiRo? ghiRoItem}) {
+    log('onChangePhieuNganhVTGhiRoDm Mã câu hỏi ${question.maCauHoi} ${question.bangChiTieu}');
+    if (isA1GhiRoF(question, chiTieuDong!, chiTieuCot!) ||
+        isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+      if (chiTieuDong.maSo == "13") {
+        //updateAnswerPhieuVTGhiRoToDB("C1",value)
+      } else {}
+    }
+  }
+
+  updateAnswerPhieuVTGhiRoToDB(String fieldName, value, id) async {
+    await phieuNganhVTGhiRoProvider.updateValueById(fieldName, value, id);
+    await getTablePhieuNganhVTGhiRo();
+  }
+
+  onChangeInputChiTieuDongCotNganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem,
+      value,
+      {String? fieldNameVTGhiRo}) async {
+    try {
+      if (isA1GhiRoF(question, chiTieuDong, chiTieuCot) ||
+          isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+        String fieldName = 'C_${chiTieuCot.maChiTieu}';
+        if (fieldNameVTGhiRo != null && fieldNameVTGhiRo == "C_GhiRo") {
+          fieldName = fieldNameVTGhiRo;
+        }
+        await updateAnswerPhieuVTGhiRoToDB(fieldName, value, ghiRoItem!.id!);
+      }
+
+      //   if (maCauHoi == "A7_1") {
+      //     if (a7_1FieldWarning.contains(fieldName)) {
+      //       await warningA7_1_X3SoPhongTangMoi(chiTieuDong!.maSo!);
+      //     }
+      //   }
+      //   List<String> fieldNames = [];
+      //   String fieldNameTotal = "";
+      //   await updateAnswerDongCotToDB(table, fieldName!, value,
+      //       fieldNames: fieldNames,
+      //       fieldNameTotal: fieldNameTotal,
+      //       maCauHoi: maCauHoi);
+      // }
+    } catch (e) {
+      printError(info: e.toString());
+    }
   }
 /*****END::NGANH VT********/
 

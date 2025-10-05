@@ -15,12 +15,18 @@ class DialogSearchVcpaTab extends StatefulWidget {
       this.onChangeListViewItem,
       this.productItem,
       this.searchType,
-      this.capSo});
+      this.capSo,
+      this.maNganhCap5,
+      this.moTaMaNganhCap5});
 
   final String? keyword;
   final String? initialValue;
   final Function(TableDmMotaSanpham, dynamic, int)? onChangeListViewItem;
   final dynamic productItem;
+
+  ///Để đảm bảo mã sản phẩm cấp 8 đang tìm kiếm thuộc phạm vi mã sản phẩm cấp 5 này.
+  final String? maNganhCap5;
+    final String? moTaMaNganhCap5;
 
   ///0: AI; 1: Danh muc
   final int? searchType;
@@ -161,14 +167,18 @@ class _DialogSearchVcpaTabState extends State<DialogSearchVcpaTab>
                       onChangeListViewItem: widget.onChangeListViewItem,
                       productItem: widget.productItem,
                       searchType: 0,
-                      capSo: widget.capSo),
+                      capSo: widget.capSo,
+                      maNganhCap5:widget.maNganhCap5,
+                      moTaMaNganhCap5: widget.moTaMaNganhCap5),
                   VcpaSearchService(
                       keywordText: widget.keyword,
                       initialValue: widget.initialValue,
                       onChangeListViewItem: widget.onChangeListViewItem,
                       productItem: widget.productItem,
                       searchType: 1,
-                      capSo: widget.capSo)
+                      capSo: widget.capSo,
+                      maNganhCap5:widget.maNganhCap5,
+                      moTaMaNganhCap5: widget.moTaMaNganhCap5)
                 ],
               ),
             ),

@@ -1,7 +1,7 @@
 const String columnId = '_id';
 const String columnMaPhieu = 'LoaiPhieu';
 const String columnIDCoSo = 'IDCoSo';
-const String columnMaDTV = 'MaDTV';  
+const String columnMaDTV = 'MaDTV';
 const String columnMaTinh = 'MaTinh';
 const String columnMaHuyen = 'MaHuyen';
 const String columnMaXa = 'MaXa';
@@ -16,7 +16,10 @@ const String columnSoDienThoai = 'SoDienThoai';
 const String columnHoTenDTV = 'HoTenDTV';
 const String columnSoDienThoaiDTV = 'SoDienThoaiDTv';
 const String columnThoiGianBD = 'ThoiGianBD';
-const String columnThoiGianKT = 'ThoiGianKT'; 
-const String columnMa= 'Ma';
-const String columnTen= 'Ten';  
-const String columnSTT= 'STT';  
+const String columnThoiGianKT = 'ThoiGianKT';
+const String columnMa = 'Ma';
+const String columnTen = 'Ten';
+const String columnSTT = 'STT';
+
+const String columnGhiChu = 'GhiChu';
+String giaiTrinhToaDo = "GiaiTrinhToaDo";

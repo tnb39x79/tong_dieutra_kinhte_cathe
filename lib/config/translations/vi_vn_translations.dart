@@ -96,7 +96,7 @@ final Map<String, String> viVN = {
   'household': 'Hộ',
   'commune': 'Xã',
   'coso': 'Cơ sở',
-  //'tongiao_tinnguong': 'Tôn giáo, tín ngưỡng',
+
 
   //update app
   'update_app_title': 'Cập nhật chương trình',

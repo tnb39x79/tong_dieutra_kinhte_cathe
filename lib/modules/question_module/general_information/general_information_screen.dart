@@ -23,7 +23,7 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
             Icons.arrow_back_ios_new_rounded,
             color: Colors.white,
           ),
-          subTitle: controller.currentTenDoiTuongDT,
+          subTitle: controller.getSubTitle(),
           onPressedLeading: () => controller.onBackPage(),
           actions: const SizedBox(),
         ),

@@ -15,3 +15,5 @@ enum SubjectType{
   interviewed,
   unInterviewed,
 }
+
+enum BtnType { inline, outline, text }

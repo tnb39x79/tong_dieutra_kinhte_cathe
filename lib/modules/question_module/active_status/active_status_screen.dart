@@ -17,7 +17,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
           Icons.arrow_back_ios_new_rounded,
           color: Colors.white,
         ),
-        subTitle: controller.currentTenDoiTuongDT,
+        subTitle: controller.getSubTitle(),
         onPressedLeading: () => Get.back(),
       ),
       body: LoadingFullScreen(

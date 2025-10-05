@@ -30,13 +30,17 @@ class VcpaSearchService extends StatefulWidget {
       this.capSo,
       this.onChangeListViewItem,
       this.productItem,
-      this.searchType});
+      this.searchType,
+      this.maNganhCap5,
+      this.moTaMaNganhCap5});
 
   final String? keywordText;
   final String? linhVuc;
   final String? initialValue;
   final Function(TableDmMotaSanpham, dynamic, int)? onChangeListViewItem;
   final dynamic productItem;
+  final String? maNganhCap5;
+  final String? moTaMaNganhCap5;
 
   ///0: AI; 1: Danh muc
   final int? searchType;
@@ -172,7 +176,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
       // If no local AI, show choice dialog
       showInitialChoiceDialog();
     } else if (widget.searchType == 1) {
-      await getVcpaDanhMuc();
+      await searchFromDanhMuc();
     } else {
       return;
     }
@@ -407,11 +411,12 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
           await phieuTBController.evaluator.predict([keyword], topK: topK);
       List<PredictionResult> _results =
           predictions.isNotEmpty ? predictions.first : [];
+
       List<Map> vcpaCap5s = await phieuTBController.dmMotaSanphamProvider
           .mapResultAIToDmSanPhamOffline(
-              _results, linhVucItem != null ? linhVucItem!.maLV ?? '' : '',capSo: widget.capSo);
+              _results, linhVucItem != null ? linhVucItem!.maLV ?? '' : '',
+              capSo: widget.capSo, maNganhCap5: widget.maNganhCap5 ?? '');
       var result = vcpaCap5s.map((e) => TableDmMotaSanpham.fromJson(e));
-
       debugPrint('OFFLINE SEARCH RESULT ${result.length}');
 
       return result.toList();
@@ -430,9 +435,11 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
       if (response.body != null) {
         if (response.body!.isNotEmpty) {
           var res = response.body!;
+
           List<Map> vcpaCap5s = await phieuTBController.dmMotaSanphamProvider
               .mapResultAIToDmSanPham(
-                  res, linhVucItem != null ? linhVucItem!.maLV ?? '' : '',capSo: widget.capSo);
+                  res, linhVucItem != null ? linhVucItem!.maLV ?? '' : '',
+                  capSo: widget.capSo, maNganhCap5: widget.maNganhCap5 ?? '');
           var result = vcpaCap5s.map((e) => TableDmMotaSanpham.fromJson(e));
 
           log('SEARCH RESULT: ${result.length}');
@@ -444,7 +451,9 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
     } else if (response.statusCode.toString() == ApiConstants.requestTimeOut) {
       errorMessage = 'Request timeout.';
     } else {
-      errorMessage = response.message ?? 'Có lỗi: ${response.statusCode} ';
+      errorMessage = (response.message != null || response.message != "")
+          ? 'Có lỗi: ${response.message} '
+          : 'Có lỗi: ${response.statusCode} ';
     }
     return [];
   }
@@ -454,7 +463,8 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
         .searchVcpaCap5ByLinhVuc(
             searchController.text,
             linhVucItem != null ? linhVucItem!.maLV ?? '' : '',
-            widget.capSo ?? 5);
+            widget.capSo ?? 5,
+            maNganhCap5: widget.maNganhCap5 ?? '');
     var result = vcpaCap5s.map((e) => TableDmMotaSanpham.fromJson(e));
     return result.toList();
   }
@@ -514,6 +524,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
           )
         ],
       ),
+      buildMoTaCap5(),
       Expanded(child: buildListItem())
     ]);
   }
@@ -589,6 +600,27 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
     }
   }
 
+  Widget buildMoTaCap5() {
+    if (widget.maNganhCap5 != null && widget.maNganhCap5 != '') {
+      return Column(children: [
+        const SizedBox(height: 8,),
+        Row(children: [
+          Expanded(
+              child: RichText(
+                  text: TextSpan(
+                      text: 'Mã cấp 5: ',
+                      style: TextStyle(color: blackText),
+                      children: [
+                TextSpan(
+                    text: '${widget.maNganhCap5} - ${widget.moTaMaNganhCap5}',
+                    style: TextStyle(color: primaryColor)),
+              ])))
+        ])
+      ]);
+    }
+    return const SizedBox();
+  }
+
   TextStyle styleTable = styleMedium;
 
   Widget buildListItem() {
@@ -601,18 +633,6 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                   child: Text(
                     responseMessage!,
                     style: TextStyle(color: primaryColor),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            : const SizedBox(),
-        errorMessage != null
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    errorMessage!,
-                    style: TextStyle(color: Colors.red),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -638,7 +658,9 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
         ),
         const Divider(),
         Expanded(
-          child: dataResult.isEmpty ? notFoundView() : buildListView(),
+          child: isLoading
+              ? IndicatorView()
+              : (dataResult.isEmpty ? notFoundView() : buildListView()),
         ),
       ],
     );

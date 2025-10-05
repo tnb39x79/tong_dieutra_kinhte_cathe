@@ -12,6 +12,7 @@ class TextString extends StatefulWidget {
       this.maxLine = 1,
       this.warningText,
       this.textStyle,
+      this.borderColor,
       super.key});
 
   final QuestionCommonModel question;
@@ -21,7 +22,7 @@ class TextString extends StatefulWidget {
   final int maxLine;
   final String? warningText;
   final TextStyle? textStyle;
-
+  final Color? borderColor;
   @override
   TextStringState createState() => TextStringState();
 }
@@ -57,7 +58,7 @@ class TextStringState extends State<TextString> {
               decoration: BoxDecoration(
                   color: backgroundDisableColor,
                   border: Border.all(
-                    color: primaryLightColor,
+                    color: widget.borderColor?? primaryLightColor,
                     width: 1.0,
                   ),
                   borderRadius: const BorderRadius.all(Radius.circular(

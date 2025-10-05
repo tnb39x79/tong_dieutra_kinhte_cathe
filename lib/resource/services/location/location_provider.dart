@@ -69,7 +69,7 @@ class LocationProVider {
       return false;
     }
 
-    return false;
+    return true;
   }
 
   static Future<Position> getLocation() async {
@@ -78,5 +78,8 @@ class LocationProVider {
     // await requestPermission();
     return await Geolocator.getCurrentPosition();
   }
- 
+
+  static openSetting() {
+    Geolocator.openLocationSettings();
+  }
 }

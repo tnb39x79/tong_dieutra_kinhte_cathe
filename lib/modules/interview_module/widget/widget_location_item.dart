@@ -4,16 +4,18 @@ import 'package:gov_statistics_investigation_economic/config/config.dart';
 
 class WidgetLocationItem extends StatelessWidget {
   const WidgetLocationItem({
-    Key? key,
+    super.key,
     required this.index,
     required this.title,
-    required this.vilage,
+    required this.vilage, 
     required this.onPressed,
-  }) : super(key: key);
+    this.textStyleSub
+  });
 
   final String index;
   final String title;
   final String vilage;
+  final TextStyle? textStyleSub;
   final Function() onPressed;
 
   @override
@@ -83,7 +85,7 @@ class WidgetLocationItem extends StatelessWidget {
         children: <TextSpan>[
           TextSpan(
             text: vilage,
-            style: styleMediumBold.copyWith(color: warningColor),
+            style: textStyleSub?? styleMediumBold.copyWith(color: warningColor),
           ),
         ],
       ),

@@ -112,7 +112,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
   }
 
   Future<List<Map>> searchVcpaCap5ByLinhVuc(
-      String keyword, String maLV, int capSo) async {
+      String keyword, String maLV, int capSo,{String? maNganhCap5}) async {
     if (keyword != '') {
       // List<String> kws = keyword.split(' ');
       // List<String> whs = [];
@@ -144,6 +144,9 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
       if (maLV != '' && maLV != '0') {
         sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
       }
+      if(maNganhCap5!=null && maNganhCap5!=''){ 
+        sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
+      }
       if (capSo > 0) {
         sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
       }
@@ -156,10 +159,10 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
     return [];
   }
-
+ 
   Future<List<Map>> mapResultAIToDmSanPham(
       List<ProductAiModel> products, String maLV,
-      {int? capSo}) async {
+      {int? capSo,String? maNganhCap5}) async {
     List<String> vcpas = [];
     if (products != null && products.isNotEmpty) {
       for (var item in products) {
@@ -186,6 +189,9 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     if (maLV != '' && maLV != '0') {
       sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
     }
+    if(maNganhCap5!=null && maNganhCap5!=''){ 
+     sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
+    }
     if (capSo != null && capSo > 0) {
       sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
     }
@@ -196,11 +202,13 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return maps;
   }
 
+   
+
   ///
   ///capSo: mã cấp 1,2,3,4,5,6,7,8
   Future<List<Map>> mapResultAIToDmSanPhamOffline(
       List<PredictionResult> products, String maLV,
-      {int? capSo}) async {
+      {int? capSo,String? maNganhCap5}) async {
     List<String> vcpas = [];
     if (products != null && products.isNotEmpty) {
       for (var item in products) {
@@ -227,6 +235,9 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     if (maLV != '' && maLV != '0') {
       sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
     }
+    if(maNganhCap5!=null && maNganhCap5!=''){ 
+     sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
+    }
     if (capSo != null && capSo > 0) {
       sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
     }
@@ -236,6 +247,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
 
     return maps;
   }
+ 
 
   Future<List<Map>> selectAlls() async {
     final List<Map> maps = await db!.query(tableDmMoTaSanPham);
@@ -562,7 +574,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
   Future<List<String>> getMaNganhCap5ByMaSanPham5(
       String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
     List<String> result = [];
-    
+
     var vcpaQuiDinhs = vcpaQuiDinh.split(';');
     var vcpa5DieuKiens = maSanPhamPhieuMauTBSanPham.split(';');
     String sql =
@@ -578,10 +590,10 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return result;
   }
 
-   Future<List<String>> getMaNganhCapByMaSanPham2(
+  Future<List<String>> getMaNganhCapByMaSanPham2(
       String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
     List<String> result = [];
-     
+
     var vcpaQuiDinha = vcpaQuiDinh.split(';');
     var vcpa2DieuKiens = maSanPhamPhieuMauTBSanPham.split(';');
     String sql =

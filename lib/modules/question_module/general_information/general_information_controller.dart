@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart'; 
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_phieu_tb_controller.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
@@ -25,8 +25,9 @@ import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 class GeneralInformationController extends BaseController {
   static const giMaDoiTuongDTKey = 'maDoiTuongDT';
   static const giMaDiaBanKey = 'maDiaBan';
-  static const giMaDiaBanTGKey = 'maDiaBanTG';
+  static const giTenDiaBanKey = 'tenDiaBan';
   static const giMaXaKey = 'maXa';
+  static const giTenXaKey = 'tenXa';
   static const giTenDoiTuongDTKey = "tenDoiTuongDT";
   static const giCoSoSXKDIdKey = "coSoSXKDId";
   static const giMaTinhTrangDTKey = "maTinhTrangDT";
@@ -67,7 +68,8 @@ class GeneralInformationController extends BaseController {
   ///
   final HomeController homeController = Get.find();
   final MainMenuController mainMenuController = Get.find();
-
+ final interviewListDetailController =
+          Get.find<InterviewListDetailController>();
   /// RX
   final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
   //final tblBkCoSoSXKDNganhSanPham = <TableBkCoSoSXKDNganhSanPham>[].obs;
@@ -93,40 +95,44 @@ class GeneralInformationController extends BaseController {
   String? currentTenDoiTuongDT;
   String? currentMaTinhTrangDT;
   String? currentMaDiaBan;
-  String? currentMaDiaBanTG;
+  String? currentTenDiaBan;
   String? currentIdCoSoTG;
   String? currentIdCoSo;
   String? currentMaXa;
+  String? currentTenXa;
   String? currentMaVCPACap1;
 
   @override
   void onInit() async {
     setLoading(true);
     if (homeController.isDefaultUserType()) {
-      final interviewListDetailController =
-          Get.find<InterviewListDetailController>();
+     
       currentMaDoiTuongDT = interviewListDetailController.currentMaDoiTuongDT;
       currentTenDoiTuongDT = interviewListDetailController.currentTenDoiTuongDT;
       currentMaTinhTrangDT = interviewListDetailController.currentMaTinhTrangDT;
       currentIdCoSo = interviewListDetailController.currentIdCoSo;
       currentMaXa = interviewListDetailController.currentMaXa;
+      currentTenXa = interviewListDetailController.currentTenXa;
       currentMaDiaBan = interviewListDetailController.currentMaDiaBan;
-      currentMaDiaBanTG = interviewListDetailController.currentMaDiaBanTG;
-      currentIdCoSoTG = interviewListDetailController.currentIdCoSoTG ?? '';
+      currentTenDiaBan = interviewListDetailController.currentTenDiaBan;
     } else {
       currentMaDoiTuongDT = Get.parameters[giMaDoiTuongDTKey]!;
       currentTenDoiTuongDT = Get.parameters[giTenDoiTuongDTKey]!;
       currentMaTinhTrangDT = Get.parameters[giMaTinhTrangDTKey]!;
       currentIdCoSo = Get.parameters[giCoSoSXKDIdKey]!;
       currentMaXa = Get.parameters[giMaXaKey]!;
+      currentTenXa = Get.parameters[giTenXaKey]!;
       currentMaDiaBan = Get.parameters[giMaDiaBanKey]!;
-      //currentMaDiaBanTG = interviewListDetailController.currentMaDiaBanTG;
-      // currentIdCoSoTG = interviewListDetailController.currentIdCoSoTG ?? '';
+      currentTenDiaBan = Get.parameters[giTenDiaBanKey]!;
     }
     await getGeneralInformation();
     await getScreenNo();
     setLoading(false);
     super.onInit();
+  }
+
+  getSubTitle() {
+     return '$currentTenDoiTuongDT';
   }
 
   Future getGeneralInformation() async {
@@ -244,7 +250,7 @@ class GeneralInformationController extends BaseController {
         "TenChuCoSo": tenChuCoSoController.text,
         "DienThoai": dienThoaiController.text,
       });
-     
+
       await insertNewRecordSanPham();
     }
     setLoading(false);
@@ -287,7 +293,7 @@ class GeneralInformationController extends BaseController {
 
 /***********/
 
-Future insertNewRecord() async {
+  Future insertNewRecord() async {
     var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
     if (res == false) {
       //var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
@@ -310,6 +316,7 @@ Future insertNewRecord() async {
       await phieuMauTBSanPhamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
     }
   }
+
   ///San pham
 
   ///

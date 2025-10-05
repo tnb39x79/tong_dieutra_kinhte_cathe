@@ -4,8 +4,6 @@ class AppUtils {
   AppUtils._();
   AppUtils();
 
-   
-
   static convertStringToDouble(value) {
     if (value == null || value == "" || value == "null") {
       return 0.0;
@@ -109,5 +107,17 @@ class AppUtils {
   static double roundDouble(double value, int places) {
     num mod = pow(10.0, places);
     return ((value * mod).round().toDouble() / mod);
+  }
+
+  static String getXaPhuong(String tenXaPhuong) {
+    String result = tenXaPhuong;
+    if (tenXaPhuong != '') {
+      if (tenXaPhuong.toLowerCase().contains(('phường'))) {
+        return 'Phường';
+      } else if (tenXaPhuong.toLowerCase().contains(('đặc khu'))) {
+        return 'Đặc khu';
+      }
+    } 
+    return 'Xã';
   }
 }

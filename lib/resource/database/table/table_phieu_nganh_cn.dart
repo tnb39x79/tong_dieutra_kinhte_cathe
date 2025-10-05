@@ -11,6 +11,7 @@ const String colPhieuNganhCNA1_2 = 'A1_2';
 const String colPhieuNganhCNA2_1 = 'A2_1';
 const String colPhieuNganhCNA2_2 = 'A2_2';
 
+//const String colPhieuNganhCNLoaiDvt = 'LoaiDvt';
 const String colPhieuNganhCNIsDefault = 'IsDefault';
 const String colPhieuNganhCNIsSync = 'IsSync';
 const String colPhieuNganhCNCreatedAt = 'CreatedAt';
@@ -26,6 +27,9 @@ class TablePhieuNganhCN {
   String? a2_1;
   double? a2_2;
 
+  ///1: Đơn vị tính lấy từ danh mục sản phẩm;
+  ///2: Đơn vị tính người dùng tự nhập
+ // int? loaiDvt;
   int? isDefault;
   int? isSync;
   String? maDTV;
@@ -41,6 +45,7 @@ class TablePhieuNganhCN {
       this.a1_2,
       this.a2_1,
       this.a2_2,
+  //    this.loaiDvt,
       this.isDefault,
       this.isSync,
       this.maDTV,
@@ -58,6 +63,7 @@ class TablePhieuNganhCN {
     a2_1 = json['A2_1'];
     a2_2 = json['A2_2'];
 
+  //  loaiDvt = json['LoaiDvt'];
     isDefault = json['IsDefault'];
     isSync = json['IsSync'];
 
@@ -77,6 +83,7 @@ class TablePhieuNganhCN {
     json['A1_2'] = a1_2;
     json['A2_1'] = a2_1;
     json['A2_2'] = a2_2;
+   // json['LoaiDvt'] = loaiDvt;
     json['IsDefault'] = isDefault;
     json['IsSync'] = isSync;
     json['MaDTV'] = maDTV;

@@ -30,7 +30,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(
-      kToolbarHeight); // kToolbarHeight is a common default AppBar height
+      kToolbarHeight + 10); // kToolbarHeight is a common default AppBar height
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
@@ -65,7 +65,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 10);
 
   Widget actionDefault() {
     // return IconButton(onPressed: () {}, icon: const Icon(Icons.location_on));

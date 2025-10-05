@@ -29,7 +29,7 @@ class SideBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: backgroundColor,
+      backgroundColor:  Colors.white,
       child: Column(
         children: <Widget>[
           Container(
@@ -99,7 +99,7 @@ class SideBar extends StatelessWidget {
       List<QuestionGroupByManHinh> questionGroupByManHinhs) {
     return Container(
         width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+        padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
         margin: const EdgeInsets.only(left: 0, top: 8, right: 0, bottom: 8),
         decoration: const BoxDecoration(
             color: Colors.transparent,
@@ -108,58 +108,48 @@ class SideBar extends StatelessWidget {
                 topRight: Radius.circular(AppValues
                     .borderLv2))), // Adds a gradient background and rounded corners to the container
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(0),
+                padding: const EdgeInsets.only(
+                          left: 0, top: 0, right: 0, bottom: 12),
                 margin: const EdgeInsets.only(top: 0),
                 decoration: const BoxDecoration(
                     boxShadow: [
                       BoxShadow(
                         color:
-                            backgroundColor, // White shadow with some transparency
+                           backgroundColor, // White shadow with some transparency
                         spreadRadius: 5, // How much the shadow spreads
                         blurRadius: 10, // How blurry the shadow is
                         offset: Offset(0, 5), // X and Y offset of the shadow
                       ),
                     ],
                     color: Color(0xFFf0f4f9),
-                    border: Border(
-                      left: BorderSide(color: backgroundColor),
-                      top: BorderSide(color: backgroundColor),
-                      right: BorderSide(color: backgroundColor),
-                    ),
+                    
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(AppValues.borderLv2),
-                        topRight: Radius.circular(AppValues.borderLv2))),
+                        topRight: Radius.circular(AppValues.borderLv2),
+                        bottomRight: Radius.circular(AppValues.borderLv2),
+                        bottomLeft: Radius.circular(AppValues.borderLv2))),
                 // Adds a gradient background and rounded corners to the container
-                child: buildTenPhieu(tenPhieu)),
-            Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 8),
-                margin: const EdgeInsets.only(top: 0),
-                decoration: const BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color:
-                            backgroundColor, // White shadow with some transparency
-                        spreadRadius: 5, // How much the shadow spreads
-                        blurRadius: 10, // How blurry the shadow is
-                        offset: Offset(0, 5), // X and Y offset of the shadow
-                      ),
-                    ],
-                    color: Color(0xFFf0f4f9),
-                    border: Border(
-                      left: BorderSide(color: backgroundColor),
-                      bottom: BorderSide(color: backgroundColor),
-                      right: BorderSide(color: backgroundColor),
-                    ),
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(AppValues.borderLv2),
-                        bottomRight: Radius.circular(AppValues
-                            .borderLv2))), // Adds a gradient background and rounded corners to the container
-                child: buildNhomCauHoi(idPhieu, questionGroupByManHinhs!))
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                  buildTenPhieu(tenPhieu),
+                  Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.only(
+                          left: 0, top: 0, right: 0, bottom: 0),
+                      margin: const EdgeInsets.only(top: 0),
+                      decoration: const BoxDecoration( 
+                          color: Color(0xFFf0f4f9), 
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(AppValues.borderLv2),
+                              bottomRight: Radius.circular(AppValues
+                                  .borderLv2))), // Adds a gradient background and rounded corners to the container
+                      child: buildNhomCauHoi(idPhieu, questionGroupByManHinhs!))
+                ])),
           ],
         ));
   }
@@ -180,7 +170,7 @@ class SideBar extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black54,
+            color:Color.fromARGB(255, 83, 85, 90),
           ),
         ));
   }
@@ -253,6 +243,7 @@ class SideBar extends StatelessWidget {
                         onTap: () {
                           onPressed(idPhieu, idManHinh);
                         },
+                     
                       )),
                     ),
                   ],

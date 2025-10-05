@@ -26,6 +26,11 @@ class ResponseModel<T> {
       log("${response.body}");
       message = '';
       // message = response.body['Message']?? response.body;
+       if (statusCode == null) {
+        if (response.statusText != null && response.statusText != "") {
+          message = response.statusText;
+        }
+      }
     } else {
       statusCode = ApiConstants.errorServer;
       log("=========== message ===========");
@@ -50,6 +55,11 @@ class ResponseModel<T> {
       log("${response.bodyString}");
       message = response.bodyString ?? '';
       // message = response.body['Message']?? response.body;
+       if (statusCode == null) {
+        if (response.statusText != null && response.statusText != "") {
+          message = response.statusText;
+        }
+      }
     } else {
       statusCode = ApiConstants.errorServer;
       log("=========== message ===========");

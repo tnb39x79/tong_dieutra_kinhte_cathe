@@ -32,13 +32,13 @@ class DataModel {
   dynamic ctDmQuocTich;
   dynamic tgDmCapCongNhan;
   dynamic tgDmLoaiCoSo;
-  dynamic tgDmLoaiHinhTonGiao;
+   
   dynamic tgDmNangLuong;
   dynamic tgDmSuDungPhanMem;
   dynamic tgDmTrinhDoChuyenMon;
   dynamic tgDmXepHang;
   dynamic tgDmXepHangDiTich;
-  dynamic tgDmLoaiTonGiao;
+ 
   String? maSanPhamLoaiTruCoSoCT;
   dynamic dmPhieu;
 
@@ -68,13 +68,13 @@ class DataModel {
       this.ctDmQuocTich,
       this.tgDmCapCongNhan,
       this.tgDmLoaiCoSo,
-      this.tgDmLoaiHinhTonGiao,
+   
       this.tgDmNangLuong,
       this.tgDmSuDungPhanMem,
       this.tgDmTrinhDoChuyenMon,
       this.tgDmXepHang,
       this.tgDmXepHangDiTich,
-      this.tgDmLoaiTonGiao,
+   
       this.maSanPhamLoaiTruCoSoCT,
       this.dmPhieu});
 
@@ -88,7 +88,7 @@ class DataModel {
     cauHoiPhieu07TBs = json['CauHoiPhieu07TBs'];
     cauHoiPhieu07MauMenu = json['CauHoiPhieu07MauMenu'];
     cauHoiPhieu07TBMenu = json['CauHoiPhieu07TBMenu'];
-    cauHoiPhieu08s = json['CauHoiPhieu08TonGiaos'];
+   
     dmCoKhong = json['DM_CoKhong'];
     dmGioiTinh = json['DM_GioiTinh'];
     dmDanToc = json['DM_DanToc'];
@@ -108,13 +108,13 @@ class DataModel {
 
     tgDmCapCongNhan = json['TG_DM_CapCongNhan'];
     tgDmLoaiCoSo = json['TG_DM_LoaiCoSo'];
-    tgDmLoaiHinhTonGiao = json['TG_DM_LoaiHinhTonGiao'];
+    
     tgDmNangLuong = json['TG_DM_NangLuong'];
     tgDmSuDungPhanMem = json['TG_DM_SuDungPhanMem'];
     tgDmTrinhDoChuyenMon = json['TG_DM_TrinhDoChuyenMon'];
     tgDmXepHang = json['TG_DM_XepHang'];
     tgDmXepHangDiTich = json['TG_DM_XepHangDiTich'];
-    tgDmLoaiTonGiao = json['TG_DM_LoaiTonGiao'];
+   
     maSanPhamLoaiTruCoSoCT = json['MaSanPhamLoaiTruCoSoCT'];
     dmPhieu = json['CT_DM_Phieu'];
   }
@@ -129,7 +129,7 @@ class DataModel {
     map['Datas'] = data;
     map['CauHoiPhieu07Maus'] = cauHoiPhieu07Maus;
     map['CauHoiPhieu07TBs'] = cauHoiPhieu07TBs;
-    map['CauHoiPhieu08TonGiaos'] = cauHoiPhieu08s;
+  
     map['DM_CoKhong'] = dmCoKhong;
     map['DM_GioiTinh'] = dmGioiTinh;
     map['DM_DanToc'] = dmDanToc;
@@ -150,7 +150,7 @@ class DataModel {
 
     map['TG_DM_CapCongNhan'] = tgDmCapCongNhan;
     map['TG_DM_LoaiCoSo'] = tgDmLoaiCoSo;
-    map['TG_DM_LoaiHinhTonGiao'] = tgDmLoaiHinhTonGiao;
+ 
 
     map['TG_DM_NangLuong'] = tgDmNangLuong;
     map['TG_DM_SuDungPhanMem'] = tgDmSuDungPhanMem;
@@ -158,7 +158,7 @@ class DataModel {
 
     map['TG_DM_XepHang'] = tgDmXepHang;
     map['TG_DM_XepHangDiTich'] = tgDmXepHangDiTich;
-    map['TG_DM_LoaiTonGiaoss'] = tgDmLoaiTonGiao;
+   
     map['MaSanPhamLoaiTruCoSoCT'] = maSanPhamLoaiTruCoSoCT;
     map['CT_DM_Phieu'] = dmPhieu;
     return map;

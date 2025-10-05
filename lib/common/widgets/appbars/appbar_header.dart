@@ -39,11 +39,11 @@ class AppBarHeader extends StatelessWidget implements PreferredSizeWidget {
             contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
             title: Text(title!, style: styleMediumBoldAppBarHeader),
             subtitle:
-                Text(subTitle!, style: const TextStyle(color: Colors.white)),
+                Text(subTitle!, style: const TextStyle(color: Colors.white )),
             titleAlignment: ListTileTitleAlignment.center,
           );
     
-    return AppBar(
+    return AppBar( 
       automaticallyImplyLeading: false,
       centerTitle: true,
       actions: [actions ?? actionDefault()],
@@ -62,7 +62,7 @@ class AppBarHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight+10);
 
   Widget actionDefault() {
     // return IconButton(onPressed: () {}, icon: const Icon(Icons.location_on));

@@ -14,17 +14,7 @@ class ProgressListController extends BaseController {
 
   BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider(); 
 
-  // final countPhieuMauInterviewed = 0.obs;
-  // final countPhieuMauUnInterviewed = 0.obs;
-  // final countPhieuMauSyncSuccess = 0.obs;
-
-  // final countPhieuTBInterviewed = 0.obs;
-  // final countPhieuTBUnInterviewed = 0.obs;
-  // final countPhieuTBSyncSuccess = 0.obs;
-
-  // final countPhieuTonGiaoInterviewed = 0.obs;
-  // final countPhieuTonGiaoUnInterviewed = 0.obs;
-  // final countPhieuTonGiaoSyncSuccess = 0.obs;
+ 
 
   @override
   void onInit() async {
@@ -64,61 +54,7 @@ class ProgressListController extends BaseController {
           await bkCoSoSXKDProvider.countSyncSuccessAll(maDoiTuongDT) ?? 0;
       return progressModel;
   }
-
-  // Future getProgressCount() async {
-  //   countPhieuMauUnInterviewed.value = await bkCoSoSXKDProvider
-  //           .countOfUnInterviewedAll(AppDefine.maDoiTuongDT_07Mau) ??
-  //       0;
-  //   countPhieuMauInterviewed.value = await bkCoSoSXKDProvider
-  //           .countOfInterviewedAll(AppDefine.maDoiTuongDT_07Mau) ??
-  //       0;
-  //   countPhieuMauSyncSuccess.value = await bkCoSoSXKDProvider
-  //           .countSyncSuccessAll(AppDefine.maDoiTuongDT_07Mau) ??
-  //       0;
-  //   countPhieuTBUnInterviewed.value = await bkCoSoSXKDProvider
-  //           .countOfUnInterviewedAll(AppDefine.maDoiTuongDT_07TB) ??
-  //       0;
-  //   countPhieuTBInterviewed.value = await bkCoSoSXKDProvider
-  //           .countOfInterviewedAll(AppDefine.maDoiTuongDT_07TB) ??
-  //       0;
-  //   countPhieuTBSyncSuccess.value = await bkCoSoSXKDProvider
-  //           .countSyncSuccessAll(AppDefine.maDoiTuongDT_07TB) ??
-  //       0;
-  //   countPhieuTonGiaoUnInterviewed.value =
-  //       await bkCoSoTonGiaoProvider.countOfUnInterviewedAll() ?? 0;
-  //   countPhieuTonGiaoInterviewed.value =
-  //       await bkCoSoTonGiaoProvider.countOfInterviewedAll() ?? 0;
-  //   countPhieuTonGiaoSyncSuccess.value =
-  //       await bkCoSoTonGiaoProvider.countSyncSuccess() ?? 0;
-  // }
-
-  // countDoiTuong(int maDoiTuongDT, int maTrangThaiDT) {
-  //   if (maDoiTuongDT == AppDefine.maDoiTuongDT_07Mau) {
-  //     if (maTrangThaiDT == AppDefine.hoanThanhPhongVan) {
-  //       return countPhieuMauInterviewed.value;
-  //     } else if (maTrangThaiDT == AppDefine.dangPhongVan) {
-  //       return countPhieuMauUnInterviewed.value;
-  //     } else if (maTrangThaiDT == 5) {
-  //       return countPhieuMauSyncSuccess.value;
-  //     }
-  //   } else if (maDoiTuongDT == AppDefine.maDoiTuongDT_07TB) {
-  //     if (maTrangThaiDT == AppDefine.hoanThanhPhongVan) {
-  //       return countPhieuTBInterviewed.value;
-  //     } else if (maTrangThaiDT == AppDefine.dangPhongVan) {
-  //       return countPhieuTBUnInterviewed.value;
-  //     } else if (maTrangThaiDT == 5) {
-  //       return countPhieuTBSyncSuccess.value;
-  //     }
-  //   } else if (maDoiTuongDT == AppDefine.maDoiTuongDT_08) {
-  //     if (maTrangThaiDT == AppDefine.hoanThanhPhongVan) {
-  //       return countPhieuTonGiaoInterviewed.value;
-  //     } else if (maTrangThaiDT == AppDefine.dangPhongVan) {
-  //       return countPhieuTonGiaoUnInterviewed.value;
-  //     } else if (maTrangThaiDT == 5) {
-  //       return countPhieuTonGiaoSyncSuccess.value;
-  //     }
-  //   }
-  // }
+ 
 
   @override
   void onDetached() {

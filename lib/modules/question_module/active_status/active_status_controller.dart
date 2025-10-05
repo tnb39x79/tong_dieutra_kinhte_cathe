@@ -76,10 +76,10 @@ class ActiveStatusController extends BaseController {
   String? currentTenDoiTuongDT;
   String? currentMaTinhTrangDT;
   String? currentMaDiaBan;
-  String? currentMaDiaBanTG;
-  String? currentIdCoSoTG;
+  String? currentTenDiaBan;
   String? currentIdCoSo;
   String? currentMaXa;
+  String? currentTenXa;
 
   /// For dialog
   final dialogFormKey = GlobalKey<FormState>();
@@ -104,10 +104,10 @@ class ActiveStatusController extends BaseController {
       currentTenDoiTuongDT = interviewListDetailController.currentTenDoiTuongDT;
       currentIdCoSo = interviewListDetailController.currentIdCoSo;
       currentMaXa = interviewListDetailController.currentMaXa;
+      currentTenXa = interviewListDetailController.currentTenXa;
       currentMaTinhTrangDT = interviewListDetailController.currentMaTinhTrangDT;
       currentMaDiaBan = interviewListDetailController.currentMaDiaBan;
-      currentMaDiaBanTG = interviewListDetailController.currentMaDiaBanTG;
-      currentIdCoSoTG = interviewListDetailController.currentIdCoSoTG ?? '';
+      currentTenDiaBan = interviewListDetailController.currentTenDiaBan;
 
       await fetchDataPhieu();
       await getTinhTrangHD();
@@ -117,6 +117,10 @@ class ActiveStatusController extends BaseController {
           ErrorLogModel(errorCode: "", errorMessage: e.toString()));
     }
     super.onInit();
+  }
+
+  getSubTitle() {
+    return '$currentTenDoiTuongDT ${tblBkCoSoSXKD.value.tenCoSo} ĐB.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
   }
 
   onPressedCheckBox(int p1) {

@@ -61,53 +61,5 @@ class ProgressListScreen extends GetView<ProgressListController> {
           ));
     });
   }
-
-  // Widget _buildBodyV2() {
-  //   return Obx(() {
-  //     return ListView.builder(
-  //       itemCount: controller.doiTuongDTs.length,
-  //       shrinkWrap: true,
-  //       physics: const BouncingScrollPhysics(),
-  //       padding: const EdgeInsets.only(top: AppValues.padding),
-  //       itemBuilder: (context, index) {
-  //         return Column(
-  //           children: [
-  //             const SizedBox(height: AppValues.padding),
-  //             Material(
-  //               color: Colors.white,
-  //               child: Text(
-  //                 '${controller.doiTuongDTs[index].moTaDoiTuongDT}',
-  //                 style: styleLarge.copyWith(fontWeight: FontWeight.bold),
-  //               ),
-  //             ),
-  //             WidgetRowItem(
-  //               title: 'progress_interviewed'.tr,
-  //               count: controller.doiTuongDTs[index].maDoiTuongDT ==
-  //                       AppDefine.maDoiTuongDT_07Mau
-  //                   ? controller.countPhieuMauInterviewed.value
-  //                   : controller.countPhieuTonGiaoInterviewed.value,
-  //               onPressed: () {},
-  //             ),
-  //             WidgetRowItem(
-  //               title: 'progress_un_interviewed'.tr,
-  //               count: controller.doiTuongDTs[index].maDoiTuongDT ==
-  //                       AppDefine.maDoiTuongDT_07Mau
-  //                   ? controller.countPhieuMauUnInterviewed.value
-  //                   : controller.countPhieuTonGiaoUnInterviewed.value,
-  //               onPressed: () {},
-  //             ),
-  //             WidgetRowItem(
-  //               title: 'progress_sync_success'.tr,
-  //               count: controller.doiTuongDTs[index].maDoiTuongDT ==
-  //                       AppDefine.maDoiTuongDT_07Mau
-  //                   ? controller.countPhieuMauSyncSuccess.value
-  //                   : controller.countPhieuTonGiaoSyncSuccess.value,
-  //               onPressed: () {},
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   });
-  // }
+ 
 }

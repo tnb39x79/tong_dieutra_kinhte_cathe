@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/config/config.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
-  
+
 import 'interview_location_list_controller.dart';
 
 ///Danh sách địa bàn hộ
-class InterviewLocationListScreen extends GetView<InterviewLocationListController> {
+class InterviewLocationListScreen
+    extends GetView<InterviewLocationListController> {
   const InterviewLocationListScreen({Key? key}) : super(key: key);
 
   @override
@@ -20,8 +21,8 @@ class InterviewLocationListScreen extends GetView<InterviewLocationListControlle
             title: 'locations'.tr,
             onPressedLeading: () => Get.back(),
             iconLeading: const Icon(Icons.arrow_back_ios_new_rounded),
-             subTitle: controller.homeController.currentTenDoiTuongDT,    
-           //  backAction: () => controller.onBackInterviewObjectList(),
+            subTitle: controller.homeController.currentTenDoiTuongDT,
+            //  backAction: () => controller.onBackInterviewObjectList(),
           ),
           body: Obx(() => _buildBody()),
         ));
@@ -37,8 +38,10 @@ class InterviewLocationListScreen extends GetView<InterviewLocationListControlle
         return WidgetLocationItem(
           index: '${index + 1}',
           title:
-              '${controller.diaBanCoSoSXKDs[index].maDiaBan} - ${controller.diaBanCoSoSXKDs[index].maXa}',
-          vilage: controller.diaBanCoSoSXKDs[index].tenDiaBan ?? '',
+              'ĐB.${controller.diaBanCoSoSXKDs[index].maDiaBan} - ${controller.diaBanCoSoSXKDs[index].tenDiaBan ?? ''}',
+          vilage:
+              '${AppUtils.getXaPhuong(controller.diaBanCoSoSXKDs[index].tenXa??'')}.${controller.diaBanCoSoSXKDs[index].maXa} - ${controller.diaBanCoSoSXKDs[index].tenXa}',
+          textStyleSub: styleMediumW400.copyWith(color: warningColor),
           onPressed: () => controller.onPressItem(index),
         );
       },

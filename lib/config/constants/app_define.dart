@@ -75,10 +75,13 @@ class AppDefine {
   ///1: Chỉ tiêu dòng của các câu hỏi có mã IO; 2: Chỉ tiêu dòng của các câu không có mã IO
   static const String loaiChiTieu_1 = '1';
   static const String loaiChiTieu_2 = '2';
+    static const String loaiChiTieu_3 = '3'; //Ghi ro
 
   ///Bảng chỉ tiêu CT_DM_CauHoi_ChiTieu
   static const String maChiTieu_1 = '1'; //Cột 1
   static const String maChiTieu_2 = '2'; //Cột 2
+    static const String maChiTieu_3 = '3'; //Cột 2
+      static const String maChiTieu_4 = '4'; //Cột 2
 
   /// 1: Ngành công nghiệp;
   static const String loaiNganhIO_1 = '1';

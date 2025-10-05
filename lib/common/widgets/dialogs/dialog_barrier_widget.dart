@@ -5,17 +5,18 @@ import 'package:gov_statistics_investigation_economic/config/config.dart';
 import '../../common.dart';
 
 class DialogBarrierWidget extends StatelessWidget {
-  const DialogBarrierWidget({
-    super.key,
-    required this.onPressedPositive,
-    required this.onPressedNegative,
-    required this.title,
-    required this.content,
-    this.body,
-    this.confirmText,
-    this.isCancelButton = true,
-    this.color,
-  });
+  const DialogBarrierWidget(
+      {super.key,
+      required this.onPressedPositive,
+      required this.onPressedNegative,
+      required this.title,
+      required this.content,
+      this.body,
+      this.confirmText,
+      this.content2,
+      this.isCancelButton = true,
+      this.color,
+      this.content2Color});
 
   ///Agree Acrtion
   final Function() onPressedPositive;
@@ -29,6 +30,8 @@ class DialogBarrierWidget extends StatelessWidget {
   final Widget? body;
   final bool isCancelButton;
   final Color? color;
+  final String? content2;
+  final Color? content2Color;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +57,7 @@ class DialogBarrierWidget extends StatelessWidget {
         children: [
           Text(
             title,
-            style: styleLargeBold.copyWith(color:color?? warningColor),
+            style: styleLargeBold.copyWith(color: color ?? warningColor),
           ),
           const SizedBox(height: 8),
           Container(
@@ -71,7 +74,7 @@ class DialogBarrierWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: styleLargeBold.copyWith(color: color?? warningColor),
+          style: styleLargeBold.copyWith(color: color ?? warningColor),
         ),
         const SizedBox(height: 8),
         Text(
@@ -79,6 +82,7 @@ class DialogBarrierWidget extends StatelessWidget {
           style: styleMediumW400.copyWith(color: blackText),
           textAlign: TextAlign.center,
         ),
+        wTextConfirm(),
         const SizedBox(height: 24),
         _buttonActions(),
       ],
@@ -107,5 +111,16 @@ class DialogBarrierWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget wTextConfirm() {
+    if (content2 != null && content2 != '') {
+      return Text(
+        content2!,
+        style: styleMediumW400.copyWith(color: content2Color ?? blackText),
+        textAlign: TextAlign.center,
+      );
+    }
+    return const SizedBox();
   }
 }

@@ -9,6 +9,7 @@ const String columnDmDiaBanCoSoSxkdMaPhieu = 'LoaiPhieu';
 const String columnDmDiaBanCoSoSxkdMaTinh = 'MaTinh';
 const String columnDmDiaBanCoSoSxkdMaHuyen = 'MaHuyen';
 const String columnDmDiaBanCoSoSxkdMaXa = 'MaXa';
+const String columnDmDiaBanCoSoSxkdTenXa = 'TenXa';
 const String columnDmDiaBanCoSoSxkdMaDiaBan = 'MaDiaBan';
 const String columnDmDiaBanCoSoSxkdTenDiaBan = 'TenDiaBan';
 
@@ -22,6 +23,7 @@ class TableDmDiaBanCosoSxkd {
   String? maTinh;
   String? maHuyen;
   String? maXa;
+  String? tenXa;
   String? maDiaBan;
   String? tenDiaBan;
   String? maDTV;
@@ -34,6 +36,7 @@ class TableDmDiaBanCosoSxkd {
       this.maTinh,
       this.maHuyen,
       this.maXa,
+      this.tenXa,
       this.maDiaBan,
       this.tenDiaBan,
       this.maDTV,
@@ -47,6 +50,7 @@ class TableDmDiaBanCosoSxkd {
     maTinh = json['MaTinh'];
     maHuyen = json['MaHuyen'];
     maXa = json['MaXa'];
+    tenXa = json['TenXa'];
     maDiaBan = json['MaDiaBan'];
     tenDiaBan = json['TenDiaBan'];
     maDTV = json['MaDTV'];
@@ -63,6 +67,7 @@ class TableDmDiaBanCosoSxkd {
     data['MaTinh'] = maTinh;
     data['MaHuyen'] = maHuyen;
     data['MaXa'] = maXa;
+    data['TenXa'] = tenXa;
     data['MaDiaBan'] = maDiaBan;
     data['TenDiaBan'] = tenDiaBan;
     data['MaDTV'] = maDTV;

@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_dia_ban_coso_sxkd.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
@@ -44,7 +45,7 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
     List<int> ids = [];
     for (var element in value) {
       element.createdAt = createdAt;
-  //    element.updatedAt = createdAt;
+      //    element.updatedAt = createdAt;
       ids.add(await db!.insert(tableDiaBanCoSoSXKD, element.toJson()));
     }
     return ids;
@@ -60,6 +61,7 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
         $columnDmDiaBanCoSoSxkdMaTinh TEXT,
         $columnDmDiaBanCoSoSxkdMaHuyen TEXT,
         $columnDmDiaBanCoSoSxkdMaXa TEXT,
+        $columnDmDiaBanCoSoSxkdTenXa TEXT,
         $columnDmDiaBanCoSoSxkdMaDiaBan TEXT,
         $columnDmDiaBanCoSoSxkdTenDiaBan TEXT, 
         $columnMaDTV TEXT, 
@@ -82,13 +84,30 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
     // TODO: implement selectOne
     throw UnimplementedError();
   }
- Future<List<Map>> selectByMaPhieu(int maDoiTuongDT) async {
+
+  Future<List<Map>> selectByMaPhieu(int maDoiTuongDT) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    String cols=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdId,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaPhieu,";
+    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaHuyen,";
+    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaDiaBan,";
+    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdTenDiaBan,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoMaDTV,";
+    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoCreatedAt,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoUpdatedAt,";
+    cols +=" (SELECT $tablebkCoSoSXKD.$colBkCoSoSXKDTenXa FROM $tablebkCoSoSXKD WHERE $tablebkCoSoSXKD.$colBkCoSoSXKDMaXa = $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ) AS TenXa";
+
+    String sql = "Select $cols  FROM $tableDiaBanCoSoSXKD ";
+    sql +=
+        " WHERE $columnCreatedAt = '$createdAt' AND $columnMaPhieu = $maDoiTuongDT ";
+    return await db!.rawQuery(sql);
+  }
+
+  Future<List<Map>> selectByMaPhieuV0(int maDoiTuongDT) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     return await db!.query(tableDiaBanCoSoSXKD, where: '''
       $columnCreatedAt = '$createdAt'
       AND $columnMaPhieu = $maDoiTuongDT
     ''');
   }
+
   @override
   Future update(TableDmDiaBanCosoSxkd value, String id) {
     // TODO: implement update
@@ -98,7 +117,8 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
   @override
   Future deletedTable(Database database) async {
     try {
-      return await database.rawQuery('DROP TABLE IF EXISTS $tableDiaBanCoSoSXKD');
+      return await database
+          .rawQuery('DROP TABLE IF EXISTS $tableDiaBanCoSoSXKD');
     } catch (e) {
       return null;
     }

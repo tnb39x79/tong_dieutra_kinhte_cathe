@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:gov_statistics_investigation_economic/common/utils/app_utils.dart';
 import 'package:gov_statistics_investigation_economic/config/config.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
@@ -15,11 +16,13 @@ import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 /// - Xã đã phỏng vấn
 class InterviewListController extends BaseController {
   final HomeController homeController = Get.find();
+    
 
   static const maDoiTuongDTKey = 'maDoiTuongDT';
   static const maDiaBanKey = 'maDiaBan';
-  static const maDiaBanTGKey = 'maDiaBanTG';
+  static const tenDiaBanKey = 'tenDiaBan';
   static const maXaKey = 'maXa';
+   static const tenXaKey = 'tenXa';
   static const tenDoiTuongDTKey = "tenDoiTuongDT";
 
   BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider();
@@ -30,8 +33,9 @@ class InterviewListController extends BaseController {
   String currentMaDoiTuongDT = Get.parameters[maDoiTuongDTKey]!;
   String currentTenDoiTuongDT = Get.parameters[tenDoiTuongDTKey]!;
   String? currentMaDiaBan = Get.parameters[maDiaBanKey];
-  String? currentMaDiaBanTG = Get.parameters[maDiaBanTGKey];
+  String? currentTenDiaBan = Get.parameters[tenDiaBanKey];
   String? currentMaXa = Get.parameters[maXaKey];
+   String? currentTenXa = Get.parameters[tenXaKey];
 
   @override
   void onInit() async {
@@ -45,7 +49,8 @@ class InterviewListController extends BaseController {
     String subTitle = currentTenDoiTuongDT;
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      subTitle = '$currentTenDoiTuongDT Địa bàn: $currentMaDiaBan';
+          String tt=AppUtils.getXaPhuong(currentTenXa??'');
+      subTitle = '$currentTenDoiTuongDT ĐB.$currentMaDiaBan - $currentTenDiaBan $tt. $currentMaXa - $currentTenXa';
     }
     return subTitle;
   }
@@ -65,7 +70,9 @@ class InterviewListController extends BaseController {
         InterviewListDetailController.tenDoiTuongDTKey: currentTenDoiTuongDT,
         InterviewListDetailController.maTinhTrangDTKey: '$maTinhTrangDT',
         InterviewListDetailController.maDiaBanKey: currentMaDiaBan ?? '',
+        InterviewListDetailController.tenDiaBanKey: currentTenDiaBan ?? '',
         InterviewListDetailController.maXaKey: currentMaXa ?? '',
+        InterviewListDetailController.tenXaKey: currentTenXa ?? '',
       });
       selectCountByType();
     } else {

@@ -25,12 +25,7 @@ class InterviewListDetailScreen extends GetView<InterviewListDetailController> {
             iconLeading: IconButton(
                 onPressed: () => Get.back(),
                 icon: const Icon(Icons.arrow_back_ios_new_rounded)),
-            subTitle: (controller.currentMaDoiTuongDT ==
-                        AppDefine.maDoiTuongDT_07Mau.toString() ||
-                    controller.currentMaDoiTuongDT ==
-                        AppDefine.maDoiTuongDT_07TB.toString())
-                ? 'Địa bàn: ${controller.currentMaDiaBan}'
-                : '',
+            subTitle: controller.getSubTitle(),
             //  backAction: () => controller.backInterviewList(),
           ),
           body: _buildBody(),
@@ -86,34 +81,35 @@ class InterviewListDetailScreen extends GetView<InterviewListDetailController> {
   }
 
   SliverChildBuilderDelegate _listViewByCategories() {
-     if (controller.currentMaTinhTrangDT == '${AppDefine.chuaPhongVan}') {
-        return SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
-            var bkCoSo = controller.danhSachBKCoSoSXXKD[index];
-            String tenCs = '${bkCoSo.maXa} - ${bkCoSo.tenCoSo}';
-            return WidgetSubject(
-              index: '${index + 1}',
-              onPressed: () => controller.startInterView(index),
-              name: tenCs,
-              questions: controller.currentTenDoiTuongDT,
-            );
-          },
-          childCount: controller.danhSachBKCoSoSXXKD.length,
-        );
-      } else {
-        return SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
-            var bkCoSo = controller.danhSachBKCoSoSXXKD[index];
-            String tenCs = '${bkCoSo.maXa} - ${bkCoSo.tenCoSo}';
-            return WidgetSubject(
-              index: '${index + 1}',
-              onPressed: () => controller.startInterView(index),
-              name: tenCs,
-              questions: controller.currentTenDoiTuongDT,
-            );
-          },
-          childCount: controller.danhSachBKCoSoSXXKD.length,
-        );
-      }
+    if (controller.currentMaTinhTrangDT == '${AppDefine.chuaPhongVan}') {
+      return SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          var bkCoSo = controller.danhSachBKCoSoSXXKD[index];
+          String tenCs = '${AppUtils.getXaPhuong(bkCoSo.tenXa ?? '')}.${bkCoSo.maXa} - ${bkCoSo.tenCoSo}';
+          return WidgetSubject(
+            index: '${index + 1}',
+            onPressed: () => controller.startInterView(index),
+            name: tenCs,
+            questions: controller.currentTenDoiTuongDT,
+          );
+        },
+        childCount: controller.danhSachBKCoSoSXXKD.length,
+      );
+    } else {
+      return SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          var bkCoSo = controller.danhSachBKCoSoSXXKD[index];
+          String tenCs =
+              '${AppUtils.getXaPhuong(bkCoSo.tenXa ?? '')}.${bkCoSo.maXa} - ${bkCoSo.tenCoSo}';
+          return WidgetSubject(
+            index: '${index + 1}',
+            onPressed: () => controller.startInterView(index),
+            name: tenCs,
+            questions: controller.currentTenDoiTuongDT,
+          );
+        },
+        childCount: controller.danhSachBKCoSoSXXKD.length,
+      );
+    }
   }
 }

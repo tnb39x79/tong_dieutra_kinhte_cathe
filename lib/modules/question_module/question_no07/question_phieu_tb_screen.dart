@@ -61,7 +61,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           body: _buildBody(),
           drawer: SideBar(
               controller.questionGroupList,
-              drawerTitle: controller.subTitleBar,
+              drawerTitle: controller.silderTitleBar,
               controller.onMenuPress,
               hasNganhVT: ((controller.isCap1H_VT.value &&
                       controller.isCap5VanTaiHangHoa.value) ||
@@ -80,7 +80,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         ? Text(t, style: styleMediumBold)
         : ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-            title: Text(t, style: styleMediumBoldAppBarHeader),
+            title: Text(
+              t,
+              style: styleMediumBoldAppBarHeader,
+              textAlign: TextAlign.left,
+            ),
             subtitle: Text(controller.subTitleBar,
                 style: const TextStyle(color: Colors.white)),
             titleAlignment: ListTileTitleAlignment.center,
@@ -771,43 +775,79 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       });
     } else if (question.maCauHoi == colPhieuNganhTMA3T &&
         question.bangDuLieu == tablePhieuNganhTM) {
-      var valA3T = controller.getValueByFieldName(
-          question.bangDuLieu!, question.maCauHoi!);
-      if (valA3T == null) {
-        var vkey1 =
-            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.cauHoiUUID}_1_$valA3T';
-        return InputIntView(
-          key: ValueKey(vkey1),
-          question: question,
-          onChange: (value) => {},
-          value: valA3T,
-          enable: false,
-          type: "double",
-          txtStyle: styleMediumBold.copyWith(color: primaryColor),
-          hintText: "Tự động tính.",
-          decimalDigits: 2,
-        );
-      }
       return Obx(() {
-        var valA3T = controller.getValueByFieldName(
+        var a3TVal = controller.getValueByFieldName(
             question.bangDuLieu!, question.maCauHoi!);
+        var a2TMVal = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuNganhTMA2);
+        if (a2TMVal == 1) {
+          if (a3TVal == null) {
+            var vkey1 =
+                '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.maPhieu}_${question.cauHoiUUID}_1_${a3TVal ?? 0}';
+            return InputIntView(
+              key: ValueKey(vkey1),
+              question: question,
+              onChange: (value) => {},
+              value: a3TVal,
+              enable: false,
+              type: "double",
+              txtStyle: styleMediumBold.copyWith(color: primaryColor),
+              hintText: "Tự động tính.",
+              decimalDigits: 2,
+            );
+          }
 
-        var vkey =
-            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.cauHoiUUID}_1_$valA3T';
+          var vkey =
+              '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.maPhieu}_${question.cauHoiUUID}_1_$a3TVal';
 
-        return InputIntView(
-          key: ValueKey(vkey),
-          question: question,
-          onChange: (value) => {},
-          value: valA3T,
-          enable: false,
-          type: "double",
-          txtStyle: styleMediumBold.copyWith(color: primaryColor),
-          hintText: "Tự động tính.",
-          decimalDigits: 2,
-        );
+          return InputIntView(
+            key: ValueKey(vkey),
+            question: question,
+            onChange: (value) => {},
+            value: a3TVal,
+            enable: false,
+            type: "double",
+            txtStyle: styleMediumBold.copyWith(color: primaryColor),
+            hintText: "Tự động tính.",
+            decimalDigits: 2,
+          );
+        }
+        return const SizedBox();
+      });
+    } else if (question.maCauHoi == colPhieuNganhTMA3 &&
+        question.bangDuLieu == tablePhieuNganhTM) {
+      return Obx(() {
+        var a3TMVal = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+        var a2TMVal = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuNganhTMA2);
+        if (a2TMVal == 1) {
+          var decimalDigits = 2;
+          return InputInt(
+            key: ValueKey(
+                '${question.maPhieu}-${question.maCauHoi}-${question.maPhieu}-${question.sTT}'),
+            question: question,
+            onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
+                question.maCauHoi, question.maCauHoi, value),
+            subName: subName,
+            value: a3TMVal,
+            type: 'double',
+            validator: (String? value) => controller.onValidate(
+                question.bangDuLieu!,
+                question.maCauHoi!,
+                question.maCauHoi,
+                value,
+                question.giaTriNN,
+                question.giaTriLN,
+                question.loaiCauHoi!,
+                true),
+            decimalDigits: decimalDigits,
+          );
+        }
+        return const SizedBox();
       });
     }
+
     var val = controller.getValueByFieldName(
         question.bangDuLieu!, question.maCauHoi!);
     var wFilterInput = RegExp('[0-9]');
@@ -1348,8 +1388,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   _renderQuestionType5Dm(QuestionCommonModel question, {String? subName}) {
     // if (question.maCauHoi == "A1_4") {
     //   return Obx(() {
-    //     var a1_4Val = controller.getValueDmByFieldName(question.maCauHoi!);
-    //     var a1_3val = controller.getValueDmByFieldName("A1_3");
+    //     var a1_4Val = controller.getValueByFieldName(question.bangDuLieu!,question.maCauHoi!);
+    //     var a1_3val = controller.getValueByFieldName(question.bangDuLieu!,"A1_3");
     //     var dmChiTieu =
     //         controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
 
@@ -1377,8 +1417,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     // }
     if (question.maCauHoi == "A1_1") {
       return Obx(() {
-        // var a1_4Val = controller.getValueDmByFieldName(question.maCauHoi!);
-        var a1_1val = controller.getValueDmByFieldName(question.maCauHoi!);
+        // var a1_4Val = controller.getValueByFieldName(question.bangDuLieu!,question.maCauHoi!);
+        var a1_1val = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
         var dmChiTieu =
             controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
 
@@ -1405,8 +1446,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       });
     } else if (question.maCauHoi == colPhieuMauTBA1_3_5) {
       return Obx(() {
-        var a1_5_6Val = controller.getValueDmByFieldName(question.maCauHoi!);
-        //  var a1_5_3val = controller.getValueDmByFieldName("A1_5_3");
+        var a1_5_6Val = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+        //  var a1_5_3val = controller.getValueByFieldName(question.bangDuLieu!,"A1_5_3");
         var dmChiTieu =
             controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
 
@@ -1435,7 +1477,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     // if (question.maCauHoi == "A9_1") {
     //   return Obx(() {
     //     var val = controller.getValueDm(question);
-    //     var a9_1val = controller.getValueDmByFieldName("A9_1");
+    //     var a9_1val = controller.getValueByFieldName(question.bangDuLieu!,"A9_1");
     //     var dmChiTieu =
     //         controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
 
@@ -1463,7 +1505,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     // if (question.maCauHoi == "A9_2") {
     //   return Obx(() {
     //     var val = controller.getValueDm(question);
-    //     var a9_1val = controller.getValueDmByFieldName("A9_1");
+    //     var a9_1val = controller.getValueByFieldName(question.bangDuLieu!,"A9_1");
     //     var dmChiTieu =
     //         controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
     //     if (a9_1val != 1) {
@@ -1495,14 +1537,15 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     // }
 
     return Obx(() {
-      var val = controller.getValueDm(question);
+      var val = controller.getValueByFieldName(
+          question.bangDuLieu!, question.maCauHoi!);
       var dmChiTieu =
           controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
       return Column(
         children: [
           SelectIntCTDm(
             key: ValueKey(
-                '${question.maPhieu}${question.cauHoiUUID}${question.maCauHoi}$val'),
+                '${question.maPhieu}${question.cauHoiUUID}_${question.maPhieu}_${question.maCauHoi}${val}'),
             question: question,
             listValue: dmChiTieu,
             tenDanhMuc: question.bangChiTieu,
@@ -1521,7 +1564,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           buildGhiRo(question, val),
           if (question.danhSachCauHoiCon != null &&
               question.danhSachCauHoiCon!.isNotEmpty)
-            _buildQuestion3(question)
+            _buildQuestion3(question),
         ],
       );
     });
@@ -1529,7 +1572,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
   buildQuestionA6_1(QuestionCommonModel question, {String? subName}) {
     return Obx(() {
-      var val = controller.getValueDm(question);
+      var val = controller.getValueByFieldName(
+          question.bangDuLieu!, question.maCauHoi!);
       var dmChiTieu =
           controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
       return Column(
@@ -1994,18 +2038,18 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if ((chiTieuDong.maSo == '0' && chiTieuDong.maCauHoi == 'A4_7'))
-            RichTextQuestionChiTieu(
-              chiTieuDong.tenChiTieu ?? '',
-              level: 2,
-            )
-          else
-            RichTextQuestionChiTieu(
-              chiTieuDong.tenChiTieu ?? '',
-              prefixText: chiTieuDong.maSo,
-              seperateSign: ' - ',
-              level: 3,
-            ),
+          //  if ((chiTieuDong.maSo == '0' && chiTieuDong.maCauHoi == 'A4_7'))
+          // RichTextQuestionChiTieu(
+          //   chiTieuDong.tenChiTieu ?? '',
+          //   level: 2,
+          // )
+          //  else
+          RichTextQuestionChiTieu(
+            chiTieuDong.tenChiTieu ?? '',
+            prefixText: chiTieuDong.maSo,
+            seperateSign: ' - ',
+            level: 3,
+          ),
           Container(
               margin: const EdgeInsets.fromLTRB(
                   0.0, 0.0, 0.0, AppValues.marginBottomBox),
@@ -2084,9 +2128,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     // if (chiTieuDong.maCauHoi == 'A8_1') {
     //   return Obx(() {
     //     var a8_1_3Value =
-    //         controller.getValueDmByFieldName(columnPhieuMauA8_1_3_1);
+    //         controller.getValueByFieldName(question.bangDuLieu!,columnPhieuMauA8_1_3_1);
     //     var a8_1_5Value =
-    //         controller.getValueDmByFieldName(columnPhieuMauA8_1_5_1);
+    //         controller.getValueByFieldName(question.bangDuLieu!,columnPhieuMauA8_1_5_1);
     //     if (chiTieuDong.maSo == '3.1') {
     //       // if (a8_1_3Value == 1) {
     //       //   return Column(
@@ -2328,13 +2372,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         return renderChiTieuDongCotQuestionType3(
             question, chiTieuDong, chiTieuCot);
       case 5:
-        // if (question.maCauHoi == "A8_1" &&
-        //     (chiTieuDong.maSo == "3.1" || chiTieuDong.maSo == "5.1")) {
-        //   return const SizedBox();
-        // }
-        if (question.maCauHoi == "A8_1" &&
-            (chiTieuDong.maSo == "3.1" || chiTieuDong.maSo == "5.1")) {
-          return const SizedBox();
+        if (controller.isA1GhiRoF(question, chiTieuDong, chiTieuCot)) {
+          return buildNganhVTGhiRo(question, chiTieuDong, chiTieuCot);
+        } else if (controller.isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+          return buildNganhVTGhiRo(question, chiTieuDong, chiTieuCot);
         }
         return renderQuestionType5DmChiTieuDongCot(
             question, chiTieuDong, chiTieuCot, tableDmCoKhong);
@@ -2343,53 +2384,6 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     }
   }
 
-  // renderChiTieuDongCotQuestionType2(QuestionCommonModel question,
-  //     ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot,
-  //     {String? subName, String? value}) {
-  //   var fieldNameMaCauHoiMaSo =
-  //       controller.getFieldNameByMaCauChiTieuDongCot(chiTieuCot, chiTieuDong)!;
-  //   // var wFilterInput = chiTieuCot.maChiTieu == AppDefine.maChiTieu_2
-  //   //     ? RegExp(r'(^\d*\.?\d{0,1})')
-  //   //     : RegExp('[0-9]');
-  //   var wFilterInput = RegExp('[0-9]');
-
-  //   return Obx(() {
-  //     var val = controller.getValueByFieldName(
-  //         question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-  //     return Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         InputIntChiTieu(
-  //           key: ValueKey(fieldNameMaCauHoiMaSo),
-  //           // key: ValueKey<ChiTieuModel>(chiTieuCot),
-  //           // key: ValueKey(
-  //           //     '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuDong.maIO}-${chiTieuCot.maChiTieu}-$fieldNameIO'),
-  //           type: 'int',
-  //           onChange: (value) => controller.onChangeInputChiTieuDongCot(
-  //               question.bangDuLieu!,
-  //               question.maCauHoi,
-  //               fieldNameMaCauHoiMaSo,
-  //               value,
-  //               question: question,
-  //               chiTieuCot: chiTieuCot,
-  //               chiTieuDong: chiTieuDong),
-  //           chiTieuCot: chiTieuCot,
-  //           chiTieuDong: chiTieuDong,
-  //           showDvtTheoChiTieuDong: question.buocNhay == 'exit' ? true : false,
-  //           subName: subName,
-  //           enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
-  //                   question.buocNhay == 'exit')
-  //               ? false
-  //               : true,
-  //           value: val,
-  //           validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
-  //               question, chiTieuCot, chiTieuDong, inputValue),
-  //           flteringTextInputFormatterRegExp: wFilterInput,
-  //         ),
-  //       ],
-  //     );
-  //   });
-  // }
   renderChiTieuDongCotQuestionType2(QuestionCommonModel question,
       ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot,
       {String? subName, String? value}) {
@@ -2398,7 +2392,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Obx(() {
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-      if (question.maCauHoi == "A7_1") {
+      if ((question.maCauHoi == "A1" &&
+              question.maPhieu == AppDefine.maPhieuVT) ||
+          question.maCauHoi == "A1" &&
+              question.maPhieu == AppDefine.maPhieuLT) {
         return renderChiTieuDongCotType2ByMaChiTieu(
             question, chiTieuDong, chiTieuCot,
             value: value);
@@ -2420,14 +2417,37 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Obx(() {
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-      if (question.maCauHoi == "A7_1") {
-        var a7_8_x_xFieldName = '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_0';
-        var a7_8_x_xValue = controller.getValueDmByFieldName(a7_8_x_xFieldName);
-        if (a7_8_x_xValue == 1) {
-          //  1.5. Loại khác (ghi rõ___________)
-          if (a7_8_x_xFieldName == colPhieuNganhLTA1_1_5) {
+      if (question.maCauHoi == "A1" &&
+          question.maPhieu == AppDefine.maPhieuVT) {
+        //  13. Xe ô tô khác 1 (GHI RÕ ______________) 15. Phương tiện chở khách khác (ghi rõ__)
+        if (chiTieuDong.maSo == "13" || chiTieuDong.maSo == "15") {
+          //   String a1MaSoFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}';
+          // var a1MaSoVal = controller.getValueVTGhiByFieldNameFromDB(
+          //     tablePhieuNganhVTGhiRo,
+          //     colPhieuNganhVTGhiRoC1,
+          //     a1MaSoFieldName,
+          //     1); //stt=1 là Giá trị Có của mã số 13 hoặc 15
+          // return renderChiTieuDongCotType2NganhVTGhiRo(
+          //     question, chiTieuDong, chiTieuCot, a1MaSoFieldName, a1MaSoVal);
+          return const SizedBox();
+        } else {
+          var a1_Maso_CotFieldName =
+              '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_1';
+          var a1MaSoCotVal = controller.getValueByFieldName(
+              question.bangDuLieu!, a1_Maso_CotFieldName);
+          if (a1MaSoCotVal == 1) {
             return renderChiTieuDongCotType2(question, chiTieuDong, chiTieuCot);
+          } else {
+            return const SizedBox();
           }
+        }
+      } else if (question.maCauHoi == "A1" &&
+          question.maPhieu == AppDefine.maPhieuLT) {
+        var a1_Maso_CotFieldName =
+            '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_1';
+        var a1MaSoCotVal = controller.getValueByFieldName(
+            question.bangDuLieu!, a1_Maso_CotFieldName);
+        if (a1MaSoCotVal == 1) {
           return renderChiTieuDongCotType2(question, chiTieuDong, chiTieuCot);
         } else {
           return const SizedBox();
@@ -2437,15 +2457,438 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     });
   }
 
-  buildGhiRoPhanVIA7_1(
+  buildNganhVTGhiRo(QuestionCommonModel question, ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot) {
+    return Obx(() {
+      if (controller.tblPhieuNganhVTGhiRos.isNotEmpty) {
+        String maCauHoiMaSo = '${question.maCauHoi}_${chiTieuDong.maSo}';
+
+        var ghiRoDefault = controller.tblPhieuNganhVTGhiRos
+            .where((s) => s.sTT == 1 && s.maCauHoi == maCauHoiMaSo)
+            .firstOrNull;
+        var lastGhiRo = controller.tblPhieuNganhVTGhiRos
+            .where((s) => s.maCauHoi == maCauHoiMaSo)
+            .lastOrNull;
+        var ghiRoItemA1Item = controller.tblPhieuNganhVTGhiRos
+            .where((s) => s.maCauHoi == maCauHoiMaSo)
+            .toList();
+        var ghiRoItemA1SubItem = controller.tblPhieuNganhVTGhiRos
+            .where((s) => s.maCauHoi == maCauHoiMaSo && s.sTT != 1)
+            .toList();
+        int lastStt = 0;
+        if (lastGhiRo != null) {
+          lastStt = lastGhiRo.sTT!;
+        }
+        return Column(
+            children: ghiRoItemA1Item.asMap().entries.map((entry) {
+          int idxSp = entry.key;
+
+          TablePhieuNganhVTGhiRo ghiRoItem = entry.value;
+          if (ghiRoItem.sTT != 1) {
+            idxSp += 1;
+          }
+          String addNewCaption = '';
+          String orderCaption = '';
+          if (ghiRoItem.maCauHoi == "A1_13") {
+            addNewCaption = 'Xe ô tô khác';
+            orderCaption = 'Xe ô tô khác $idxSp';
+          } else if (ghiRoItem.maCauHoi == "A1_15") {
+            addNewCaption = 'Phương tiện chở khách khác';
+            orderCaption = 'Phương tiện chở khách khác $idxSp';
+          } else if (ghiRoItem.maCauHoi == "A7_17") {
+            addNewCaption = 'Ô tô tải khác';
+            orderCaption = 'Ô tô tải khác $idxSp';
+          } else if (ghiRoItem.maCauHoi == "A7_18") {
+            addNewCaption = 'Phương tiện chở hàng khác';
+            orderCaption = 'Phương tiện chở hàng khác $idxSp';
+          }
+          return Column(
+            children: [
+              if (ghiRoItem.sTT! == 1)
+                renderQuestionType5DmChiTieuDongCotNganhVTGhiRo(question,
+                    chiTieuDong, chiTieuCot, tableDmCoKhong, ghiRoItem)
+              else
+                //Obx(() {
+                Container(
+                    margin: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color:
+                              primary1LighterColor, //const Color.fromARGB(255, 4, 116, 228),
+                          width: 1),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (ghiRoItem.sTT! != 1)
+                          Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      primary1LighterColor,
+                                      primary1LighterColor,
+                                      primary1LighterColor,
+                                      primary1LighterColor,
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5.0),
+                                      topRight: Radius.circular(
+                                          5.0))), // Adds a gradient background and rounded corners to the container
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                            child: Text(
+                                          orderCaption,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Color.fromARGB(255, 62, 65, 68),
+                                          ),
+                                        )),
+                                        if (ghiRoItem.sTT != 1)
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                controller
+                                                    .onDeletePhieuNganhVTGhiRo(
+                                                        question,
+                                                        chiTieuDong,
+                                                        chiTieuCot,
+                                                        ghiRoItem);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                  fixedSize: const Size(80, 28),
+                                                  foregroundColor: Colors.red,
+                                                  backgroundColor: Colors.white,
+                                                  surfaceTintColor:
+                                                      Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              AppValues
+                                                                  .borderLv5)),
+                                                  elevation: 1.0,
+                                                  side: const BorderSide(
+                                                      color: Colors.red)),
+                                              child: const Text('Xoá')),
+                                      ],
+                                    ),
+                                  ])),
+                        Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                            child:
+                                renderQuestionType5DmChiTieuDongCotNganhVTGhiRo(
+                                    question,
+                                    chiTieuDong,
+                                    chiTieuCot,
+                                    tableDmCoKhong,
+                                    ghiRoItem))
+                      ],
+                    )),
+              //    }),
+              if (lastStt > 0 && lastStt == ghiRoItem.sTT!)
+                if (controller.countHasMorePhieuNganhVTGhiRo(
+                        tablePhieuNganhVTGhiRo, ghiRoItem) >
+                    0) ...[
+                  const SizedBox(height: 16),
+                  Align(
+                      alignment: Alignment.centerRight,
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.add_outlined),
+                        label: Text(addNewCaption),
+                        onPressed: () =>
+                            controller.addNewRowonPhieuNganhVTGhiRo(
+                                question, chiTieuDong, chiTieuCot, ghiRoItem),
+                        style: ElevatedButton.styleFrom(
+                            side: const BorderSide(
+                                width: 1.0, color: primaryLightColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppValues.borderLv5),
+                            ),
+                            foregroundColor: primaryColor),
+                      ))
+                ],
+              const SizedBox(height: 8)
+            ],
+          );
+        }).toList());
+      }
+      return const SizedBox();
+    });
+  }
+
+  renderQuestionType5DmChiTieuDongCotNganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      String tenDanhMuc,
+      TablePhieuNganhVTGhiRo ghiRoItem) {
+    if (controller.isA1GhiRoF(question, chiTieuDong, chiTieuCot) ||
+        controller.isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+      return Obx(() {
+        var fieldName = colPhieuNganhVTGhiRoC1;
+
+        var xVal = controller.getValueVTGhiByFieldNameFromDB(
+            tablePhieuNganhVTGhiRo,
+            fieldName,
+            ghiRoItem.maCauHoi!,
+            ghiRoItem.sTT!,
+            id: ghiRoItem.id!);
+        var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
+        return Column(
+          children: [
+            SelectIntCTDm(
+              key: ValueKey(
+                  '${question.maPhieu}${question.cauHoiUUID}_${chiTieuDong.maSo}_${chiTieuCot.maChiTieu}_${ghiRoItem.maCauHoi}_${ghiRoItem.sTT}_${ghiRoItem.id}_$xVal'),
+              question: question,
+              listValue: dmChiTieu,
+              tenDanhMuc: tenDanhMuc,
+              onChange: (value, dmItem) => controller.onSelectDmA1_A7(
+                  question,
+                  question.bangDuLieu!,
+                  question.maCauHoi,
+                  fieldName,
+                  value,
+                  dmItem,
+                  chiTieuDong: chiTieuDong,
+                  chiTieuCot: chiTieuCot,
+                  ghiRoItem: ghiRoItem),
+              value: xVal,
+              hienThiTenCauHoi: false,
+            ),
+            if (xVal == 1) ...[
+              buildChiTieuDongCotItemNganhVTGhiRo(
+                  question, chiTieuDong, question.danhSachChiTieu!, ghiRoItem),
+              renderQuestionType4NganhVTGhiRo(
+                  question, chiTieuDong, chiTieuCot, ghiRoItem)
+            ]
+          ],
+        );
+      });
+    }
+  }
+
+  buildChiTieuDongCotItemNganhVTGhiRo(
+      QuestionCommonModel mainQuestion,
+      ChiTieuDongModel chiTieuDong,
+      List<ChiTieuModel> chiTieuCots,
+      TablePhieuNganhVTGhiRo ghiRoItem) {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListView.builder(
+              key: ObjectKey(chiTieuDong),
+              itemCount: chiTieuCots.length,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (_, index) {
+                ChiTieuModel chitieuCot = chiTieuCots[index];
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (chitieuCot.loaiChiTieu.toString() ==
+                        AppDefine.loaiChiTieu_1) ...[
+                      renderChiTieuDongCotQuestionByTypeNganhVTGhiRo(
+                          mainQuestion, chiTieuDong, chitieuCot, ghiRoItem),
+                    ] else
+                      const SizedBox(),
+                  ],
+                );
+              }),
+        ]);
+  }
+
+  renderChiTieuDongCotQuestionByTypeNganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem,
+      {String? subName,
+      String? value}) {
+    switch (chiTieuCot.loaiCauHoi) {
+      case 0:
+        RichTextQuestionChiTieu(
+          chiTieuCot.tenChiTieu ?? '',
+          level: 2,
+        );
+      case 2:
+        return renderChiTieuDongCotType2NganhVTGhiRo(
+            question, chiTieuDong, chiTieuCot, ghiRoItem);
+      case 3:
+        return renderChiTieuDongCotType3NganhVTGhiRo(
+            question, chiTieuDong, chiTieuCot, ghiRoItem);
+      case 5:
+        // if (controller.isA1GhiRoF(question, chiTieuDong, chiTieuCot) ||
+        //     controller.isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
+        //   return renderQuestionType5DmChiTieuDongCotNganhVTGhiRo(
+        //       question, chiTieuDong, chiTieuCot, tableDmCoKhong,ghiRoItem);
+        // }
+        return const SizedBox();
+      default:
+        return Container();
+    }
+  }
+
+  renderChiTieuDongCotType2NganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem) {
+    var fieldNameMaCauHoiMaSo = 'C_${chiTieuCot.maChiTieu}';
+    var maCauHoiMaSo = '${chiTieuCot.maCauHoi}_${chiTieuDong.maSo}';
+    if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuVT) {
+      return Obx(() {
+        var a1Val = controller.getValueVTGhiByFieldNameFromDB(
+            tablePhieuNganhVTGhiRo,
+            fieldNameMaCauHoiMaSo,
+            ghiRoItem.maCauHoi!,
+            ghiRoItem.sTT,
+            id: ghiRoItem.id);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InputIntChiTieu(
+              key: ValueKey(
+                  '${question.maPhieu}_${question.maCauHoi}_${fieldNameMaCauHoiMaSo}_${ghiRoItem.maCauHoi}_${ghiRoItem.sTT}_${ghiRoItem.id}'),
+              type: 'int',
+              onChange: (value) =>
+                  controller.onChangeInputChiTieuDongCotNganhVTGhiRo(
+                      question, chiTieuDong, chiTieuCot, ghiRoItem, value),
+              chiTieuCot: chiTieuCot,
+              chiTieuDong: chiTieuDong,
+              showDvtTheoChiTieuDong:
+                  question.buocNhay == 'exit' ? true : false,
+              enable: true,
+              value: a1Val,
+              validator: (inputValue) =>
+                  controller.onValidateInputChiTieuDongCot(
+                      question, chiTieuCot, chiTieuDong, inputValue,
+                      typing: true),
+              warningText:
+                  controller.getA7_1WarningValue(fieldNameMaCauHoiMaSo),
+            ),
+          ],
+        );
+      });
+    }
+  }
+
+  renderChiTieuDongCotType3NganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem,
+      {String? subName}) {
+    var wFilterInput = RegExp('[0-9]');
+    int decimalDigits = 2;
+    if (question.maCauHoi == 'A7' &&
+        (chiTieuCot.maChiTieu == '3' || chiTieuCot.maChiTieu == "4")) {
+      wFilterInput = RegExp(r'(^\d*\.?\d{0,2})');
+      decimalDigits = 2;
+    }
+    return Obx(() {
+      var fieldNameMaCauHoiMaSo = 'C_${chiTieuCot.maChiTieu}';
+      var maCauHoiMaSo = '${chiTieuCot.maCauHoi}_${chiTieuDong.maSo}';
+
+      var a1Val = controller.getValueVTGhiByFieldNameFromDB(
+          tablePhieuNganhVTGhiRo,
+          fieldNameMaCauHoiMaSo,
+          ghiRoItem.maCauHoi!,
+          ghiRoItem.sTT,
+          id: ghiRoItem.id);
+      //return Obx(() {
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InputIntChiTieu(
+            key: ValueKey(
+                '${question.maPhieu}${question.maCauHoi}_${fieldNameMaCauHoiMaSo}_${ghiRoItem.maCauHoi}_${ghiRoItem.sTT}_${ghiRoItem.id}'),
+            type: 'double',
+            onChange: (value) =>
+                controller.onChangeInputChiTieuDongCotNganhVTGhiRo(
+                    question, chiTieuDong, chiTieuCot, ghiRoItem, value),
+            chiTieuCot: chiTieuCot,
+            chiTieuDong: chiTieuDong,
+            subName: subName,
+            enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9)
+                ? false
+                : true,
+            value: a1Val,
+            validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
+                question, chiTieuCot, chiTieuDong, inputValue,
+                fieldName: fieldNameMaCauHoiMaSo),
+            flteringTextInputFormatterRegExp: wFilterInput,
+            decimalDigits: decimalDigits,
+          ),
+        ],
+      );
+    });
+  }
+
+  renderQuestionType4NganhVTGhiRo(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      TablePhieuNganhVTGhiRo ghiRoItem,
+      {String? subName}) {
+    return Obx(() {
+      var fieldNameMaCauHoiMaSo = 'C_GhiRo';
+      var maCauHoiMaSo = '${chiTieuCot.maCauHoi}_${chiTieuDong.maSo}';
+      var a1GhiRoVal = controller.getValueVTGhiByFieldNameFromDB(
+          tablePhieuNganhVTGhiRo,
+          fieldNameMaCauHoiMaSo,
+          ghiRoItem.maCauHoi!,
+          ghiRoItem.sTT,
+          id: ghiRoItem.id);
+
+      return InputStringCTDm(
+        key: ValueKey(
+            '${question.maPhieu}${question.cauHoiUUID}${question.maCauHoi}'),
+        question: question,
+        onChange: (value) => controller.onChangeInputChiTieuDongCotNganhVTGhiRo(
+            question, chiTieuDong, chiTieuCot, ghiRoItem, value,
+            fieldNameVTGhiRo: fieldNameMaCauHoiMaSo),
+        titleText: 'Ghi rõ',
+        level: 3,
+        value: a1GhiRoVal,
+        validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
+            question, chiTieuCot, chiTieuDong, inputValue,
+            fieldName: fieldNameMaCauHoiMaSo),
+      );
+    });
+  }
+
+  buildGhiRoNganhLTA1(
       QuestionCommonModel question,
       ChiTieuDongModel chiTieuDong,
       ChiTieuModel chiTieuCot,
       String fieldNameLoaiKhac,
       selectedValue) {
     //  1.5. Loại khác (ghi rõ___________)
-    if ((selectedValue == 1 && question.maCauHoi == "A7_1") &&
-        fieldNameLoaiKhac == colPhieuNganhLTA1_1_5) {
+    if ((selectedValue == 1 &&
+            question.maCauHoi == "A1" &&
+            question.maPhieu == AppDefine.maPhieuLT) &&
+        fieldNameLoaiKhac == colPhieuNganhLTA1_5_1) {
       var fieldNameGhiRo = '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_GhiRo';
       var ghiRoValue =
           controller.getValueByFieldName(question.bangDuLieu!, fieldNameGhiRo);
@@ -2475,87 +2918,48 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //     ? RegExp(r'(^\d*\.?\d{0,1})')
     //     : RegExp('[0-9]');
     var wFilterInput = RegExp('[0-9]');
-
-    if (question.maCauHoi == "A7_1") {
-      if (controller.a7_1FieldWarning.contains(fieldNameMaCauHoiMaSo)) {
-        controller.warningA7_1_X3SoPhongTangMoi(chiTieuDong.maSo!);
-        return Obx(() {
-          var valA7_1x = controller.getValueByFieldName(
-              question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InputIntChiTieu(
-                key: ValueKey(
-                    '${question.maPhieu}_${question.maCauHoi}_$fieldNameMaCauHoiMaSo'),
-                type: 'int',
-                onChange: (value) => controller.onChangeInputChiTieuDongCot(
-                    question.bangDuLieu!,
-                    question.maCauHoi,
-                    fieldNameMaCauHoiMaSo,
-                    value,
-                    question: question,
-                    chiTieuCot: chiTieuCot,
-                    chiTieuDong: chiTieuDong),
+    return Obx(() {
+      var val = controller.getValueByFieldName(
+          question.bangDuLieu!, fieldNameMaCauHoiMaSo);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InputIntChiTieu(
+            key: ValueKey(
+                '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo'),
+            // key: ValueKey<ChiTieuModel>(chiTieuCot),
+            // key: ValueKey(
+            //     '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuDong.maIO}-${chiTieuCot.maChiTieu}-$fieldNameIO'),
+            type: 'int',
+            onChange: (value) => controller.onChangeInputChiTieuDongCot(
+                question.bangDuLieu!,
+                question.maCauHoi,
+                fieldNameMaCauHoiMaSo,
+                value,
+                question: question,
                 chiTieuCot: chiTieuCot,
-                chiTieuDong: chiTieuDong,
-                showDvtTheoChiTieuDong:
-                    question.buocNhay == 'exit' ? true : false,
-                subName: subName,
-                enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
-                        question.buocNhay == 'exit')
-                    ? false
-                    : true,
-                value: valA7_1x,
-                validator: (inputValue) =>
-                    controller.onValidateInputChiTieuDongCot(
-                        question, chiTieuCot, chiTieuDong, inputValue,
-                        typing: true),
-                flteringTextInputFormatterRegExp: wFilterInput,
-                warningText:
-                    controller.getA7_1WarningValue(fieldNameMaCauHoiMaSo),
-              ),
-            ],
-          );
-        });
-      }
-    }
-    var val = controller.getValueByFieldName(
-        question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InputIntChiTieu(
-          key: ValueKey(
-              '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo'),
-          // key: ValueKey<ChiTieuModel>(chiTieuCot),
-          // key: ValueKey(
-          //     '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuDong.maIO}-${chiTieuCot.maChiTieu}-$fieldNameIO'),
-          type: 'int',
-          onChange: (value) => controller.onChangeInputChiTieuDongCot(
-              question.bangDuLieu!,
-              question.maCauHoi,
-              fieldNameMaCauHoiMaSo,
-              value,
-              question: question,
-              chiTieuCot: chiTieuCot,
-              chiTieuDong: chiTieuDong),
-          chiTieuCot: chiTieuCot,
-          chiTieuDong: chiTieuDong,
-          showDvtTheoChiTieuDong: question.buocNhay == 'exit' ? true : false,
-          subName: subName,
-          enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
-                  question.buocNhay == 'exit')
-              ? false
-              : true,
-          value: val,
-          validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
-              question, chiTieuCot, chiTieuDong, inputValue,
-              typing: true),
-          flteringTextInputFormatterRegExp: wFilterInput,
-        ),
-      ],
-    );
+                chiTieuDong: chiTieuDong),
+            chiTieuCot: chiTieuCot,
+            chiTieuDong: chiTieuDong,
+            showDvtTheoChiTieuDong: question.buocNhay == 'exit' ? true : false,
+            subName: subName,
+            enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
+                    ((question.maCauHoi == "A1" || question.maCauHoi == "A7") &&
+                        question.maPhieu == AppDefine.maPhieuVT &&
+                        chiTieuDong.loaiChiTieu == "2" &&
+                        (chiTieuCot.maChiTieu == AppDefine.maChiTieu_3 ||
+                            chiTieuCot.maChiTieu == AppDefine.maChiTieu_4)))
+                ? false
+                : true,
+            value: val,
+            validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
+                question, chiTieuCot, chiTieuDong, inputValue,
+                typing: true),
+            flteringTextInputFormatterRegExp: wFilterInput,
+          ),
+        ],
+      );
+    });
   }
 
   renderChiTieuDongCotQuestionType3(QuestionCommonModel question,
@@ -2566,9 +2970,12 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //  return Obx(() {
     var val = controller.getValueByFieldName(
         question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-    if (question.maCauHoi == "A4_5" ||
-        question.maCauHoi == "A4_7" ||
-        question.maCauHoi == "A8_1") {
+    if ((question.maCauHoi == "A7_4" &&
+            question.maPhieu == AppDefine.maPhieuTB) ||
+        (question.maCauHoi == "A1" &&
+            question.maPhieu == AppDefine.maPhieuVT) ||
+        (question.maCauHoi == "A7" &&
+            question.maPhieu == AppDefine.maPhieuVT)) {
       return renderChiTieuDongCotType3ByMaChiTieu(
           question, chiTieuDong, chiTieuCot,
           value: value);
@@ -2590,10 +2997,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Obx(() {
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
-      if (question.maCauHoi == "A4_5" || question.maCauHoi == "A4_7") {
-        var a4_5_x_xFieldName = '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_1';
-        var a4_5_x_xValue = controller.getValueDmByFieldName(a4_5_x_xFieldName);
-        if (a4_5_x_xValue == 1) {
+      if ((question.maCauHoi == "A7_4" &&
+              question.maPhieu == AppDefine.maPhieuTB) ||
+          (question.maCauHoi == "A1" &&
+              question.maPhieu == AppDefine.maPhieuVT) ||
+          (question.maCauHoi == "A7" &&
+              question.maPhieu == AppDefine.maPhieuVT)) {
+        var aDongCotFieldName = '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_1';
+        var aDongCotVal = controller.getValueByFieldName(
+            question.bangDuLieu!, aDongCotFieldName);
+        if (aDongCotVal == 1) {
           return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
         } else {
           return const SizedBox();
@@ -2602,7 +3015,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         if (chiTieuDong.maSo == "3.1") {
           // var a8_1_3_1FieldName = '${chiTieuDong.maCauHoi}_3_1';
           // var a8_1_3_1Value =
-          //     controller.getValueDmByFieldName(a8_1_3_1FieldName);
+          //     controller.getValueByFieldName(question.bangDuLieu!,a8_1_3_1FieldName);
           // if (a8_1_3_1Value == 1 && chiTieuCot.maChiTieu == '2') {
           //   return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
           // } else {
@@ -2617,7 +3030,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         } else if (chiTieuDong.maSo == "5.1") {
           // var a8_1_5_1FieldName = '${chiTieuDong.maCauHoi}_5_1';
           // var a8_1_5_1Value =
-          //     controller.getValueDmByFieldName(a8_1_5_1FieldName);
+          //     controller.getValueByFieldName(question.bangDuLieu!,a8_1_5_1FieldName);
           // if (a8_1_5_1Value == 1 && chiTieuCot.maChiTieu == '2') {
           //   return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
           // } else {
@@ -2635,8 +3048,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             chiTieuDong.maSo == "1.4") {
           var a8_1_x_xFieldName =
               '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo!.replaceAll('.', '_')}_1';
-          var a8_1_x_xValue =
-              controller.getValueDmByFieldName(a8_1_x_xFieldName);
+          var a8_1_x_xValue = controller.getValueByFieldName(
+              question.bangDuLieu!, a8_1_x_xFieldName);
           if (a8_1_x_xValue == 1) {
             return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
           } else {
@@ -2645,8 +3058,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         } else {
           var a8_1_x_xFieldName =
               '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_1';
-          var a8_1_x_xValue =
-              controller.getValueDmByFieldName(a8_1_x_xFieldName);
+          var a8_1_x_xValue = controller.getValueByFieldName(
+              question.bangDuLieu!, a8_1_x_xFieldName);
           if (a8_1_x_xValue == 1) {
             return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
           } else {
@@ -2669,51 +3082,48 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     }
     var fieldNameMaCauHoiMaSo =
         controller.getFieldNameByMaCauChiTieuDongCot(chiTieuCot, chiTieuDong)!;
-    //return Obx(() {
-    var xVal = controller.getValueByFieldName(
-        question.bangDuLieu!, fieldNameMaCauHoiMaSo);
+    return Obx(() {
+      var xVal = controller.getValueByFieldName(
+          question.bangDuLieu!, fieldNameMaCauHoiMaSo);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InputIntChiTieu(
-          key: ValueKey(
-              '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo'),
-          // key: ValueKey<ChiTieuModel>(chiTieuCot),
-          // key: ValueKey(
-          //     '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuDong.maIO}-${chiTieuCot.maChiTieu}-$fieldNameIO'),
-          type: 'double',
-          onChange: (value) => controller.onChangeInputChiTieuDongCot(
-              question.bangDuLieu!,
-              question.maCauHoi,
-              fieldNameMaCauHoiMaSo,
-              value,
-              question: question,
-              chiTieuCot: chiTieuCot,
-              chiTieuDong: chiTieuDong),
-          chiTieuCot: chiTieuCot,
-          chiTieuDong: chiTieuDong,
-          showDvtTheoChiTieuDong:
-              ((question.maCauHoi == 'A8_1' && chiTieuCot.maChiTieu == '2'))
-                  ? true
-                  : false,
-          subName: subName,
-          enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
-                  question.buocNhay == 'exit')
-              ? false
-              : true,
-          value: xVal,
-          validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
-              question, chiTieuCot, chiTieuDong, inputValue,
-              fieldName: fieldNameMaCauHoiMaSo),
-          flteringTextInputFormatterRegExp: wFilterInput,
-          decimalDigits: decimalDigits,
-          warningText: buildWarningTextA8_1(
-              question, chiTieuDong, chiTieuCot, fieldNameMaCauHoiMaSo),
-        ),
-      ],
-    );
-    //  });
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InputIntChiTieu(
+            key: ValueKey(
+                '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo'),
+            type: 'double',
+            onChange: (value) => controller.onChangeInputChiTieuDongCot(
+                question.bangDuLieu!,
+                question.maCauHoi,
+                fieldNameMaCauHoiMaSo,
+                value,
+                question: question,
+                chiTieuCot: chiTieuCot,
+                chiTieuDong: chiTieuDong),
+            chiTieuCot: chiTieuCot,
+            chiTieuDong: chiTieuDong,
+            subName: subName,
+            enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
+                    ((question.maCauHoi == "A1" || question.maCauHoi == "A7") &&
+                        question.maPhieu == AppDefine.maPhieuVT &&
+                        chiTieuDong.loaiChiTieu == "2" &&
+                        (chiTieuCot.maChiTieu == AppDefine.maChiTieu_3 ||
+                            chiTieuCot.maChiTieu == AppDefine.maChiTieu_4)))
+                ? false
+                : true,
+            value: xVal,
+            validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
+                question, chiTieuCot, chiTieuDong, inputValue,
+                fieldName: fieldNameMaCauHoiMaSo),
+            flteringTextInputFormatterRegExp: wFilterInput,
+            decimalDigits: decimalDigits,
+            warningText: buildWarningTextA8_1(
+                question, chiTieuDong, chiTieuCot, fieldNameMaCauHoiMaSo),
+          ),
+        ],
+      );
+    });
   }
 
   renderQuestionType5DmChiTieuDongCot(
@@ -2721,13 +3131,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       ChiTieuDongModel chiTieuDong,
       ChiTieuModel chiTieuCot,
       String tenDanhMuc) {
-    if (question.maCauHoi == "A1" && question.maPhieu == 2) {
+    if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuVT) {
       return Obx(() {
         var wFilterInput = RegExp('[0-9]');
         int decimalDigits = 0;
         var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
             chiTieuCot, chiTieuDong);
-        //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
+
         var xVal =
             controller.getValueByFieldName(question.bangDuLieu!, fieldName);
         var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
@@ -2739,7 +3149,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question: question,
               listValue: dmChiTieu,
               tenDanhMuc: tenDanhMuc,
-              onChange: (value, dmItem) => controller.onSelectDmA7_1(
+              onChange: (value, dmItem) => controller.onSelectDmA1_A7(
                   question,
                   question.bangDuLieu!,
                   question.maCauHoi,
@@ -2754,7 +3164,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               hienThiTenCauHoi: false,
             ),
             if (chiTieuCot.maChiTieu == '0')
-              buildGhiRoPhanVIA7_1(
+              buildGhiRoNganhLTA1(
                   question, chiTieuDong, chiTieuCot, fieldName, xVal),
           ],
         );
@@ -2767,11 +3177,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //     var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
     //         chiTieuCot, chiTieuDong);
     //     //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
-    //     var xVal = controller.getValueDmByFieldName(fieldName);
+    //     var xVal = controller.getValueByFieldName(question.bangDuLieu!,fieldName);
     //     var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
 
     //     var a4_7_0_TongSo =
-    //         controller.getValueDmByFieldName(columnPhieuMauA4_7_0);
+    //         controller.getValueByFieldName(question.bangDuLieu!,columnPhieuMauA4_7_0);
     //     // return InputIntView(
     //     //   key: ValueKey('${question.cauHoiUUID}_$a4_7_0_TongSo'),
     //     //   question: question,
@@ -2806,44 +3216,46 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //     );
     //   });
     // }
-    // if (question.maCauHoi == "A7_1") {
-    //   return Obx(() {
-    //     var wFilterInput = RegExp('[0-9]');
-    //     int decimalDigits = 0;
-    //     var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
-    //         chiTieuCot, chiTieuDong);
-    //     //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
-    //     var xVal = controller.getValueDmByFieldName(fieldName);
-    //     var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
-    //     return Column(
-    //       children: [
-    //         SelectIntCTDm(
-    //           key: ValueKey(
-    //               '${question.maPhieu}${question.cauHoiUUID}_${chiTieuDong.maSo}_${chiTieuCot.maChiTieu}_$xVal'),
-    //           question: question,
-    //           listValue: dmChiTieu,
-    //           tenDanhMuc: tenDanhMuc,
-    //           onChange: (value, dmItem) => controller.onSelectDmA7_1(
-    //               question,
-    //               question.bangDuLieu!,
-    //               question.maCauHoi,
-    //               fieldName,
-    //               value,
-    //               dmItem,
-    //               chiTieuDong: chiTieuDong,
-    //               chiTieuCot: chiTieuCot),
-    //           value: xVal,
-    //           onChangeGhiRo: (value, dmItem) =>
-    //               controller.onChangeGhiRoDm(question, value, dmItem),
-    //           hienThiTenCauHoi: false,
-    //         ),
-    //         if (chiTieuCot.maChiTieu == '0')
-    //           buildGhiRoPhanVIA7_1(
-    //               question, chiTieuDong, chiTieuCot, fieldName, xVal),
-    //       ],
-    //     );
-    //   });
-    // }
+    if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuLT) {
+      return Obx(() {
+        var wFilterInput = RegExp('[0-9]');
+        int decimalDigits = 0;
+        var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
+            chiTieuCot, chiTieuDong);
+        var xVal =
+            controller.getValueByFieldName(question.bangDuLieu!, fieldName);
+        var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
+        return Column(
+          children: [
+            SelectIntCTDm(
+              key: ValueKey(
+                  '${question.maPhieu}_${question.cauHoiUUID}_${chiTieuDong.maSo}_${chiTieuCot.maChiTieu}_$xVal'),
+              question: question,
+              listValue: dmChiTieu,
+              tenDanhMuc: tenDanhMuc,
+              onChange: (value, dmItem) => controller.onSelectDmLTA1(
+                  question,
+                  question.bangDuLieu!,
+                  question.maCauHoi,
+                  fieldName,
+                  value,
+                  dmItem,
+                  chiTieuDong: chiTieuDong,
+                  chiTieuCot: chiTieuCot),
+              value: xVal,
+              onChangeGhiRo: (value, dmItem) =>
+                  controller.onChangeGhiRoDm(question, value, dmItem),
+              hienThiTenCauHoi: false,
+            ),
+            if (xVal == 1 &&
+                chiTieuDong.maSo ==
+                    '5') //chiTieuDong.loaiChiTieu == AppDefine.loaiChiTieu_3
+              buildGhiRoNganhLTA1(
+                  question, chiTieuDong, chiTieuCot, fieldName, xVal),
+          ],
+        );
+      });
+    }
     // if (question.maCauHoi == "A8_1" &&
     //     (chiTieuDong.maSo == "4" || chiTieuDong.maSo == "5"|| chiTieuDong.maSo == "7")) {
     //   return Column(
@@ -2911,7 +3323,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       var fieldName =
           controller.getFieldNameByMaCauChiTieuDongCotA9_4(chiTieuDong);
       //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
-      var val = controller.getValueDmByFieldName(fieldName);
+      var val = controller.getValueByFieldName(question.bangDuLieu!, fieldName);
       var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
       return Column(
         children: [
@@ -3852,7 +4264,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           TablePhieuNganhCNCap5 productCap5 = entry.value;
           return Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
             margin: const EdgeInsets.only(top: 24),
             decoration: BoxDecoration(
               border: Border.all(color: greyDarkBorder, width: 1),
@@ -3897,25 +4309,29 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 const SizedBox(
                   height: 15,
                 ),
-                Align(
-                    alignment: Alignment.centerRight,
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.add_outlined),
-                      label: Text("Thêm sản phẩm cấp 8"),
-                      onPressed: () =>
-                          controller.addNewRowProductNganhCN(productCap5),
-                      style: ElevatedButton.styleFrom(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          side: const BorderSide(
-                              width: 1.0, color: primaryLightColor),
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppValues.borderLv5),
-                          ),
-                          foregroundColor: primaryColor),
-                    )),
-                const SizedBox(height: 16)
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                  margin: const EdgeInsets.all(0),
+                  child: Align(
+                      alignment: Alignment.centerRight,
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.add_outlined),
+                        label: Text("Thêm sản phẩm cấp 8"),
+                        onPressed: () =>
+                            controller.addNewRowProductNganhCN(productCap5),
+                        style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            side: const BorderSide(
+                                width: 1.0, color: primaryLightColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(AppValues.borderLv5),
+                            ),
+                            foregroundColor: primaryColor),
+                      )),
+                ),
+                const SizedBox(height: 8)
               ]
             ]
                 //  ]
@@ -3961,13 +4377,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         QuestionCommonModel questionC = questionsCon[index];
-                        return questionNganhCNItem(questionC, product);
+                        return questionNganhCNItem(
+                            questionC, product, productCap5);
                       })
                 else
                   Obx(() {
                     return Container(
-                        margin: const EdgeInsets.fromLTRB(8, 20, 8, 0),
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                        margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
                         decoration: BoxDecoration(
                           border: Border.all(
                               color: const Color.fromARGB(255, 4, 116, 228),
@@ -3983,7 +4400,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                               Container(
                                   width: double.infinity,
                                   padding:
-                                      const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                                      const EdgeInsets.fromLTRB(16, 2, 16, 2),
                                   decoration: const BoxDecoration(
                                       gradient: LinearGradient(
                                         begin: Alignment.topLeft,
@@ -4026,9 +4443,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                   onPressed: () {
                                                     controller
                                                         .onDeleteProductNganhCN(
-                                                            product.id);
+                                                            product,
+                                                            productCap5);
                                                   },
                                                   style: ElevatedButton.styleFrom(
+                                                      fixedSize: Size(80, 24),
                                                       foregroundColor:
                                                           Colors.red,
                                                       backgroundColor:
@@ -4059,12 +4478,15 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                     QuestionCommonModel questionC =
                                         questionsCon[index];
                                     return questionNganhCNItem(
-                                        questionC, product);
+                                        questionC, product, productCap5);
                                   }),
                             )
                           ],
                         ));
                   }),
+                const SizedBox(
+                  height: 8,
+                )
               ],
             );
           }).toList());
@@ -4076,6 +4498,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   }
 
   questionNganhCNItem(QuestionCommonModel question, TablePhieuNganhCN product,
+      TablePhieuNganhCNCap5 productCap5,
       {QuestionCommonModel? parentQestion}) {
     var wFilterInput = RegExp('[0-9]');
     int decimalDigits = 0;
@@ -4088,13 +4511,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question.tenCauHoi ?? '',
           level: question.cap ?? 2,
         ),
-        buildNganhCNType0Sub(question, product)
+        buildNganhCNType0Sub(question, product, productCap5)
       ],
     );
   }
 
-  buildNganhCNType0Sub(
-      QuestionCommonModel question, TablePhieuNganhCN product) {
+  buildNganhCNType0Sub(QuestionCommonModel question, TablePhieuNganhCN product,
+      TablePhieuNganhCNCap5 productCap5) {
     if (question.danhSachCauHoiCon!.isNotEmpty) {
       List<QuestionCommonModel> questionCon = question.danhSachCauHoiCon!;
 
@@ -4106,11 +4529,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             QuestionCommonModel questionConItem = questionCon[index];
             switch (questionConItem.loaiCauHoi) {
               case 0:
-                return buildNganhCNType0Sub2(questionConItem, product);
+                return buildNganhCNType0Sub2(
+                    questionConItem, product, productCap5);
               case 3:
-                return renderNganhCNType4(questionConItem, product);
+                return renderNganhCNType4(
+                    questionConItem, product, productCap5);
               case 4:
-                return renderNganhCNType4(questionConItem, product);
+                return renderNganhCNType4(
+                    questionConItem, product, productCap5);
               default:
                 return Container();
             }
@@ -4119,8 +4545,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return const SizedBox();
   }
 
-  buildNganhCNType0Sub2(
-      QuestionCommonModel question, TablePhieuNganhCN product) {
+  buildNganhCNType0Sub2(QuestionCommonModel question, TablePhieuNganhCN product,
+      TablePhieuNganhCNCap5 productCap5) {
     if (question.danhSachCauHoiCon!.isNotEmpty) {
       List<QuestionCommonModel> questionCon = question.danhSachCauHoiCon!;
 
@@ -4132,11 +4558,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             QuestionCommonModel questionConItem = questionCon[index];
             switch (questionConItem.loaiCauHoi) {
               case 0:
-                return buildNganhCNType0Sub2(questionConItem, product);
+                return buildNganhCNType0Sub2(
+                    questionConItem, product, productCap5);
               case 3:
-                return renderNganhCNType4(questionConItem, product);
+                return renderNganhCNType4(
+                    questionConItem, product, productCap5);
               case 4:
-                return renderNganhCNType4(questionConItem, product);
+                return renderNganhCNType4(
+                    questionConItem, product, productCap5);
               default:
                 return Container();
             }
@@ -4145,7 +4574,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return const SizedBox();
   }
 
-  renderNganhCNType4(QuestionCommonModel question, TablePhieuNganhCN product) {
+  renderNganhCNType4(QuestionCommonModel question, TablePhieuNganhCN product,
+      TablePhieuNganhCNCap5 productCap5) {
     if (question.maCauHoi == "A1_1") {
       return Obx(() {
         var a1_1 = controller.getValueSanPham(
@@ -4194,7 +4624,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               product.id!,
               product.sTT_SanPham!,
               product.a1_1 ?? '',
-              a1_2);
+              a1_2,
+              productCap5);
         },
         child: IgnorePointer(
             child: InputStringVcpa(
@@ -4259,16 +4690,17 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.loaiCauHoi!,
               product.sTT_SanPham!,
               true),
-          maxLine: 5,
+          enable: false,
         );
       });
     } else if (question.maCauHoi == "A2_2") {
-      return renderNganhCNType3(question, product);
+      return renderNganhCNType3(question, product, productCap5);
     }
     return const SizedBox();
   }
 
-  renderNganhCNType3(QuestionCommonModel question, TablePhieuNganhCN product) {
+  renderNganhCNType3(QuestionCommonModel question, TablePhieuNganhCN product,
+      TablePhieuNganhCNCap5 productCap5) {
     var wFilterInput = RegExp('[0-9]');
     int decimalDigits = 2;
     return Obx(() {
@@ -4318,25 +4750,25 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
 /*****End: NganhCN***/
   buildNganhTM(QuestionCommonModel question, {String? subName}) {
-  //  return Obx(() {
-      if (question.danhSachCauHoiCon != null &&
-          question.danhSachCauHoiCon!.isNotEmpty) {
-        List<QuestionCommonModel> questionsCon = question.danhSachCauHoiCon!;
-        return Column(children: [
-          ListView.builder(
-              //   key: ValueKey(product),
-              itemCount: questionsCon.length,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                QuestionCommonModel questionC = questionsCon[index];
-                return buildNganhTMDetail(questionC, parentQuestion: question);
-              })
-        ]);
-      }
+    //  return Obx(() {
+    if (question.danhSachCauHoiCon != null &&
+        question.danhSachCauHoiCon!.isNotEmpty) {
+      List<QuestionCommonModel> questionsCon = question.danhSachCauHoiCon!;
+      return Column(children: [
+        ListView.builder(
+            //   key: ValueKey(product),
+            itemCount: questionsCon.length,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              QuestionCommonModel questionC = questionsCon[index];
+              return buildNganhTMDetail(questionC, parentQuestion: question);
+            })
+      ]);
+    }
 
-      return const SizedBox();
-  // });
+    return const SizedBox();
+    // });
   }
 
   buildNganhTMDetail(QuestionCommonModel mainQuestion,
@@ -4500,6 +4932,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         value: a1_1Val,
         enable: false,
         textStyle: styleMedium.copyWith(color: primaryDarkColor),
+        borderColor: greyDarkBorder,
       );
       // });
     } else if (question.maCauHoi == 'A1_2') {
@@ -4548,7 +4981,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   buildWarningText(QuestionCommonModel question, selectedValue) {
     // if (question.maCauHoi == columnPhieuMauA1_4) {
     //   if (selectedValue == 2) {
-    //     var a1_3Value = controller.getValueDmByFieldName("A1_3");
+    //     var a1_3Value = controller.getValueByFieldName(question.bangDuLieu!,"A1_3");
     //     if (a1_3Value != null) {
     //       if (a1_3Value.toString() == "6") {
     //         return const Text(
@@ -4561,7 +4994,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //   return const SizedBox();
     // } else if (question.maCauHoi == columnPhieuMauA1_5_6) {
     //   if (controller.a1_5_6MaWarning.contains(selectedValue)) {
-    //     var a1_5_3val = controller.getValueDmByFieldName("A1_5_3");
+    //     var a1_5_3val = controller.getValueByFieldName(question.bangDuLieu!,"A1_5_3");
     //     if (selectedValue == 4 ||
     //         selectedValue == 5 ||
     //         selectedValue == 6 ||

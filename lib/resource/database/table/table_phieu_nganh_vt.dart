@@ -410,6 +410,8 @@ List<String> fieldNamesPhan6HHMau = [
   colPhieuNganhVTA10_M,
 ];
 
+ 
+
 class TablePhieuNganhVT {
   int? id;
   String? iDCoSo;

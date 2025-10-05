@@ -373,7 +373,7 @@ class HomeController extends BaseController with SyncMixin {
       await insertUserInfo(dtSaveDB);
       await insertIntoDb(tableData);
       await insertDoiTuongDT(data.body!.data, dtSaveDB);
-      await insertIntoTableCoSoSxkdVaTonGiao(data.body!.data, dtSaveDB);
+      await insertIntoTableCoSoSxkd(data.body!.data, dtSaveDB);
       if (data.body!.hasDm == '1') {
         await insertDanhMucChung(data.body!, dtSaveDB);
         await insertDanhMucPhieuMau(data.body!, dtSaveDB);
@@ -404,12 +404,11 @@ class HomeController extends BaseController with SyncMixin {
     await doiTuongDieuTraProvider.insert(dsDoiTuongDT, dtSaveDB);
   }
 
-  Future insertIntoTableCoSoSxkdVaTonGiao(
+  Future insertIntoTableCoSoSxkd(
       dynamic tableData, String dtSaveDB) async {
     List<TableDmDiaBanCosoSxkd> dmDiaBanCosoSxkd =
         TableData.toListDiaBanCoSoSXKDs(tableData);
-    // List<TableDmDiaBanTonGiao> dmDiaBanTonGiao =
-    //     TableData.toListDiaBanTonGiaos(tableData);
+    
 
     List<TableBkCoSoSXKD> danhSachBkCsSxkd = [];
     for (var element in dmDiaBanCosoSxkd) {

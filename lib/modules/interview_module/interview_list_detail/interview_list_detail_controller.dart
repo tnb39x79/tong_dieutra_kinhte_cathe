@@ -11,14 +11,16 @@ import 'package:rxdart/subjects.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
 
 class InterviewListDetailController extends BaseController {
+  final InterviewListController interviewListController = Get.find();
   // maTinhTrangDT = 1 => chua pv
   // maTinhTrangDT = 9 => da pv
   static const maDoiTuongDTKey = 'maDoiTuongDT';
   static const tenDoiTuongDTKey = 'tenDoiTuongDT';
   static const maTinhTrangDTKey = 'maTinhTrangDT';
   static const maDiaBanKey = 'maDiaBan';
-  static const maDiaBanTGKey = 'maDiaBanTG';
+  static const tenDiaBanKey = 'tenDiaBan';
   static const maXaKey = 'maXa';
+  static const tenXaKey = 'tenXa';
   static const routeKey = 'routeKey';
   // controller
   final searchController = TextEditingController();
@@ -29,8 +31,9 @@ class InterviewListDetailController extends BaseController {
   String currentTenDoiTuongDT = Get.parameters[tenDoiTuongDTKey]!;
   String currentMaTinhTrangDT = Get.parameters[maTinhTrangDTKey]!;
   String? currentMaDiaBan = Get.parameters[maDiaBanKey];
-  String? currentMaDiaBanTG = Get.parameters[maDiaBanTGKey];
+  String? currentTenDiaBan = Get.parameters[tenDiaBanKey];
   String? currentMaXa = Get.parameters[maXaKey];
+  String? currentTenXa = Get.parameters[tenXaKey];
 
   //static final interviewListDetailStream = PublishSubject();
 
@@ -70,6 +73,10 @@ class InterviewListDetailController extends BaseController {
   void onClose() {
     searchController.dispose();
     super.onClose();
+  }
+
+  getSubTitle() {
+    return interviewListController.getSubTitle();
   }
 
   void backInterviewList() {
@@ -174,8 +181,8 @@ class InterviewListDetailController extends BaseController {
       danhSachBKCoSoSXXKD.clear();
       danhSachBKCoSoSXXKD.value = TableBkCoSoSXKD.listFromJson(map);
     }
-    List<Map> map =
-        await bkCoSoSXKDProvider.selectListInterviewedAll(maDoiTuongDT, maDB,currentMaXa!);
+    List<Map> map = await bkCoSoSXKDProvider.selectListInterviewedAll(
+        maDoiTuongDT, maDB, currentMaXa!);
     danhSachBKCoSoSXXKD.clear();
     danhSachBKCoSoSXXKD.value = TableBkCoSoSXKD.listFromJson(map);
   }

@@ -61,6 +61,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
       $colPhieuNganhCNA1_2  TEXT,
       $colPhieuNganhCNA2_1  TEXT,
       $colPhieuNganhCNA2_2  REAL,
+       
       $colPhieuNganhCNIsDefault INTEGER, 
       $colPhieuNganhCNIsSync INTEGER,
       $columnMaDTV  TEXT,
@@ -127,7 +128,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     return maps;
   }
 
-   Future<List<Map>> selectDistinctCap5ByIdCoso(String idCoso) async {
+  Future<List<Map>> selectDistinctCap5ByIdCoso(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> maps = await db!.rawQuery('''
@@ -144,6 +145,8 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     List<Map> maps = await db!.rawQuery('''
           SELECT * FROM $tablePhieuNganhCN 
           WHERE $columnIDCoSo = '$idCoso' 
+          AND $colPhieuNganhCNSTT_SanPham is not null
+          AND $colPhieuNganhCNMaNganhC5 is not null
           AND $colPhieuNganhCNA1_1 is not null
           AND $colPhieuNganhCNA1_2 is not null
           AND $colPhieuNganhCNA2_1 is not null
@@ -151,6 +154,16 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
           AND $columnCreatedAt = '$createdAt' ORDER BY STT
         ''');
     return maps;
+  }
+
+  Future<List<Map>> getByMaNganhC5(String idCoso, String maNganhC5) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<Map> map = await db!.query(tablePhieuNganhCN, where: '''
+      $columnCreatedAt = '$createdAt'
+      AND  $colPhieuNganhCNMaNganhC5 = '$maNganhC5'
+      AND $columnIDCoSo = '$idCoso' AND $columnMaDTV='${AppPref.uid}'
+    ''');
+    return map;
   }
 
   Future<List<Map>> selectCap1BCDEByIdCoSo(
@@ -229,6 +242,24 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     }
     return 0;
   }
+    Future<int> countMaNganhCap5ByIdCoso(String idCoso,String maNganhCap5) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    List<Map> map = await db!.rawQuery('''
+          SELECT COUNT($colPhieuNganhCNMaNganhC5) AS COUNTCAP5 FROM $tablePhieuNganhCN 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND $columnCreatedAt = '$createdAt' 
+          AND $colPhieuNganhCNMaNganhC5='$maNganhCap5'
+          GROUP BY $colPhieuNganhCNMaNganhC5
+
+        ''');
+    if (map.isNotEmpty) {
+      if (map[0] != null) {
+        return map[0]['COUNTCAP5'] ?? 0;
+      }
+    }
+    return 0;
+  }
 
   Future<bool> isExistQuestion(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -289,7 +320,6 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     ''');
     return map.isNotEmpty;
   }
- 
 
   Future<int> totalIntByMaCauHoi(
       String idCoso, int id, List<String> fieldNames) async {

@@ -1613,7 +1613,7 @@ class QuestionPhieuVTController extends BaseController with QuestionUtils {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   var tblPhieuCT;
-    //   // tblPhieuTonGiao.value.toJson();
+ 
     //   if (typing == false) {
     //     tblPhieuCT = tblPhieuMau.value.toJson();
     //   } else {
@@ -2495,7 +2495,7 @@ class QuestionPhieuVTController extends BaseController with QuestionUtils {
     }
 
     // colPhieuNganhLTA8_M <=> var fieldNameTotalA7_10 = "A7_10";
-    await phieuNganhLTProvider.updateValByIdCoSo(
+    await phieuNganhLTProvider.updateValueByIdCoSo(
         colPhieuNganhLTA8_M, totalA8M, currentIdCoSo);
     await updateAnswerTblPhieuMau(
         colPhieuNganhLTA8_M, totalA8M, tablePhieuNganhLT);
@@ -2507,7 +2507,7 @@ class QuestionPhieuVTController extends BaseController with QuestionUtils {
       totalA9M = AppUtils.roundDouble(totalA9M, 2);
     }
 
-    await phieuNganhLTProvider.updateValByIdCoSo(
+    await phieuNganhLTProvider.updateValueByIdCoSo(
         colPhieuNganhLTA9_M!, totalA9M, currentIdCoSo);
     await updateAnswerTblPhieuMau(
         colPhieuNganhLTA9_M, totalA9M, tablePhieuNganhLT);
@@ -2520,7 +2520,7 @@ class QuestionPhieuVTController extends BaseController with QuestionUtils {
     var a6MVal = a6MValue ?? 0;
     if (a10MValue >= 0 && a6MVal >= 0) {
       var a10M = a10MValue / a6MVal;
-      await phieuNganhLTProvider.updateValByIdCoSo(
+      await phieuNganhLTProvider.updateValueByIdCoSo(
           colPhieuNganhLTA10_M, a10M, currentIdCoSo);
       await updateAnswerTblPhieuMau(
           colPhieuNganhLTA10_M, a10M, tablePhieuNganhLT);
@@ -2539,7 +2539,7 @@ class QuestionPhieuVTController extends BaseController with QuestionUtils {
     // // var minValue =chiTieuCot!=null? chiTieuCot!.giaTriNN;
     // // var maxValue = chiTieuCot!=null? chiTieuCot!.giaTriLN ;
     // var tblPhieuCT;
-    // // tblPhieuTonGiao.value.toJson();
+ 
     // if (typing == false) {
     //   tblPhieuCT = tblPhieuMau.value.toJson();
     // } else {
@@ -2713,7 +2713,7 @@ class QuestionPhieuVTController extends BaseController with QuestionUtils {
     //   }
     // }
     // var tblPhieuCT;
-    // // tblPhieuTonGiao.value.toJson();
+ 
     // if (typing == false) {
     //   tblPhieuCT = tblPhieuMau.value.toJson();
     // } else {

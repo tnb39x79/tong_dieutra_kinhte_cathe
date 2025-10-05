@@ -140,7 +140,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
 
     log('UPDATE PHIEU MAU A61: $i');
   }
- Future updateValByIdCoSo(String fieldName, value, idCoSo) async {
+ Future updateValueByIdCoSo(String fieldName, value, idCoSo) async {
     String createAt = AppPref.dateTimeSaveDB!;
     Map<String, Object?> values = {
       fieldName: value,
@@ -153,7 +153,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
 
     log('UPDATE PHIEU 04: $i');
   }
-  Future updateValueByIdCoSo(String fieldName, value, columId) async {
+  Future updateValueById(String fieldName, value, columId) async {
     Map<String, Object?> values = {
       fieldName: value,
       columnUpdatedAt: DateTime.now().toIso8601String(),
