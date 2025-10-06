@@ -125,7 +125,7 @@ class SyncResultDetailItem {
   @override
   String toString() {
     return (maDiaBan == null || maDiaBan == '')
-        ? "$maXa - $ten"
-        : "$maXa - $maDiaBan - $ten";
+        ? "Xã.$maXa - $ten"
+        : "Xã.$maXa - ĐB.$maDiaBan - $ten";
   }
 }

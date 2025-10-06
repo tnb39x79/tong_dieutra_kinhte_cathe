@@ -547,8 +547,27 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         value: val,
       );
     }
-
-    if (question.maCauHoi == "A6_6" || question.maCauHoi == "A7_8_1") {
+    if (((question.maCauHoi == "A5_1" || question.maCauHoi == "A6_1") &&
+            question.maPhieu == AppDefine.maPhieuLT) ||
+        (question.maCauHoi == "A7_1_M" &&
+            question.maPhieu == AppDefine.maPhieuLTMau)) {
+      return Obx(() {
+        var axLTVal = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+        var vkey =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}}_${question.cauHoiUUID}_1_$axLTVal';
+        return InputIntView(
+          key: ValueKey(vkey),
+          question: question,
+          onChange: (value) => {},
+          value: axLTVal,
+          enable: false,
+          type: "int",
+          txtStyle: styleMediumBold.copyWith(color: primaryColor),
+          hintText: "Tự động tính.",
+        );
+      });
+    } else if (question.maCauHoi == "A6_6" || question.maCauHoi == "A7_8_1") {
       return Obx(() {
         var valA6_6_6_7 = controller.getValueByFieldName(
             question.bangDuLieu!, question.maCauHoi!);
@@ -645,7 +664,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     var val = controller.getValueByFieldName(
         question.bangDuLieu!, question.maCauHoi!);
     var wFilterInput = RegExp('[0-9]');
-    if (question.maCauHoi == "A7_M") {
+    if ((question.maCauHoi == "A7_M" || question.maCauHoi == "A7_1_M") &&
+        question.maPhieu == AppDefine.maPhieuLTMau) {
       //  return Obx(() {
       var aValue = controller.getValueByFieldName(
           question.bangDuLieu!, question.maCauHoi!);
@@ -673,6 +693,24 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         ],
       );
       //   });
+    } else if ((question.maCauHoi == "A4_M") &&
+        question.maPhieu == AppDefine.maPhieuVTMau) {
+      return Obx(() {
+        var a45VTMauVal = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+        var vkey =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}}_${question.cauHoiUUID}_1_$a45VTMauVal';
+        return InputIntView(
+          key: ValueKey(vkey),
+          question: question,
+          onChange: (value) => {},
+          value: a45VTMauVal,
+          enable: false,
+          type: "int",
+          txtStyle: styleMediumBold.copyWith(color: primaryColor),
+          hintText: "Tự động tính.",
+        );
+      });
     } else if ((question.maCauHoi == "A5" ||
             question.maCauHoi == "A6" ||
             question.maCauHoi == "A11") &&
@@ -692,6 +730,36 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           txtStyle: styleMediumBold.copyWith(color: primaryColor),
           hintText: "Tự động tính.",
         );
+      });
+    } else if ((question.maCauHoi == "A5" || question.maCauHoi == "A6") &&
+        question.maPhieu == AppDefine.maPhieuLT) {
+      return Obx(() {
+        var axLTVal = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+
+        var vkey =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}}_${question.cauHoiUUID}_1_$axLTVal';
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          InputIntView(
+            key: ValueKey(vkey),
+            question: question,
+            onChange: (value) => {},
+            value: axLTVal,
+            enable: false,
+            type: "int",
+            txtStyle: styleMediumBold.copyWith(color: primaryColor),
+            hintText: "Tự động tính.",
+          ),
+          if (question.danhSachCauHoiCon!.isNotEmpty)
+            Container(
+                margin: const EdgeInsets.all(0.0),
+                padding: const EdgeInsets.all(15.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: greyDarkBorder, width: 1),
+                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                ),
+                child: _buildQuestion3(question))
+        ]);
       });
     }
     return Obx(() {
@@ -773,14 +841,24 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maCauHoi == colPhieuMauTBA4T &&
             question.bangDuLieu == tablePhieuMauTB ||
         (question.maCauHoi == "A12" &&
-            question.maPhieu == AppDefine.maPhieuVT)) {
+            question.maPhieu == AppDefine.maPhieuVT) ||
+        ((question.maCauHoi == "A5_M" ||
+                question.maCauHoi == "A9_M" ||
+                question.maCauHoi == "A10_M") &&
+            question.maPhieu == AppDefine.maPhieuVTMau) ||
+        ((question.maCauHoi == "A7_M" ||
+                question.maCauHoi == "A7_1_M" ||
+                question.maCauHoi == "A8_M" ||
+                question.maCauHoi == "A9_M" ||
+                question.maCauHoi == "A10_M") &&
+            question.maPhieu == AppDefine.maPhieuLTMau)) {
       return Obx(() {
         var valA32 = controller.getValueByFieldName(
             question.bangDuLieu!, question.maCauHoi!);
 
         var valRep = valA32 ?? 0;
         var vkey =
-            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.cauHoiUUID}_1_$valRep';
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.maCauHoi}_${question.cauHoiUUID}_1_$valRep';
         if (valA32 == null) {}
 
         return InputIntView(
@@ -977,29 +1055,6 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       });
     }
 
-    // if (question.maCauHoi == columnPhieuMauA6_7 ||
-    //     question.maCauHoi == columnPhieuMauA7_11 ||
-    //     question.maCauHoi == columnPhieuMauA7_13 ||
-    //     question.maCauHoi == columnPhieuMauA6_13 ||
-    //     question.maCauHoi == columnPhieuMauA6_14 ||
-    //     question.maCauHoi == columnPhieuMauA7_10) {
-    //   return Obx(() {
-    //     var valA = controller.getValueByFieldName(
-    //         question.bangDuLieu!, question.maCauHoi!);
-    //     return InputInt(
-    //       key: ValueKey('${question.maPhieu}${question.maCauHoi}${question.cauHoiUUID}_$valA'),
-    //       question: question,
-    //       onChange: (value) => (),
-    //       enable: false,
-    //       subName: subName,
-    //       value: valA,
-    //       type: "double",
-    //       txtStyle: styleMediumBold.copyWith(color: primaryColor),
-    //       decimalDigits: 2,
-    //     );
-    //   });
-    // }
-
     if (question.maCauHoi == colPhieuMauTBA7_6_M) {
       return Obx(() {
         var a9_4_1Value = controller.getValueByFieldName(
@@ -1132,7 +1187,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //     );
     //   });
     // }
-    if (question.maCauHoi == colPhieuNganhVTA3_M) {
+    if (question.maCauHoi == colPhieuNganhVTA3_M &&
+        question.maPhieu == AppDefine.maPhieuVTMau) {
       controller.warningA6_5SoKmBQ();
       return Obx(() {
         var a6_5Value = controller.getValueByFieldName(
@@ -1163,7 +1219,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         );
       });
     }
-    if (question.maCauHoi == colPhieuNganhVTA7_M) {
+    if (question.maCauHoi == colPhieuNganhVTA7_M &&
+        question.maPhieu == AppDefine.maPhieuVTMau) {
       controller.warningA6_11KhoiLuongHHBQ();
       return Obx(() {
         var a6_11Value = controller.getValueByFieldName(
@@ -1194,7 +1251,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         );
       });
     }
-    if (question.maCauHoi == colPhieuNganhVTA8_M) {
+    if (question.maCauHoi == colPhieuNganhVTA8_M &&
+        question.maPhieu == AppDefine.maPhieuVTMau) {
       controller.warningA6_12SoKmBQ();
       return Obx(() {
         var a6_12Value = controller.getValueByFieldName(
@@ -2522,16 +2580,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           String addNewCaption = '';
           String orderCaption = '';
           if (ghiRoItem.maCauHoi == "A1_13") {
-            addNewCaption = 'Xe ô tô khác';
+            addNewCaption = 'Thêm Xe ô tô khác';
             orderCaption = 'Xe ô tô khác $idxSp';
           } else if (ghiRoItem.maCauHoi == "A1_15") {
-            addNewCaption = 'Phương tiện chở khách khác';
+            addNewCaption = 'Thêm Phương tiện chở khách khác';
             orderCaption = 'Phương tiện chở khách khác $idxSp';
           } else if (ghiRoItem.maCauHoi == "A7_17") {
-            addNewCaption = 'Ô tô tải khác';
+            addNewCaption = 'Thêm Ô tô tải khác';
             orderCaption = 'Ô tô tải khác $idxSp';
           } else if (ghiRoItem.maCauHoi == "A7_18") {
-            addNewCaption = 'Phương tiện chở hàng khác';
+            addNewCaption = 'Thêm Phương tiện chở hàng khác';
             orderCaption = 'Phương tiện chở hàng khác $idxSp';
           }
           return Column(
@@ -2683,6 +2741,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             ghiRoItem.maCauHoi!,
             ghiRoItem.sTT!,
             id: ghiRoItem.id!);
+
         var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
         return Column(
           children: [
@@ -2938,7 +2997,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             question.maCauHoi == "A1" &&
             question.maPhieu == AppDefine.maPhieuLT) &&
         fieldNameLoaiKhac == colPhieuNganhLTA1_5_1) {
-      var fieldNameGhiRo = '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_GhiRo';
+      var fieldNameGhiRo = colPhieuNganhLTA1_5_GhiRo;
       var ghiRoValue =
           controller.getValueByFieldName(question.bangDuLieu!, fieldNameGhiRo);
 
@@ -5000,8 +5059,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     } else if (question.maCauHoi == 'A1_2') {
       var wFilterInput = RegExp('[0-9]');
       int decimalDigits = 2;
-      var val;
-      var dvt = '';
+      var val = product.a1_2;
+      var dvt = 'Triệu đồng';
       // var a5_1_2Val = controller.getValueSanPham(
       //     question.bangDuLieu!, 'A1_2', product.id!);
 

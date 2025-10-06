@@ -235,7 +235,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
           AND $colPhieuMauTBSanPhamA5_1_1 is not null
           AND $colPhieuMauTBSanPhamA5_1_2 is not null 
           AND $colPhieuMauTBSanPhamA5_2 is not null 
-          AND $columnCreatedAt = '$createdAt' ORDER BY STT
+          AND $columnCreatedAt = '$createdAt' ORDER BY STT_SanPham
         ''');
     return maps;
   }

@@ -86,24 +86,24 @@ mixin SyncMixin {
     await Future.wait(danhSachBkCoSoSXKDInterviewed.map((item) async {
       var map = {
         "LoaiPhieu": item.loaiPhieu,
-        "IDCoso": item.iDCoSo,
-        "TenCoso": item.tenCoSo,
+        "IDCoso": item.iDCoSo, 
         "MaTinh": item.maTinh,
         "MaTKCS": item.maTKCS,
-        "MaXa": item.maXa,
-        "MaDiaBan": item.maDiaBan,
-        "TenDiaBan": item.tenDiaBan,
+        "MaXa": item.maXa, 
         "MaThon": item.maThon,
         "TenThon": item.tenThon,
+         "MaDiaBan": item.maDiaBan,
+        "TenDiaBan": item.tenDiaBan,
+        "TenCoso": item.tenCoSo,
         "DiaChi": item.diaChi,
         "DienThoai": item.dienThoai,
         "Email": item.email,
         "MaTinhTrangHD": item.maTinhTrangHD,
       };
 
-      Map phieuMaus = await getPhieuMaus(item.iDCoSo!);
-      if (phieuMaus.isNotEmpty) {
-        map['PhieuMau'] = phieuMaus;
+      Map phieuMauTBs = await getPhieuMauTBs(item.iDCoSo!);
+      if (phieuMauTBs.isNotEmpty) {
+        map['PhieuMauTB'] = phieuMauTBs;
       }
 
       cosoSX.add(map);
@@ -112,24 +112,31 @@ mixin SyncMixin {
     body['CoSoSXKDData'] = cosoSX;
   }
 
-  Future<Map> getPhieuMaus(String iDCoSo) async {
+  Future<Map> getPhieuMauTBs(String iDCoSo) async {
     Map mapPhieu = {};
 
     Map phieu = await phieuMixProvider.selectByIdCoSo(iDCoSo);
+
     Map phieuMauTB = await phieuMauTBMixProvider.selectByIdCoSo(iDCoSo);
+
     List<Map> phieuMauTBSanPhams =
         await phieuMauTBSanPhamMixProvider.selectByIdCosoSync(iDCoSo);
+
     List<Map> phieuNganhCNs =
         await phieuNganhCNMixProvider.selectByIdCosoSync(iDCoSo);
-    List<Map> phieuNganhLTs =
+
+    Map phieuNganhLTs =
         await phieuNganhLTMixProvider.selectByIdCoSoSync(iDCoSo);
 
-    List<Map> phieuNganhTMs =
+    Map phieuNganhTMs =
         await phieuNganhTMMixProvider.selectByIdCoSoSync(iDCoSo);
+
     List<Map> phieuNganhTMSanPhams =
         await phieuNganhTMSanphamMixProvider.selectByIdCoSoSync(iDCoSo);
-    List<Map> phieuNganhVTs =
+
+    Map phieuNganhVTs =
         await phieuNganhVTMixProvider.selectByIdCoSoSync(iDCoSo);
+
     List<Map> phieuNganhVTGhiRos =
         await phieuNganhVTGhiRoMixProvider.selectByIdCosoSync(iDCoSo);
 

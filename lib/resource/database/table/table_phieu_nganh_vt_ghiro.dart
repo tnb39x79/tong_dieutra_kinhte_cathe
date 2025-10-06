@@ -23,8 +23,8 @@ class TablePhieuNganhVTGhiRo {
   String? cGhiRo;
   int? c_1;
   int? c_2;
-  int? c_3;
-  int? c_4;
+  double? c_3;
+  double? c_4;
 
   String? maDTV;
   String? createdAt;

@@ -284,19 +284,18 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     return map.isNotEmpty ? map[0] : {};
   }
 
-  Future<List<Map>> selectByIdCoSoSync(String idCoso) async {
+  Future<Map> selectByIdCoSoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
-    List<Map> maps = await db!.rawQuery('''
+    List<Map> map = await db!.rawQuery('''
           SELECT * FROM $tablePhieuNganhVT 
           WHERE $columnIDCoSo = '$idCoso' 
-          AND $colPhieuNganhVTA1_1_1  TEXT, is not null
-          AND $colPhieuNganhVTA1_1_2  TEXT, is not null 
-          AND $columnCreatedAt = '$createdAt' ORDER BY STT
+          AND $colPhieuNganhVTA1_1_1 is not null
+          AND $colPhieuNganhVTA1_1_2 is not null 
+          AND $columnCreatedAt = '$createdAt' 
         ''');
-    return maps;
+    return map.isNotEmpty ? map[0] : {};
   }
- 
 
   Future<bool> isExistQuestion(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -315,10 +314,8 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     ''');
     return map.isNotEmpty;
   }
- 
 
-  Future<int> totalIntByMaCauHoi(
-      String idCoso, List<String> fieldNames) async {
+  Future<int> totalIntByMaCauHoi(String idCoso, List<String> fieldNames) async {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -341,7 +338,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
   }
 
   Future<double> totalDoubleByMaCauHoi(
-      String idCoso,   List<String> fieldNames, String tongVsTich) async {
+      String idCoso, List<String> fieldNames, String tongVsTich) async {
     double result = 0.0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -351,6 +348,29 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     }
     String sql =
         "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso'    AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+    List<Map> map = await db!.rawQuery(sql);
+
+    for (var item in map) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result = value;
+        }
+      });
+    }
+    return result;
+  }
+
+  Future<int> totalSubtractIntByMaCauHoi(
+      String idCoso, List<String> fieldNames) async {
+    int result = 0;
+
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<String> fields = [];
+    for (var item in fieldNames) {
+      fields.add("IFNULL($item,0)");
+    }
+    String sql =
+        "SELECT ${fields.join('*')} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {

@@ -58,8 +58,8 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
       $colPhieuNganhVTGhiRoCGhiRo  TEXT,
       $colPhieuNganhVTGhiRoC1  INTEGER,
       $colPhieuNganhVTGhiRoC2  INTEGER,
-      $colPhieuNganhVTGhiRoC3  INTEGER,
-      $colPhieuNganhVTGhiRoC4  INTEGER,
+      $colPhieuNganhVTGhiRoC3  REAL,
+      $colPhieuNganhVTGhiRoC4  REAL,
       $columnMaDTV  TEXT,
       $columnCreatedAt TEXT,
       $columnUpdatedAt TEXT
@@ -141,12 +141,12 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
     List<Map> maps = await db!.rawQuery('''
           SELECT * FROM $tablePhieuNganhVTGhiRo 
           WHERE $columnIDCoSo = '$idCoso' 
-          AND $colPhieuNganhVTGhiRoMaCauHoi  TEXT, is not null
-          AND $colPhieuNganhVTGhiRoSTT  TEXT, is not null
-          AND $colPhieuNganhVTGhiRoC1  TEXT, is not null
-          AND $colPhieuNganhVTGhiRoC2  TEXT, is not null 
-          AND $colPhieuNganhVTGhiRoC3  TEXT, is not null 
-          AND $colPhieuNganhVTGhiRoC4  TEXT, is not null 
+          AND $colPhieuNganhVTGhiRoMaCauHoi is not null
+          AND $colPhieuNganhVTGhiRoSTT is not null
+          AND $colPhieuNganhVTGhiRoC1 is not null
+          AND $colPhieuNganhVTGhiRoC2 is not null 
+          AND $colPhieuNganhVTGhiRoC3 is not null 
+          AND $colPhieuNganhVTGhiRoC4 is not null 
           AND $columnCreatedAt = '$createdAt' ORDER BY STT
         ''');
     return maps;
@@ -271,7 +271,7 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
   }
 
   Future<int> tongTaiTrongA1_1315(String idCoso) async {
-    int result = 0;
+    double result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
 
@@ -286,16 +286,17 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
         }
       });
     }
-    return result;
+   int res=result.toInt();
+    return res;
   }
 
-  Future<double> tongSoLuongA7_1718(String idCoso) async {
-    double result = 0.0;
+  Future<int> tongSoLuongA7_1718(String idCoso) async {
+    int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
 
     String sql =
-        "SELECT SUM($colPhieuNganhVTGhiRoC2) as total FROM $tablePhieuNganhVTGhiRo  WHERE $columnIDCoSo = '$idCoso' AND $colPhieuNganhVTGhiRoMaCauHoi in('A1_17','A1_18')  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "SELECT SUM($colPhieuNganhVTGhiRoC2) as total FROM $tablePhieuNganhVTGhiRo  WHERE $columnIDCoSo = '$idCoso' AND $colPhieuNganhVTGhiRoMaCauHoi in('A7_17','A7_18')  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {
@@ -314,7 +315,7 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     String sql =
-        "SELECT SUM($colPhieuNganhVTGhiRoC4) as total FROM $tablePhieuNganhVTGhiRo  WHERE $columnIDCoSo = '$idCoso' AND $colPhieuNganhVTGhiRoMaCauHoi in('A1_17','A1_18')  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "SELECT SUM($colPhieuNganhVTGhiRoC4) as total FROM $tablePhieuNganhVTGhiRo  WHERE $columnIDCoSo = '$idCoso' AND $colPhieuNganhVTGhiRoMaCauHoi in('A7_17','A7_18')  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {

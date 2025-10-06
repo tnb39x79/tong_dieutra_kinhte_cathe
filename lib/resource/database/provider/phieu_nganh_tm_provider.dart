@@ -132,21 +132,20 @@ class PhieuNganhTMProvider extends BaseDBProvider<TablePhieuNganhTM> {
     return map.isNotEmpty ? map[0] : {};
   }
 
-  Future<List<Map>> selectByIdCoSoSync(String idCoso) async {
+  Future<Map> selectByIdCoSoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
-    List<Map> maps = await db!.rawQuery('''
+    List<Map> map = await db!.rawQuery('''
           SELECT * FROM $tablePhieuNganhTM 
           WHERE $columnIDCoSo = '$idCoso' 
-          AND $colPhieuNganhTMA1T  TEXT, is not null
-          AND $colPhieuNganhTMA2  TEXT, is not null
-          AND $colPhieuNganhTMA3  TEXT, is not null
-          AND $colPhieuNganhTMA3T  TEXT, is not null 
-          AND $columnCreatedAt = '$createdAt' ORDER BY STT
+          AND $colPhieuNganhTMA1T is not null
+          AND $colPhieuNganhTMA2 is not null
+          AND $colPhieuNganhTMA3 is not null
+          AND $colPhieuNganhTMA3T is not null 
+          AND $columnCreatedAt = '$createdAt' 
         ''');
-    return maps;
+    return map.isNotEmpty ? map[0] : {};
   }
- 
 
   Future<bool> isExistQuestion(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -156,7 +155,6 @@ class PhieuNganhTMProvider extends BaseDBProvider<TablePhieuNganhTM> {
     ''');
     return map.isNotEmpty;
   }
- 
 
   Future<int> totalIntByMaCauHoi(
       String idCoso, int id, List<String> fieldNames) async {

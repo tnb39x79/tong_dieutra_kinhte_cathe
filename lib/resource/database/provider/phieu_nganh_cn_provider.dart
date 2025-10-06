@@ -151,7 +151,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
           AND $colPhieuNganhCNA1_2 is not null
           AND $colPhieuNganhCNA2_1 is not null
           AND $colPhieuNganhCNA2_2 is not null 
-          AND $columnCreatedAt = '$createdAt' ORDER BY STT
+          AND $columnCreatedAt = '$createdAt' ORDER BY $colPhieuNganhCNSTT_SanPham
         ''');
     return maps;
   }
@@ -207,7 +207,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
       }
     }
     return 0;
-    // return map.isNotEmpty ? map[0]['STT'] : 0;
+    
   }
 
   Future<int> getIsDefaultByIdCoso(String idCoso) async {

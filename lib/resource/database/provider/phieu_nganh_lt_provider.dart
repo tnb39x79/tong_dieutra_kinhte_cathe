@@ -208,7 +208,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     List<Map> maps = await db!.rawQuery('''
           SELECT * FROM $tablePhieuNganhLT
           WHERE $columnIDCoSo = '$idCoso'
-          AND $columnCreatedAt = '$createdAt' ORDER BY STT
+          AND $columnCreatedAt = '$createdAt'  
         ''');
     return maps;
   }
@@ -224,17 +224,17 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     return map.isNotEmpty ? map[0] : {};
   }
 
-  Future<List<Map>> selectByIdCoSoSync(String idCoso) async {
+  Future<Map> selectByIdCoSoSync(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
-    List<Map> maps = await db!.rawQuery('''
+    List<Map> map = await db!.rawQuery('''
           SELECT * FROM $tablePhieuNganhLT 
           WHERE $columnIDCoSo = '$idCoso' 
           AND $colPhieuNganhLTA1_1_1 is not null
           AND $colPhieuNganhLTA1_1_2 is not null 
-          AND $columnCreatedAt = '$createdAt' ORDER BY STT
+          AND $columnCreatedAt = '$createdAt'  
         ''');
-    return maps;
+    return map.isNotEmpty ? map[0] : {};
   }
 
   Future<bool> isExistQuestion(String idCoso) async {
@@ -247,7 +247,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
   }
  
   Future<int> totalIntByMaCauHoi(
-      String idCoso, int id, List<String> fieldNames, String tongVsTich) async {
+      String idCoso, List<String> fieldNames, String tongVsTich) async {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -256,7 +256,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
       fields.add("IFNULL($item,0)");
     }
     String sql =
-        "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhLT  WHERE $columnIDCoSo = '$idCoso' AND $columnId=$id  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhLT  WHERE $columnIDCoSo = '$idCoso'  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {

@@ -345,8 +345,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   /// Fetch Data các bảng của phiếu
   Future fetchData() async {
-    Map questionPhieuMap =
-        await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
+    Map questionPhieuMap = await phieuProvider.selectByIdCoSo(currentIdCoSo!);
     Map questionPhieuMauTBMap =
         await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
     if (questionPhieuMauTBMap.isNotEmpty) {
@@ -486,8 +485,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     Map questionVTMap =
         await phieuNganhVTProvider.selectByIdCoSo(currentIdCoSo!);
 
-    tblPhieuNganhLT.value = TablePhieuNganhLT.fromJson(questionVTMap)!;
-    tblPhieuNganhLT.refresh();
+    tblPhieuNganhVT.value = TablePhieuNganhVT.fromJson(questionVTMap)!;
+    tblPhieuNganhVT.refresh();
   }
 
   Future getTablePhieuNganhVTGhiRo() async {
@@ -1471,7 +1470,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     log('ON onChangeInput: $fieldName $value');
 
     try {
-      updateAnswerToDB(table, fieldName ?? "", value);
+      await updateAnswerToDB(table, fieldName ?? "", value);
       if (maCauHoi == colPhieuMauTBA3_2) {
         await updateAnswerDongCotToDB(table, fieldName!, value,
             fieldNames: fieldNameA3T,
@@ -1503,12 +1502,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
         if (maCauHoi == colPhieuNganhVTA1_M ||
             maCauHoi == colPhieuNganhVTA2_M) {
-          var fieldNameTotalA6_6 = colPhieuNganhVTA4_M;
-          var fieldNamesA6_3_6_4 = [colPhieuNganhVTA1_M, colPhieuNganhVTA2_M];
-          await updateAnswerDongCotToDB(table, fieldName!, value,
-              fieldNames: fieldNamesA6_3_6_4,
-              fieldNameTotal: fieldNameTotalA6_6,
-              maCauHoi: maCauHoi);
+          await tinhSoLuotKhachVanChuyenA4VTMau();
 
           if (maCauHoi == colPhieuNganhVTA2_M) {
             await warningA6_4SoKhachBQ();
@@ -1516,24 +1510,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
 
         if (maCauHoi == colPhieuNganhVTA3_M) {
-          var fieldNameTotalA6_7 = colPhieuNganhVTA5_M;
-          var fieldNamesA6_5 = [colPhieuNganhVTA3_M, colPhieuNganhVTA4_M];
-          await updateAnswerDongCotToDB(table, fieldName!, value,
-              fieldNames: fieldNamesA6_5,
-              fieldNameTotal: fieldNameTotalA6_7,
-              maCauHoi: maCauHoi);
-
+          await tinhSoLuotKhachLuanChuyenA4VTMau();
           await warningA6_5SoKmBQ();
         }
 
         if (maCauHoi == colPhieuNganhVTA6_M ||
             maCauHoi == colPhieuNganhVTA7_M) {
-          var fieldNameTotalA6_13 = colPhieuNganhVTA9_M;
-          var fieldNamesA6_13 = [colPhieuNganhVTA6_M, colPhieuNganhVTA7_M];
-          await updateAnswerDongCotToDB(table, fieldName!, value,
-              fieldNames: fieldNamesA6_13,
-              fieldNameTotal: fieldNameTotalA6_13,
-              maCauHoi: maCauHoi);
+          await tinhKhoiLuongHangHoaVanChuyenA9MVTMau();
 
           if (maCauHoi == colPhieuNganhVTA7_M) {
             await warningA6_11KhoiLuongHHBQ();
@@ -1541,12 +1524,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           await tinhCapNhatA6_13_A6_14();
         }
         if (maCauHoi == colPhieuNganhVTA8_M) {
-          var fieldNameTotalA6_14 = colPhieuNganhVTA10_M;
-          var fieldNamesA6_14 = [colPhieuNganhVTA8_M, colPhieuNganhVTA9_M];
-          await updateAnswerDongCotToDB(table, fieldName!, value,
-              fieldNames: fieldNamesA6_14,
-              fieldNameTotal: fieldNameTotalA6_14,
-              maCauHoi: maCauHoi);
+          await tinhKhoiLuongHangHoaLuanChuyenA9MVTMau();
 
           await warningA6_12SoKmBQ();
           await tinhCapNhatA6_13_A6_14();
@@ -1574,8 +1552,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             maCauHoi: maCauHoi);
       }
       if (maCauHoi == colPhieuNganhTMA3 && table == tablePhieuNganhTM) {
-        var total3TValue = await totalA3TNganhtTM();
-        updateAnswerToDB(tablePhieuNganhTM, colPhieuNganhTMA3T, total3TValue);
+        // var total3TValue = await totalA3TNganhtTM();
+        // updateAnswerToDB(tablePhieuNganhTM, colPhieuNganhTMA3T, total3TValue);
+        await tinhTongTriGiaVonCau3TNganhTM();
       }
     } catch (e) {
       printError(info: e.toString());
@@ -1614,18 +1593,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       map.update(fieldName, (val) => value, ifAbsent: () => value);
       answerTblPhieuMau.value = map;
       answerTblPhieuMau.refresh();
-    } else if (table == tablePhieuNganhLT) {
-      Map<String, dynamic> map =
-          Map<String, dynamic>.from(answerTblPhieuNganhLT);
-      map.update(fieldName, (val) => value, ifAbsent: () => value);
-      answerTblPhieuNganhLT.value = map;
-      answerTblPhieuNganhLT.refresh();
     } else if (table == tablePhieuNganhVT) {
       Map<String, dynamic> map =
           Map<String, dynamic>.from(answerTblPhieuNganhVT);
       map.update(fieldName, (val) => value, ifAbsent: () => value);
       answerTblPhieuNganhVT.value = map;
       answerTblPhieuNganhVT.refresh();
+    } else if (table == tablePhieuNganhLT) {
+      Map<String, dynamic> map =
+          Map<String, dynamic>.from(answerTblPhieuNganhLT);
+      map.update(fieldName, (val) => value, ifAbsent: () => value);
+      answerTblPhieuNganhLT.value = map;
+      answerTblPhieuNganhLT.refresh();
     }
   }
 
@@ -2382,9 +2361,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       {String? fieldNameGhiRo}) {
     log('onChangeGhiRoDm Mã câu hỏi ${question.maCauHoi} ${question.bangChiTieu}');
     String fieldName = '${question.maCauHoi}_GhiRo';
-    if (question.maCauHoi == "A1_7" ||
-        (question.maCauHoi == "A7_1" &&
-            question.maPhieu == AppDefine.maPhieuLT)) {
+    if ((question.maCauHoi == "A1" &&
+        question.maPhieu == AppDefine.maPhieuLT)) {
       fieldName = fieldNameGhiRo!;
     }
     updateAnswerToDB(question.bangDuLieu!, fieldName, value);
@@ -2503,30 +2481,29 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               fieldNameTotal: colPhieuMauTBA3T,
               maCauHoi: maCauHoi);
         }
-
-        //   if (maCauHoi == "A7_1") {
-        //     if (a7_1FieldWarning.contains(fieldName)) {
-        //       await warningA7_1_X3SoPhongTangMoi(chiTieuDong!.maSo!);
-        //     }
-        //   }
-        //   List<String> fieldNames = [];
-        //   String fieldNameTotal = "";
-        //   await updateAnswerDongCotToDB(table, fieldName!, value,
-        //       fieldNames: fieldNames,
-        //       fieldNameTotal: fieldNameTotal,
-        //       maCauHoi: maCauHoi);
       } else if (table == tablePhieuNganhVT) {
         if (isA1NganhVT(question!, chiTieuDong!, chiTieuCot!)) {
           await updateAnswerDongCotToDB(table, fieldName!, value,
               maCauHoi: maCauHoi);
           await tinhTongTaiTrongA1NganhVT(
               question, table, chiTieuDong, chiTieuCot);
+          await tinhTongA5A6NganhVT(question);
         } else if (isA7NganhVT(question, chiTieuDong, chiTieuCot)) {
           await updateAnswerDongCotToDB(table, fieldName!, value,
               maCauHoi: maCauHoi);
           await tinhTongTaiTrongA7NganhVT(
               question, table, chiTieuDong, chiTieuCot);
+          await tinhTongA11A12NganhVT(question);
         }
+      } else if (table == tablePhieuNganhLT) {
+        // if (maCauHoi == "A1" && question!.maPhieu == AppDefine.maPhieuLT) {
+        //   if (a7_1FieldWarning.contains(fieldName)) {
+        //     await warningA7_1_X3SoPhongTangMoi(chiTieuDong!.maSo!);
+        //   }
+        // }
+        await updateAnswerDongCotToDB(table, fieldName!, value,
+            maCauHoi: maCauHoi);
+        await tinhTongSoPhongA5LT(question!);
       }
     } catch (e) {
       printError(info: e.toString());
@@ -2559,13 +2536,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               fieldNameTotal!, total, currentIdCoSo);
           await updateAnswerTblPhieuMau(fieldNameTotal, total, table);
         }
-        // if (maCauHoi == "A6_3" || maCauHoi == "A6_4") {
-        //   var total = await phieuMauProvider.totalSubtractIntByMaCauHoi(
-        //       currentIdCoSo!, fieldNames!);
-        //   await phieuMauProvider.updateValue(
-        //       fieldNameTotal!, total, currentIdCoSo);
-        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
-        // } else if (maCauHoi == "A4_1" ||
+        //  else if ((maCauHoi == colPhieuNganhVTA1_M || maCauHoi == colPhieuNganhVTA2_M) && table==tablePhieuNganhVT) {
+        //     var total = await phieuNganhVTProvider.totalSubtractIntByMaCauHoi(
+        //         currentIdCoSo!, fieldNames!);
+        //     await phieuNganhVTProvider.updateValue(
+        //         fieldNameTotal!, total, currentIdCoSo);
+        //     await updateAnswerTblPhieuMau(fieldNameTotal, total,tablePhieuNganhVT);
+        //   }
+        // else if (maCauHoi == "A4_1" ||
         //     maCauHoi == "A4_2" ||
         //     maCauHoi == "A6_10" ||
         //     maCauHoi == "A6_11" ||
@@ -2604,42 +2582,20 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
       //     var a7_12Value = getValueDmByFieldName('A7_12') ?? 0;
       //     await tinhUpdateA10M(a7_12Value);
-      //     // var totalA5_2 = await phieuMauSanPhamProvider.totalA5_2ByMaVcpaCap2(
-      //     //     currentIdCoSo!, vcpaCap2LT);
-      //     // //Tinh cho cau A7_10
-      //     // var totalA7_10 = (value * totalA5_2) / 100;
-      //     // if (totalA7_10 > 0) {
-      //     //   totalA7_10 = AppUtils.roundDouble(totalA7_10, 2);
-      //     // }
 
-      //     // var fieldNameTotalA7_10 = "A7_10";
-      //     // await phieuMauProvider.updateValue(
-      //     //     fieldNameTotalA7_10!, totalA7_10, currentIdCoSo);
-      //     // await updateAnswerTblPhieuMau(fieldNameTotalA7_10, totalA7_10);
-      //     // //Tính cho câu A7_11
-      //     // var totalA7_11 = totalA5_2 - totalA7_10;
-
-      //     // if (totalA7_11 > 0) {
-      //     //   totalA7_11 = AppUtils.roundDouble(totalA7_11, 2);
-      //     // }
-      //     // var fieldNameTotalA7_11 = "A7_11";
-      //     // await phieuMauProvider.updateValue(
-      //     //     fieldNameTotalA7_11!, totalA7_11, currentIdCoSo);
-      //     // await updateAnswerTblPhieuMau(fieldNameTotalA7_11, totalA7_11);
       //   }
       //   if (maCauHoi == "A7_12") {
       //     await tinhUpdateA10M(value);
-      //     // var a7_10Value = getValueDmByFieldName('A7_10');
-      //     // if (a7_10Value >= 0 && value > 0) {
-      //     //   var a7_13 = a7_10Value / value;
-      //     //   await phieuMauProvider.updateValue('A7_13', a7_13, currentIdCoSo);
-      //     //   await updateAnswerTblPhieuMau('A7_13', a7_13);
-      //     // }
+
       //   }
       // } else {
       //   snackBar("dialog_title_warning".tr, "data_table_undefine".tr);
     } else if (table == tablePhieuNganhVT) {
       await phieuNganhVTProvider.updateValueByIdCoSo(
+          fieldName, value, currentIdCoSo);
+      await updateAnswerTblPhieuMau(fieldName, value, table);
+    } else if (table == tablePhieuNganhLT) {
+      await phieuNganhLTProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo);
       await updateAnswerTblPhieuMau(fieldName, value, table);
     }
@@ -4941,6 +4897,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       } else if (table == tablePhieuNganhCN) {
         await updateToDbSanPham(table, fieldName!, idValue, value);
         if (maCauHoi == "A1_2") {}
+      } else if (table == tablePhieuNganhTMSanPham) {
+        await updateToDbSanPham(table, fieldName!, idValue, value);
       }
     } catch (e) {
       printError(info: e.toString());
@@ -4955,25 +4913,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     var sumA5_2 = await phieuMauTBSanPhamProvider.totalA5_2(currentIdCoSo);
     var total = a4_1Val * sumA5_2;
-
-    return total;
-  }
-
-  totalA3TNganhtTM() async {
-    var a4_1Value = answerTblPhieuMau['A4_1'];
-    var a4_1Val = 0.0;
-    if (a4_1Value != null) {
-      a4_1Val = AppUtils.convertStringToDouble(a4_1Value);
-    }
-
-    var a3Value =
-        getValueByFieldNameFromDB(tablePhieuNganhTM, colPhieuNganhTMA3);
-
-    var a3Val = 0.0;
-    if (a3Value != null) {
-      a3Val = AppUtils.convertStringToDouble(a3Value);
-    }
-    var total = a3Val * a4_1Val;
 
     return total;
   }
@@ -5068,6 +5007,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           fieldName, value, currentIdCoSo, idValue);
       if (fieldName == colPhieuNganhCNA1_2) {}
       await getTablePhieuNganhCN();
+    } else if (table == tablePhieuNganhTMSanPham) {
+      await phieuNganhTMSanphamProvider.updateValueByIdCoso(
+          fieldName, value, currentIdCoSo, idValue);
+      await tinhTongTriGiaVonCau1TNganhTM();
     }
   }
 
@@ -5453,21 +5396,30 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
       if (maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuLT) {
         if (value != 1) {
-          Get.dialog(DialogBarrierWidget(
-            onPressedNegative: () async {
-              await backYesValueForYesNoQuestionLTA1(
-                  table, maCauHoi, fieldName, 1, question);
-            },
-            onPressedPositive: () async {
-              updateAnswerToDB(table, fieldName!, value);
-              await executeOnChangeYesNoQuestionLTA1(
-                  table, value, chiTieuDong!, chiTieuCot!);
-              Get.back();
-            },
-            title: 'dialog_title_warning'.tr,
-            content: 'dialog_content_warning_select_no_chitieu'.tr,
-          ));
+          var hasData =
+              kiemTraDuLieuLTA1ChiTieu(table, value, chiTieuDong!, chiTieuCot!);
+          if (hasData) {
+            Get.dialog(DialogBarrierWidget(
+              onPressedNegative: () async {
+                await backYesValueForYesNoQuestionLTA1(
+                    table, maCauHoi, fieldName, 1, question);
+              },
+              onPressedPositive: () async {
+                updateAnswerToDB(table, fieldName!, value);
+                updateAnswerTblPhieuMau(fieldName, value, table);
+                await executeOnChangeYesNoQuestionLTA1(
+                    table, value, chiTieuDong!, chiTieuCot!);
+                Get.back();
+              },
+              title: 'dialog_title_warning'.tr,
+              content: 'dialog_content_warning_select_no_chitieu'.tr,
+            ));
+          } else {
+            updateAnswerToDB(table, fieldName!, value);
+            updateAnswerTblPhieuMau(fieldName, value, table);
+          }
         }
+        tinhTongSoPhongA5LT(question);
       }
     } catch (e) {
       printError(info: e.toString());
@@ -5476,28 +5428,45 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   backYesValueForYesNoQuestionLTA1(
       String table, String? maCauHoi, String? fieldName, value, dmItem) async {
-    updateAnswerToDB(table, fieldName!, 1);
-    updateAnswerTblPhieuMau(fieldName, value, table);
+    await updateAnswerToDB(table, fieldName!, 1);
+    await updateAnswerTblPhieuMau(fieldName, 1, table);
     Get.back();
   }
 
   executeOnChangeYesNoQuestionLTA1(table, value, ChiTieuDongModel chiTieuDong,
       ChiTieuModel chiTieuCot) async {
-    log('ON executeOnChangeYesNoQuestionA4_2:  $value');
+    log('ON executeOnChangeYesNoQuestionLTA1:  $value');
 
     try {
       if (value != 1) {
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 2; i <= 6; i++) {
           var fieldNameDel = '${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_$i';
-          updateAnswerToDB(table, fieldNameDel, null);
-          updateAnswerTblPhieuMau(fieldNameDel, null, table);
+          await updateAnswerToDB(table, fieldNameDel, null);
+          await updateAnswerTblPhieuMau(fieldNameDel, null, table);
         }
-        updateAnswerToDB(table, 'A7_1_5_GhiRo', null);
-        updateAnswerTblPhieuMau('A7_1_5_GhiRo', null, table);
+        await updateAnswerToDB(table, colPhieuNganhLTA1_5_GhiRo, null);
+        await updateAnswerTblPhieuMau(colPhieuNganhLTA1_5_GhiRo, null, table);
       }
     } catch (e) {
       printError(info: e.toString());
     }
+  }
+
+  kiemTraDuLieuLTA1ChiTieu(
+      table, value, ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot) {
+    List<dynamic> result = [];
+    for (int i = 2; i <= 6; i++) {
+      var fieldName = '${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_$i';
+      var val = getValueByFieldName(table, fieldName);
+      if (val != null && val != '') {
+        result.add(val);
+      }
+    }
+    var valGhiRo = getValueByFieldName(table, colPhieuNganhLTA1_5_GhiRo);
+    if (valGhiRo != null) {
+      result.add(valGhiRo);
+    }
+    return result.isNotEmpty;
   }
 
   ///END::PHẦN VII
@@ -5986,7 +5955,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             updateAnswerPhieuVTGhiRoToDB(
                 colPhieuNganhVTGhiRoCGhiRo, null, ghiRoItem!.id!);
           }
-          tinhTongA5A6NganhVT(question);
+          tinhTongA11A12NganhVT(question);
         }
       } else if (isA1NganhVT(question, chiTieuDong, chiTieuCot)) {
         String soLuongFieldName = '${question.maCauHoi}_${chiTieuDong.maSo}_2';
@@ -6148,6 +6117,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         await phieuNganhVTGhiRoProvider.tongTaiTrongA1_1315(currentIdCoSo!);
     tongSoLuong = tongSoLuong + tongSoLuongA1_1315;
     tongTaiTrong = tongTaiTrong + tongTaiTrongA1_1315;
+
     await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA5, tongSoLuong);
     await updateAnswerTblPhieuMau(
         colPhieuNganhVTA5, tongSoLuong, tablePhieuNganhVT);
@@ -6178,7 +6148,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   Future tinhTongA11A12NganhVT(QuestionCommonModel question) async {
-    double tongSoLuong = 0.0;
+    int tongSoLuong = 0;
     double tongTaiTrong = 0.0;
     var dsChiTieuDong = question.danhSachChiTieuIO;
     if (dsChiTieuDong != null) {
@@ -6194,25 +6164,25 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           taiTrongFieldNames.add(taiTrongFieldName);
         }
       }
-      tongSoLuong = await phieuNganhVTProvider.totalDoubleByMaCauHoi(
-          currentIdCoSo!, soLuongFieldNames,'+');
+      tongSoLuong = await phieuNganhVTProvider.totalIntByMaCauHoi(
+          currentIdCoSo!, soLuongFieldNames);
       tongTaiTrong = await phieuNganhVTProvider.totalDoubleByMaCauHoi(
-          currentIdCoSo!, taiTrongFieldNames,'+');
+          currentIdCoSo!, taiTrongFieldNames, '+');
     }
-    double tongSoLuongA7_1718 =
+    int tongSoLuongA7_1718 =
         await phieuNganhVTGhiRoProvider.tongSoLuongA7_1718(currentIdCoSo!);
 
     double tongTaiTrongA7_1718 =
         await phieuNganhVTGhiRoProvider.tongTaiTrongA7_1718(currentIdCoSo!);
     tongSoLuong = tongSoLuong + tongSoLuongA7_1718;
     tongTaiTrong = tongTaiTrong + tongTaiTrongA7_1718;
-    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA5, tongSoLuong);
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA11, tongSoLuong);
     await updateAnswerTblPhieuMau(
-        colPhieuNganhVTA5, tongSoLuong, tablePhieuNganhVT);
+        colPhieuNganhVTA11, tongSoLuong, tablePhieuNganhVT);
     //Tong tai trong
-    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA6, tongTaiTrong);
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA12, tongTaiTrong);
     await updateAnswerTblPhieuMau(
-        colPhieuNganhVTA6, tongTaiTrong, tablePhieuNganhVT);
+        colPhieuNganhVTA12, tongTaiTrong, tablePhieuNganhVT);
   }
 
   Future<double> tinhTongTaiTrongA7GhiRoNganhVT(
@@ -6278,7 +6248,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             await tinhTongTaiTrongA1GhiRoNganhVT(question,
                 tablePhieuNganhVTGhiRo, chiTieuDong, chiTieuCot, ghiRoItem);
             await tinhTongA5A6NganhVT(question);
-             
           }
         } else if (isA7GhiRoF(question, chiTieuDong, chiTieuCot)) {
           if (fieldName == colPhieuNganhVTGhiRoC2 ||
@@ -6306,6 +6275,44 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       printError(info: e.toString());
     }
   }
+
+  ///4. SỐ LƯỢT HÀNH KHÁCH VẬN CHUYỂN (PM TỰ TÍNH= 1*2)
+  Future tinhSoLuotKhachVanChuyenA4VTMau() async {
+    var fieldNamesA1_MA2_M = [colPhieuNganhVTA1_M, colPhieuNganhVTA2_M];
+    int tich = await phieuNganhVTProvider.totalSubtractIntByMaCauHoi(
+        currentIdCoSo!, fieldNamesA1_MA2_M);
+
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA4_M, tich);
+    await updateAnswerTblPhieuMau(colPhieuNganhVTA4_M, tich, tablePhieuNganhVT);
+  }
+
+  ///5. SỐ LƯỢT HÀNH KHÁCH LUÂN CHUYỂN (PM TỰ TÍNH= 4*3)
+  Future tinhSoLuotKhachLuanChuyenA4VTMau() async {
+    var fieldNamesA3_MA4_M = [colPhieuNganhVTA3_M, colPhieuNganhVTA4_M];
+    double tich = await phieuNganhVTProvider.totalDoubleByMaCauHoi(
+        currentIdCoSo!, fieldNamesA3_MA4_M, "*");
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA5_M, tich);
+    await updateAnswerTblPhieuMau(colPhieuNganhVTA5_M, tich, tablePhieuNganhVT);
+  }
+
+  Future tinhKhoiLuongHangHoaVanChuyenA9MVTMau() async {
+    var fieldNamesA6_MA7M = [colPhieuNganhVTA6_M, colPhieuNganhVTA7_M];
+    double tich = await phieuNganhVTProvider.totalDoubleByMaCauHoi(
+        currentIdCoSo!, fieldNamesA6_MA7M, "*");
+
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA9_M, tich);
+    await updateAnswerTblPhieuMau(colPhieuNganhVTA9_M, tich, tablePhieuNganhVT);
+  }
+
+  Future tinhKhoiLuongHangHoaLuanChuyenA9MVTMau() async {
+    var fieldNamesA8_MA9_M = [colPhieuNganhVTA8_M, colPhieuNganhVTA9_M];
+    double tich = await phieuNganhVTProvider.totalDoubleByMaCauHoi(
+        currentIdCoSo!, fieldNamesA8_MA9_M, "*");
+
+    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA10_M, tich);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhVTA10_M, tich, tablePhieuNganhVT);
+  }
 /*****END::NGANH VT********/
 
   /// ***BEGIN::NGANH LT*******
@@ -6331,6 +6338,79 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return hasC2_56LT;
   }
 
+  bool isA1NganhLT(QuestionCommonModel question, ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot) {
+    return (question.maCauHoi == "A1" &&
+        question.maPhieu == AppDefine.maPhieuLT);
+  }
+
+  Future tinhTongSoPhongA5LT(QuestionCommonModel question) async {
+    int tongSoPhong = 0;
+    int tongSoPhongTang = 0;
+    int tongSoGuong = 0;
+    int tongSoGuongTang = 0;
+
+    var dsChiTieuDong = question.danhSachChiTieuIO;
+    if (dsChiTieuDong != null) {
+      List<String> soPhongFieldNames = [];
+      List<String> soPhongTangFieldNames = [];
+      List<String> soGuongFieldNames = [];
+      List<String> soGuongTangFieldNames = [];
+
+      for (var chiTieuDong in dsChiTieuDong) {
+        var soPhongFieldName =
+            '${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_3';
+        var soPhongTangFieldName =
+            '${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_4';
+        var soGuongFieldName =
+            '${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_5';
+        var soGuongTangFieldName =
+            '${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_6';
+        soPhongFieldNames.add(soPhongFieldName);
+        soPhongTangFieldNames.add(soPhongTangFieldName);
+        soGuongFieldNames.add(soGuongFieldName);
+        soGuongTangFieldNames.add(soGuongTangFieldName);
+      }
+
+      ///5.  TỔNG SỐ PHÒNG TẠI 31/12/2025:
+      tongSoPhong = await phieuNganhLTProvider.totalIntByMaCauHoi(
+          currentIdCoSo!, soPhongFieldNames, "+");
+
+      ///5.1. TỔNG SỐ PHÒNG TĂNG MỚI TRONG NĂM 2025:
+      tongSoPhongTang = await phieuNganhLTProvider.totalIntByMaCauHoi(
+          currentIdCoSo!, soPhongTangFieldNames, "+");
+
+      /// 6. TỔNG SỐ GIƯỜNG TẠI 31/12/2025:
+      tongSoGuong = await phieuNganhLTProvider.totalIntByMaCauHoi(
+          currentIdCoSo!, soGuongFieldNames, "+");
+
+      /// 6.1. TỔNG SỐ GIƯỜNG TĂNG MỚI TRONG NĂM 2025:
+      tongSoGuongTang = await phieuNganhLTProvider.totalIntByMaCauHoi(
+          currentIdCoSo!, soGuongTangFieldNames, "+");
+    }
+
+    ///5.  TỔNG SỐ PHÒNG TẠI 31/12/2025:
+    await updateAnswerToDB(tablePhieuNganhLT, colPhieuNganhLTA5, tongSoPhong);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA5, tongSoPhong, tablePhieuNganhLT);
+
+    ///5.1. TỔNG SỐ PHÒNG TĂNG MỚI TRONG NĂM 2025:
+    await updateAnswerToDB(
+        tablePhieuNganhLT, colPhieuNganhLTA5_1, tongSoPhongTang);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA5_1, tongSoPhongTang, tablePhieuNganhLT);
+
+    /// 6. TỔNG SỐ GIƯỜNG TẠI 31/12/2025:
+    await updateAnswerToDB(tablePhieuNganhLT, colPhieuNganhLTA6, tongSoGuong);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA6, tongSoGuong, tablePhieuNganhLT);
+
+    /// 6.1. TỔNG SỐ GIƯỜNG TĂNG MỚI TRONG NĂM 2025:
+    await updateAnswerToDB(
+        tablePhieuNganhLT, colPhieuNganhLTA6_1, tongSoGuongTang);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA6_1, tongSoGuongTang, tablePhieuNganhLT);
+  }
 /*****BEGIN::NGANH LT********/
 
   /// ***BEGIN::NGANH TM*******
@@ -6391,6 +6471,62 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     }
   }
+
+  ///"1T. TRỊ GIÁ VỐN HÀNG BÁN (TỔNG CÂU 1 * CÂU 4.1- PHIẾU TB)"
+  Future<double> tinhTongTriGiaVonCau1TNganhTM() async {
+    double result = 0.0;
+    int a4_1TBValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+    double tong =
+        await phieuNganhTMSanphamProvider.tongTriGiaVonCau1T(currentIdCoSo!);
+    if (a4_1TBValue != null && a4_1TBValue >= 0) {
+      result = tong * a4_1TBValue;
+    }
+    await phieuNganhTMProvider.updateValueByIdCoSo(
+        colPhieuNganhTMA1T, result, currentIdCoSo!);
+    await getTablePhieuNganhTM();
+    await getTablePhieuNganhTMSanPham();
+    return result;
+  }
+
+  ///"3T. TRỊ GIÁ VỐN HÀNG CHUYỂN BÁN  (CÂU 3 *CÂU 4.1 - PHIẾU TB)"
+  Future<double> tinhTongTriGiaVonCau3TNganhTM() async {
+    double result = 0.0;
+    int a4_1TBValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+    var a3TMValue = getValueByFieldName(tablePhieuNganhTM, colPhieuNganhTMA3);
+    double a3TMVal = 0.0;
+    if (a3TMValue != null) {
+      a3TMVal = AppUtils.convertStringToDouble(a3TMValue);
+    }
+    if (a4_1TBValue != null &&
+        a4_1TBValue >= 0 &&
+        a3TMValue != null &&
+        a3TMValue >= 0) {
+      result = a4_1TBValue * a3TMVal;
+    }
+    await phieuNganhTMProvider.updateValueByIdCoSo(
+        colPhieuNganhTMA3T, result, currentIdCoSo!);
+    await getTablePhieuNganhTM();
+    return result;
+  }
+
+  // totalA3TNganhtTM() async {
+  //   var a4_1Value = answerTblPhieuMau['A4_1'];
+  //   var a4_1Val = 0.0;
+  //   if (a4_1Value != null) {
+  //     a4_1Val = AppUtils.convertStringToDouble(a4_1Value);
+  //   }
+
+  //   var a3Value =
+  //       getValueByFieldNameFromDB(tablePhieuNganhTM, colPhieuNganhTMA3);
+
+  //   var a3Val = 0.0;
+  //   if (a3Value != null) {
+  //     a3Val = AppUtils.convertStringToDouble(a3Value);
+  //   }
+  //   var total = a3Val * a4_1Val;
+
+  //   return total;
+  // }
 
 /*****BEGIN::NGANH TM********/
   ///
