@@ -1184,6 +1184,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     var res6810 = await validateNganhTM6810();
     if (res56 != "" && res6810 != "") {
       return "nganhTM";
+    }else  if (res56 != "" && res6810 == "") {
+      return "";
     } else if (res56 != "") {
       return res56;
     } else if (res6810 != "") {
@@ -1500,57 +1502,53 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
       //Van tai mẫu
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
-        if (maCauHoi == colPhieuNganhVTA1_M ||
-            maCauHoi == colPhieuNganhVTA2_M) {
-          await tinhSoLuotKhachVanChuyenA4VTMau();
+        if (table == tablePhieuNganhVT) {
+          if (maCauHoi == colPhieuNganhVTA1_M ||
+              maCauHoi == colPhieuNganhVTA2_M) {
+            await tinhSoLuotKhachVanChuyenA4VTMau();
 
-          if (maCauHoi == colPhieuNganhVTA2_M) {
-            await warningA6_4SoKhachBQ();
+            if (maCauHoi == colPhieuNganhVTA2_M) {
+              await warningA6_4SoKhachBQ();
+            }
+          }
+
+          if (maCauHoi == colPhieuNganhVTA3_M) {
+            await tinhSoLuotKhachLuanChuyenA4VTMau();
+            await warningA6_5SoKmBQ();
+          }
+
+          if (maCauHoi == colPhieuNganhVTA6_M ||
+              maCauHoi == colPhieuNganhVTA7_M) {
+            await tinhKhoiLuongHangHoaVanChuyenA9MVTMau();
+
+            if (maCauHoi == colPhieuNganhVTA7_M) {
+              await warningA6_11KhoiLuongHHBQ();
+            }
+          }
+          if (maCauHoi == colPhieuNganhVTA8_M) {
+            await tinhKhoiLuongHangHoaLuanChuyenA9MVTMau();
+
+            await warningA6_12SoKmBQ();
+          }
+        } else if (table == tablePhieuNganhLT) {
+          if (maCauHoi == colPhieuNganhLTA1_M ||
+              maCauHoi == colPhieuNganhLTA2_M) {
+            await tinhTongLuotKhachBQ1Thang();
+          }
+          if (maCauHoi == colPhieuNganhLTA1_1_M ||
+              maCauHoi == colPhieuNganhLTA2_1_M) {
+            await tinhTongLuotKhachBQ1ThangQuocTe();
+          }
+          if (maCauHoi == colPhieuNganhLTA5_M) {
+            await tinhDoanhThuKhachNguQuaDem();
+            await tinhDoanhThuKhachKhongNguQuaDem();
+          }
+          if (maCauHoi == colPhieuNganhLTA6_M) {
+            await soNgayKhachDoCsPhucVu();
           }
         }
-
-        if (maCauHoi == colPhieuNganhVTA3_M) {
-          await tinhSoLuotKhachLuanChuyenA4VTMau();
-          await warningA6_5SoKmBQ();
-        }
-
-        if (maCauHoi == colPhieuNganhVTA6_M ||
-            maCauHoi == colPhieuNganhVTA7_M) {
-          await tinhKhoiLuongHangHoaVanChuyenA9MVTMau();
-
-          if (maCauHoi == colPhieuNganhVTA7_M) {
-            await warningA6_11KhoiLuongHHBQ();
-          }
-          await tinhCapNhatA6_13_A6_14();
-        }
-        if (maCauHoi == colPhieuNganhVTA8_M) {
-          await tinhKhoiLuongHangHoaLuanChuyenA9MVTMau();
-
-          await warningA6_12SoKmBQ();
-          await tinhCapNhatA6_13_A6_14();
-        }
       }
-      if (maCauHoi == colPhieuNganhLTA1_M || maCauHoi == colPhieuNganhLTA2_M) {
-        // var fieldNameTotalA7x = "A7_8";
-        // var fieldNamesA7x = ['A7_6', 'A7_7'];
-        // await updateAnswerDongCotToDB(table, fieldName!, value,
-        //     fieldNames: fieldNamesA7x,
-        //     fieldNameTotal: fieldNameTotalA7x,
-        //     maCauHoi: maCauHoi);
-      }
-      if (maCauHoi == colPhieuNganhLTA1_1_M ||
-          maCauHoi == colPhieuNganhLTA2_1_M) {
-        // var fieldNameTotalA7x = "A7_8_1";
-        // var fieldNamesA7x = ['A7_6_1', 'A7_7_1'];
-        // await updateAnswerDongCotToDB(table, fieldName!, value,
-        //     fieldNames: fieldNamesA7x,
-        //     fieldNameTotal: fieldNameTotalA7x,
-        //     maCauHoi: maCauHoi);
-      }
-      if (maCauHoi == colPhieuNganhLTA5_M || maCauHoi == colPhieuNganhLTA6_M) {
-        await updateAnswerDongCotToDB(table, fieldName!, value,
-            maCauHoi: maCauHoi);
-      }
+
       if (maCauHoi == colPhieuNganhTMA3 && table == tablePhieuNganhTM) {
         // var total3TValue = await totalA3TNganhtTM();
         // updateAnswerToDB(tablePhieuNganhTM, colPhieuNganhTMA3T, total3TValue);
@@ -2536,60 +2534,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               fieldNameTotal!, total, currentIdCoSo);
           await updateAnswerTblPhieuMau(fieldNameTotal, total, table);
         }
-        //  else if ((maCauHoi == colPhieuNganhVTA1_M || maCauHoi == colPhieuNganhVTA2_M) && table==tablePhieuNganhVT) {
-        //     var total = await phieuNganhVTProvider.totalSubtractIntByMaCauHoi(
-        //         currentIdCoSo!, fieldNames!);
-        //     await phieuNganhVTProvider.updateValue(
-        //         fieldNameTotal!, total, currentIdCoSo);
-        //     await updateAnswerTblPhieuMau(fieldNameTotal, total,tablePhieuNganhVT);
-        //   }
-        // else if (maCauHoi == "A4_1" ||
-        //     maCauHoi == "A4_2" ||
-        //     maCauHoi == "A6_10" ||
-        //     maCauHoi == "A6_11" ||
-        //     maCauHoi == "A6_12") {
-        //   var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
-        //       currentIdCoSo!, fieldNames!);
-        //   await phieuMauProvider.updateValue(
-        //       fieldNameTotal!, total, currentIdCoSo);
-        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
-        // } else if (maCauHoi == "A6_5") {
-        //   var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
-        //       currentIdCoSo!, fieldNames!);
-        //   var totalRounded = AppUtils.roundDouble(total, 2);
-        //   await phieuMauProvider.updateValue(
-        //       fieldNameTotal!, totalRounded, currentIdCoSo);
-        //   await updateAnswerTblPhieuMau(fieldNameTotal, totalRounded);
-        // } else if (maCauHoi == "A7_6" ||
-        //     maCauHoi == "A7_7" ||
-        //     maCauHoi == "A7_6_1" ||
-        //     maCauHoi == "A7_7_1") {
-        //   var total = await phieuMauProvider.totalIntByMaCauHoi(
-        //       currentIdCoSo!, fieldNames!);
-        //   await phieuMauProvider.updateValue(
-        //       fieldNameTotal!, total, currentIdCoSo);
-        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
-        // } else {
-        //   var total = await phieuMauTBProvider.totalDoubleByMaCauHoi(
-        //       currentIdCoSo!, fieldNames!);
-        //   await phieuMauTBProvider.updateValue(
-        //       fieldNameTotal!, total, currentIdCoSo);
-        //   await updateAnswerTblPhieuMau(fieldNameTotal, total);
-        // }
       }
-      //   if (maCauHoi == "A7_9") {
-      //     await tinhCapNhatA8_M_A9_M_A10_M(value);
-
-      //     var a7_12Value = getValueDmByFieldName('A7_12') ?? 0;
-      //     await tinhUpdateA10M(a7_12Value);
-
-      //   }
-      //   if (maCauHoi == "A7_12") {
-      //     await tinhUpdateA10M(value);
-
-      //   }
-      // } else {
-      //   snackBar("dialog_title_warning".tr, "data_table_undefine".tr);
     } else if (table == tablePhieuNganhVT) {
       await phieuNganhVTProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo);
@@ -2598,66 +2543,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       await phieuNganhLTProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo);
       await updateAnswerTblPhieuMau(fieldName, value, table);
-    }
-  }
-
-  tinhCapNhatA6_13_A6_14() async {
-    var fieldNameTotalA6_14 = "A6_14";
-    var fieldNamesA6_14 = ['A6_12', 'A6_13'];
-
-    // var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
-    //     currentIdCoSo!, fieldNamesA6_14!);
-    // await phieuMauProvider.updateValue(
-    //     fieldNameTotalA6_14, total, currentIdCoSo);
-    // await updateAnswerTblPhieuMau(fieldNameTotalA6_14, total);
-  }
-
-  ///A8_M, A9_M, A10_M
-  ///A8_M <=> A7_10
-  ///A9_M <=> A7_11
-  ///A10_M <=> A7_13
-  ///tinhCapNhatA8_M_A9_M_A10_M
-  tinhCapNhatA8_M_A9_M_A10_M(a8MValue) async {
-    var totalA5_2 = await phieuMauTBSanPhamProvider.totalA5_2ByMaVcpaCap2(
-        currentIdCoSo!, vcpaCap2LT);
-    //Tinh cho cau A8 (cũ A7_10)
-    //8. DOANH THU KHÁCH NGỦ QUA ĐÊM (=CÂU 5.2 CỦA PHIẾU TB x Câu 5)/100)
-    var totalA8M = (a8MValue * totalA5_2) / 100;
-    if (totalA8M > 0) {
-      totalA8M = AppUtils.roundDouble(totalA8M, 2);
-    }
-
-    // colPhieuNganhLTA8_M <=> var fieldNameTotalA7_10 = "A7_10";
-    await phieuNganhLTProvider.updateValueByIdCoSo(
-        colPhieuNganhLTA8_M, totalA8M, currentIdCoSo);
-    await updateAnswerTblPhieuMau(
-        colPhieuNganhLTA8_M, totalA8M, tablePhieuNganhLT);
-    //Tính cho câu A9_M <=> A7_11
-    //9. DOANH THU KHÁCH KHÔNG NGỦ QUA ĐÊM (= CÂU 5.2 CỦA PHIẾU TB - câu 8)
-    var totalA9M = totalA5_2 - totalA8M;
-
-    if (totalA9M > 0) {
-      totalA9M = AppUtils.roundDouble(totalA9M, 2);
-    }
-
-    await phieuNganhLTProvider.updateValueByIdCoSo(
-        colPhieuNganhLTA9_M!, totalA9M, currentIdCoSo);
-    await updateAnswerTblPhieuMau(
-        colPhieuNganhLTA9_M, totalA9M, tablePhieuNganhLT);
-  }
-
-  ///A10_M <=> A7_13
-  tinhUpdateA10M(a6MValue) async {
-    var a10MValue =
-        getValueByFieldName(tablePhieuMauTB, colPhieuNganhLTA10_M) ?? 0;
-
-    var a6MVal = a6MValue ?? 0;
-    if (a10MValue >= 0 && a6MVal >= 0) {
-      var a10M = a10MValue / a6MVal;
-      await phieuNganhLTProvider.updateValueByIdCoSo(
-          colPhieuNganhLTA10_M, a10M, currentIdCoSo);
-      await updateAnswerTblPhieuMau(
-          colPhieuNganhLTA10_M, a10M, tablePhieuNganhLT);
     }
   }
 
@@ -6411,7 +6296,138 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await updateAnswerTblPhieuMau(
         colPhieuNganhLTA6_1, tongSoGuongTang, tablePhieuNganhLT);
   }
-/*****BEGIN::NGANH LT********/
+
+  ///7.TỔNG SỐ LƯỢT KHÁCH CỦA CƠ SỞ BÌNH QUÂN 1 THÁNG NĂM 2025 (=1+2)
+  Future tinhTongLuotKhachBQ1Thang() async {
+    var a1MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA1_M);
+    var a2MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA2_M);
+    var a1MLTVal = AppUtils.convertStringToInt(a1MLT);
+    var a2MLTVal = AppUtils.convertStringToInt(a2MLT);
+    int tong = a1MLTVal + a2MLTVal;
+    await updateAnswerToDB(tablePhieuNganhLT, colPhieuNganhLTA7_M, tong);
+    await updateAnswerTblPhieuMau(colPhieuNganhLTA7_M, tong, tablePhieuNganhLT);
+  }
+
+  ///7.1.TRONG ĐÓ: LƯỢT KHÁCH QUỐC TẾ (1.1+2.1)
+  Future tinhTongLuotKhachBQ1ThangQuocTe() async {
+    var a1MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA1_1_M);
+    var a2MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA2_1_M);
+    var a1MLTVal = AppUtils.convertStringToInt(a1MLT);
+    var a2MLTVal = AppUtils.convertStringToInt(a2MLT);
+    int tong = a1MLTVal + a2MLTVal;
+    await updateAnswerToDB(tablePhieuNganhLT, colPhieuNganhLTA7_1_M, tong);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA7_1_M, tong, tablePhieuNganhLT);
+  }
+
+  ///8. DOANH THU KHÁCH NGỦ QUA ĐÊM (=CÂU 5.2 CỦA PHIẾU TB x Câu 5)/100)
+  Future tinhDoanhThuKhachNguQuaDem() async {
+    var totalA5_2 = await phieuMauTBSanPhamProvider.totalA5_2ByMaVcpaCap2(
+        currentIdCoSo!, vcpaCap2LT);
+    var a5MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA5_M);
+
+    var a5MLTVAl = AppUtils.convertStringAndFixedToDouble(a5MLT);
+    var a8MLTVal = (totalA5_2 * a5MLTVAl) / 100;
+    if (a8MLTVal > 0) {
+      a8MLTVal = AppUtils.roundDouble(a8MLTVal, 2);
+    }
+    await updateAnswerToDB(tablePhieuNganhLT, colPhieuNganhLTA8_M, a8MLTVal);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA8_M, a8MLTVal, tablePhieuNganhLT);
+  }
+
+  Future tinhDoanhThuKhachKhongNguQuaDem() async {
+    var totalA5_2 = await phieuMauTBSanPhamProvider.totalA5_2ByMaVcpaCap2(
+        currentIdCoSo!, vcpaCap2LT);
+    var a8MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA8_M);
+
+    var a8MLTVal = AppUtils.convertStringAndFixedToDouble(a8MLT);
+    var a9MLTVal = totalA5_2 - a8MLTVal;
+    if (a8MLTVal > 0) {
+      a8MLTVal = AppUtils.roundDouble(a8MLTVal, 2);
+    }
+    await updateAnswerToDB(tablePhieuNganhLT, colPhieuNganhLTA9_M, a9MLTVal);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA9_M, a9MLTVal, tablePhieuNganhLT);
+  }
+
+  ///10. SỐ NGÀY KHÁCH DO CƠ SỞ LƯU TRÚ PHỤC VỤ =(8/6)
+  Future soNgayKhachDoCsPhucVu() async {
+    var a6MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA6_M);
+    var a8MLT = getValueByFieldName(tablePhieuNganhLT, colPhieuNganhLTA8_M);
+    var a6MLTVal = AppUtils.convertStringAndFixedToDouble(a6MLT);
+    var a8MLTVal = AppUtils.convertStringAndFixedToDouble(a8MLT);
+
+    if (a6MLT>0 && a8MLTVal > 0) {
+      var a10MLTVal = a8MLTVal / a6MLTVal;
+      a10MLTVal = AppUtils.roundDouble(a10MLTVal, 2);
+      await updateAnswerToDB(
+          tablePhieuNganhLT, colPhieuNganhLTA10_M, a10MLTVal);
+      await updateAnswerTblPhieuMau(
+          colPhieuNganhLTA10_M, a10MLTVal, tablePhieuNganhLT);
+    }
+  }
+
+  tinhCapNhatA6_13_A6_14() async {
+    var fieldNameTotalA6_14 = "A6_14";
+    var fieldNamesA6_14 = ['A6_12', 'A6_13'];
+
+    // var total = await phieuMauProvider.totalSubtractDoubleByMaCauHoi(
+    //     currentIdCoSo!, fieldNamesA6_14!);
+    // await phieuMauProvider.updateValue(
+    //     fieldNameTotalA6_14, total, currentIdCoSo);
+    // await updateAnswerTblPhieuMau(fieldNameTotalA6_14, total);
+  }
+
+  ///A8_M, A9_M, A10_M
+  ///A8_M <=> A7_10
+  ///A9_M <=> A7_11
+  ///A10_M <=> A7_13
+  ///tinhCapNhatA8_M_A9_M_A10_M
+  tinhCapNhatA8_M_A9_M_A10_M(a8MValue) async {
+    var totalA5_2 = await phieuMauTBSanPhamProvider.totalA5_2ByMaVcpaCap2(
+        currentIdCoSo!, vcpaCap2LT);
+    //Tinh cho cau A8 (cũ A7_10)
+    //8. DOANH THU KHÁCH NGỦ QUA ĐÊM (=CÂU 5.2 CỦA PHIẾU TB x Câu 5)/100)
+    var totalA8M = (a8MValue * totalA5_2) / 100;
+    if (totalA8M > 0) {
+      totalA8M = AppUtils.roundDouble(totalA8M, 2);
+    }
+
+    // colPhieuNganhLTA8_M <=> var fieldNameTotalA7_10 = "A7_10";
+    await phieuNganhLTProvider.updateValueByIdCoSo(
+        colPhieuNganhLTA8_M, totalA8M, currentIdCoSo);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA8_M, totalA8M, tablePhieuNganhLT);
+    //Tính cho câu A9_M <=> A7_11
+    //9. DOANH THU KHÁCH KHÔNG NGỦ QUA ĐÊM (= CÂU 5.2 CỦA PHIẾU TB - câu 8)
+    var totalA9M = totalA5_2 - totalA8M;
+
+    if (totalA9M > 0) {
+      totalA9M = AppUtils.roundDouble(totalA9M, 2);
+    }
+
+    await phieuNganhLTProvider.updateValueByIdCoSo(
+        colPhieuNganhLTA9_M!, totalA9M, currentIdCoSo);
+    await updateAnswerTblPhieuMau(
+        colPhieuNganhLTA9_M, totalA9M, tablePhieuNganhLT);
+  }
+
+  ///A10_M <=> A7_13
+  tinhUpdateA10M(a6MValue) async {
+    var a10MValue =
+        getValueByFieldName(tablePhieuMauTB, colPhieuNganhLTA10_M) ?? 0;
+
+    var a6MVal = a6MValue ?? 0;
+    if (a10MValue >= 0 && a6MVal >= 0) {
+      var a10M = a10MValue / a6MVal;
+      await phieuNganhLTProvider.updateValueByIdCoSo(
+          colPhieuNganhLTA10_M, a10M, currentIdCoSo);
+      await updateAnswerTblPhieuMau(
+          colPhieuNganhLTA10_M, a10M, tablePhieuNganhLT);
+    }
+  }
+/*****END::NGANH LT********/
 
   /// ***BEGIN::NGANH TM*******
   Future<(bool, bool)> updateDataNganhTM() async {
@@ -6422,7 +6438,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       await insertUpdateNganhTMSanpham();
     }
 
-    if ((hasC2_56TM)) {
+    if ((hasC2_56TM ||(has5G8610TM))) {
       var res = await phieuNganhTMProvider.isExistQuestion(currentIdCoSo!);
       if (res == false) {
         var tblSp =

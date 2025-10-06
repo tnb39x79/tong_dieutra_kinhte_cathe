@@ -16,6 +16,9 @@ import 'package:gov_statistics_investigation_economic/resource/model/question/qu
 import 'package:gov_statistics_investigation_economic/resource/model/store/dm_common_model.dart';
 
 mixin QuestionUtils {
+
+
+
   ///Lấy danh sách nhóm câu hỏi có trên màn hình để hiển thị lên sidebar
   Future<List<QuestionGroup>> getQuestionGroups(
       String maDoiTuongDT, String idCoSo) async {

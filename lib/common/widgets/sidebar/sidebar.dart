@@ -119,7 +119,7 @@ class SideBar extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color:
-                           backgroundColor, // White shadow with some transparency
+                           Colors.white, // White shadow with some transparency
                         spreadRadius: 5, // How much the shadow spreads
                         blurRadius: 10, // How blurry the shadow is
                         offset: Offset(0, 5), // X and Y offset of the shadow

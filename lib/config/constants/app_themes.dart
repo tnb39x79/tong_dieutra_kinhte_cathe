@@ -41,4 +41,26 @@ class CustomTheme {
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
   }
+
+   static ThemeData get lightThemeMau {
+    return ThemeData(
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: backgroundColorMau,
+      fontFamily: inter,
+      buttonTheme: ButtonThemeData(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
+        buttonColor: primaryColor,
+      ),
+      appBarTheme: const AppBarTheme(
+        color: primaryColor,
+        elevation: 0.0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent, // Status bar
+        ),
+        foregroundColor: Colors.white
+      ),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    );
+  }
 }

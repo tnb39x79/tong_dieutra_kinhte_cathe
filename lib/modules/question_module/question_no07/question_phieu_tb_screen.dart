@@ -441,8 +441,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               .toList()
               .join('; ')
           : '';
-    } else if (question.maCauHoi == maCauHoiLT &&
-        question.maPhieu == AppDefine.maPhieuLT) {
+    } else if ((question.maCauHoi == maCauHoiLT &&
+            question.maPhieu == AppDefine.maPhieuLT) ||
+        (question.maCauHoi == maCauHoiLTMau &&
+            question.maPhieu == AppDefine.maPhieuLTMau)) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamLT.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamLT
               .map((p) => p.a5_1_1!)
@@ -666,33 +668,38 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     var wFilterInput = RegExp('[0-9]');
     if ((question.maCauHoi == "A7_M" || question.maCauHoi == "A7_1_M") &&
         question.maPhieu == AppDefine.maPhieuLTMau) {
-      //  return Obx(() {
-      var aValue = controller.getValueByFieldName(
-          question.bangDuLieu!, question.maCauHoi!);
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InputInt(
-            key: ValueKey(
-                '${question.maPhieu}${question.maCauHoi}${question.cauHoiUUID}'),
-            question: question,
-            onChange: (value) => (),
-            enable: false,
-            subName: subName,
-            value: aValue,
-          ),
-          if (question.danhSachCauHoiCon!.isNotEmpty)
-            Container(
-                margin: const EdgeInsets.all(0.0),
-                padding: const EdgeInsets.all(15.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: greyDarkBorder, width: 1),
-                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                ),
-                child: _buildQuestion3(question))
-        ],
-      );
-      //   });
+      return Obx(() {
+        var aValue = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
+
+        var vkey =
+            '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}}_${question.cauHoiUUID}_1_$aValue';
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InputIntView(
+              key: ValueKey(vkey),
+              question: question,
+              onChange: (value) => {},
+              value: aValue,
+              enable: false,
+              type: "int",
+              txtStyle: styleMediumBold.copyWith(color: primaryColor),
+              hintText: "Tự động tính.",
+            ),
+            if (question.danhSachCauHoiCon!.isNotEmpty)
+              Container(
+                  margin: const EdgeInsets.all(0.0),
+                  padding: const EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: greyDarkBorder, width: 1),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                  child: _buildQuestion3(question))
+          ],
+        );
+      });
     } else if ((question.maCauHoi == "A4_M") &&
         question.maPhieu == AppDefine.maPhieuVTMau) {
       return Obx(() {
@@ -4623,8 +4630,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       {QuestionCommonModel? parentQestion}) {
     var wFilterInput = RegExp('[0-9]');
     int decimalDigits = 0;
-    var a5_1_2Val =
-        controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
+   
+   
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -5025,7 +5032,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   buildNganhTMItem(
       QuestionCommonModel question, TablePhieuNganhTMSanPham product,
       {QuestionCommonModel? parentQestion}) {
-    controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
+   // controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
     //  switch (question.maCauHoi) {
     //  case "A1":
     return Column(
@@ -5041,7 +5048,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   renderNganhTMType(
       QuestionCommonModel question, TablePhieuNganhTMSanPham product) {
     if (question.maCauHoi == "A1_1") {
-      var a1_1Val = controller.getValueSanPham(tablePhieuMauTBSanPham,
+      var a1_1Val = controller.getValueSanPhamByStt(tablePhieuMauTBSanPham,
           colPhieuMauTBSanPhamA5_1_1, product.sTT_SanPham!);
       String vkey =
           '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTT_SanPham}';
