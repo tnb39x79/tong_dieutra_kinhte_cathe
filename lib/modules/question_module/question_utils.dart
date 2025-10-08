@@ -17,7 +17,7 @@ import 'package:gov_statistics_investigation_economic/resource/model/store/dm_co
 
 mixin QuestionUtils {
 
-
+ 
 
   ///Lấy danh sách nhóm câu hỏi có trên màn hình để hiển thị lên sidebar
   Future<List<QuestionGroup>> getQuestionGroups(
@@ -321,7 +321,7 @@ mixin QuestionUtils {
                 maCauHoiCha: item.maCauHoiCha,
                 tenCauHoi: item.tenCauHoi,
                 sTT: item.sTT,
-                hienThi: item.hienThi,
+                tenHienThi: item.tenHienThi,
                 cap: item.cap,
                 maSo: item.maSo,
                 dVT: item.dVT,
@@ -381,7 +381,7 @@ mixin QuestionUtils {
               maCauHoiCha: item.maCauHoiCha,
               tenCauHoi: item.tenCauHoi,
               sTT: item.sTT,
-              hienThi: item.hienThi,
+              tenHienThi: item.tenHienThi,
               cap: item.cap,
               maSo: item.maSo,
               dVT: item.dVT,
@@ -414,7 +414,7 @@ mixin QuestionUtils {
               maCauHoiCha: item.maCauHoiCha,
               tenCauHoi: item.tenCauHoi,
               sTT: item.sTT,
-              hienThi: item.hienThi,
+              tenHienThi: item.tenHienThi,
               cap: item.cap,
               maSo: item.maSo,
               dVT: item.dVT,
@@ -448,7 +448,7 @@ mixin QuestionUtils {
               maCauHoiCha: item.maCauHoiCha,
               tenCauHoi: item.tenCauHoi,
               sTT: item.sTT,
-              hienThi: item.hienThi,
+              tenHienThi: item.tenHienThi,
               cap: item.cap,
               maSo: item.maSo,
               dVT: item.dVT,

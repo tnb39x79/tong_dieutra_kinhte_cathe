@@ -38,7 +38,7 @@ class InterviewListDetailController extends BaseController {
   //static final interviewListDetailStream = PublishSubject();
 
   // params send to questions
-  String? currentIdCoSoTG;
+  //String? currentIdCoSoTG;
   String? currentIdCoSo;
 
   //RX

@@ -95,6 +95,9 @@ class ActiveStatusController extends BaseController {
   final isAnimating = true.obs;
   final currentButtonState = 'init'.obs;
 
+  final subTitleBar = ''.obs;
+  final currentTenPhieu = ''.obs;
+
   @override
   void onInit() async {
     setLoading(true);
@@ -108,19 +111,16 @@ class ActiveStatusController extends BaseController {
       currentMaTinhTrangDT = interviewListDetailController.currentMaTinhTrangDT;
       currentMaDiaBan = interviewListDetailController.currentMaDiaBan;
       currentTenDiaBan = interviewListDetailController.currentTenDiaBan;
-
+      currentTenPhieu.value = currentTenDoiTuongDT ?? '';
       await fetchDataPhieu();
       await getTinhTrangHD();
+        subTitleBar.value = '${tblBkCoSoSXKD.value.tenCoSo} Địa bàn.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
       setLoading(false);
     } on Exception catch (e) {
       errorLogRepository.sendErrorLog(
           ErrorLogModel(errorCode: "", errorMessage: e.toString()));
     }
     super.onInit();
-  }
-
-  getSubTitle() {
-    return '$currentTenDoiTuongDT ${tblBkCoSoSXKD.value.tenCoSo} ĐB.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
   }
 
   onPressedCheckBox(int p1) {
@@ -154,6 +154,7 @@ class ActiveStatusController extends BaseController {
         // tablePhieuMau = TablePhieuMau.fromJson(phieu07Mau);
       }
     }
+     subTitleBar.value ='${tblBkCoSoSXKD.value.tenCoSo} Địa bàn.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
   }
 
   onPressNext() async {

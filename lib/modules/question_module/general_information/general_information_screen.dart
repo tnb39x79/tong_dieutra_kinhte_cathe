@@ -27,7 +27,7 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
           onPressedLeading: () => controller.onBackPage(),
           actions: const SizedBox(),
         ),
-        body: _buildBody(),
+        body: Obx(_buildBody),
       ),
     );
   }
@@ -37,6 +37,19 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
             AppDefine.maDoiTuongDT_07Mau.toString() ||
         controller.currentMaDoiTuongDT ==
             AppDefine.maDoiTuongDT_07TB.toString()) {
+
+      controller.tenCoSoController.text =
+          controller.tblPhieu.value.tenCoSo ?? '';
+
+      controller.diaChiCoSoController.text =
+          controller.tblPhieu.value.diaChi ?? '';
+
+      controller.tenChuCoSoController.text =
+          controller.tblPhieu.value.tenChuCoSo ?? '';
+
+      controller.dienThoaiController.text =
+          controller.tblPhieu.value.sDTCoSo ?? '';
+          
       return SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(AppValues.padding),
@@ -64,27 +77,41 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
               textController: controller.maCoSoController,
               enable: false,
             ),
-            field(
-                label: 'TÊN CƠ SỞ (BIỂN HIỆU/ĐĂNG KÝ KINH DOANH)',
-                textController: controller.tenCoSoController,
-                txtTextStyle: styleMediumBold.copyWith(color: primaryColor),
-                maxLine: 3,
-                enable: true),
-            field(
-              label: 'ĐIA CHỈ CƠ SỞ (SỐ NHÀ, ĐƯỜNG PHỐ, NGÕ, XÓM)',
-              textController: controller.diaChiChuHoController,
-              enable: true,
-            ),
-            field(
-              label: 'TÊN CHỦ CƠ SỞ',
-              textController: controller.tenChuCoSoController,
-              enable: true,
-            ),
-            field(
-              label: 'SỐ ĐIỆN THOẠI LIÊN HỆ',
-              textController: controller.dienThoaiController,
-              enable: true,
-            ),
+            Form(
+                key: controller.formKey,
+                child: Column(children: [
+                  field(
+                      label: 'TÊN CƠ SỞ (BIỂN HIỆU/ĐĂNG KÝ KINH DOANH)',
+                      textController: controller.tenCoSoController,
+                      txtTextStyle:
+                          styleMediumBold.copyWith(color: primaryColor),
+                      maxLine: 3,
+                      enable: true,
+                      onChanged: controller.onChangeTenCS,
+                      validator: controller.onValidateTenCS,
+                      warningText: controller.waringTenCs()),
+                  field(
+                      label: 'ĐIA CHỈ CƠ SỞ (SỐ NHÀ, ĐƯỜNG PHỐ, NGÕ, XÓM)',
+                      textController: controller.diaChiCoSoController,
+                      enable: true,
+                      onChanged: controller.onChangeDiaChi,
+                      validator: controller.onValidateDiaChi,
+                      warningText: controller.waringDiaChi()),
+                  field(
+                      label: 'TÊN CHỦ CƠ SỞ',
+                      textController: controller.tenChuCoSoController,
+                      enable: true,
+                      onChanged: controller.onChangeTenChuCS,
+                      validator: controller.onValidateTenChuCS,
+                      warningText: controller.waringTenChuCs()),
+                  field(
+                      label: 'SỐ ĐIỆN THOẠI LIÊN HỆ',
+                      textController: controller.dienThoaiController,
+                      enable: true,
+                      onChanged: controller.onChangeSoDT,
+                      validator: controller.onValidateSoDT,
+                      warningText: controller.waringSoDienThoai()),
+                ])),
             field(
                 label: 'MÃ NGÀNH SẢN PHẨM CỦA CƠ SỞ',
                 textController: controller.maNganhController,
@@ -103,6 +130,8 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
     return const SizedBox();
   }
 
+ 
+
 // Widget buildNganhSanPham(TableBkCoSoSXKDNganhSanPham bkSanPhams) {
 //   return Column(
 //     crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,12 +148,13 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
       required TextEditingController textController,
       bool enable = false,
       keyboardType = TextInputType.text,
-      String? Function(String?)? validator,
+      String? Function(String?, String)? validator,
       Function(String?)? onChanged,
       int? maxLength,
       int? maxLine,
       TextStyle? lblTextStyle,
-      TextStyle? txtTextStyle}) {
+      TextStyle? txtTextStyle,
+      String? warningText}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -138,12 +168,13 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
           hint: '',
           enable: enable,
           keyboardType: keyboardType,
-          validator: validator,
+          validator: (v) => validator?.call(v, label),
           onChanged: onChanged,
           maxLength: maxLength,
           txtStyle: txtTextStyle,
           maxLine: maxLine,
         ),
+        wWarningText(warningText),
         const SizedBox(height: 24),
       ],
     );
@@ -201,6 +232,20 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
         const SizedBox(height: 24),
       ],
     );
+  }
+
+  Widget wWarningText(warningText) {
+    if (warningText != null && warningText != '') {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(
+            16.0, 4.0, 16.0, 4.0), // Applies 16 pixels of padding on all sides
+        child: Text(
+          warningText!,
+          style: const TextStyle(color: Colors.orange),
+        ),
+      );
+    }
+    return const SizedBox();
   }
 
   Widget productItems(

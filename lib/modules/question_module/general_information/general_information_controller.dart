@@ -17,12 +17,15 @@ import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_mautb_sanpham.dart';
 
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 
 class GeneralInformationController extends BaseController {
+  final formKey = GlobalKey<FormState>();
+
   static const giMaDoiTuongDTKey = 'maDoiTuongDT';
   static const giMaDiaBanKey = 'maDiaBan';
   static const giTenDiaBanKey = 'tenDiaBan';
@@ -58,7 +61,7 @@ class GeneralInformationController extends BaseController {
   final tenChuCoSoController = TextEditingController();
   final maDanTocController = TextEditingController();
   final tenDanTocController = TextEditingController();
-  final diaChiChuHoController = TextEditingController();
+  final diaChiCoSoController = TextEditingController();
   final ttNTController = TextEditingController();
 
   final tenNganhController = TextEditingController();
@@ -68,10 +71,13 @@ class GeneralInformationController extends BaseController {
   ///
   final HomeController homeController = Get.find();
   final MainMenuController mainMenuController = Get.find();
- final interviewListDetailController =
-          Get.find<InterviewListDetailController>();
+  final interviewListDetailController =
+      Get.find<InterviewListDetailController>();
+
   /// RX
   final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
+
+  final tblPhieu = TablePhieu().obs;
   //final tblBkCoSoSXKDNganhSanPham = <TableBkCoSoSXKDNganhSanPham>[].obs;
   final tblBkCoSoSXKDNganhSanPham = TableBkCoSoSXKDNganhSanPham().obs;
   final screenNos = <int>[].obs;
@@ -96,7 +102,7 @@ class GeneralInformationController extends BaseController {
   String? currentMaTinhTrangDT;
   String? currentMaDiaBan;
   String? currentTenDiaBan;
-  String? currentIdCoSoTG;
+  //String? currentIdCoSoTG;
   String? currentIdCoSo;
   String? currentMaXa;
   String? currentTenXa;
@@ -106,7 +112,6 @@ class GeneralInformationController extends BaseController {
   void onInit() async {
     setLoading(true);
     if (homeController.isDefaultUserType()) {
-     
       currentMaDoiTuongDT = interviewListDetailController.currentMaDoiTuongDT;
       currentTenDoiTuongDT = interviewListDetailController.currentTenDoiTuongDT;
       currentMaTinhTrangDT = interviewListDetailController.currentMaTinhTrangDT;
@@ -132,7 +137,7 @@ class GeneralInformationController extends BaseController {
   }
 
   getSubTitle() {
-     return '$currentTenDoiTuongDT';
+    return '$currentTenDoiTuongDT';
   }
 
   Future getGeneralInformation() async {
@@ -163,10 +168,10 @@ class GeneralInformationController extends BaseController {
         maCoSoController.text = tblBkCoSoSXKD.value.maCoSo != null
             ? tblBkCoSoSXKD.value.maCoSo.toString()
             : '';
-        tenChuCoSoController.text = tblBkCoSoSXKD.value.tenChuCoSo ?? '';
-        tenCoSoController.text = tblBkCoSoSXKD.value.tenCoSo ?? '';
-        diaChiChuHoController.text = tblBkCoSoSXKD.value.diaChi ?? '';
-        dienThoaiController.text = tblBkCoSoSXKD.value.dienThoai ?? '';
+        // tenChuCoSoController.text = tblBkCoSoSXKD.value.tenChuCoSo ?? '';
+        // tenCoSoController.text = tblBkCoSoSXKD.value.tenCoSo ?? '';
+        // diaChiCoSoController.text = tblBkCoSoSXKD.value.diaChi ?? '';
+        // dienThoaiController.text = tblBkCoSoSXKD.value.dienThoai ?? '';
         emailController.text = tblBkCoSoSXKD.value.email ?? '';
 
         var mapMaNganhs =
@@ -182,7 +187,19 @@ class GeneralInformationController extends BaseController {
           tenNganhController.text =
               tblBkCoSoSXKDNganhSanPham.value.tenNganh ?? '';
         }
+        await getPhieu();
       }
+    }
+  }
+
+  Future getPhieu() async {
+    var phieuMau = await phieuProvider.selectByIdCoSo(currentIdCoSo!);
+    if (phieuMau != null) {
+      tblPhieu.value = TablePhieu.fromJson(phieuMau);
+      tenChuCoSoController.text = tblPhieu.value.tenChuCoSo ?? '';
+      tenCoSoController.text = tblPhieu.value.tenCoSo ?? '';
+      diaChiCoSoController.text = tblPhieu.value.diaChi ?? '';
+      dienThoaiController.text = tblPhieu.value.sDTCoSo ?? '';
     }
   }
 
@@ -235,6 +252,19 @@ class GeneralInformationController extends BaseController {
   }
 
   Future onPressNext() async {
+    var validRes1 = onValidateTenCS(tenCoSoController.text, '');
+    if (validRes1 != null && validRes1 != '') {
+      return showError(validRes1);
+    }
+    var validRes2 = onValidateDiaChi(diaChiCoSoController.text, '');
+    if (validRes2 != null && validRes2 != '') {
+      return showError(validRes2);
+    }
+    var validRes3 = onValidateTenChuCS(tenChuCoSoController.text, '');
+    if (validRes3 != null && validRes3 != '') {
+      return showError(validRes3);
+    }
+
     var phoneValidate = Valid.validateMobile(dienThoaiController.text);
     if (phoneValidate != null && phoneValidate != '') {
       return showError(phoneValidate);
@@ -246,7 +276,7 @@ class GeneralInformationController extends BaseController {
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       await bkCoSoSXKDProvider.updateValues(currentIdCoSo!, multiValue: {
         "TenCoSo": tenCoSoController.text,
-        "DiaChi": diaChiChuHoController.text,
+        "DiaChi": diaChiCoSoController.text,
         "TenChuCoSo": tenChuCoSoController.text,
         "DienThoai": dienThoaiController.text,
       });
@@ -350,6 +380,103 @@ class GeneralInformationController extends BaseController {
     } else {
       Get.offAllNamed(AppRoutes.mainMenu);
     }
+  }
+
+  onChangeTenCS(String? value) {
+    phieuProvider.updateValue(colPhieuTenCoSo, value, currentIdCoSo!);
+    getPhieu();
+  }
+
+  onChangeDiaChi(String? value) {
+    phieuProvider.updateValue(colPhieuDiaChi, value, currentIdCoSo!);
+    getPhieu();
+  }
+
+  onChangeTenChuCS(String? value) {
+    phieuProvider.updateValue(colPhieuTenChuCoSo, value, currentIdCoSo!);
+    getPhieu();
+  }
+
+  onChangeSoDT(String? value) {
+    phieuProvider.updateValue(colPhieuSDTCoSo, value, currentIdCoSo!);
+    getPhieu();
+  }
+
+  String? onValidateTenCS(String? value, String fieldName) {
+    if (tenCoSoController.text.isEmpty || tenCoSoController.text == "") {
+      return 'Vui lòng nhập Tên cơ sở';
+    } else if (tenCoSoController.text.length < 3) {
+      return 'Tên cơ sở không được phép < 3 ký tự';
+    }
+    return null;
+  }
+
+  String? onValidateDiaChi(String? value, String fieldName) {
+    if (diaChiCoSoController.text.isEmpty || diaChiCoSoController.text == "") {
+      return 'Vui lòng nhập địa chỉ cơ sở';
+    } else if (diaChiCoSoController.text.length < 3) {
+      return 'Địa chỉ cơ sở không được phép < 3 ký tự';
+    }
+    return null;
+  }
+
+  String? onValidateTenChuCS(String? value, String fieldName) {
+    if (tenChuCoSoController.text.isEmpty || tenChuCoSoController.text == "") {
+      return 'Vui lòng nhập Tên chủ cơ sở';
+    } else if (tenChuCoSoController.text.length < 3) {
+      return 'Tên chủ cơ sở không được phép < 3 ký tự';
+    }
+    return null;
+  }
+
+  String? onValidateSoDT(String? value, String fieldName) {
+    var phoneValidate = Valid.validateMobile(dienThoaiController.text);
+    if (phoneValidate != null && phoneValidate != '') {
+      return phoneValidate;
+    }
+    return null;
+  }
+
+  waringTenCs() {
+    if (tenCoSoController.text.isNotEmpty) {
+      if (tenCoSoController.text.length >= 3 &&
+          tenCoSoController.text.length < 5) {
+        return 'Tên cơ sở quá ngắn';
+      }
+    }
+    return '';
+  }
+
+  waringTenChuCs() {
+    if (tenChuCoSoController.text.isNotEmpty) {
+      if (tenChuCoSoController.text.length >= 3 &&
+          tenChuCoSoController.text.length < 5) {
+        return 'Tên chủ cơ sở quá ngắn';
+      }
+    }
+    return '';
+  }
+
+  waringDiaChi() {
+    if (diaChiCoSoController.text.isNotEmpty) {
+      if (diaChiCoSoController.text.length >= 3 &&
+          diaChiCoSoController.text.length < 5) {
+        return 'Địa chỉ cơ sở quá ngắn';
+      }
+    }
+    return '';
+  }
+
+  waringSoDienThoai() {
+    if (dienThoaiController.text.isNotEmpty) {
+      if (dienThoaiController.text.length < 10 ||
+          dienThoaiController.text.length > 11) {
+        return 'Kiểm tra lại số điện thoại <10 hoặc >11 số';
+      } else {
+        return '';
+      }
+    }
+    return '';
   }
 
   ///

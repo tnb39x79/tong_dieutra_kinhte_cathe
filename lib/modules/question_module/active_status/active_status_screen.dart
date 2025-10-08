@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/appbars/appbar_customize.dart';
 import 'package:gov_statistics_investigation_economic/config/config.dart';
 
 import 'active_status_controller.dart';
@@ -11,20 +12,39 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarHeader(
+      appBar: CustomAppBar(
         title: 'status_active'.tr,
         iconLeading: const Icon(
           Icons.arrow_back_ios_new_rounded,
           color: Colors.white,
         ),
-        subTitle: controller.getSubTitle(),
+        subTitle: controller.subTitleBar.value,
         onPressedLeading: () => Get.back(),
+        wTitle: Obx(() => appBarTitle()),
       ),
       body: LoadingFullScreen(
         loading: controller.loadingSubject,
         child: _buildBody(),
       ),
     );
+  }
+
+  Widget appBarTitle() {
+     var t =
+        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
+    return (controller.subTitleBar == null || controller.subTitleBar == "")
+        ? Text(t, style: styleMediumBold)
+        : ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+            title: Text(
+              t,
+              style: styleMediumBoldAppBarHeader,
+              textAlign: TextAlign.left,
+            ),
+            subtitle: Text(controller.subTitleBar.value,
+                style: const TextStyle(color: Colors.white)),
+            titleAlignment: ListTileTitleAlignment.center,
+          );
   }
 
   Widget _buildBody() {

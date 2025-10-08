@@ -24,3 +24,17 @@ const String columnSTTSanpham = 'STT_SanPham';
 
 const String columnGhiChu = 'GhiChu';
 String giaiTrinhToaDo = "GiaiTrinhToaDo";
+
+List<String> colsExcludeValidate=[ 
+  columnIDCoSo,
+  columnMaDTV,
+  columnCreatedAt,
+  columnUpdatedAt,
+  columnSTTSanpham,
+  'IsDefault',
+  'IsSync',
+  'MaNganhC5',
+  'MoTaSanPham',
+  'STT',
+  '_id'
+];

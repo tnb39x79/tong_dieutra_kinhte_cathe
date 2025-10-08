@@ -30,13 +30,12 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
   }
 
   @override
-  Future<List<int>> insert(
-      List<TablePhieu> value, String createdAt) async {
+  Future<List<int>> insert(List<TablePhieu> value, String createdAt) async {
     List<int> ids = [];
     for (var element in value) {
       element.createdAt = createdAt;
       //   element.updatedAt = createdAt;
-      
+
       ids.add(await db!.insert(tablePhieu, element.toJson()));
     }
     return ids;
@@ -112,7 +111,7 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
     var i = await db!
         .update(tablePhieu, values, where: '$columnId = ?', whereArgs: [id]);
 
-    log('UPDATE PHIEU 04: $i');
+    log('UPDATE PHIEU  : $i');
   }
 
   Future updateValue(String fieldName, value, idCoSo) async {
@@ -126,7 +125,7 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
             '''$columnIDCoSo = '$idCoSo' AND $columnMaDTV = '${AppPref.uid}' AND  $columnCreatedAt = '$createAt'
             ''');
 
-    log('UPDATE PHIEU 04: $i');
+    log('UPDATE PHIEU : $i');
   }
 
   ///update multi field
@@ -325,6 +324,19 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
     var res =
         db!.delete(tablePhieu, where: '''  $columnIDCoSo = '$coSoId'  ''');
     return res;
+  }
+
+  Future<List<String>> getColumnNames(String tableName) async {
+    List<Map<String, dynamic>> result =
+        await db!.rawQuery('PRAGMA table_info($tableName)');
+
+    List<String> columnNames = [];
+    for (var row in result) {
+      if (!colsExcludeValidate.contains(row['name'].toString())) {
+        columnNames.add(row['name'] as String);
+      }
+    }
+    return columnNames;
   }
 
   @override

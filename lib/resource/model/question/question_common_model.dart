@@ -12,7 +12,7 @@ class QuestionCommonModel {
   String? maCauHoiCha;
   String? tenCauHoi;
   int? sTT;
-  int? hienThi;
+  String? tenHienThi;
   int? cap;
   String? maSo;
   String? dVT;
@@ -42,7 +42,7 @@ class QuestionCommonModel {
       this.maCauHoiCha,
       this.tenCauHoi,
       this.sTT,
-      this.hienThi,
+      this.tenHienThi,
       this.cap,
       this.maSo,
       this.dVT,
@@ -70,7 +70,7 @@ class QuestionCommonModel {
     maCauHoiCha = json['MaCauHoiCha'];
     tenCauHoi = json['TenCauHoi'];
     sTT = json['STT'];
-    hienThi = json['HienThi'];
+    tenHienThi = json['TenHienThi'];
     cap = json['Cap'];
     maSo = json['MaSo'];
     dVT = json['DVT'];
@@ -120,7 +120,7 @@ class QuestionCommonModel {
     data['MaCauHoiCha'] = maCauHoiCha;
     data['TenCauHoi'] = tenCauHoi;
     data['STT'] = sTT;
-    data['HienThi'] = hienThi;
+    data['TenHienThi'] = tenHienThi;
     data['Cap'] = cap;
     data['MaSo'] = maSo;
     data['DVT'] = dVT;

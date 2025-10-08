@@ -3,11 +3,13 @@ import 'dart:ffi';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
 class QuestionFieldModel {
+  int? maPhieu;
   int? manHinh;
   String? maCauHoi;
   String? tenNganCauHoi;
   String? mucCauHoi;
   String? tenTruong;
+  String? tenHienThi;
   int? loaiCauHoi;
   double? giaTriNN;
   double? giaTriLN;
@@ -17,18 +19,20 @@ class QuestionFieldModel {
   String? maIODinhDanh;
   String? dieuKienMaIO;
   //Câu hỏi cha là loại 1 (có/không) để nhận biết khi validate giá trị câu hỏi con nếu câu hỏi cha có giá trị =1 mới validate con hỏi con, =0 không gọi validate
-  
+
   QuestionCommonModel? question;
   ChiTieuModel? chiTieuCot;
   ChiTieuDongModel? chiTieuDong;
 
   QuestionFieldModel(
-      {this.manHinh,
+      {this.maPhieu,
+      this.manHinh,
       this.maCauHoi,
       this.tenNganCauHoi,
       this.mucCauHoi,
       this.tenTruong,
       this.loaiCauHoi,
+      this.tenHienThi,
       this.giaTriNN,
       this.giaTriLN,
       this.bangDuLieu,
@@ -41,19 +45,20 @@ class QuestionFieldModel {
       this.chiTieuDong});
 
   QuestionFieldModel.fromJson(dynamic json) {
+    maPhieu = json['MaPhieu'];
     manHinh = json['ManHinh'];
     maCauHoi = json['MaCauHoi'];
     tenNganCauHoi = json['TenNganCauHoi'];
     mucCauHoi = json['MucCauHoi'];
     tenTruong = json['TenTruong'];
     loaiCauHoi = json['LoaiCauHoi'];
-
+    tenHienThi = json['TenHienThi'];
     giaTriNN = json['GiaTriNN'];
     giaTriLN = json['GiaTriLN'];
     bangDuLieu = json['BangDuLieu'];
     bangChiTieu = json['BangChiTieu'];
     tenTruongKhoa = json['TenTruongKhoa'];
-   maIODinhDanh = json['MaIODinhDanh'];
+    maIODinhDanh = json['MaIODinhDanh'];
     dieuKienMaIO = json['DieuKienMaIO'];
     question = json['Question'];
     chiTieuCot = json['ChiTieuCot'];
@@ -63,12 +68,13 @@ class QuestionFieldModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['ManHinh'] = manHinh;
+    data['MaPhieu'] = maPhieu;
     data['MaCauHoi'] = maCauHoi;
     data['TenNganCauHoi'] = tenNganCauHoi;
     data['MucCauHoi'] = mucCauHoi;
     data['TenTruong'] = tenTruong;
     data['LoaiCauHoi'] = loaiCauHoi;
-
+    data['TenHienThi'] = tenHienThi;
     data['GiaTriNN'] = giaTriNN;
     data['GiaTriLN'] = giaTriLN;
     data['BangDuLieu'] = bangDuLieu;

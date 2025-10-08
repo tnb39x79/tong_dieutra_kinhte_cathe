@@ -236,20 +236,20 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
             switch (question.loaiCauHoi) {
               case 0:
-                if (question.bangChiTieu == '1' && question.loaiCauHoi == 0) {
-                  return Obx(() => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichTextQuestion(
-                            question.tenCauHoi ?? '',
-                            level: question.cap!,
-                          ),
-                          buildOnlyQuestionChiTieuCot(question,
-                              parentQuestion: parentQuestion),
-                        ],
-                      ));
-                } else if (question.loaiCauHoi == 0 &&
-                    question.bangChiTieu == '2') {
+                // if (question.bangChiTieu == '1' && question.loaiCauHoi == 0) {
+                //   return Obx(() => Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           RichTextQuestion(
+                //             question.tenCauHoi ?? '',
+                //             level: question.cap!,
+                //           ),
+                //           buildOnlyQuestionChiTieuCot(question,
+                //               parentQuestion: parentQuestion),
+                //         ],
+                //       ));
+                // } else
+                if (question.loaiCauHoi == 0 && question.bangChiTieu == '2') {
                   //return const SizedBox();
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -795,6 +795,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 true),
             flteringTextInputFormatterRegExp: wFilterInput,
           ),
+          buildWarningText(question, val2),
           if (question.danhSachCauHoiCon!.isNotEmpty)
             Container(
                 margin: const EdgeInsets.all(0.0),
@@ -1062,138 +1063,6 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       });
     }
 
-    if (question.maCauHoi == colPhieuMauTBA7_6_M) {
-      return Obx(() {
-        var a9_4_1Value = controller.getValueByFieldName(
-            question.bangDuLieu!, colPhieuMauTBA7_6_M);
-        var val9_5 = controller.getValueByFieldName(
-            question.bangDuLieu!, question.maCauHoi!);
-        // var a9_8Value = controller.getValueByFieldName(
-        //     question.bangDuLieu!, columnPhieuMauA9_8);
-        if (a9_4_1Value != 1) {
-          return const SizedBox();
-        }
-        return InputInt(
-          key: ValueKey(
-              '${question.maPhieu}_${question.cauHoiUUID}_${question.cauHoiUUID}$a9_4_1Value'),
-          question: question,
-          onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
-              question.maCauHoi, question.maCauHoi, value),
-          subName: subName,
-          value: val9_5,
-          type: 'double',
-          validator: (String? value) => controller.onValidate(
-              question.bangDuLieu!,
-              question.maCauHoi!,
-              question.maCauHoi,
-              value,
-              question.giaTriNN,
-              question.giaTriLN,
-              question.loaiCauHoi!,
-              true),
-          flteringTextInputFormatterRegExp: wFilterInput,
-          decimalDigits: decimalDigits,
-        );
-      });
-    }
-    if (question.maCauHoi == colPhieuMauTBA7_8_M) {
-      decimalDigits = 2;
-      return Obx(() {
-        var a9_7Value = controller.getValueByFieldName(
-            question.bangDuLieu!, colPhieuMauTBA7_7_M);
-        // var a9_8Value = controller.getValueByFieldName(
-        //     question.bangDuLieu!, columnPhieuMauA9_8);
-        if (a9_7Value != 1) {
-          return const SizedBox();
-        }
-        return InputInt(
-          key:
-              ValueKey('${question.maPhieu}_${question.cauHoiUUID}_$a9_7Value'),
-          question: question,
-          onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
-              question.maCauHoi, question.maCauHoi, value),
-          subName: subName,
-          value: val,
-          type: 'double',
-          validator: (String? value) => controller.onValidate(
-              question.bangDuLieu!,
-              question.maCauHoi!,
-              question.maCauHoi,
-              value,
-              question.giaTriNN,
-              question.giaTriLN,
-              question.loaiCauHoi!,
-              true),
-          flteringTextInputFormatterRegExp: wFilterInput,
-          decimalDigits: decimalDigits,
-        );
-      });
-    }
-    // if (question.maCauHoi == columnPhieuMauA9_8) {
-    //   return Obx(() {
-    //     var a9_4_2Value = controller.getValueByFieldName(
-    //         question.bangDuLieu!, columnPhieuMauA9_4_2);
-    //     var a9_7Value = controller.getValueByFieldName(
-    //         question.bangDuLieu!, columnPhieuMauA9_7);
-    //     var a9_8Value = controller.getValueByFieldName(
-    //         question.bangDuLieu!, columnPhieuMauA9_8);
-    //     if (a9_4_2Value != 1 ) {
-    //       return const SizedBox();
-    //     }
-    //     return InputInt(
-    //       key: ValueKey('${question.maPhieu}_${question.cauHoiUUID}_$a9_4_2Value'),
-    //       question: question,
-    //       onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
-    //           question.maCauHoi, question.maCauHoi, value),
-    //       subName: subName,
-    //       value: a9_8Value,
-    //       type: 'double',
-    //       validator: (String? value) => controller.onValidate(
-    //           question.bangDuLieu!,
-    //           question.maCauHoi!,
-    //           question.maCauHoi,
-    //           value,
-    //           question.giaTriNN,
-    //           question.giaTriLN,
-    //           question.loaiCauHoi!,
-    //           true),
-    //       flteringTextInputFormatterRegExp: wFilterInput,
-    //       decimalDigits: decimalDigits,
-    //     );
-    //   });
-    // }
-    // if (question.maCauHoi == columnPhieuMauA9_10) {
-    //   decimalDigits = 2;
-    //   return Obx(() {
-    //     var a9_9Value = controller.getValueByFieldName(
-    //         question.bangDuLieu!, columnPhieuMauA9_9);
-    //     // var a9_8Value = controller.getValueByFieldName(
-    //     //     question.bangDuLieu!, columnPhieuMauA9_8);
-    //     if (a9_9Value != 1) {
-    //       return const SizedBox();
-    //     }
-    //     return InputInt(
-    //       key: ValueKey('${question.maPhieu}_${question.cauHoiUUID}_$a9_9Value'),
-    //       question: question,
-    //       onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
-    //           question.maCauHoi, question.maCauHoi, value),
-    //       subName: subName,
-    //       value: val,
-    //       type: 'double',
-    //       validator: (String? value) => controller.onValidate(
-    //           question.bangDuLieu!,
-    //           question.maCauHoi!,
-    //           question.maCauHoi,
-    //           value,
-    //           question.giaTriNN,
-    //           question.giaTriLN,
-    //           question.loaiCauHoi!,
-    //           true),
-    //       flteringTextInputFormatterRegExp: wFilterInput,
-    //       decimalDigits: decimalDigits,
-    //     );
-    //   });
-    // }
     if (question.maCauHoi == colPhieuNganhVTA3_M &&
         question.maPhieu == AppDefine.maPhieuVTMau) {
       controller.warningA6_5SoKmBQ();
@@ -1290,6 +1159,110 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         );
       });
     }
+    if (question.maCauHoi == "A7_4_M" &&
+        question.maPhieu == AppDefine.maPhieuMau) {
+      return Obx(() {
+        var a7_1TBVal = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_1);
+        if (a7_1TBVal != 1) {
+          return const SizedBox();
+        }
+        var a7_3MVal = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_3_M);
+        if (a7_3MVal != 1) {
+          return const SizedBox();
+        }
+        decimalDigits = 2;
+        return InputInt(
+          key: ValueKey(
+              '${question.maPhieu}-${question.maCauHoi}-${question.sTT}'),
+          question: question,
+          onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
+              question.maCauHoi, question.maCauHoi, value),
+          subName: subName,
+          value: val,
+          type: 'double',
+          validator: (String? value) => controller.onValidate(
+              question.bangDuLieu!,
+              question.maCauHoi!,
+              question.maCauHoi,
+              value,
+              question.giaTriNN,
+              question.giaTriLN,
+              question.loaiCauHoi!,
+              true),
+          flteringTextInputFormatterRegExp: wFilterInput,
+          decimalDigits: decimalDigits,
+        );
+      });
+    }
+    if (question.maCauHoi == "A7_6_M" &&
+        question.maPhieu == AppDefine.maPhieuMau) {
+      return Obx(() {
+        var a7_5MVal = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_5_M);
+        if (a7_5MVal != 1) {
+          return const SizedBox();
+        }
+        decimalDigits = 2;
+        return InputInt(
+          key: ValueKey(
+              '${question.maPhieu}-${question.maCauHoi}-${question.sTT}'),
+          question: question,
+          onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
+              question.maCauHoi, question.maCauHoi, value),
+          subName: subName,
+          value: val,
+          type: 'double',
+          validator: (String? value) => controller.onValidate(
+              question.bangDuLieu!,
+              question.maCauHoi!,
+              question.maCauHoi,
+              value,
+              question.giaTriNN,
+              question.giaTriLN,
+              question.loaiCauHoi!,
+              true),
+          flteringTextInputFormatterRegExp: wFilterInput,
+          decimalDigits: decimalDigits,
+        );
+      });
+    }
+
+    if (question.maCauHoi == colPhieuMauTBA7_8_M) {
+      decimalDigits = 2;
+      return Obx(() {
+        var a9_7Value = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_7_M);
+        // var a9_8Value = controller.getValueByFieldName(
+        //     question.bangDuLieu!, columnPhieuMauA9_8);
+        if (a9_7Value != 1) {
+          return const SizedBox();
+        }
+        return InputInt(
+          key:
+              ValueKey('${question.maPhieu}_${question.cauHoiUUID}_$a9_7Value'),
+          question: question,
+          onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
+              question.maCauHoi, question.maCauHoi, value),
+          subName: subName,
+          value: val,
+          type: 'double',
+          validator: (String? value) => controller.onValidate(
+              question.bangDuLieu!,
+              question.maCauHoi!,
+              question.maCauHoi,
+              value,
+              question.giaTriNN,
+              question.giaTriLN,
+              question.loaiCauHoi!,
+              true),
+          flteringTextInputFormatterRegExp: wFilterInput,
+          decimalDigits: decimalDigits,
+        );
+      });
+    }
+
     decimalDigits = 2;
     return InputInt(
       key: ValueKey('${question.maPhieu}-${question.maCauHoi}-${question.sTT}'),
@@ -1311,7 +1284,6 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       flteringTextInputFormatterRegExp: wFilterInput,
       decimalDigits: decimalDigits,
     );
-    // }
   }
 
   _renderQuestionType4(QuestionCommonModel question, {String? subName}) {
@@ -1473,35 +1445,6 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   }
 
   _renderQuestionType5Dm(QuestionCommonModel question, {String? subName}) {
-    // if (question.maCauHoi == "A1_4") {
-    //   return Obx(() {
-    //     var a1_4Val = controller.getValueByFieldName(question.bangDuLieu!,question.maCauHoi!);
-    //     var a1_3val = controller.getValueByFieldName(question.bangDuLieu!,"A1_3");
-    //     var dmChiTieu =
-    //         controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
-
-    //     return Column(
-    //       children: [
-    //         SelectIntCTDm(
-    //           key: ValueKey(
-    //               '${question.maPhieu}_${question.cauHoiUUID}${question.maCauHoi}$a1_4Val'),
-    //           question: question,
-    //           listValue: dmChiTieu,
-    //           tenDanhMuc: question.bangChiTieu,
-    //           onChange: (value, dmItem) => controller.onSelectDm(
-    //               question,
-    //               question.bangDuLieu!,
-    //               question.maCauHoi,
-    //               question.maCauHoi,
-    //               value,
-    //               dmItem),
-    //           value: a1_4Val,
-    //         ),
-    //         buildWarningText(question, a1_4Val)
-    //       ],
-    //     );
-    //   });
-    // }
     if (question.maCauHoi == "A1_1") {
       return Obx(() {
         // var a1_4Val = controller.getValueByFieldName(question.bangDuLieu!,question.maCauHoi!);
@@ -1561,67 +1504,42 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         );
       });
     }
-    // if (question.maCauHoi == "A9_1") {
-    //   return Obx(() {
-    //     var val = controller.getValueDm(question);
-    //     var a9_1val = controller.getValueByFieldName(question.bangDuLieu!,"A9_1");
-    //     var dmChiTieu =
-    //         controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
+    if (question.maCauHoi == "A7_3_M" &&
+        question.maPhieu == AppDefine.maPhieuMau) {
+      return Obx(() {
+        var a7_1TBVal = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_1);
+        if (a7_1TBVal != 1 && a7_1TBVal != "1") {
+          return const SizedBox();
+        }
+        var a7_3MVal = controller.getValueByFieldName(
+            question.bangDuLieu!, question.maCauHoi!);
 
-    //     return Column(
-    //       children: [
-    //         SelectIntCTDm(
-    //           key: ValueKey('${question.maPhieu}${question.cauHoiUUID}${question.maCauHoi}$val'),
-    //           question: question,
-    //           listValue: dmChiTieu,
-    //           tenDanhMuc: question.bangChiTieu,
-    //           onChange: (value, dmItem) => controller.onSelectDm(
-    //               question,
-    //               question.bangDuLieu!,
-    //               question.maCauHoi,
-    //               question.maCauHoi,
-    //               value,
-    //               dmItem),
-    //           value: val,
-    //         ),
-    //         buildWarningText(question, val),
-    //       ],
-    //     );
-    //   });
-    // }
-    // if (question.maCauHoi == "A9_2") {
-    //   return Obx(() {
-    //     var val = controller.getValueDm(question);
-    //     var a9_1val = controller.getValueByFieldName(question.bangDuLieu!,"A9_1");
-    //     var dmChiTieu =
-    //         controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
-    //     if (a9_1val != 1) {
-    //       return const SizedBox();
-    //     }
-    //     return Column(
-    //       children: [
-    //         SelectIntCTDm(
-    //           key: ValueKey('${question.maPhieu}${question.cauHoiUUID}${question.maCauHoi}$val'),
-    //           question: question,
-    //           listValue: dmChiTieu,
-    //           tenDanhMuc: question.bangChiTieu,
-    //           onChange: (value, dmItem) => controller.onSelectDm(
-    //               question,
-    //               question.bangDuLieu!,
-    //               question.maCauHoi,
-    //               question.maCauHoi,
-    //               value,
-    //               dmItem),
-    //           value: val,
-    //           titleGhiRoText: 'Ghi rõ',
-    //           onChangeGhiRo: (value, dmItem) =>
-    //               controller.onChangeGhiRoDm(question, value, dmItem),
-    //         ),
-    //         buildGhiRo(question, val),
-    //       ],
-    //     );
-    //   });
-    // }
+        var dmChiTieu =
+            controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
+
+        return Column(
+          children: [
+            SelectIntCTDm(
+              key: ValueKey(
+                  '${question.maPhieu}${question.cauHoiUUID}${question.maCauHoi}$a7_3MVal'),
+              question: question,
+              listValue: dmChiTieu,
+              tenDanhMuc: question.bangChiTieu,
+              onChange: (value, dmItem) => controller.onSelectDm(
+                  question,
+                  question.bangDuLieu!,
+                  question.maCauHoi,
+                  question.maCauHoi,
+                  value,
+                  dmItem),
+              value: a7_3MVal,
+            ),
+            buildWarningText(question, a7_3MVal),
+          ],
+        );
+      });
+    }
 
     return Obx(() {
       var val = controller.getValueByFieldName(
@@ -1728,353 +1646,6 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return const SizedBox();
   }
 
-  ///BEGIN::  Build cho A43; Dành cho các câu chỉ có chi tiêu cột, thêm mới dòng bằng nút Thêm mới
-  buildOnlyQuestionChiTieuCot(QuestionCommonModel mainQuestion,
-      {ProductModel? product, QuestionCommonModel? parentQuestion}) {
-    var chiTieus = mainQuestion.danhSachChiTieu ?? [];
-
-    dynamic recordList = [];
-    if (mainQuestion.maCauHoi == 'A6_1') {
-      //recordList = controller.tblPhieuMauA61;
-    } else if (mainQuestion.maCauHoi == 'A6_8') {
-      //recordList = controller.tblPhieuMauA68;
-    }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (recordList.isNotEmpty)
-          ListView.builder(
-              itemCount: recordList.length,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (_, indexsp) {
-                var recordListItem = recordList[indexsp];
-                return buildOnlyChiTieuCotItem(
-                    mainQuestion, chiTieus, recordListItem);
-              })
-        else
-          const Text('Chưa có loại phương tiện.',
-              style: TextStyle(color: errorColor)),
-        //    buildOnlyChiTieuCotItem(
-        //       mainQuestion, chiTieus, null),
-        const SizedBox(
-          height: 1.0,
-        ),
-
-        ///if (recordList.isNotEmpty)
-        Align(
-            alignment: Alignment.centerRight,
-            child: OutlinedButton.icon(
-              icon: const Icon(Icons.add_outlined),
-              label: const Text("Thêm loại phương tiện"),
-              onPressed: () => controller.addNewRowPhieuMauAA6_1(
-                  mainQuestion.bangDuLieu!, mainQuestion.maCauHoi!),
-              style: ElevatedButton.styleFrom(
-                  side: const BorderSide(width: 1.0, color: primaryLightColor),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppValues.borderLv5),
-                  ),
-                  foregroundColor: primaryColor),
-            )),
-        const SizedBox(
-          height: 10.0,
-        ),
-        _buildQuestion2(mainQuestion)
-      ],
-    );
-  }
-
-  buildOnlyChiTieuCotItem(QuestionCommonModel mainQuestion,
-      List<ChiTieuModel> chiTieus, dynamic recordValue) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(children: <Widget>[
-            Container(
-                margin:
-                    const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, AppValues.padding),
-                padding: const EdgeInsets.all(15.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: greyDarkBorder, width: 1),
-                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                ),
-                child: Column(
-                  children: [
-                    ListView.builder(
-                        itemCount: chiTieus.length,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (_, index) {
-                          ChiTieuModel chitieu = chiTieus[index];
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              renderOnlyChiTieuCotQuestionByType(
-                                  mainQuestion, chitieu,
-                                  recordValue: recordValue)
-                            ],
-                          );
-                        }),
-                  ],
-                )),
-            if (recordValue != null)
-              Positioned(
-                top: 10.0,
-                right: 15.0,
-                child: ElevatedButton(
-                    onPressed: () {
-                      controller.deleteA61Item(mainQuestion.bangDuLieu!,
-                          mainQuestion.maCauHoi!, recordValue);
-                    },
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppValues.borderLv5)),
-                        elevation: 1.0,
-                        side: const BorderSide(color: Colors.red)),
-                    child: const Text('Xoá')),
-              ),
-          ])
-        ]);
-  }
-
-  renderOnlyChiTieuCotQuestionByType(
-      QuestionCommonModel mainQuestion, ChiTieuModel chiTieuCot,
-      {String? subName, dynamic recordValue}) {
-    var val = null;
-    var idValue = null;
-    var fieldName = '';
-    int maxLen = 0;
-    int minLen = 0;
-    var maxValue;
-    var minValue;
-    int? stt;
-
-    // if (recordValue is TablePhieuMauA61) {
-    //   TablePhieuMauA61 tablePhieuA61 = recordValue;
-    //   fieldName = '${chiTieuCot.maCauHoi}_${chiTieuCot.maChiTieu}';
-    //   //if(fieldName)
-    //   idValue = tablePhieuA61.id;
-
-    //   if (fieldName == columnSTT) {
-    //     val.value = tablePhieuA61.sTT;
-    //     maxLen = chiTieuCot.giaTriLN != null
-    //         ? chiTieuCot.giaTriLN!.toInt().toString().length
-    //         : 3;
-    //     minLen = chiTieuCot.giaTriNN != null
-    //         ? chiTieuCot.giaTriNN!.toInt().toString().length
-    //         : 1;
-    //     maxValue =
-    //         chiTieuCot.giaTriLN != null ? chiTieuCot.giaTriLN!.toInt() : 100;
-    //     minValue =
-    //         chiTieuCot.giaTriNN != null ? chiTieuCot.giaTriNN!.toInt() : 1;
-    //   } else if (fieldName == columnPhieuMauA61A6_1_0) {
-    //     val = tablePhieuA61.a_6_1_0;
-    //     maxLen = chiTieuCot.giaTriLN != null
-    //         ? chiTieuCot.giaTriLN!.toInt().toString().length
-    //         : 255;
-    //     minLen = chiTieuCot.giaTriNN != null
-    //         ? chiTieuCot.giaTriNN!.toInt().toString().length
-    //         : 1;
-    //   } else if (fieldName == columnPhieuMauA61A6_1_1) {
-    //     val = tablePhieuA61.a_6_1_1;
-
-    //     maxValue =
-    //         chiTieuCot.giaTriLN != null ? chiTieuCot.giaTriLN! : 99999999;
-    //     minValue = chiTieuCot.giaTriNN != null ? chiTieuCot.giaTriNN! : 0;
-    //   } else if (fieldName == columnPhieuMauA61A6_1_2) {
-    //     val = tablePhieuA61.a_6_1_2;
-    //     maxValue =
-    //         chiTieuCot.giaTriLN != null ? chiTieuCot.giaTriLN! : 99999999;
-    //     minValue = chiTieuCot.giaTriNN != null ? chiTieuCot.giaTriNN! : 0;
-    //   } else if (fieldName == columnPhieuMauA61A6_1_3) {
-    //     val = tablePhieuA61.a_6_1_3;
-    //   }
-    // } else if (recordValue is TablePhieuMauA68) {
-    //   TablePhieuMauA68 tablePhieuA68 = recordValue;
-    //   fieldName = '${chiTieuCot.maCauHoi}_${chiTieuCot.maChiTieu}';
-    //   //if(fieldName)
-    //   idValue = tablePhieuA68.id;
-
-    //   if (fieldName == columnSTT) {
-    //     val = tablePhieuA68.sTT;
-    //     maxLen = chiTieuCot.giaTriLN != null
-    //         ? chiTieuCot.giaTriLN!.toInt().toString().length
-    //         : 3;
-    //     minLen = chiTieuCot.giaTriNN != null
-    //         ? chiTieuCot.giaTriNN!.toInt().toString().length
-    //         : 1;
-    //     maxValue =
-    //         chiTieuCot.giaTriLN != null ? chiTieuCot.giaTriLN!.toInt() : 100;
-    //     minValue =
-    //         chiTieuCot.giaTriNN != null ? chiTieuCot.giaTriNN!.toInt() : 1;
-    //   } else if (fieldName == columnPhieuMauA68A6_8_0) {
-    //     val = tablePhieuA68.a6_8_0;
-    //     maxLen = chiTieuCot.giaTriLN != null
-    //         ? chiTieuCot.giaTriLN!.toInt().toString().length
-    //         : 255;
-    //     minLen = chiTieuCot.giaTriNN != null
-    //         ? chiTieuCot.giaTriNN!.toInt().toString().length
-    //         : 1;
-    //   } else if (fieldName == columnPhieuMauA68A6_8_1) {
-    //     val = tablePhieuA68.a6_8_1;
-
-    //     maxValue =
-    //         chiTieuCot.giaTriLN != null ? chiTieuCot.giaTriLN! : 99999999;
-    //     minValue = chiTieuCot.giaTriNN != null ? chiTieuCot.giaTriNN! : 0;
-    //   } else if (fieldName == columnPhieuMauA68A6_8_2) {
-    //     val = tablePhieuA68.a6_8_2;
-    //     maxValue =
-    //         chiTieuCot.giaTriLN != null ? chiTieuCot.giaTriLN! : 99999999;
-    //     minValue = chiTieuCot.giaTriNN != null ? chiTieuCot.giaTriNN! : 0;
-    //   } else if (fieldName == columnPhieuMauA68A6_8_3) {
-    //     val = tablePhieuA68.a6_8_3;
-    //   }
-    // }
-    // switch (chiTieuCot.loaiCauHoi) {
-    //   case 2:
-    //     var wFilterInput = RegExp('[0-9]');
-
-    //     if ((mainQuestion.maCauHoi == "A6_1") &&
-    //         fieldName == columnPhieuMauA61A6_1_3 &&
-    //         chiTieuCot.maChiTieu == '3') {
-    //       return Obx(() {
-    //         var totalValA6_1_3 = controller.getValueByFieldNameStt(
-    //             mainQuestion.bangDuLieu!, fieldName, idValue);
-    //         return InputIntChiTieu(
-    //           key: ValueKey(
-    //               '${question.maPhieu}${mainQuestion.cauHoiUUID}_${chiTieuCot.maCauHoi}_${chiTieuCot.maChiTieu}_${chiTieuCot.sTT}_${idValue!}_$totalValA6_1_3'),
-    //           onChange: (value) => (),
-    //           chiTieuCot: chiTieuCot,
-    //           value: totalValA6_1_3,
-    //           enable: false,
-    //           txtStyle: styleMediumBold.copyWith(color: primaryColor),
-    //         );
-    //       });
-    //     }
-    //     return InputIntChiTieu(
-    //       key: ValueKey(
-    //           '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuCot.maChiTieu}-${chiTieuCot.sTT}-${idValue!}'),
-    //       onChange: (value) => controller.onChangeInputA6_1(
-    //           mainQuestion.bangDuLieu!,
-    //           mainQuestion.maCauHoi!,
-    //           fieldName,
-    //           idValue,
-    //           value),
-    //       chiTieuCot: chiTieuCot,
-    //       subName: subName,
-    //       value: val,
-    //       enable: chiTieuCot.tenChiTieu == "STT" ? false : true,
-    //       validator: (String? inputValue) => controller.onValidateInputA6_1(
-    //           mainQuestion.bangDuLieu!,
-    //           mainQuestion.maCauHoi!,
-    //           fieldName,
-    //           idValue,
-    //           inputValue,
-    //           minLen,
-    //           maxLen,
-    //           minValue,
-    //           maxValue,
-    //           chiTieuCot.loaiCauHoi!),
-    //       flteringTextInputFormatterRegExp: wFilterInput,
-    //     );
-    //   case 3:
-    //     var wFilterInput = RegExp(r'(^\d*\.?\d{0,2})'); // RegExp('[0-9]');
-    //     int decimalDigits = 2;
-    //     if ((mainQuestion.maCauHoi == "A6_8") &&
-    //         fieldName == columnPhieuMauA68A6_8_3 &&
-    //         chiTieuCot.maChiTieu == '3') {
-    //       return Obx(() {
-    //         var totalValA6_8_3 = controller.getValueByFieldNameStt(
-    //             mainQuestion.bangDuLieu!, fieldName, idValue);
-    //         return InputIntChiTieu(
-    //           key: ValueKey(
-    //               '${question.maPhieu}${mainQuestion.cauHoiUUID}_${chiTieuCot.maCauHoi}_${chiTieuCot.maChiTieu}-${chiTieuCot.sTT}-${idValue!}_$totalValA6_8_3'),
-    //           onChange: (value) => (),
-    //           chiTieuCot: chiTieuCot,
-    //           value: val,
-    //           enable: false,
-    //           type: "double",
-    //           decimalDigits: decimalDigits,
-    //           txtStyle: styleMediumBold.copyWith(color: primaryColor),
-
-    //         );
-    //       });
-    //     }
-    //     return InputIntChiTieu(
-    //       key: ValueKey(
-    //           '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuCot.maChiTieu}-${chiTieuCot.sTT}-${idValue!}'),
-    //       onChange: (value) => controller.onChangeInputA6_1(
-    //           mainQuestion.bangDuLieu!,
-    //           mainQuestion.maCauHoi!,
-    //           fieldName,
-    //           idValue,
-    //           value),
-    //       chiTieuCot: chiTieuCot,
-    //       subName: subName,
-    //       type: "double",
-    //       value: controller.getDoubleValue(val, "double"),
-    //       enable: (chiTieuCot.tenChiTieu == "STT") ? false : true,
-    //       validator: (inputValue) => controller.onValidateInputA6_1(
-    //           mainQuestion.bangDuLieu!,
-    //           mainQuestion.maCauHoi!,
-    //           fieldName,
-    //           idValue,
-    //           inputValue,
-    //           minLen,
-    //           maxLen,
-    //           minValue,
-    //           maxValue,
-    //           chiTieuCot.loaiCauHoi!),
-    //       flteringTextInputFormatterRegExp: wFilterInput,
-    //     );
-
-    //   case 4:
-    //     return InputStringChiTieuCT(
-    //       key: ValueKey(
-    //           '${chiTieuCot.maPhieu}-${chiTieuCot.maCauHoi}-${chiTieuCot.maChiTieu}-${chiTieuCot.sTT}-${idValue!}'),
-    //       onChange: (inputValue) => controller.onChangeInputA6_1(
-    //           mainQuestion.bangDuLieu!,
-    //           mainQuestion.maCauHoi!,
-    //           fieldName,
-    //           idValue,
-    //           inputValue),
-    //       chiTieuCot: chiTieuCot,
-    //       subName: subName,
-    //       value: val,
-    //       maxLen: maxLen,
-    //       maxLine: 3,
-    //       validator: (String? inputValue) => controller.onValidateInputA6_1(
-    //           mainQuestion.bangDuLieu!,
-    //           mainQuestion.maCauHoi!,
-    //           fieldName,
-    //           idValue,
-    //           inputValue,
-    //           minLen,
-    //           maxLen,
-    //           minValue,
-    //           maxValue,
-    //           chiTieuCot.loaiCauHoi!),
-    //     );
-    //   case 5:
-
-    //   //  case 6:
-    //   //return _renderQuestionType6(question);
-    //   // case 7:
-    //   //   return _renderQuestionType7(question);
-
-    //   default:
-    //     return Container();
-    // }
-    return Container();
-  }
-
   ///END:: Build cho A43
   /******/
   ///BEGIN:: Build câu vừa có chỉ tiêu dòng và chỉ tiêu cột
@@ -2098,17 +1669,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             shrinkWrap: true,
             itemBuilder: (_, indexIO) {
               ChiTieuDongModel chiTieuDong = chiTieuDongs[indexIO];
-              if (mainQuestion.maCauHoi == "A8_1" &&
-                  (chiTieuDong.maSo == '3.1' || chiTieuDong.maSo == '5.1')) {
-                return buildChiTieuDongCotItemA3_1VsA5_1(
-                    mainQuestion, chiTieuDong, chiTieuCots);
-              }
-              if (mainQuestion.maCauHoi == 'A9_4') {
-                return buildChiTieuDongCotItemA9_4(mainQuestion, chiTieuDong);
-              } else {
-                return buildChiTieuDongCotItem(
-                    mainQuestion, chiTieuDong, chiTieuCots);
-              }
+
+              return buildChiTieuDongCotItem(
+                  mainQuestion, chiTieuDong, chiTieuCots);
             })
       ],
     );
@@ -2116,24 +1679,34 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
   buildChiTieuDongCotItem(QuestionCommonModel mainQuestion,
       ChiTieuDongModel chiTieuDong, List<ChiTieuModel> chiTieuCots) {
-    ///Không build chỉ tiêu này; => Để kiểm tra ngành là H thì mới build sau
-    // if (mainQuestion.maCauHoi == "A8_1" &&
-    //     (chiTieuDong.maSo == "3.1" || chiTieuDong.maSo == "5.1")) {
-    //   return const SizedBox();
-    // }
+    ///(CHỈ HIỂN THỊ NHỮNG NĂNG LƯỢNG CÓ CÂU 6.1 = "CÓ" Ở PHIẾU TOÀN BỘ)
+    if (mainQuestion.maCauHoi == "A6_1_M" &&
+        mainQuestion.maPhieu == AppDefine.maPhieuMau) {
+      var a6_1fieldName = 'A6_1_${chiTieuDong.maSo}_1';
+      if (chiTieuDong.maSo == "1_1" || chiTieuDong.maSo == "1_2") {
+        a6_1fieldName = 'A6_1_1_1';
+      } else if (chiTieuDong.maSo == "6_1") {
+        a6_1fieldName = 'A6_1_6_1';
+      } else if (chiTieuDong.maSo == "7_1") {
+        a6_1fieldName = 'A6_1_7_1';
+      } else if (chiTieuDong.maSo == "10_1") {
+        a6_1fieldName = 'A6_1_10_1';
+      }
+      var a6_1Val = controller.getValueByFieldName(
+          mainQuestion.bangDuLieu!, a6_1fieldName);
+      if (a6_1Val != 1 && a6_1Val != "1") {
+        return const SizedBox();
+      }
+    }
     return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //  if ((chiTieuDong.maSo == '0' && chiTieuDong.maCauHoi == 'A4_7'))
-          // RichTextQuestionChiTieu(
-          //   chiTieuDong.tenChiTieu ?? '',
-          //   level: 2,
-          // )
-          //  else
           RichTextQuestionChiTieu(
             chiTieuDong.tenChiTieu ?? '',
-            prefixText: chiTieuDong.maSo,
+            prefixText: chiTieuDong.maSo!.contains("_")
+                ? chiTieuDong.maSo!.replaceAll('_', '.')
+                : chiTieuDong.maSo!,
             seperateSign: ' - ',
             level: 3,
           ),
@@ -2176,278 +1749,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         ]);
   }
 
-  buildChiTieuDongCotItemA9_4(
-      QuestionCommonModel mainQuestion, ChiTieuDongModel chiTieuDong) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichTextQuestionChiTieu(
-            chiTieuDong.tenChiTieu ?? '',
-            prefixText: chiTieuDong.maSo,
-            seperateSign: ' - ',
-            level: 3,
-          ),
-          Container(
-              margin: const EdgeInsets.fromLTRB(
-                  0.0, 0.0, 0.0, AppValues.marginBottomBox),
-              padding: const EdgeInsets.all(AppValues.paddingBox),
-              decoration: BoxDecoration(
-                  border: Border.all(color: greyDarkBorder, width: 1),
-                  borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-                  color: chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9
-                      ? greyDarkBorder2
-                      : Colors.white),
-              child: Column(
-                children: [
-                  renderQuestionType5DmChiTieuDongCotA9_4(
-                      mainQuestion, chiTieuDong, tableDmCoKhong)
-                ],
-              )),
-        ]);
-  }
-
-  buildChiTieuDongCotItemA3_1VsA5_1(QuestionCommonModel mainQuestion,
-      ChiTieuDongModel chiTieuDong, List<ChiTieuModel> chiTieuCots) {
-    // ///Không build chỉ tiêu này; => Để kiểm tra ngành là H thì mới build sau
-    // // if (mainQuestion.maCauHoi == "A8_1" &&
-    // //     (chiTieuDong.maSo == "3.1" || chiTieuDong.maSo == "5.1")) {
-    // //   return const SizedBox();
-    // // }
-    // if (chiTieuDong.maCauHoi == 'A8_1') {
-    //   return Obx(() {
-    //     var a8_1_3Value =
-    //         controller.getValueByFieldName(question.bangDuLieu!,columnPhieuMauA8_1_3_1);
-    //     var a8_1_5Value =
-    //         controller.getValueByFieldName(question.bangDuLieu!,columnPhieuMauA8_1_5_1);
-    //     if (chiTieuDong.maSo == '3.1') {
-    //       // if (a8_1_3Value == 1) {
-    //       //   return Column(
-    //       //       mainAxisAlignment: MainAxisAlignment.start,
-    //       //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       //       children: [
-    //       //         RichTextQuestionChiTieu(
-    //       //           key: ValueKey(
-    //       //               '${mainQuestion.maCauHoi}_${chiTieuDong.maSo}_$a8_1_3Value'),
-    //       //           chiTieuDong.tenChiTieu ?? '',
-    //       //           prefixText: chiTieuDong.maSo,
-    //       //           seperateSign: ' - ',
-    //       //           level: 3,
-    //       //         ),
-    //       //         Container(
-    //       //             margin: const EdgeInsets.fromLTRB(
-    //       //                 0.0, 0.0, 0.0, AppValues.marginBottomBox),
-    //       //             padding: const EdgeInsets.all(AppValues.paddingBox),
-    //       //             decoration: BoxDecoration(
-    //       //                 border: Border.all(color: greyDarkBorder, width: 1),
-    //       //                 borderRadius:
-    //       //                     const BorderRadius.all(Radius.circular(5.0)),
-    //       //                 color:
-    //       //                     chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9
-    //       //                         ? greyDarkBorder2
-    //       //                         : Colors.white),
-    //       //             child: Column(
-    //       //               children: [
-    //       //                 ListView.builder(
-    //       //                     key: ObjectKey(chiTieuDong),
-    //       //                     itemCount: chiTieuCots.length,
-    //       //                     physics: const NeverScrollableScrollPhysics(),
-    //       //                     shrinkWrap: true,
-    //       //                     itemBuilder: (_, index) {
-    //       //                       ChiTieuModel chitieuCot = chiTieuCots[index];
-    //       //                       return Column(
-    //       //                         mainAxisAlignment: MainAxisAlignment.start,
-    //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-    //       //                         children: [
-    //       //                           if (chitieuCot.loaiChiTieu.toString() ==
-    //       //                               AppDefine.loaiChiTieu_1)
-    //       //                             renderChiTieuDongCotQuestionByType(
-    //       //                                 mainQuestion, chiTieuDong, chitieuCot)
-    //       //                           else
-    //       //                             const SizedBox(),
-    //       //                         ],
-    //       //                       );
-    //       //                     }),
-    //       //               ],
-    //       //             )),
-    //       //       ]);
-    //       // }
-    //       if (controller.isCap1HPhanVI.value == true &&
-    //           (controller.isCap5VanTaiHanhKhachPhanVI.value == true ||
-    //               controller.isCap5DichVuHangHoaPhanVI.value)) {
-    //         return Column(
-    //             mainAxisAlignment: MainAxisAlignment.start,
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               RichTextQuestionChiTieu(
-    //                 key: ValueKey(
-    //                     '${question.maPhieu}${mainQuestion.maCauHoi}_${chiTieuDong.maSo}_$a8_1_3Value'),
-    //                 chiTieuDong.tenChiTieu ?? '',
-    //                 prefixText: chiTieuDong.maSo,
-    //                 seperateSign: ' - ',
-    //                 level: 3,
-    //               ),
-    //               Container(
-    //                   margin: const EdgeInsets.fromLTRB(
-    //                       0.0, 0.0, 0.0, AppValues.marginBottomBox),
-    //                   padding: const EdgeInsets.all(AppValues.paddingBox),
-    //                   decoration: BoxDecoration(
-    //                       border: Border.all(color: greyDarkBorder, width: 1),
-    //                       borderRadius:
-    //                           const BorderRadius.all(Radius.circular(5.0)),
-    //                       color:
-    //                           chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9
-    //                               ? greyDarkBorder2
-    //                               : Colors.white),
-    //                   child: Column(
-    //                     children: [
-    //                       ListView.builder(
-    //                           key: ObjectKey(chiTieuDong),
-    //                           itemCount: chiTieuCots.length,
-    //                           physics: const NeverScrollableScrollPhysics(),
-    //                           shrinkWrap: true,
-    //                           itemBuilder: (_, index) {
-    //                             ChiTieuModel chitieuCot = chiTieuCots[index];
-    //                             return Column(
-    //                               mainAxisAlignment: MainAxisAlignment.start,
-    //                               crossAxisAlignment: CrossAxisAlignment.start,
-    //                               children: [
-    //                                 if (chitieuCot.loaiChiTieu.toString() ==
-    //                                     AppDefine.loaiChiTieu_1)
-    //                                   renderChiTieuDongCotQuestionByType(
-    //                                       mainQuestion, chiTieuDong, chitieuCot)
-    //                                 else
-    //                                   const SizedBox(),
-    //                               ],
-    //                             );
-    //                           }),
-    //                     ],
-    //                   )),
-    //             ]);
-    //       }
-    //       return const SizedBox();
-    //     } else if (chiTieuDong.maSo == '5.1') {
-    //       // if (a8_1_5Value == 1) {
-    //       //   return Column(
-    //       //       mainAxisAlignment: MainAxisAlignment.start,
-    //       //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       //       children: [
-    //       //         RichTextQuestionChiTieu(
-    //       //           key: ValueKey(
-    //       //               '${mainQuestion.maCauHoi}_${chiTieuDong.maSo}_$a8_1_3Value'),
-    //       //           chiTieuDong.tenChiTieu ?? '',
-    //       //           prefixText: chiTieuDong.maSo,
-    //       //           seperateSign: ' - ',
-    //       //           level: 3,
-    //       //         ),
-    //       //         Container(
-    //       //             margin: const EdgeInsets.fromLTRB(
-    //       //                 0.0, 0.0, 0.0, AppValues.marginBottomBox),
-    //       //             padding: const EdgeInsets.all(AppValues.paddingBox),
-    //       //             decoration: BoxDecoration(
-    //       //                 border: Border.all(color: greyDarkBorder, width: 1),
-    //       //                 borderRadius:
-    //       //                     const BorderRadius.all(Radius.circular(5.0)),
-    //       //                 color:
-    //       //                     chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9
-    //       //                         ? greyDarkBorder2
-    //       //                         : Colors.white),
-    //       //             child: Column(
-    //       //               children: [
-    //       //                 ListView.builder(
-    //       //                     key: ObjectKey(chiTieuDong),
-    //       //                     itemCount: chiTieuCots.length,
-    //       //                     physics: const NeverScrollableScrollPhysics(),
-    //       //                     shrinkWrap: true,
-    //       //                     itemBuilder: (_, index) {
-    //       //                       ChiTieuModel chitieuCot = chiTieuCots[index];
-    //       //                       return Column(
-    //       //                         mainAxisAlignment: MainAxisAlignment.start,
-    //       //                         crossAxisAlignment: CrossAxisAlignment.start,
-    //       //                         children: [
-    //       //                           if (chitieuCot.loaiChiTieu.toString() ==
-    //       //                               AppDefine.loaiChiTieu_1)
-    //       //                             renderChiTieuDongCotQuestionByType(
-    //       //                                 mainQuestion, chiTieuDong, chitieuCot)
-    //       //                           else
-    //       //                             const SizedBox(),
-    //       //                         ],
-    //       //                       );
-    //       //                     }),
-    //       //               ],
-    //       //             )),
-    //       //       ]);
-    //       // }
-    //       if (controller.isCap1HPhanVI.value == true &&
-    //           (controller.isCap5VanTaiHanhKhachPhanVI.value == true ||
-    //               controller.isCap5DichVuHangHoaPhanVI.value)) {
-    //         return Column(
-    //             mainAxisAlignment: MainAxisAlignment.start,
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               RichTextQuestionChiTieu(
-    //                 key: ValueKey(
-    //                     '${question.maPhieu}${mainQuestion.maCauHoi}_${chiTieuDong.maSo}_$a8_1_3Value'),
-    //                 chiTieuDong.tenChiTieu ?? '',
-    //                 prefixText: chiTieuDong.maSo,
-    //                 seperateSign: ' - ',
-    //                 level: 3,
-    //               ),
-    //               Container(
-    //                   margin: const EdgeInsets.fromLTRB(
-    //                       0.0, 0.0, 0.0, AppValues.marginBottomBox),
-    //                   padding: const EdgeInsets.all(AppValues.paddingBox),
-    //                   decoration: BoxDecoration(
-    //                       border: Border.all(color: greyDarkBorder, width: 1),
-    //                       borderRadius:
-    //                           const BorderRadius.all(Radius.circular(5.0)),
-    //                       color:
-    //                           chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9
-    //                               ? greyDarkBorder2
-    //                               : Colors.white),
-    //                   child: Column(
-    //                     children: [
-    //                       ListView.builder(
-    //                           key: ObjectKey(chiTieuDong),
-    //                           itemCount: chiTieuCots.length,
-    //                           physics: const NeverScrollableScrollPhysics(),
-    //                           shrinkWrap: true,
-    //                           itemBuilder: (_, index) {
-    //                             ChiTieuModel chitieuCot = chiTieuCots[index];
-    //                             return Column(
-    //                               mainAxisAlignment: MainAxisAlignment.start,
-    //                               crossAxisAlignment: CrossAxisAlignment.start,
-    //                               children: [
-    //                                 if (chitieuCot.loaiChiTieu.toString() ==
-    //                                     AppDefine.loaiChiTieu_1)
-    //                                   renderChiTieuDongCotQuestionByType(
-    //                                       mainQuestion, chiTieuDong, chitieuCot)
-    //                                 else
-    //                                   const SizedBox(),
-    //                               ],
-    //                             );
-    //                           }),
-    //                     ],
-    //                   )),
-    //             ]);
-    //       }
-    //       return const SizedBox();
-    //     }
-    //     return const SizedBox();
-    //   });
-    // }
-    return const SizedBox();
-  }
-
   renderChiTieuDongCotQuestionByType(QuestionCommonModel question,
       ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot,
       {String? subName, String? value}) {
-    ///BUILD CAU 9.4
-    if (question.maCauHoi == "A9_4") {
-      return const SizedBox();
-      // return renderQuestionType5DmChiTieuDongCotA9_4(
-      //     question, chiTieuDong, chiTieuCot, tableDmCoKhong);
-    }
     switch (chiTieuCot.loaiCauHoi) {
       case 0:
         RichTextQuestionChiTieu(
@@ -3095,7 +2399,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         (question.maCauHoi == "A1" &&
             question.maPhieu == AppDefine.maPhieuVT) ||
         (question.maCauHoi == "A7" &&
-            question.maPhieu == AppDefine.maPhieuVT)) {
+            question.maPhieu == AppDefine.maPhieuVT) ||
+        (question.maCauHoi == "A6_1_M" &&
+            question.maPhieu == AppDefine.maPhieuMau)) {
       return renderChiTieuDongCotType3ByMaChiTieu(
           question, chiTieuDong, chiTieuCot,
           value: value);
@@ -3131,61 +2437,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         } else {
           return const SizedBox();
         }
-      } else if (question.maCauHoi == "A8_1") {
-        if (chiTieuDong.maSo == "3.1") {
-          // var a8_1_3_1FieldName = '${chiTieuDong.maCauHoi}_3_1';
-          // var a8_1_3_1Value =
-          //     controller.getValueByFieldName(question.bangDuLieu!,a8_1_3_1FieldName);
-          // if (a8_1_3_1Value == 1 && chiTieuCot.maChiTieu == '2') {
-          //   return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
-          // } else {
-          //   return const SizedBox();
-          // }
-
-          if (chiTieuCot.maChiTieu == '2') {
-            return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
-          } else {
-            return const SizedBox();
-          }
-        } else if (chiTieuDong.maSo == "5.1") {
-          // var a8_1_5_1FieldName = '${chiTieuDong.maCauHoi}_5_1';
-          // var a8_1_5_1Value =
-          //     controller.getValueByFieldName(question.bangDuLieu!,a8_1_5_1FieldName);
-          // if (a8_1_5_1Value == 1 && chiTieuCot.maChiTieu == '2') {
-          //   return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
-          // } else {
-          //   return const SizedBox();
-          // }
-
-          if (chiTieuCot.maChiTieu == '2') {
-            return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
-          } else {
-            return const SizedBox();
-          }
-        } else if (chiTieuDong.maSo == "1.1" ||
-            chiTieuDong.maSo == "1.2" ||
-            chiTieuDong.maSo == "1.3" ||
-            chiTieuDong.maSo == "1.4") {
-          var a8_1_x_xFieldName =
-              '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo!.replaceAll('.', '_')}_1';
-          var a8_1_x_xValue = controller.getValueByFieldName(
-              question.bangDuLieu!, a8_1_x_xFieldName);
-          if (a8_1_x_xValue == 1) {
-            return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
-          } else {
-            return const SizedBox();
-          }
-        } else {
-          var a8_1_x_xFieldName =
-              '${chiTieuDong.maCauHoi}_${chiTieuDong.maSo}_1';
-          var a8_1_x_xValue = controller.getValueByFieldName(
-              question.bangDuLieu!, a8_1_x_xFieldName);
-          if (a8_1_x_xValue == 1) {
-            return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
-          } else {
-            return const SizedBox();
-          }
-        }
+      } else if (question.maCauHoi == "A6_1_M" &&
+          question.maPhieu == AppDefine.maPhieuMau) {
+        return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
       }
       return renderChiTieuDongCotType3(question, chiTieuDong, chiTieuCot);
     });
@@ -3204,6 +2458,24 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Obx(() {
       var fieldNameMaCauHoiMaSo = controller.getFieldNameByMaCauChiTieuDongCot(
           chiTieuCot, chiTieuDong)!;
+      if (question.maCauHoi == "A6_1_M" ||
+          question.maPhieu == AppDefine.maPhieuMau) {
+        if (chiTieuCot.maChiTieu == "1") {
+          fieldNameMaCauHoiMaSo = "A6_1_${chiTieuDong.maSo}_2";
+        } else if (chiTieuCot.maChiTieu == "2") {
+          fieldNameMaCauHoiMaSo = "A6_1_${chiTieuDong.maSo}_3";
+        } else if (chiTieuCot.maChiTieu == "1_1") {
+          fieldNameMaCauHoiMaSo = "A6_1_${chiTieuDong.maSo}_1_1";
+        } else if (chiTieuCot.maChiTieu == "1_2") {
+          fieldNameMaCauHoiMaSo = "A6_1_${chiTieuDong.maSo}_1_2";
+        } else if (chiTieuCot.maChiTieu == "16_1") {
+          fieldNameMaCauHoiMaSo = "A6_1_${chiTieuDong.maSo}_6_1";
+        } else if (chiTieuCot.maChiTieu == "7_1") {
+          fieldNameMaCauHoiMaSo = "A6_1_${chiTieuDong.maSo}_7_1";
+        } else if (chiTieuCot.maChiTieu == "10_1") {
+          fieldNameMaCauHoiMaSo = "A6_1_${chiTieuDong.maSo}_10_1";
+        }
+      }
       var xVal = controller.getValueByFieldName(
           question.bangDuLieu!, fieldNameMaCauHoiMaSo);
       String vKey =
@@ -3241,6 +2513,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
                 question, chiTieuCot, chiTieuDong, inputValue,
                 fieldName: fieldNameMaCauHoiMaSo),
+            showDvtTheoChiTieuDong: (question.maPhieu == AppDefine.maPhieuMau &&
+                    question.maCauHoi == "A6_1_M" &&
+                    chiTieuCot.maChiTieu == "1")
+                ? true
+                : false,
             flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
             warningText: buildWarningTextA8_1(
@@ -3298,52 +2575,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         );
       });
     }
-    // if (question.maCauHoi == "A4_7" && chiTieuDong.maSo == "0") {
-    //   return Obx(() {
-    //     var wFilterInput = RegExp('[0-9]');
-    //     int decimalDigits = 2;
-    //     var fieldName = controller.getFieldNameByMaCauChiTieuDongCot(
-    //         chiTieuCot, chiTieuDong);
-    //     //'${chiTieuDong.maCauHoi!}_${chiTieuDong.maSo!}_${chiTieuCot.maChiTieu}';
-    //     var xVal = controller.getValueByFieldName(question.bangDuLieu!,fieldName);
-    //     var dmChiTieu = controller.getDanhMucByTenDm(tenDanhMuc) ?? [];
 
-    //     var a4_7_0_TongSo =
-    //         controller.getValueByFieldName(question.bangDuLieu!,columnPhieuMauA4_7_0);
-    //     // return InputIntView(
-    //     //   key: ValueKey('${question.cauHoiUUID}_$a4_7_0_TongSo'),
-    //     //   question: question,
-    //     //   onChange: (value) => {},
-    //     //   value: a4_7_0_TongSo,
-    //     //   enable: false,
-    //     //   txtStyle: styleMediumBold.copyWith(color: primaryColor),
-    //     //   hienThiTenCauHoi: false,
-    //     // );
-    //     return InputInt(
-    //       key: ValueKey('${question.cauHoiUUID}'),
-    //       question: question,
-    //       onChange: (value) => controller.onChangeInputChiTieuDongCot(
-    //           question.bangDuLieu!,
-    //           question.maCauHoi,
-    //           columnPhieuMauA4_7_0,
-    //           value,
-    //           question: question,
-    //           chiTieuCot: chiTieuCot,
-    //           chiTieuDong: chiTieuDong),
-    //       value: a4_7_0_TongSo,
-    //       showDtv: true,
-    //       rightString: chiTieuDong.dVT,
-    //       type: 'double',
-    //       validator: (String? inputValue) =>
-    //           controller.onValidateInputChiTieuDongCot(
-    //               question, chiTieuCot, chiTieuDong, inputValue,
-    //               typing: true, fieldName: columnPhieuMauA4_7_0),
-    //       flteringTextInputFormatterRegExp: wFilterInput,
-    //       decimalDigits: decimalDigits,
-    //       hideQuestionCaption: true,
-    //     );
-    //   });
-    // }
     if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuLT) {
       return Obx(() {
         var wFilterInput = RegExp('[0-9]');
@@ -3384,32 +2616,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         );
       });
     }
-    // if (question.maCauHoi == "A8_1" &&
-    //     (chiTieuDong.maSo == "4" || chiTieuDong.maSo == "5"|| chiTieuDong.maSo == "7")) {
-    //   return Column(
-    //     children: [
-    //       SelectIntCTDm(
-    //         key: ValueKey(
-    //             '${question.cauHoiUUID}_${chiTieuDong.maSo}_${chiTieuCot.maChiTieu}_$val'),
-    //         question: question,
-    //         listValue: dmChiTieu,
-    //         tenDanhMuc: tenDanhMuc,
-    //         onChange: (value, dmItem) => controller.onSelectDm(
-    //             question,
-    //             question.bangDuLieu!,
-    //             question.maCauHoi,
-    //             fieldName,
-    //             value,
-    //             dmItem),
-    //         value: val,
-    //         onChangeGhiRo: (value, dmItem) =>
-    //             controller.onChangeGhiRoDm(question, value, dmItem),
-    //         hienThiTenCauHoi: false,
-    //       ),
-    //       buildWarningTextA8_1(question, chiTieuDong, chiTieuCot),
-    //     ],
-    //   );
-    // }
+
     return Obx(() {
       var wFilterInput = RegExp('[0-9]');
       int decimalDigits = 0;
@@ -3524,9 +2731,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   renderQuestionType3A4_4(QuestionCommonModel question) {
     var wFilterInput = RegExp('[0-9]');
     int decimalDigits = 2;
-    var a4_4Value = controller.getValueByFieldName(
+    var a10MVal = controller.getValueByFieldName(
         question.bangDuLieu!, colPhieuMauTBA10_M);
-    if (a4_4Value.toString().contains("1") && question.maCauHoi == "A4_4_1") {
+    if (a10MVal.toString().contains("1") &&
+        question.maCauHoi == colPhieuMauTBA10_1_M) {
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, question.maCauHoi!);
       return InputInt(
@@ -3549,8 +2757,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         flteringTextInputFormatterRegExp: wFilterInput,
         decimalDigits: decimalDigits,
       );
-    } else if (a4_4Value.toString().contains("2") &&
-        question.maCauHoi == "A4_4_2") {
+    } else if (a10MVal.toString().contains("2") &&
+        question.maCauHoi == colPhieuMauTBA10_2_M) {
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, question.maCauHoi!);
       return InputInt(
@@ -4402,7 +3610,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               IntrinsicHeight(
                 child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                     margin: const EdgeInsets.only(top: 0),
                     decoration: const BoxDecoration(
                         gradient: LinearGradient(
@@ -4630,8 +3838,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       {QuestionCommonModel? parentQestion}) {
     var wFilterInput = RegExp('[0-9]');
     int decimalDigits = 0;
-   
-   
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -5032,7 +4239,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   buildNganhTMItem(
       QuestionCommonModel question, TablePhieuNganhTMSanPham product,
       {QuestionCommonModel? parentQestion}) {
-   // controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
+    // controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
     //  switch (question.maCauHoi) {
     //  case "A1":
     return Column(
@@ -5107,20 +4314,20 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   }
 
   buildWarningText(QuestionCommonModel question, selectedValue) {
-    // if (question.maCauHoi == columnPhieuMauA1_4) {
-    //   if (selectedValue == 2) {
-    //     var a1_3Value = controller.getValueByFieldName(question.bangDuLieu!,"A1_3");
-    //     if (a1_3Value != null) {
-    //       if (a1_3Value.toString() == "6") {
-    //         return const Text(
-    //           'Cảnh báo: Câu 1.3 đã chọn 6 - Cơ sở không có địa điểm cố định. Vui lòng kiểm tra lại.',
-    //           style: TextStyle(color: Colors.orange),
-    //         );
-    //       }
-    //     }
-    //   }
-    //   return const SizedBox();
-    // } else if (question.maCauHoi == columnPhieuMauA1_5_6) {
+    if (question.maCauHoi == colPhieuMauTBA1_3_2) {
+      var a1_3_2Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_3_2);
+      if (controller.validateNotEmptyString(a1_3_2Value.toString())) {
+        if (a1_3_2Value < 1946 || a1_3_2Value > 2008) {
+          return const Text(
+            'Cảnh báo: Câu 1.3.2 "Chủ cơ sở nhỏ hơn 18 tuổi Chủ cơ sở lớn hơn 80 tuổi',
+            style: TextStyle(color: Colors.orange),
+          );
+        }
+      }
+      return const SizedBox();
+    }
+    // else if (question.maCauHoi == columnPhieuMauA1_5_6) {
     //   if (controller.a1_5_6MaWarning.contains(selectedValue)) {
     //     var a1_5_3val = controller.getValueByFieldName(question.bangDuLieu!,"A1_5_3");
     //     if (selectedValue == 4 ||
