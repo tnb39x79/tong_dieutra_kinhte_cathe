@@ -16,7 +16,8 @@ class DialogBarrierWidget extends StatelessWidget {
       this.content2,
       this.isCancelButton = true,
       this.color,
-      this.content2Color});
+      this.content2Color,
+      this.content2StyleText});
 
   ///Agree Acrtion
   final Function() onPressedPositive;
@@ -32,6 +33,7 @@ class DialogBarrierWidget extends StatelessWidget {
   final Color? color;
   final String? content2;
   final Color? content2Color;
+  final TextStyle? content2StyleText;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +119,8 @@ class DialogBarrierWidget extends StatelessWidget {
     if (content2 != null && content2 != '') {
       return Text(
         content2!,
-        style: styleMediumW400.copyWith(color: content2Color ?? blackText),
+        style: content2StyleText ??
+            styleMediumW400.copyWith(color: content2Color ?? blackText),
         textAlign: TextAlign.center,
       );
     }

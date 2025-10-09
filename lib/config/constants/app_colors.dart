@@ -9,7 +9,7 @@ const Color primary1LighterColor = Color(0xFFfdedcc);
 
 const Color backgroundWhiteColor = Color.fromARGB(255, 255, 255, 255);
 const Color backgroundColor = Color(0xFFF9F9FB);
-const Color backgroundColorMau = Color(0xFFeeeeec);
+const Color backgroundColorMau = Color(0xFFfef6e5);
 //const Color backgroundColorSync = Color.fromARGB(255, 241, 240, 240);
 const Color backgroundColorSync = Color(0xFFFFFFFF);
 

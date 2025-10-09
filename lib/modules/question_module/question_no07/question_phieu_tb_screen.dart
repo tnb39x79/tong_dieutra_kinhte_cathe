@@ -75,7 +75,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
   Widget appBarTitle() {
     var t =
-        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
+        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT} ';
+    t = '$t (${controller.currentScreenNo})';
     return (controller.subTitleBar == null || controller.subTitleBar == "")
         ? Text(t, style: styleMediumBold)
         : ListTile(
@@ -604,7 +605,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           warningText: (controller.warningA6_4.value != '')
               ? controller.warningA6_4.value
@@ -633,7 +635,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question.giaTriNN,
           question.giaTriLN,
           question.loaiCauHoi!,
-          true),
+          true,
+          question.maPhieu!),
       flteringTextInputFormatterRegExp: wFilterInput,
     );
     // });
@@ -653,7 +656,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //       question.giaTriNN,
     //       question.giaTriLN,
     //       question.loaiCauHoi!,
-    //       true),
+    //       true,question.maPhieu!),
     //   flteringTextInputFormatterRegExp: wFilterInput,
     // );
     //  });
@@ -792,7 +795,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.giaTriNN,
                 question.giaTriLN,
                 question.loaiCauHoi!,
-                true),
+                true,
+                question.maPhieu!),
             flteringTextInputFormatterRegExp: wFilterInput,
           ),
           buildWarningText(question, val2),
@@ -868,18 +872,20 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         var vkey =
             '${question.maPhieu}_${question.manHinh}_${question.bangDuLieu}_${question.maCauHoi}_${question.cauHoiUUID}_1_$valRep';
         if (valA32 == null) {}
-
-        return InputIntView(
-          key: ValueKey(vkey),
-          question: question,
-          onChange: (value) => {},
-          value: valA32,
-          enable: false,
-          type: "double",
-          txtStyle: styleMediumBold.copyWith(color: primaryColor),
-          hintText: "Tự động tính.",
-          decimalDigits: 2,
-        );
+        return Column(children: [
+          InputIntView(
+            key: ValueKey(vkey),
+            question: question,
+            onChange: (value) => {},
+            value: valA32,
+            enable: false,
+            type: "double",
+            txtStyle: styleMediumBold.copyWith(color: primaryColor),
+            hintText: "Tự động tính.",
+            decimalDigits: 2,
+          ),
+          buildWarningText(question, valA32)
+        ]);
       });
     } else if (question.maCauHoi == colPhieuNganhTMA3T &&
         question.bangDuLieu == tablePhieuNganhTM) {
@@ -948,7 +954,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.giaTriNN,
                 question.giaTriLN,
                 question.loaiCauHoi!,
-                true),
+                true,
+                question.maPhieu!),
             decimalDigits: decimalDigits,
           );
         }
@@ -991,13 +998,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
         );
       });
     } else if (question.maCauHoi == colPhieuMauTBA4_2) {
-      controller.warningA4_2DoanhThu();
       decimalDigits = 2;
       return Obx(() {
         var a4_2Value = controller.getValueByFieldName(
@@ -1018,12 +1025,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
-          warningText: (controller.warningA4_2.value != '')
-              ? controller.warningA4_2.value
-              : '',
+          warningText: warningWithText(question, a4_2Value),
         );
       });
     } else if (question.maCauHoi == colPhieuMauTBA4_3) {
@@ -1053,7 +1059,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
           warningText: (controller.warningA4_6.value != '')
@@ -1086,7 +1093,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
           warningText: (controller.warningA6_5.value != '')
@@ -1118,7 +1126,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
           warningText: (controller.warningA6_11.value != '')
@@ -1150,7 +1159,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
           warningText: (controller.warningA6_12.value != '')
@@ -1190,7 +1200,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
         );
@@ -1222,7 +1233,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
         );
@@ -1256,7 +1268,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
         );
@@ -1264,26 +1277,31 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     }
 
     decimalDigits = 2;
-    return InputInt(
-      key: ValueKey('${question.maPhieu}-${question.maCauHoi}-${question.sTT}'),
-      question: question,
-      onChange: (value) => controller.onChangeInput(
-          question.bangDuLieu!, question.maCauHoi, question.maCauHoi, value),
-      subName: subName,
-      value: val,
-      type: 'double',
-      validator: (String? value) => controller.onValidate(
-          question.bangDuLieu!,
-          question.maCauHoi!,
-          question.maCauHoi,
-          value,
-          question.giaTriNN,
-          question.giaTriLN,
-          question.loaiCauHoi!,
-          true),
-      flteringTextInputFormatterRegExp: wFilterInput,
-      decimalDigits: decimalDigits,
-    );
+    return Column(children: [
+      InputInt(
+        key: ValueKey(
+            '${question.maPhieu}-${question.maCauHoi}-${question.sTT}'),
+        question: question,
+        onChange: (value) => controller.onChangeInput(
+            question.bangDuLieu!, question.maCauHoi, question.maCauHoi, value),
+        subName: subName,
+        value: val,
+        type: 'double',
+        validator: (String? value) => controller.onValidate(
+            question.bangDuLieu!,
+            question.maCauHoi!,
+            question.maCauHoi,
+            value,
+            question.giaTriNN,
+            question.giaTriLN,
+            question.loaiCauHoi!,
+            true,
+            question.maPhieu!),
+        flteringTextInputFormatterRegExp: wFilterInput,
+        decimalDigits: decimalDigits,
+      ),
+      buildWarningText(question, val)
+    ]);
   }
 
   _renderQuestionType4(QuestionCommonModel question, {String? subName}) {
@@ -1309,7 +1327,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.giaTriNN,
                 question.giaTriLN,
                 question.loaiCauHoi!,
-                true),
+                true,
+                question.maPhieu!),
             warningText: (controller.warningA1_1.value != '')
                 ? controller.warningA1_1.value
                 : '',
@@ -1336,7 +1355,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question.giaTriNN,
           question.giaTriLN,
           question.loaiCauHoi!,
-          true),
+          true,
+          question.maPhieu!),
     );
   }
 
@@ -1476,7 +1496,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       });
     } else if (question.maCauHoi == colPhieuMauTBA1_3_5) {
       return Obx(() {
-        var a1_5_6Val = controller.getValueByFieldName(
+        var a1_3_5Val = controller.getValueByFieldName(
             question.bangDuLieu!, question.maCauHoi!);
         //  var a1_5_3val = controller.getValueByFieldName(question.bangDuLieu!,"A1_5_3");
         var dmChiTieu =
@@ -1486,7 +1506,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           children: [
             SelectIntCTDm(
               key: ValueKey(
-                  '${question.maPhieu}${question.cauHoiUUID}${question.maCauHoi}$a1_5_6Val'),
+                  '${question.maPhieu}${question.cauHoiUUID}${question.maCauHoi}$a1_3_5Val'),
               question: question,
               listValue: dmChiTieu,
               tenDanhMuc: question.bangChiTieu,
@@ -1497,9 +1517,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   question.maCauHoi,
                   value,
                   dmItem),
-              value: a1_5_6Val,
+              value: a1_3_5Val,
             ),
-            buildWarningText(question, a1_5_6Val)
+            buildError(question, a1_3_5Val),
+            buildWarningText(question, a1_3_5Val)
           ],
         );
       });
@@ -1542,8 +1563,17 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     }
 
     return Obx(() {
+      if (question.maCauHoi == colPhieuMauTBA1_2 &&
+          question.maPhieu == AppDefine.maPhieuTB) {
+        var a1_1Val = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA1_1);
+        if (a1_1Val == 6) {
+          return const SizedBox();
+        }
+      }
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, question.maCauHoi!);
+
       var dmChiTieu =
           controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
       return Column(
@@ -1567,6 +1597,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 controller.onChangeGhiRoDm(question, value, dmItem),
           ),
           buildGhiRo(question, val),
+          buildWarningText(question, val),
           if (question.danhSachCauHoiCon != null &&
               question.danhSachCauHoiCon!.isNotEmpty)
             _buildQuestion3(question),
@@ -1621,8 +1652,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         titleText: 'Ghi rõ',
         level: 3,
         value: ghiRoValue,
-        validator: (inputValue) => controller.onValidate(question.bangDuLieu!,
-            question.maCauHoi!, fieldNameGhiRo, inputValue, 5, 250, 4, true),
+        validator: (inputValue) => controller.onValidate(
+            question.bangDuLieu!,
+            question.maCauHoi!,
+            fieldNameGhiRo,
+            inputValue,
+            5,
+            250,
+            4,
+            true,
+            question.maPhieu!),
       );
     } else if ((selectedValue == 1 &&
         question.bangChiTieu == tableDmCoKhong &&
@@ -1639,8 +1678,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         titleText: 'Mã số thuế',
         level: 3,
         value: ghiRoValue,
-        validator: (inputValue) => controller.onValidate(question.bangDuLieu!,
-            question.maCauHoi!, fieldNameGhiRo, inputValue, 5, 250, 4, true),
+        validator: (inputValue) => controller.onValidate(
+            question.bangDuLieu!,
+            question.maCauHoi!,
+            fieldNameGhiRo,
+            inputValue,
+            5,
+            250,
+            4,
+            true,
+            question.maPhieu!),
       );
     }
     return const SizedBox();
@@ -2198,8 +2245,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   controller.onValidateInputChiTieuDongCot(
                       question, chiTieuCot, chiTieuDong, inputValue,
                       typing: true),
-              warningText:
-                  controller.getA7_1WarningValue(fieldNameMaCauHoiMaSo),
+              // warningText:
+              //     controller.getA7_1WarningValue(fieldNameMaCauHoiMaSo),
             ),
           ],
         );
@@ -2321,8 +2368,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         titleText: 'Ghi rõ',
         level: 3,
         value: ghiRoValue,
-        validator: (inputValue) => controller.onValidate(question.bangDuLieu!,
-            question.maCauHoi!, fieldNameGhiRo, inputValue, 5, 250, 4, true),
+        validator: (inputValue) => controller.onValidate(
+            question.bangDuLieu!,
+            question.maCauHoi!,
+            fieldNameGhiRo,
+            inputValue,
+            5,
+            250,
+            4,
+            true,
+            question.maPhieu!),
       );
     }
     return const SizedBox();
@@ -2520,8 +2575,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 : false,
             flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
-            warningText: buildWarningTextA8_1(
-                question, chiTieuDong, chiTieuCot, fieldNameMaCauHoiMaSo),
+            warningText: buildWarningTextDongCot(
+                question, chiTieuDong, chiTieuCot, fieldNameMaCauHoiMaSo, xVal),
           ),
         ],
       );
@@ -2753,7 +2808,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             question.giaTriNN,
             question.giaTriLN,
             question.loaiCauHoi!,
-            true),
+            true,
+            question.maPhieu!),
         flteringTextInputFormatterRegExp: wFilterInput,
         decimalDigits: decimalDigits,
       );
@@ -2777,7 +2833,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             question.giaTriNN,
             question.giaTriLN,
             question.loaiCauHoi!,
-            true),
+            true,
+            question.maPhieu!),
         flteringTextInputFormatterRegExp: wFilterInput,
         decimalDigits: decimalDigits,
       );
@@ -3352,7 +3409,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //           question.giaTriNN,
     //           question.giaTriLN,
     //           question.loaiCauHoi!,
-    //           true),
+    //           true,question.maPhieu!),
     //       flteringTextInputFormatterRegExp: wFilterInput,
     //       decimalDigits: decimalDigits,
     //       showDtv: true,
@@ -3411,7 +3468,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.giaTriNN,
               question.giaTriLN,
               question.loaiCauHoi!,
-              true),
+              true,
+              question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
           showDtv: true,
@@ -3540,7 +3598,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                         questionConItem.giaTriNN,
                         questionConItem.giaTriLN,
                         questionConItem.loaiCauHoi!,
-                        true),
+                        true,
+                        questionConItem.maPhieu!),
                     flteringTextInputFormatterRegExp: wFilterInput,
                     decimalDigits: decimalDigits,
                   );
@@ -4072,7 +4131,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.giaTriNN,
                 question.giaTriLN,
                 question.loaiCauHoi!,
-                true),
+                true,
+                question.maPhieu!),
             flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
             showDtv: true,
@@ -4301,7 +4361,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.giaTriNN,
                 question.giaTriLN,
                 question.loaiCauHoi!,
-                true),
+                true,
+                question.maPhieu!),
             flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
             showDtv: true,
@@ -4313,8 +4374,41 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return const SizedBox();
   }
 
+  buildError(QuestionCommonModel question, value) {
+    if (question.maCauHoi == colPhieuMauTBA1_3_5) {
+      var a1_3_2val = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_3_2);
+      if (value == 6 && a1_3_2val > 2008) {
+        return Text(
+          'Lỗi: Dưới 17 tuổi mà đã tốt nghiệp cao đẳng.',
+          style: const TextStyle(color: errorColor),
+        );
+      }
+      if (value == 7 && a1_3_2val > 2006) {
+        return Text(
+          'Lỗi: Tuổi dưới 19 mà tốt nghiệp đại học.',
+          style: const TextStyle(color: errorColor),
+        );
+      }
+      if (value == 8 && a1_3_2val > 2005) {
+        return Text(
+          'Lỗi: Dưới 20 tuổi mà đã tốt nghiệp thạc sỹ.',
+          style: const TextStyle(color: errorColor),
+        );
+      }
+      if ((value == 9 || value == 10) && a1_3_2val > 2002) {
+        return Text(
+          'Lỗi: Dưới 23 tuổi mà tốt nghiệp trình độ tiến sỹ hoặc sau tiến sỹ.',
+          style: const TextStyle(color: errorColor),
+        );
+      }
+    }
+    return const SizedBox();
+  }
+
   buildWarningText(QuestionCommonModel question, selectedValue) {
-    if (question.maCauHoi == colPhieuMauTBA1_3_2) {
+    if (question.maCauHoi == colPhieuMauTBA1_3_2 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
       var a1_3_2Value = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA1_3_2);
       if (controller.validateNotEmptyString(a1_3_2Value.toString())) {
@@ -4326,50 +4420,159 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         }
       }
       return const SizedBox();
+    } else if (question.maCauHoi == colPhieuMauTBA1_3_5 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (controller.validateEmptyString(selectedValue.toString())) {
+        return const SizedBox();
+      }
+      var a1_3_2Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_3_2);
+      var tblTDCM = controller.tblDmTrinhDoChuyenMon
+          .where((x) => x.ma == selectedValue)
+          .firstOrNull;
+      String selectedText = tblTDCM!.ten ?? '';
+      if (selectedValue == 1) {
+        return Text(
+          'Cảnh bảo: $selectedText.',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      if (selectedValue == 2) {
+        return Text(
+          'Cảnh bảo: $selectedText.',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      if (selectedValue == 3) {
+        return Text(
+          'Cảnh bảo: $selectedText.',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      if (selectedValue == 4) {
+        return Text(
+          'Cảnh bảo: $selectedText.',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      if (selectedValue == 6 && (a1_3_2Value == 2007 || a1_3_2Value == 2008)) {
+        return Text(
+          'Cảnh bảo: Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ cao đẳng (=6).',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      if (selectedValue == 7 && (a1_3_2Value == 2005 || a1_3_2Value == 2006)) {
+        return Text(
+          'Cảnh bảo: Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ đại học  (=7).',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      if (selectedValue == 7 && (a1_3_2Value == 2003 || a1_3_2Value == 2004)) {
+        return Text(
+          'Cảnh bảo: Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ tiến sỹ trở lên (=8).',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      if (selectedValue == 7 && (a1_3_2Value == 2001 || a1_3_2Value == 2002)) {
+        return Text(
+          'Cảnh bảo: Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ tiến sỹ trở lên (=9|10).',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+      return const SizedBox();
+    } else if (question.maCauHoi == colPhieuMauTBA1_5 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      //Quoc tich
+      var a1_3_4Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_3_4);
+      var a1_4Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_4);
+      var a1_5_1Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_5_1);
+      if (selectedValue != null && selectedValue == 1) {
+        return const SizedBox();
+      }
+      if (a1_5_1Value == null || a1_5_1Value == '') {
+        //Cơ sở có đăng ký kinh doanh mà không có mã số thuế?
+        return Text(
+          'Cảnh bảo: Cơ sở có đăng ký kinh doanh mà không có mã số thuế?.',
+          style: const TextStyle(color: Colors.orange),
+        );
+      } else if (a1_4Value == 1 && selectedValue == 2) {
+        return Text(
+          'Cảnh bảo: Cơ sở Có giấy chứng nhận đăng ký kinh doanh (C1.4=1) mà Không có MST (C1.5=2)?',
+          style: const TextStyle(color: Colors.orange),
+        );
+      } else if (a1_4Value == 2 && selectedValue == 1) {
+        return Text(
+          'Cảnh bảo: Cơ sở Chưa có giấy chứng nhận đăng ký kinh doanh (C1.4=2) mà Có MST (C1.5=1)',
+          style: const TextStyle(color: Colors.orange),
+        );
+      } else if (a1_4Value == 3 && selectedValue == 1) {
+        return Text(
+          'Cảnh bảo: Cơ sở Đã đăng ký kinh doanh nhưng chưa được cấp (C1.4=3) mà có mã số thuế (C1.5=1)',
+          style: const TextStyle(color: Colors.orange),
+        );
+      } else if (a1_4Value == 4 && selectedValue == 1) {
+        return Text(
+          'Cảnh bảo: Cơ sở Đã đăng ký kinh doanh nhưng chưa được cấp (C1.4=3) mà có mã số thuế (C1.5=1)',
+          style: const TextStyle(color: Colors.orange),
+        );
+      } else if (a1_3_4Value == 1 &&
+          a1_5_1Value != null &&
+          a1_5_1Value != '' &&
+          a1_5_1Value.toString().length == 12) {
+        return Text(
+          'Cảnh bảo: Chủ cơ sở là người có quốc tịch Việt Nam mà MST  khác 12  số (Quốc tịch Việt Nam MST cơ sở chính là CCCD 12 chữ số)?;',
+          style: const TextStyle(color: Colors.orange),
+        );
+      } else if (a1_3_4Value == 2 &&
+          a1_5_1Value != null &&
+          a1_5_1Value != '' &&
+          a1_5_1Value.toString().length == 10) {
+        return Text(
+          'Cảnh bảo: Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA3_1T &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (selectedValue != null && selectedValue == 0) {
+        return Text(
+          'Cảnh bảo: Cơ sở không có TSCĐ có đúng không?',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA3_2 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (selectedValue != null && selectedValue > 30000) {
+        return Text(
+          'Cảnh bảo: Số tiền vốn bỏ ra quá lớn> 30 tỷ',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA4_1 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (selectedValue != null && selectedValue < 3) {
+        return Text(
+          'Cảnh bảo: Cơ sở có số tháng kinh doanh<3',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA4T &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var a4TValue = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA4T);
+      var a3_2Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA3_2);
+      if (a4TValue != null && a3_2Value != null && a4TValue < a3_2Value) {
+        return Text(
+          'Cảnh bảo: Tổng doanh thu (gồm tiền vốn và lãi)  <Số tiền vốn tại thời điểm 31/12/2025 ở C3.2',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
     }
-    // else if (question.maCauHoi == columnPhieuMauA1_5_6) {
-    //   if (controller.a1_5_6MaWarning.contains(selectedValue)) {
-    //     var a1_5_3val = controller.getValueByFieldName(question.bangDuLieu!,"A1_5_3");
-    //     if (selectedValue == 4 ||
-    //         selectedValue == 5 ||
-    //         selectedValue == 6 ||
-    //         selectedValue == 7) {
-    //       if (a1_5_3val != null && a1_5_3val >= 2007) {
-    //         var tblTDCM = controller.tblDmTrinhDoChuyenMon
-    //             .where((x) => x.ma == selectedValue)
-    //             .firstOrNull;
-    //         String selectedText = tblTDCM!.ten ?? '';
-    //         return Text(
-    //           'Cảnh báo: Câu 1.5.3 Năm sinh = $a1_5_3val, câu 1.5.6 chọn $selectedValue - $selectedText. Vui lòng kiểm tra lại.',
-    //           style: const TextStyle(color: Colors.orange),
-    //         );
-    //       }
-    //     } else if (selectedValue == 8) {
-    //       if (a1_5_3val != null && a1_5_3val >= 2004) {
-    //         var tblTDCM = controller.tblDmTrinhDoChuyenMon
-    //             .where((x) => x.ma == selectedValue)
-    //             .firstOrNull;
-    //         String selectedText = tblTDCM!.ten ?? '';
-    //         return Text(
-    //           'Cảnh báo: Câu 1.5.3 Năm sinh = $a1_5_3val, câu 1.5.6 chọn $selectedValue - $selectedText. Vui lòng kiểm tra lại.',
-    //           style: const TextStyle(color: Colors.orange),
-    //         );
-    //       }
-    //     } else if (selectedValue == 9 || selectedValue == 10) {
-    //       if (a1_5_3val != null && a1_5_3val >= 2002) {
-    //         var tblTDCM = controller.tblDmTrinhDoChuyenMon
-    //             .where((x) => x.ma == selectedValue)
-    //             .firstOrNull;
-    //         String selectedText = tblTDCM!.ten ?? '';
-    //         return Text(
-    //           'Cảnh báo: Câu 1.5.3 Năm sinh = $a1_5_3val, câu 1.5.6 chọn $selectedValue - $selectedText. Vui lòng kiểm tra lại.',
-    //           style: const TextStyle(color: Colors.orange),
-    //         );
-    //       }
-    //     }
-    //   }
-    //  return const SizedBox();
-    // } else if (question.maCauHoi == columnPhieuMauA9_1) {
+    //else if (question.maCauHoi == columnPhieuMauA9_1) {
     //   if (selectedValue != 1) {
     //     var a4_5_3_1Value = controller.getValueByFieldName(
     //         question.bangDuLieu!, columnPhieuMauA4_5_3_1);
@@ -4389,8 +4592,33 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return const SizedBox();
   }
 
-  buildWarningTextA8_1(QuestionCommonModel question,
-      ChiTieuDongModel chiTieuDong, ChiTieuModel chiTieuCot, String fieldName) {
+  warningWithText(QuestionCommonModel question, selectedValue) {
+    if (question.maCauHoi == colPhieuMauTBA4_2 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (selectedValue != null && selectedValue == 0) {
+        var a4_1Value = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA4_1);
+        if (a4_1Value != null && a4_1Value > 3) {
+          return 'Cảnh bảo: Doanh thu cơ sở =0 mà số tháng hoạt động của cơ sở tại C4.1>3 tháng?';
+        }
+      }
+    }
+  }
+
+  buildWarningTextDongCot(
+      QuestionCommonModel question,
+      ChiTieuDongModel chiTieuDong,
+      ChiTieuModel chiTieuCot,
+      String fieldName,
+      value) {
+    if (question.maCauHoi == 'A3_1' &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var a1_2TValue = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_2);
+      if (value != null && value > 0 && a1_2TValue != null && a1_2TValue == 1) {
+        return 'Cơ sở có địa điểm là đi thuê/mượn (C1.2=1) mà có tài sản cố định là nhà xưởng, cửa hàng C3.1.1>0)?';
+      }
+    }
     // if (chiTieuDong.maSo == '4') {
     //   if (controller.isCap1H_VT.value &&
     //       (controller.isCap5VanTaiHanhKhach.value ||

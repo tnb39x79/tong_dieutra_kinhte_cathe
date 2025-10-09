@@ -468,14 +468,14 @@ class GeneralInformationController extends BaseController {
   }
 
   waringSoDienThoai() {
-    if (dienThoaiController.text.isNotEmpty) {
-      if (dienThoaiController.text.length < 10 ||
-          dienThoaiController.text.length > 11) {
-        return 'Kiểm tra lại số điện thoại <10 hoặc >11 số';
-      } else {
-        return '';
-      }
-    }
+    // if (dienThoaiController.text.isNotEmpty) {
+    //   if (dienThoaiController.text.length < 10 ||
+    //       dienThoaiController.text.length > 11) {
+    //     return 'Kiểm tra lại số điện thoại <10 hoặc >11 số';
+    //   } else {
+    //     return '';
+    //   }
+    // }
     return '';
   }
 

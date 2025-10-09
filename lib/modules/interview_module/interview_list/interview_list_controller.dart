@@ -50,7 +50,7 @@ class InterviewListController extends BaseController {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
           String tt=AppUtils.getXaPhuong(currentTenXa??'');
-      subTitle = '$currentTenDoiTuongDT ĐB.$currentMaDiaBan - $currentTenDiaBan $tt. $currentMaXa - $currentTenXa';
+      subTitle = '$currentTenDoiTuongDT Địa bàn.$currentMaDiaBan - $currentTenDiaBan $tt. $currentMaXa - $currentTenXa';
     }
     return subTitle;
   }

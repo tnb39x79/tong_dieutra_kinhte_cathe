@@ -679,9 +679,9 @@ class ActiveStatusController extends BaseController {
         await xacnhanTukekhaiRepository.xacNhanTuKeKhaiCsSxkd(body);
     print(request);
     if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
-      var resp = await authRepository.getToken(
-          userName: AppPref.userName, password: AppPref.password);
-      AppPref.extraToken = resp.body?.accessToken;
+      // var resp = await authRepository.getToken(
+      //     userName: AppPref.userName, password: AppPref.password,uniqueStringSameImei:AppPref.uniqueStringTheSameImei);
+      // AppPref.extraToken = resp.body?.accessToken;
       await xacNhanToServer(body, isRetryWithSignIn: true);
     }
     if (request.statusCode == ApiConstants.success) {

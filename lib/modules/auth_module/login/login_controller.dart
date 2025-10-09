@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
@@ -91,10 +92,15 @@ class LoginController extends BaseController {
   Future<bool> login(String userName, String password) async {
     log('LOGIN: USER - $userName; PASSWORD: $password');
     try {
+      String uniqueStringSameImei = AppPref.uniqueStringTheSameImei != ''
+          ? AppPref.uniqueStringTheSameImei
+          : await FlutterUdid.udid;
+          
       final response = await authRepository
           .getToken(
             userName: userName,
             password: password,
+            uniqueStringSameImei:uniqueStringSameImei
           )
           .timeout(const Duration(seconds: AppValues.timeOut));
 

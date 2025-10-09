@@ -125,7 +125,7 @@ class SideBar extends StatelessWidget {
                         offset: Offset(0, 5), // X and Y offset of the shadow
                       ),
                     ],
-                    color: Color(0xFFf0f4f9),
+                    color:backgroundColorMau,
                     
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(AppValues.borderLv2),
@@ -143,7 +143,7 @@ class SideBar extends StatelessWidget {
                           left: 0, top: 0, right: 0, bottom: 0),
                       margin: const EdgeInsets.only(top: 0),
                       decoration: const BoxDecoration( 
-                          color: Color(0xFFf0f4f9), 
+                          color:backgroundColorMau, 
                           borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(AppValues.borderLv2),
                               bottomRight: Radius.circular(AppValues

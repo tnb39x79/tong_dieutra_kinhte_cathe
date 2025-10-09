@@ -1,5 +1,4 @@
 final Map<String, String> viVN = {
- 
   'slogan': 'TỔNG ĐIỀU TRA KINH TẾ',
   'slogan2': 'CÁ THỂ',
   'login': 'Đăng nhập',
@@ -97,7 +96,6 @@ final Map<String, String> viVN = {
   'commune': 'Xã',
   'coso': 'Cơ sở',
 
-
   //update app
   'update_app_title': 'Cập nhật chương trình',
   'update_model_ai_title': 'Cập nhật dữ liệu AI',
@@ -157,4 +155,5 @@ final Map<String, String> viVN = {
       'Dữ liệu đã tồn tại. Nếu chọn "Không" thì thông tin dữ liệu của câu này sẽ bị xoá?',
   'dialog_content_warning_select_no_chitieu':
       'Dữ liệu đã tồn tại. Nếu chọn "Không" thì thông tin dữ liệu của chỉ tiêu này sẽ bị xoá?',
+  'khonglay_duoc_dulieu_kiemtra': 'Không lấy được dữ liệu để kiểm tra.',
 };

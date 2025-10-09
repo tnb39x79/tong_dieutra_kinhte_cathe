@@ -36,5 +36,7 @@ List<String> colsExcludeValidate=[
   'MaNganhC5',
   'MoTaSanPham',
   'STT',
-  '_id'
+  '_id',
+  '_Id',
+  'MaCauHoi'
 ];

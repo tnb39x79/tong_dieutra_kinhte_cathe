@@ -15,16 +15,16 @@ class AuthRepository {
 
   // base token
   Future<ResponseToken<TokenModel>> getToken(
-      {required String userName, required String password}) async {
+      {required String userName, required String password,required String uniqueStringSameImei}) async {
     if (NetworkService.connectionType == Network.none) {
       return ResponseToken.withDisconnect();
     }
-    final _mobileDeviceIdentifier = await FlutterUdid.udid;
+  //  final _mobileDeviceIdentifier = await FlutterUdid.udid;
     final body = {
       'grant_type': 'password',
       'username': userName,
       'password': password,
-      "imei": _mobileDeviceIdentifier,
+      "imei": uniqueStringSameImei,
     };
 
     final params = {'grant_type': 'refresh_token'};

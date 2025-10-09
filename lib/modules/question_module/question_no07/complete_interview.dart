@@ -10,8 +10,8 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_defin
 import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_phieu_tb_controller.dart';
- 
-import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart'; 
+
+import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 
 import '/resource/services/location/location_provider.dart';
 
@@ -34,7 +34,8 @@ class CompleteInterviewScreen extends StatefulWidget {
 }
 
 class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
-  final QuestionPhieuTBController controller = Get.find<QuestionPhieuTBController>();
+  final QuestionPhieuTBController controller =
+      Get.find<QuestionPhieuTBController>();
 
   final _formKey = GlobalKey<FormState>();
   final hoTenController = TextEditingController();
@@ -88,8 +89,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   _initData() async {
     hoTenController.text = controller.tblPhieu.value.nguoiTraLoi ?? '';
     soDienThoaiController.text = controller.tblPhieu.value.soDienThoai ?? '';
-     _latController.text = completeInfo?[columnViDo].toString() ?? '';
-     _lngController.text = completeInfo?[columnKinhDo].toString() ?? '';
+    _latController.text = completeInfo?[columnViDo].toString() ?? '';
+    _lngController.text = completeInfo?[columnKinhDo].toString() ?? '';
     // _giaiTrinhController.text = completeInfo?[columnGhiChu].ghiChu ?? '';
     //_lyDoThoiGianController.text =  controller.tblPhieu.value.giaiTrinhThoiGianPV ?? '';
     _lyDoDinhViController.text = completeInfo?[giaiTrinhToaDo] ?? '';
@@ -131,7 +132,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
       _setEdited();
     } catch (_) {
       // Handle error if needed
-
+      _latController.text = '';
+      _lngController.text = '';
       controller.showError("Không thể lấy vị trí");
     } finally {
       LoadingOverlayHelper.hide();
@@ -276,7 +278,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
       TextQuestion("Người cung cấp thông tin"),
       WidgetFieldInputMix(
         controller: hoTenController,
-        hint: 'Nhập Họ và tên người cung cấp thông tin', 
+        hint: 'Nhập Họ và tên người cung cấp thông tin',
         minLines: 1,
         onChanged: (String? value) => onChangeText(value, columnNguoiTraLoi),
         validator: (String? value) =>
@@ -436,7 +438,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
 
   /// Kiểm tra có toạ độ hay không
   bool _hasCoordinates() {
-    return  _latController.text.isNotEmpty && _lngController.text.isNotEmpty;
+    return _latController.text.isNotEmpty && _lngController.text.isNotEmpty;
   }
 
   /// Kiểm tra xem có phải đang cập nhật toạ độ hay không

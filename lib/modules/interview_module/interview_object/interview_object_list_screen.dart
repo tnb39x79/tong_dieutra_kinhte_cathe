@@ -35,7 +35,7 @@ class InterviewObjectListScreen extends GetView<InterviewObjectListController> {
         return WidgetMenuInterview(
           title: '${controller.doiTuongDTs[index].moTaDoiTuongDT}',
           onPressed: () => controller.onPressItem(index),
-          subTitle:  '${controller.doiTuongDTs[index].tenDoiTuongDT}',
+         // subTitle:  '${controller.doiTuongDTs[index].tenDoiTuongDT}',
         );
       },
     );

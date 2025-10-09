@@ -16,9 +16,6 @@ import 'package:gov_statistics_investigation_economic/resource/model/question/qu
 import 'package:gov_statistics_investigation_economic/resource/model/store/dm_common_model.dart';
 
 mixin QuestionUtils {
-
- 
-
   ///Lấy danh sách nhóm câu hỏi có trên màn hình để hiển thị lên sidebar
   Future<List<QuestionGroup>> getQuestionGroups(
       String maDoiTuongDT, String idCoSo) async {
@@ -168,15 +165,57 @@ mixin QuestionUtils {
                 if (fromQuestionItem != null) {
                   fromQuestion =
                       fromQuestionItem.maSo ?? fromQuestionItem.maCauHoi ?? '';
-                  if (fromQuestionItem.loaiCauHoi == 0 &&
-                      fromQuestionItem.cap == 1) {
-                    if (dsQuestionMH.length > 1) {
-                      var fromQuestionItem2 = dsQuestionMH[1];
-                      fromQuestion = fromQuestionItem2.maSo ??
-                          fromQuestionItem2.maCauHoi ??
-                          '';
+                      
+                  if (fromQuestionItem.maPhieu == AppDefine.maPhieuTB) {
+                    if (fromQuestionItem.loaiCauHoi == 0 &&
+                        fromQuestionItem.cap == 1) {
+                      if (dsQuestionMH.length > 1) {
+                        var fromQuestionItem2 = dsQuestionMH[1];
+                        fromQuestion = fromQuestionItem2.maSo ??
+                            fromQuestionItem2.maCauHoi ??
+                            '';
+                      }
                     }
+                  } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuCN) {
+                    fromQuestion = "Câu 1";
+                  } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuVT &&
+                      fromQuestionItem.maCauHoi == "A_I") {
+                    fromQuestion = "Câu 1";
+                  } else if (fromQuestionItem.maPhieu ==
+                          AppDefine.maPhieuVTMau &&
+                      fromQuestionItem.maCauHoi == "A_I_M") {
+                    fromQuestion = "Câu 1.M";
+                  } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuVT &&
+                      fromQuestionItem.maCauHoi == "A_II") {
+                    fromQuestion = "Câu 7";
+                  } else if (fromQuestionItem.maPhieu ==
+                          AppDefine.maPhieuVTMau &&
+                      fromQuestionItem.maCauHoi == "A_II") {
+                    fromQuestion = "Câu 6.M";
+                  } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuLT &&
+                      fromQuestionItem.maCauHoi == "A_II") {
+                    fromQuestion = "Câu 1";
+                  } else if (fromQuestionItem.maPhieu ==
+                          AppDefine.maPhieuLTMau &&
+                      fromQuestionItem.maCauHoi == "A_I_M") {
+                    fromQuestion = "Câu 1.M";
+                  } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuTM &&
+                      (fromQuestionItem.maCauHoi == "A_I" ||
+                          fromQuestionItem.maCauHoi == "A_I_0")) {
+                    fromQuestion = "Câu 1";
+                  } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuMau &&
+                      fromQuestionItem.maCauHoi == "A_I_M") {
+                    fromQuestion = "Câu 6.1.M";
                   }
+                  // if (fromQuestionItem.loaiCauHoi == 0 &&
+                  //     fromQuestionItem.cap == 1) {
+                  //   if (dsQuestionMH.length > 1) {
+                  //     var fromQuestionItem2 = dsQuestionMH[1];
+                  //     fromQuestion = fromQuestionItem2.maSo ??
+                  //         fromQuestionItem2.maCauHoi ??
+                  //         '';
+                  //   }
+                  // }
                 }
 
                 var toQuestionItem = dsQuestionMH.lastOrNull;

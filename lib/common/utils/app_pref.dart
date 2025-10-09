@@ -72,6 +72,9 @@ class AppPref {
   static const String dataModelSTTJoinerPathKey = 'dataModelSTTJoinerPathKey';
   static const String dataModelSTTTokensPathKey = 'dataModelSTTTokensPathKey';
 
+  ///Chứa chuỗi giống imei
+  static const String uniqueStringTheSameImeiKey = 'uniqueStringTheSameImeiKey';
+  
   static final GetStorage _box = GetStorage(storageName);
 
   static initListener() async {
@@ -247,4 +250,9 @@ class AppPref {
       _box.write(dataModelSTTTokensPathKey, value);
   static String get dataModelSTTTokensPath =>
       _box.read(dataModelSTTTokensPathKey) ?? '';
+
+       static set uniqueStringTheSameImei(String value) =>
+      _box.write(uniqueStringTheSameImeiKey, value);
+  static String get uniqueStringTheSameImei =>
+      _box.read(uniqueStringTheSameImeiKey) ?? '';
 }
