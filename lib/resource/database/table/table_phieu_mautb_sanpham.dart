@@ -212,4 +212,6 @@ class TablePhieuMauTBSanPham {
     '38',
     '39'
   ];
+
+   static final vcpaCap5Range62010To62090 = ['62010', '62020', '62090'];
 }

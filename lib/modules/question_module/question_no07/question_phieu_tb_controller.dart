@@ -1342,13 +1342,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       var hasVI = await phieuNganhVTProvider.kiemTraPhanVIVIIValues(
           currentIdCoSo!, fieldNamesPhan6HHTB);
-      var hasHH = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
-      return (hasVI || hasHH);
+      //  var hasHH = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
+      return (hasVI);
     } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
       var hasVI = await phieuNganhVTProvider.kiemTraPhanVIVIIValues(
           currentIdCoSo!, fieldNamesPhan6HHTB);
-      var hasHH = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
-      return (hasVI || hasHH);
+      // var hasHH = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
+      return (hasVI);
     } else {
       return false;
     }
@@ -1356,15 +1356,16 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   Future<bool> hasMucVTHanhKhach() async {
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      var hasVI = await phieuNganhVTProvider.kiemTraPhanVIVIIValues(
+      var hasHK = await phieuNganhVTProvider.kiemTraPhanVIVIIValues(
           currentIdCoSo!, fieldNamesPhan6HKTB);
-      var hasHK = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
-      return (hasVI || hasHK);
+
+      // var hasRecord = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
+      return (hasHK);
     } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
       var hasVI = await phieuNganhVTProvider.kiemTraPhanVIVIIValues(
           currentIdCoSo!, fieldNamesPhan6HKTB);
-      var hasHK = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
-      return (hasVI || hasHK);
+      // var hasHK = await phieuNganhVTProvider.isExistQuestion(currentIdCoSo!);
+      return (hasVI);
     } else {
       return false;
     }
@@ -1593,14 +1594,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       await phieuMauTBProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo);
       await updateAnswerTblPhieuMau(fieldName, value, table);
+      await getTablePhieuMauTB();
     } else if (table == tablePhieuNganhVT) {
       await phieuNganhVTProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo);
       await updateAnswerTblPhieuMau(fieldName, value, table);
+      await getTablePhieuNganhVT();
     } else if (table == tablePhieuNganhLT) {
       await phieuNganhLTProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo);
       await updateAnswerTblPhieuMau(fieldName, value, table);
+      await getTablePhieuNganhLT();
     } else if (table == tablePhieuNganhTM) {
       await phieuNganhTMProvider.updateValueByIdCoSo(
           fieldName, value, currentIdCoSo!);
@@ -1809,7 +1813,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       //- Mã ngành=46492. Dịch vụ bán buôn dược phẩm và dụng cụ y tế hoặc mã ngành=47721.
       //Bán lẻ dược phẩm, dụng cụ y tế trong các cửa hàng chuyên doanh & C1.4=2|6
       var maVcpaCap546492 = tblPhieuMauTBSanPham.value
-          .where((x) => x.a5_1_2!=null && x.a5_1_2 == '46492' || x.a5_1_2 == '47721')
+          .where((x) =>
+              x.a5_1_2 != null && x.a5_1_2 == '46492' || x.a5_1_2 == '47721')
           .toList();
       if (maVcpaCap5.isNotEmpty) {
         if ((c1_1Value != null && c1_1Value == 2) ||
@@ -2208,7 +2213,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onSelectDm(QuestionCommonModel question, String table, String? maCauHoi,
-      String? fieldName, value, dmItem) {
+      String? fieldName, value, dmItem,
+      {ChiTieuDongModel? chiTieuDong, ChiTieuModel? chiTieuCot}) {
     log('ON CHANGE onSelectDm: $fieldName $value $dmItem');
     try {
       updateAnswerToDB(table, fieldName ?? "", value);
@@ -2277,6 +2283,33 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           question.maPhieu == AppDefine.maPhieuMau) {
         if (value == 2) {
           onKetThucPhongVan();
+        }
+      }
+      if (table == tablePhieuMauTB &&
+          maCauHoi == "A7_1" &&
+          question.maPhieu == AppDefine.maPhieuTB) {
+        if (value == 2) {
+          updateAnswerToDB(table, colPhieuMauTBA7_2, null);
+          updateAnswerTblPhieuMau(colPhieuMauTBA7_2, null, table);
+          updateAnswerToDB(table, colPhieuMauTBA7_3, null);
+          updateAnswerTblPhieuMau(colPhieuMauTBA7_3, null, table);
+        }
+      }
+      if (table == tablePhieuMauTB &&
+          maCauHoi == "A7_2" &&
+          question.maPhieu == AppDefine.maPhieuTB) {
+        if (value == 2) {
+          updateAnswerToDB(table, colPhieuMauTBA7_3, null);
+          updateAnswerTblPhieuMau(colPhieuMauTBA7_3, null, table);
+        }
+      }
+      if (table == tablePhieuMauTB &&
+          maCauHoi == "A7_4" &&
+          question.maPhieu == AppDefine.maPhieuTB) {
+        if (value == 2) {
+          String fieldName = 'A7_4_${chiTieuDong!.maSo}_2';
+          updateAnswerToDB(table, fieldName, null);
+          updateAnswerTblPhieuMau(fieldName, null, table);
         }
       }
     } catch (e) {
@@ -2590,6 +2623,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
       return null;
     }
+    if (question.maCauHoi == "A7_4") {
+      var resValid = onValidateA7_4(
+          question, chiTieuCot, chiTieuDong, fieldName, valueInput,
+          typing: typing);
+      if (resValid != null && resValid != '') {
+        return resValid;
+      }
+      return null;
+    }
     //else if (question.maCauHoi == "A4_4") {
     //   if (typing) {
     //     var a4_3 = answerTblPhieuMau['A4_3'];
@@ -2825,9 +2867,52 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (maVcpa50.isNotEmpty) {
         return '4647';
       }
+      var maVcpa93290 = tblPhieuMauTBSanPham.value
+          .where((x) => x.a5_1_2 != null && x.a5_1_2! == '93290');
+      if (maVcpa50.isNotEmpty) {
+        return '93290';
+      }
+
+      var maVcpa62010To62090 = tblPhieuMauTBSanPham.value.where((x) =>
+          x.a5_1_2 != null &&
+          TablePhieuMauTBSanPham.vcpaCap5Range62010To62090.contains(x.a5_1_2!));
+      if (maVcpa50.isNotEmpty) {
+        return '62010To62090';
+      }
     }
 
     return '';
+  }
+
+  onValidateA7_4(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      {bool typing = false}) {
+    if (typing == false) {
+      for (var i = 1; i <= question.danhSachChiTieuIO!.length; i++) {
+        var fName = 'A7_4_${i.toString()}_1';
+        if (fieldName == fName) {
+          if (valueInput == null || valueInput == "null" || valueInput == "") {
+            return 'Vui lòng nhập giá trị.';
+          }
+        }
+      }
+      var tblPhieu = getTableByTableName(question.bangDuLieu!, typing);
+      for (var i = 1; i <= 4; i++) {
+        var fName1 = 'A7_4_${i.toString()}_1';
+        var fName2 = 'A7_4_${i.toString()}_2';
+        var a4_5_x_1Value = tblPhieu[fName1];
+        if (fieldName == fName2) {
+          if (a4_5_x_1Value.toString() == '1') {
+            if (valueInput == null ||
+                valueInput == "null" ||
+                valueInput == "") {
+              return 'Vui lòng nhập giá trị.';
+            }
+          }
+        }
+      }
+    }
+    return null;
   }
 
   onValidateA8_1(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
@@ -3256,7 +3341,41 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           return 'Số tiền thuê địa điểm SXKD tại C4.3> Số tiền vốn bỏ ra để SXKD? (Số tiền thuê địa điểm phải được tính vào số tiền vốn)';
         }
       }
+    } else if (maCauHoi == colPhieuMauTBA7_1 &&
+        maPhieu == AppDefine.maPhieuTB) {
+      if (valueInput != null && valueInput == '1') {
+        var a6_1_1_1Dien = tblPhieuCT[colPhieuMauTBA6_1_1_1] != null
+            ? tblPhieuCT[colPhieuMauTBA1_2].toString()
+            : '';
+        if (a6_1_1_1Dien == 2) {
+          return 'Cơ sở có sử dụng internet cho hoạt động SXKD (C7.1=1) mà Không sử dụng năng lượng là điện (C6.1_1. Điện=2. Không?)';
+        }
+      }
+    } else if (maCauHoi == colPhieuMauTBA7_2 &&
+        maPhieu == AppDefine.maPhieuTB) {
+      if (valueInput == null || valueInput == "null" || valueInput == "") {
+        return 'Vui lòng nhập giá trị.';
+      }
+    } else if (maCauHoi == colPhieuMauTBA7_3 &&
+        maPhieu == AppDefine.maPhieuTB) {
+      if (valueInput == null || valueInput == "null" || valueInput == "") {
+        return 'Vui lòng nhập giá trị.';
+      }
+      var a7_3Value = tblPhieuCT[colPhieuMauTBA7_3] != null
+          ? AppUtils.convertStringToDouble(
+              tblPhieuCT[colPhieuMauTBA7_3].toString())
+          : null;
+      if (a7_3Value != null && a7_3Value > 0) {
+        var a4TValue = tblPhieuCT[colPhieuMauTBA4T] != null
+            ? AppUtils.convertStringToDouble(
+                tblPhieuCT[colPhieuMauTBA4T].toString())
+            : null;
+        if (a4TValue != null && validate0InputValue(a4TValue)) {
+          return 'Tỷ trọng doanh thu qua internet > 0% mà Doanh thu bình quân 1 tháng năm 2025 = 0';
+        }
+      }
     }
+
     // else if (maCauHoi == "A4_4_1") {
     //   if (typing) {
     //     var a4_3s = answerTblPhieuMau['A4_4'];
@@ -3929,73 +4048,72 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return null;
   }
 
-  String? onValidateA7_4(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
-    // if (maCauHoi == "A7_4") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //     return 'Vui lòng nhập giá trị.';
-    //   }
-    //   if (typing) {
-    //     int a7_4Value = answerTblPhieuMau[columnPhieuMauA7_4] != null
-    //         ? AppUtils.convertStringToInt(answerTblPhieuMau[columnPhieuMauA7_4])
-    //         : 0;
-    //     int a7_1_1_4Val = answerTblPhieuMau[columnPhieuMauA7_1_1_4] != null
-    //         ? AppUtils.convertStringToInt(
-    //             answerTblPhieuMau[columnPhieuMauA7_1_1_4])
-    //         : 0;
-    //     int a7_1_2_4Val = answerTblPhieuMau[columnPhieuMauA7_1_2_4] != null
-    //         ? AppUtils.convertStringToInt(
-    //             answerTblPhieuMau[columnPhieuMauA7_1_2_4])
-    //         : 0;
-    //     int a7_1_3_4Val = answerTblPhieuMau[columnPhieuMauA7_1_3_4] != null
-    //         ? AppUtils.convertStringToInt(
-    //             answerTblPhieuMau[columnPhieuMauA7_1_3_4])
-    //         : 0;
-    //     int a7_1_4_4Val = answerTblPhieuMau[columnPhieuMauA7_1_4_4] != null
-    //         ? AppUtils.convertStringToInt(
-    //             answerTblPhieuMau[columnPhieuMauA7_1_4_4])
-    //         : 0;
-    //     int a7_1_5_4Val = answerTblPhieuMau[columnPhieuMauA7_1_5_4] != null
-    //         ? AppUtils.convertStringToInt(
-    //             answerTblPhieuMau[columnPhieuMauA7_1_5_4])
-    //         : 0;
-    //     var aSum_7_1_x_4Value =
-    //         a7_1_1_4Val + a7_1_2_4Val + a7_1_3_4Val + a7_1_4_4Val + a7_1_5_4Val;
-    //     if (a7_4Value != aSum_7_1_x_4Value) {
-    //       return 'Giá trị câu 7.4 ($a7_4Value) phải = Tổng của 7.1.4. Số giường tại thời điểm 31/12/2024 ($aSum_7_1_x_4Value)';
-    //     }
+  //String? onValidateA7_4(String table, String maCauHoi, String? fieldName,  String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+  // if (maCauHoi == "A7_4") {
+  //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+  //     return 'Vui lòng nhập giá trị.';
+  //   }
+  //   if (typing) {
+  //     int a7_4Value = answerTblPhieuMau[columnPhieuMauA7_4] != null
+  //         ? AppUtils.convertStringToInt(answerTblPhieuMau[columnPhieuMauA7_4])
+  //         : 0;
+  //     int a7_1_1_4Val = answerTblPhieuMau[columnPhieuMauA7_1_1_4] != null
+  //         ? AppUtils.convertStringToInt(
+  //             answerTblPhieuMau[columnPhieuMauA7_1_1_4])
+  //         : 0;
+  //     int a7_1_2_4Val = answerTblPhieuMau[columnPhieuMauA7_1_2_4] != null
+  //         ? AppUtils.convertStringToInt(
+  //             answerTblPhieuMau[columnPhieuMauA7_1_2_4])
+  //         : 0;
+  //     int a7_1_3_4Val = answerTblPhieuMau[columnPhieuMauA7_1_3_4] != null
+  //         ? AppUtils.convertStringToInt(
+  //             answerTblPhieuMau[columnPhieuMauA7_1_3_4])
+  //         : 0;
+  //     int a7_1_4_4Val = answerTblPhieuMau[columnPhieuMauA7_1_4_4] != null
+  //         ? AppUtils.convertStringToInt(
+  //             answerTblPhieuMau[columnPhieuMauA7_1_4_4])
+  //         : 0;
+  //     int a7_1_5_4Val = answerTblPhieuMau[columnPhieuMauA7_1_5_4] != null
+  //         ? AppUtils.convertStringToInt(
+  //             answerTblPhieuMau[columnPhieuMauA7_1_5_4])
+  //         : 0;
+  //     var aSum_7_1_x_4Value =
+  //         a7_1_1_4Val + a7_1_2_4Val + a7_1_3_4Val + a7_1_4_4Val + a7_1_5_4Val;
+  //     if (a7_4Value != aSum_7_1_x_4Value) {
+  //       return 'Giá trị câu 7.4 ($a7_4Value) phải = Tổng của 7.1.4. Số giường tại thời điểm 31/12/2024 ($aSum_7_1_x_4Value)';
+  //     }
 
-    //     return null;
-    //   } else {
-    //     var phieuMau = tblPhieuMau.value.toJson();
-    //     int a7_4Value = phieuMau[columnPhieuMauA7_4] != null
-    //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_4])
-    //         : 0;
-    //     int a7_1_1_4Val = phieuMau[columnPhieuMauA7_1_1_4] != null
-    //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_1_4])
-    //         : 0;
-    //     int a7_1_2_4Val = phieuMau[columnPhieuMauA7_1_2_4] != null
-    //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_2_4])
-    //         : 0;
-    //     int a7_1_3_4Val = phieuMau[columnPhieuMauA7_1_3_4] != null
-    //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_3_4])
-    //         : 0;
-    //     int a7_1_4_4Val = phieuMau[columnPhieuMauA7_1_4_4] != null
-    //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_4_4])
-    //         : 0;
-    //     int a7_1_5_4Val = phieuMau[columnPhieuMauA7_1_5_4] != null
-    //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_5_4])
-    //         : 0;
-    //     var aSum_7_1_x_4Value =
-    //         a7_1_1_4Val + a7_1_2_4Val + a7_1_3_4Val + a7_1_4_4Val + a7_1_5_4Val;
-    //     if (a7_4Value != aSum_7_1_x_4Value) {
-    //       return 'Giá trị câu 7.4 ($a7_4Value) phải = Tổng của 7.1.4. Số giường tại thời điểm 31/12/2024 ($aSum_7_1_x_4Value)';
-    //     }
-    //     return null;
-    //   }
-    // }
-    return null;
-  }
+  //     return null;
+  //   } else {
+  //     var phieuMau = tblPhieuMau.value.toJson();
+  //     int a7_4Value = phieuMau[columnPhieuMauA7_4] != null
+  //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_4])
+  //         : 0;
+  //     int a7_1_1_4Val = phieuMau[columnPhieuMauA7_1_1_4] != null
+  //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_1_4])
+  //         : 0;
+  //     int a7_1_2_4Val = phieuMau[columnPhieuMauA7_1_2_4] != null
+  //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_2_4])
+  //         : 0;
+  //     int a7_1_3_4Val = phieuMau[columnPhieuMauA7_1_3_4] != null
+  //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_3_4])
+  //         : 0;
+  //     int a7_1_4_4Val = phieuMau[columnPhieuMauA7_1_4_4] != null
+  //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_4_4])
+  //         : 0;
+  //     int a7_1_5_4Val = phieuMau[columnPhieuMauA7_1_5_4] != null
+  //         ? AppUtils.convertStringToInt(phieuMau[columnPhieuMauA7_1_5_4])
+  //         : 0;
+  //     var aSum_7_1_x_4Value =
+  //         a7_1_1_4Val + a7_1_2_4Val + a7_1_3_4Val + a7_1_4_4Val + a7_1_5_4Val;
+  //     if (a7_4Value != aSum_7_1_x_4Value) {
+  //       return 'Giá trị câu 7.4 ($a7_4Value) phải = Tổng của 7.1.4. Số giường tại thời điểm 31/12/2024 ($aSum_7_1_x_4Value)';
+  //     }
+  //     return null;
+  //   }
+  // }
+  // return null;
+  //}
 
   String? onValidateA7_4_1(String table, String maCauHoi, String? fieldName,
       String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {

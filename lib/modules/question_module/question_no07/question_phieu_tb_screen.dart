@@ -1274,6 +1274,42 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       });
     }
 
+    if ((question.maCauHoi == colPhieuMauTBA7_3) &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      return Obx(() {
+        var a7_2Val = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_2);
+        if (a7_2Val != null && a7_2Val == 2) {
+          return const SizedBox();
+        }
+        decimalDigits = 2;
+        return Column(children: [
+          InputInt(
+            key: ValueKey(
+                '${question.maPhieu}-${question.maCauHoi}-${question.sTT}'),
+            question: question,
+            onChange: (value) => controller.onChangeInput(question.bangDuLieu!,
+                question.maCauHoi, question.maCauHoi, value),
+            subName: subName,
+            value: val,
+            type: 'double',
+            validator: (String? value) => controller.onValidate(
+                question.bangDuLieu!,
+                question.maCauHoi!,
+                question.maCauHoi,
+                value,
+                question.giaTriNN,
+                question.giaTriLN,
+                question.loaiCauHoi!,
+                true,
+                question.maPhieu!),
+            flteringTextInputFormatterRegExp: wFilterInput,
+            decimalDigits: decimalDigits,
+          ),
+          buildWarningText(question, val)
+        ]);
+      });
+    }
     decimalDigits = 2;
     return Column(children: [
       InputInt(
@@ -1462,6 +1498,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     );
   }
 
+//Co khong ko dong cot
   _renderQuestionType5Dm(QuestionCommonModel question, {String? subName}) {
     if (question.maCauHoi == "A1_1") {
       return Obx(() {
@@ -1569,11 +1606,21 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           return const SizedBox();
         }
       }
+      if ((question.maCauHoi == colPhieuMauTBA7_2) &&
+          question.maPhieu == AppDefine.maPhieuTB) {
+        var a7_1Val = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_1);
+        if (a7_1Val != null && a7_1Val == 2) {
+          return const SizedBox();
+        }
+      }
+
       var val = controller.getValueByFieldName(
           question.bangDuLieu!, question.maCauHoi!);
 
       var dmChiTieu =
           controller.getDanhMucByTenDm(question.bangChiTieu ?? '') ?? [];
+
       return Column(
         children: [
           SelectIntCTDm(
@@ -1595,7 +1642,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 controller.onChangeGhiRoDm(question, value, dmItem),
           ),
           buildGhiRo(question, val),
-          buildWarningText(question, val),
+          buildWarningText(question, val, fieldName: question.maCauHoi!),
           if (question.danhSachCauHoiCon != null &&
               question.danhSachCauHoiCon!.isNotEmpty)
             _buildQuestion3(question),
@@ -1707,6 +1754,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       children: [
         RichTextQuestion(mainQuestion.tenCauHoi ?? '',
             level: mainQuestion.cap ?? 3),
+        if (mainQuestion.maCauHoi == "A6_1") ...[
+          buildWarningText(mainQuestion, 0, isShow: true)
+        ],
         ListView.builder(
             key: ObjectKey(chiTieuCots),
             itemCount: chiTieuDongs.length,
@@ -1714,7 +1764,6 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             shrinkWrap: true,
             itemBuilder: (_, indexIO) {
               ChiTieuDongModel chiTieuDong = chiTieuDongs[indexIO];
-
               return buildChiTieuDongCotItem(
                   mainQuestion, chiTieuDong, chiTieuCots);
             })
@@ -2693,13 +2742,15 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.maCauHoi,
                 fieldName,
                 value,
-                dmItem),
+                dmItem,
+                chiTieuDong: chiTieuDong,
+                chiTieuCot: chiTieuCot),
             value: xVal,
             onChangeGhiRo: (value, dmItem) =>
                 controller.onChangeGhiRoDm(question, value, dmItem),
             hienThiTenCauHoi: false,
           ),
-          buildWarningText(question, xVal),
+          buildWarningText(question, xVal, isShow: false),
           buildGhiRo(question, xVal),
         ],
       );
@@ -4292,7 +4343,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return const SizedBox();
   }
 
-  buildWarningText(QuestionCommonModel question, selectedValue) {
+  buildWarningText(QuestionCommonModel question, selectedValue,
+      {String? fieldName, bool? isShow}) {
     if (question.maCauHoi == colPhieuMauTBA1_3_2 &&
         question.maPhieu == AppDefine.maPhieuTB) {
       var a1_3_2Value = controller.getValueByFieldName(
@@ -4459,6 +4511,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       }
     } else if (question.maCauHoi == "A6_1" &&
         question.maPhieu == AppDefine.maPhieuTB) {
+      if (isShow != null && isShow == false) {
+        return const SizedBox();
+      }
       var a3_1_2_1TB = controller.getValueByFieldName(
           tablePhieuMauTB, colPhieuMauTBA3_1_2_1);
       List<String> a6_1Cot1Val = [];
@@ -4469,11 +4524,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
         if (a6_1_x_1Value != null) {
           if (a6_1_x_1Value.toString() == '2') {
-            a6_1Cot1Val.add(a6_1_x_1Value.toString());
+            a6_1Cot1Val.add(fName1);
           }
         }
       }
-      if (a6_1Cot1Val.isNotEmpty) {
+      if (a6_1Cot1Val.isNotEmpty && a6_1Cot1Val.length == 9) {
         if (a3_1_2_1TB != null && a3_1_2_1TB > 0) {
           //
           return Text(
@@ -4481,13 +4536,65 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             style: const TextStyle(color: Colors.orange),
           );
         }
-        var resCN =controller.validateA6_1MaSanPhamPhanV();
-        if(resCN=='cn10to39'){
-          return 'Mã ngành cấp 2 thuộc ngành Công nghiệp (Mã ngành>=10 vaf <=39) mà không sử dụng bất kỳ loại năng lượng nào cho phương tiện vận tải (C6.1_ các mã từ 1 đến 9 đều =2. Không)?;';
+        var resCN = controller.validateA6_1MaSanPhamPhanV();
+        if (resCN == 'cn10to39') {
+          return Text(
+            'Cảnh bảo: Mã ngành cấp 2 thuộc ngành Công nghiệp (Mã ngành>=10 vaf <=39) mà không sử dụng bất kỳ loại năng lượng nào cho phương tiện vận tải (C6.1_ các mã từ 1 đến 9 đều =2. Không)?',
+            style: const TextStyle(color: Colors.orange),
+          );
         }
-        if(resCN=='4647'){
-          
+        if (resCN == '4647') {
+          return Text(
+            'Cảnh bảo: Mã ngành cấp 2 thuộc ngành Bán buôn, bán lẻ (Mã ngành=46|47) mà Không sử dụng bất kỳ loại năng lượng nào cho phương tiện vận tải (C6.1_ các mã từ 1 đến 9 đều =2. Không)?',
+            style: const TextStyle(color: Colors.orange),
+          );
         }
+      } else {
+        return const SizedBox();
+      }
+
+      List<String> a6_1Cot1Val2 = [];
+      for (var i = 1; i <= 11; i++) {
+        var fName1 = 'A6_1_${i.toString()}_1';
+        var a6_1_x_1Value =
+            controller.getValueByFieldName(tablePhieuMauTB, fName1);
+
+        if (a6_1_x_1Value != null) {
+          if (a6_1_x_1Value.toString() == '2') {
+            a6_1Cot1Val2.add(a6_1_x_1Value.toString());
+          }
+        }
+      }
+      if (a6_1Cot1Val2.isNotEmpty) {
+        return Text(
+          'Cảnh bảo: Cơ sở không sử dụng bất kỳ loại năng lượng nào cho hoạt động SXKD của cơ sở có đúng không?',
+          style: const TextStyle(color: Colors.orange),
+        );
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA7_1 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (selectedValue != null && selectedValue == 2) {
+        var res = controller.validateA6_1MaSanPhamPhanV();
+        if (res == "93290") {
+          return Text(
+            'Cảnh bảo: Mã ngành sản phẩm=93290. Dịch vụ vui chơi giải trí khác mà Không sử dụng internet (C7.1=2)',
+            style: const TextStyle(color: Colors.orange),
+          );
+        }
+        if (res == '62010To62090') {
+          return Text(
+            'Cảnh bảo: Mã ngành thuộc ngành 62. Dịch vụ lập trình máy tính, tư vấn và dịch vụ khác liên quan đến máy tính mà Không sử dụng internet (C7.1=2)',
+            style: const TextStyle(color: Colors.orange),
+          );
+        }
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA7_3 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var a4TValue =
+          controller.getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
+
+      if (a4TValue != null && controller.validate0InputValue(a4TValue)) {
+        return 'Hộ có bán sản phẩm trên internet mà tỷ trọng doanh thu bằng 0? (Cơ sở chưa có doanh thu có đúng không?)';
       }
     }
 
@@ -4538,6 +4645,33 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question.bangDuLieu!, colPhieuMauTBA1_2);
       if (value != null && value > 0 && a1_2TValue != null && a1_2TValue == 1) {
         return 'Cơ sở có địa điểm là đi thuê/mượn (C1.2=1) mà có tài sản cố định là nhà xưởng, cửa hàng C3.1.1>0)?';
+      }
+    }
+    if (question.maCauHoi == 'A7_4' &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      //C7.4_3=1. Có và C7.1=2;
+      var a7_4_3_1Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA7_4_3_1);
+      var a7_1Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA7_1);
+      if (a7_4_3_1Value != null &&
+          a7_4_3_1Value == 1 &&
+          a7_1Value != null &&
+          a7_1Value == 2) {
+        return 'Cơ sở có phát sinh chi phí về thuê đường truyền internet, cước điện thoại (C7.4_3=1) mà Không sử dụng internet cho mục đích SXKD (C7.1=2)';
+      }
+      //(C7.4_1 >0 hoặc C7.4_2>0) và C3.4.1_ TSCĐ về Thiết bị dụng cụ quản lý=0
+      var a7_4_1_2Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA7_4_1_2);
+      var a7_4_2_2Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA7_4_2_2);
+
+      var a3_1_4_1Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA3_1_4_1);
+      if (((a7_4_1_2Value != null && a7_4_1_2Value > 0) ||
+              (a7_4_2_2Value != null && a7_4_2_2Value > 0)) &&
+          (a3_1_4_1Value != null && a3_1_4_1Value == 0)) {
+        return 'Cơ sở có phát sinh chi phí về mua, thuê phần cứng hoặc thuê mua phần mềm (C7.4_1 >0 hoặc C7.4_2>0) mà C3.4.1_ TSCĐ về Thiết bị dụng cụ quản lý=0';
       }
     }
     // if (chiTieuDong.maSo == '4') {
