@@ -1063,9 +1063,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.maPhieu!),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
-          warningText: (controller.warningA4_6.value != '')
-              ? controller.warningA4_6.value
-              : '',
+          warningText: warningWithText(question, a4_3Value),
         );
       });
     }
@@ -2701,6 +2699,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 controller.onChangeGhiRoDm(question, value, dmItem),
             hienThiTenCauHoi: false,
           ),
+          buildWarningText(question, xVal),
           buildGhiRo(question, xVal),
         ],
       );
@@ -2891,6 +2890,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 .first; //"A5_7" cũ
 
             return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // if (controller.countProduct(tablePhieuMauSanPham) == 1) ...[
                 //   InputIntView(
@@ -3022,6 +3022,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                     decimalDigits: 2,
                     txtStyle: styleMedium.copyWith(color: primaryColor),
                   ),
+                  buildError(questionA5_7, a5_7Value),
                   const SizedBox(
                     height: 15,
                   ),
@@ -3081,6 +3082,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               '${question.maPhieu}${question.maCauHoi}-${product.id}-${product.sTTSanPham}'),
           question: question,
           onChange: (value) => controller.onChangeInputPhanV(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi,
               question.maCauHoi,
@@ -3089,6 +3091,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           value: a5_2Val,
           type: 'double',
           validator: (String? value) => controller.onValidateInputA5(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi!,
               question.maCauHoi,
@@ -3103,157 +3106,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               true),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
+          subName: product.a5_1_1 ?? '',
+          warningText: warningWithText(question, a5_2Val, product: product),
         );
-        // case "A5_3":
-
-        //   //  var val = product.a5_3;
-        //   var val = controller.getValueSanPham(
-        //       question.bangDuLieu!, 'A5_3', product.id!);
-        //   var dvt = product.donViTinh != null &&
-        //           product.donViTinh != '' &&
-        //           question.dVT != null &&
-        //           question.dVT != ''
-        //       ? question.dVT!
-        //           .replaceAll('[ĐVT]', '${product.donViTinh!} ')
-        //           .replaceAll('  ', ' ')
-        //       : '';
-        //   //question.dVT = dvt;
-        //   var hasA5_3Cap1BCDE = controller.getValueDanhDauSP(ddSpIsCap1BCDE,
-        //       stt: product.sTTSanPham);
-
-        //   if (hasA5_3Cap1BCDE != null && hasA5_3Cap1BCDE == true) {
-        //     return Column(
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           InputInt(
-        //             key: ValueKey(
-        //                 '${question.maPhieu}${question.maCauHoi}-${product.id}-${product.sTTSanPham}-$a5_1_2Val'),
-        //             question: question,
-        //             onChange: (value) => controller.onChangeInputPhanV(
-        //                 question.bangDuLieu!,
-        //                 question.maCauHoi,
-        //                 question.maCauHoi,
-        //                 product.id!,
-        //                 value),
-        //             value: val,
-        //             type: 'double',
-        //             validator: (String? value) => controller.onValidateInputA5(
-        //                 question.bangDuLieu!,
-        //                 question.maCauHoi!,
-        //                 question.maCauHoi,
-        //                 product.id!,
-        //                 value,
-        //                 0,
-        //                 0,
-        //                 question.giaTriNN,
-        //                 question.giaTriLN,
-        //                 question.loaiCauHoi!,
-        //                 product.sTTSanPham!,
-        //                 true),
-        //             flteringTextInputFormatterRegExp: wFilterInput,
-        //             decimalDigits: 2,
-        //             showDtv: true,
-        //             rightString: dvt,
-        //           ),
-        //           renderPhanVType3Sub(question, product)
-        //         ]);
-        //   }
-        return const SizedBox();
-
-      case "A5_4":
-        // var val = product.a5_4;
-        // var dvt = product.donViTinh != null &&
-        //         product.donViTinh != '' &&
-        //         question.dVT != null &&
-        //         question.dVT != ''
-        //     ? question.dVT!
-        //         .replaceAll('[ĐVT]', '${product.donViTinh!} ')
-        //         .replaceAll('  ', ' ')
-        //     : '';
-        // var hasA5_4Cap1BCDE = controller.getValueDanhDauSP(ddSpIsCap1BCDE,
-        //     stt: product.sTTSanPham);
-
-        // if (hasA5_4Cap1BCDE != null && hasA5_4Cap1BCDE == true) {
-        //   return InputInt(
-        //     key: ValueKey(
-        //         '${question.maPhieu}${question.maCauHoi}-${product.id}-${product.sTTSanPham}-$a5_1_2Val'),
-        //     question: question,
-        //     onChange: (value) => controller.onChangeInputPhanV(
-        //         question.bangDuLieu!,
-        //         question.maCauHoi,
-        //         question.maCauHoi,
-        //         product.id!,
-        //         value),
-        //     value: val,
-        //     type: 'double',
-        //     validator: (String? value) => controller.onValidateInputA5(
-        //         question.bangDuLieu!,
-        //         question.maCauHoi!,
-        //         question.maCauHoi,
-        //         product.id!,
-        //         value,
-        //         0,
-        //         0,
-        //         question.giaTriNN,
-        //         question.giaTriLN,
-        //         question.loaiCauHoi!,
-        //         product.sTTSanPham!,
-        //         true),
-        //     flteringTextInputFormatterRegExp: wFilterInput,
-        //     decimalDigits: 2,
-        //     showDtv: true,
-        //     rightString: dvt,
-        //   );
-        // }
-        return const SizedBox();
-      // case "A5_5":
-      //   decimalDigits = 2;
-      //   return Obx(() {
-      //     var val = product.a5_5;
-      //     var valA5_1_2 = product.a5_1_2;
-      //     var hasA5_5G_L6810 = controller.getValueDanhDauSP(ddSpIsCap1GL,
-      //         stt: product.sTTSanPham);
-
-      //     if (hasA5_5G_L6810 != null && hasA5_5G_L6810 == true) {
-      //       return InputInt(
-      //         key: ValueKey(
-      //             '${question.maPhieu}${question.maCauHoi}-${product.id}-${product.sTTSanPham}-$a5_1_2Val'),
-      //         question: question,
-      //         onChange: (value) => controller.onChangeInputPhanV(
-      //             question.bangDuLieu!,
-      //             question.maCauHoi,
-      //             question.maCauHoi,
-      //             product.id!,
-      //             value),
-      //         value: val,
-      //         type: 'double',
-      //         validator: (String? value) => controller.onValidateInputA5(
-      //             question.bangDuLieu!,
-      //             question.maCauHoi!,
-      //             question.maCauHoi,
-      //             product.id!,
-      //             value,
-      //             0,
-      //             0,
-      //             question.giaTriNN,
-      //             question.giaTriLN,
-      //             question.loaiCauHoi!,
-      //             product.sTTSanPham!,
-      //             true),
-      //         flteringTextInputFormatterRegExp: wFilterInput,
-      //         decimalDigits: decimalDigits,
-      //       );
-      //     }
-      //     return const SizedBox();
-      //   });
-
-      // case "A5_6":
-      //   var hasCap2_56 = controller.getValueDanhDauSP(ddSpIsCap2_56,
-      //       stt: product.sTTSanPham);
-      //   if (hasCap2_56 != null && hasCap2_56 == true) {
-      //     return renderPhanVType5(question, product);
-      //   }
-      //   return const SizedBox();
 
       default:
         return Container();
@@ -3301,11 +3156,17 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       return InputString(
         //  key: ValueKey<TablePhieuMauTBSanPham>(product),
         key: ValueKey(vkey),
-        onChange: (value) => controller.onChangeInputPhanV(question.bangDuLieu!,
-            question.maCauHoi, question.maCauHoi, product.id!, value),
+        onChange: (value) => controller.onChangeInputPhanV(
+            question.maPhieu!,
+            question.bangDuLieu!,
+            question.maCauHoi,
+            question.maCauHoi,
+            product.id!,
+            value),
         question: question,
         value: a5_1_1,
         validator: (String? value) => controller.onValidateInputA5(
+            question.maPhieu!,
             question.bangDuLieu!,
             question.maCauHoi!,
             question.maCauHoi,
@@ -3336,6 +3197,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           key: ValueKey(
               '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTTSanPham}_2$a5_1_2'),
           onChange: (value) => controller.onChangeInputPhanV(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi,
               question.maCauHoi,
@@ -3344,6 +3206,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question: question,
           value: a5_1_2,
           validator: (String? value) => controller.onValidateInputA5(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi!,
               question.maCauHoi,
@@ -3453,6 +3316,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               '${question.maPhieu}_${question.maCauHoi}-${product.id}-${product.sTTSanPham}-${question.sTT}-$a5_1_2Val'),
           question: question,
           onChange: (value) => controller.onChangeInputPhanV(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi,
               question.maCauHoi,
@@ -3583,6 +3447,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   return InputInt(
                     question: questionConItem,
                     onChange: (value) => controller.onChangeInputPhanV(
+                        questionConItem.maPhieu!,
                         questionConItem.bangDuLieu!,
                         questionConItem.maCauHoi,
                         questionConItem.maCauHoi,
@@ -3981,6 +3846,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         return InputString(
           key: ValueKey(vkey),
           onChange: (value) => controller.onChangeInputPhanV(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi,
               question.maCauHoi,
@@ -3989,6 +3855,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question: question,
           value: a1_1,
           validator: (String? value) => controller.onValidateInputA5(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi!,
               question.maCauHoi,
@@ -4026,6 +3893,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           key: ValueKey(
               '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTT_SanPham}_2$a1_2'),
           onChange: (value) => controller.onChangeInputPhanV(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi,
               question.maCauHoi,
@@ -4064,6 +3932,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         return InputString(
           key: ValueKey(vkey),
           onChange: (value) => controller.onChangeInputPhanV(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi,
               question.maCauHoi,
@@ -4072,6 +3941,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question: question,
           value: a2_1,
           validator: (String? value) => controller.onValidateInputA5(
+              question.maPhieu!,
               question.bangDuLieu!,
               question.maCauHoi!,
               question.maCauHoi,
@@ -4116,6 +3986,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 '${question.maPhieu}_${question.maCauHoi}-${product.id}-${product.maNganhC5}-${product.sTT_SanPham}-${question.sTT}'),
             question: question,
             onChange: (value) => controller.onChangeInputPhanV(
+                question.maPhieu!,
                 question.bangDuLieu!,
                 question.maCauHoi,
                 question.maCauHoi,
@@ -4346,6 +4217,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 '${question.maPhieu}_${question.maCauHoi}-${product.id}-${product.sTT_SanPham}-${question.sTT}'),
             question: question,
             onChange: (value) => controller.onChangeInputPhanV(
+                question.maPhieu!,
                 question.bangDuLieu!,
                 question.maCauHoi,
                 question.maCauHoi,
@@ -4400,6 +4272,20 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         return Text(
           'Lỗi: Dưới 23 tuổi mà tốt nghiệp trình độ tiến sỹ hoặc sau tiến sỹ.',
           style: const TextStyle(color: errorColor),
+        );
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA5T &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var validRes = controller.onValidateInputA5T(
+          question.maPhieu!, question.bangDuLieu!, question.maCauHoi!, true);
+      if (validRes != null && validRes != '') {
+        return Padding(
+          padding: EdgeInsets.only(left: 16.0),
+          child: Text(
+            validRes,
+            style: const TextStyle(color: errorColor, fontSize: 13.0),
+            textAlign: TextAlign.left,
+          ),
         );
       }
     }
@@ -4571,28 +4457,45 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           style: const TextStyle(color: Colors.orange),
         );
       }
+    } else if (question.maCauHoi == "A6_1" &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var a3_1_2_1TB = controller.getValueByFieldName(
+          tablePhieuMauTB, colPhieuMauTBA3_1_2_1);
+      List<String> a6_1Cot1Val = [];
+      for (var i = 1; i <= 9; i++) {
+        var fName1 = 'A6_1_${i.toString()}_1';
+        var a6_1_x_1Value =
+            controller.getValueByFieldName(tablePhieuMauTB, fName1);
+
+        if (a6_1_x_1Value != null) {
+          if (a6_1_x_1Value.toString() == '2') {
+            a6_1Cot1Val.add(a6_1_x_1Value.toString());
+          }
+        }
+      }
+      if (a6_1Cot1Val.isNotEmpty) {
+        if (a3_1_2_1TB != null && a3_1_2_1TB > 0) {
+          //
+          return Text(
+            'Cảnh bảo: Cơ sở có TSCĐ là phương tiện vận tải (C3.1.2>0) mà Không sử dụng bất kỳ loại năng lượng nào cho phương tiện vận tải (C6.1_ các mã từ 1 đến 9 đều =2. Không)?',
+            style: const TextStyle(color: Colors.orange),
+          );
+        }
+        var resCN =controller.validateA6_1MaSanPhamPhanV();
+        if(resCN=='cn10to39'){
+          return 'Mã ngành cấp 2 thuộc ngành Công nghiệp (Mã ngành>=10 vaf <=39) mà không sử dụng bất kỳ loại năng lượng nào cho phương tiện vận tải (C6.1_ các mã từ 1 đến 9 đều =2. Không)?;';
+        }
+        if(resCN=='4647'){
+          
+        }
+      }
     }
-    //else if (question.maCauHoi == columnPhieuMauA9_1) {
-    //   if (selectedValue != 1) {
-    //     var a4_5_3_1Value = controller.getValueByFieldName(
-    //         question.bangDuLieu!, columnPhieuMauA4_5_3_1);
-    //     var a4_5_3_2Value = controller.getValueByFieldName(
-    //         question.bangDuLieu!, columnPhieuMauA4_5_3_2);
-    //     if (a4_5_3_1Value != null && a4_5_3_1Value == 1 ||
-    //         (a4_5_3_2Value != null &&
-    //             !controller.validate0InputValue(a4_5_3_2Value))) {
-    //       return const Text(
-    //         'Cảnh báo: Câu 4.5 chỉ tiêu 3.Thuê đường truyền internet, cước điện thoại đã có giá trị. Vui lòng kiểm tra lại câu 9.1.',
-    //         style: TextStyle(color: Colors.orange),
-    //       );
-    //     }
-    //   }
-    //   return const SizedBox();
-    // }
+
     return const SizedBox();
   }
 
-  warningWithText(QuestionCommonModel question, selectedValue) {
+  warningWithText(QuestionCommonModel question, selectedValue,
+      {TablePhieuMauTBSanPham? product}) {
     if (question.maCauHoi == colPhieuMauTBA4_2 &&
         question.maPhieu == AppDefine.maPhieuTB) {
       if (selectedValue != null && selectedValue == 0) {
@@ -4601,6 +4504,24 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         if (a4_1Value != null && a4_1Value > 3) {
           return 'Cảnh bảo: Doanh thu cơ sở =0 mà số tháng hoạt động của cơ sở tại C4.1>3 tháng?';
         }
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA4_3 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (selectedValue != null && selectedValue == 0) {
+        var a1_2Value = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA1_2);
+        if (a1_2Value != null && a1_2Value == 1) {
+          return 'Cảnh bảo: Cơ sở thuê/mượn địa điểm (C1.2=1) mà C4.3=0. Tiền thuê địa điểm=0';
+        }
+      }
+    } else if (question.maCauHoi == colPhieuMauTBSanPhamA5_2 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (selectedValue != null && selectedValue == 0) {
+        return product != null
+            ? product.a5_1_1 != null
+                ? 'Doanh thu [SP ${product.a5_1_1!}] = 0'
+                : 'Doanh thu = 0'
+            : 'Doanh thu = 0';
       }
     }
   }

@@ -97,6 +97,7 @@ class InputIntState extends State<InputInt> {
             widget.question.tenCauHoi ?? '',
             level: widget.question.cap ?? 2,
             subText: widget.subText,
+            moTaSanPham: widget.subName,
           ),
         const SizedBox(height: 4),
         WidgetFieldInput(

@@ -74,7 +74,7 @@ class WidgetFieldInput extends StatelessWidget {
                 prefixIcon: prefix,
                 suffixIcon: suffix,
                 hintText: hint,
-                errorMaxLines: 3,
+                errorMaxLines: 5,
                 fillColor: bgColor ??
                     (enable != null && enable != true
                         ? backgroundDisableColor

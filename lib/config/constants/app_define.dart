@@ -28,35 +28,35 @@ class AppDefine {
   static const int inputTypeString = 4;
   static const int ynQuetion = 1;
 
-///5
+  ///5
   static const int maDoiTuongDT_07Mau = 5;
 
   ///0
-  static const int maDoiTuongDT_07TB = 0; 
+  static const int maDoiTuongDT_07TB = 0;
 
-///0
-   static const int maPhieuTB = 0; 
-   ///1
-   static const int maPhieuCN = 1;
+  ///0
+  static const int maPhieuTB = 0;
 
-   ///2
-   static const int maPhieuVT = 2;
+  ///1
+  static const int maPhieuCN = 1;
 
-   ///3
-   static const int maPhieuLT = 3;
+  ///2
+  static const int maPhieuVT = 2;
 
-   ///4
-   static const int maPhieuTM = 4;  
+  ///3
+  static const int maPhieuLT = 3;
 
-   ///5  
-   static const int maPhieuMau = 5;
+  ///4
+  static const int maPhieuTM = 4;
 
-   ///6
-   static const int maPhieuVTMau = 6; 
+  ///5
+  static const int maPhieuMau = 5;
 
-   ///7
-   static const int maPhieuLTMau = 7;  
+  ///6
+  static const int maPhieuVTMau = 6;
 
+  ///7
+  static const int maPhieuLTMau = 7;
 
   static const int loaiCauHoi_1 = 1;
   static const int loaiCauHoi_2 = 2;
@@ -75,13 +75,13 @@ class AppDefine {
   ///1: Chỉ tiêu dòng của các câu hỏi có mã IO; 2: Chỉ tiêu dòng của các câu không có mã IO
   static const String loaiChiTieu_1 = '1';
   static const String loaiChiTieu_2 = '2';
-    static const String loaiChiTieu_3 = '3'; //Ghi ro
+  static const String loaiChiTieu_3 = '3'; //Ghi ro
 
   ///Bảng chỉ tiêu CT_DM_CauHoi_ChiTieu
   static const String maChiTieu_1 = '1'; //Cột 1
   static const String maChiTieu_2 = '2'; //Cột 2
-    static const String maChiTieu_3 = '3'; //Cột 2
-      static const String maChiTieu_4 = '4'; //Cột 2
+  static const String maChiTieu_3 = '3'; //Cột 2
+  static const String maChiTieu_4 = '4'; //Cột 2
 
   /// 1: Ngành công nghiệp;
   static const String loaiNganhIO_1 = '1';
@@ -104,4 +104,7 @@ class AppDefine {
   static const String waringTextDialog = 'Dialog:';
 
   static const int maTinhTrangHDTuKeKhai = 6;
+
+  static const int khongThuocDoiTuongDieuTra = 1;
+  static const int thuocDoiTuongDieuTra = 0;
 }

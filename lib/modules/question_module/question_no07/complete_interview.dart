@@ -28,6 +28,7 @@ class CompletedResult {
 class CompleteInterviewScreen extends StatefulWidget {
   const CompleteInterviewScreen({super.key});
 
+ 
   @override
   State<CompleteInterviewScreen> createState() =>
       _CompleteInterviewScreenState();
@@ -260,7 +261,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
                   Expanded(
                     child: WidgetButton(
                       title: 'Đồng ý',
-                      onPressed: _onCompleteInterview,
+                      onPressed: _onPressCompleteInterview,
                     ),
                   ),
                 ],
@@ -353,7 +354,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   //   }
   // }
 
-  _onCompleteInterview() async {
+  _onPressCompleteInterview() async {
     // if (_isConditionalInterviewTime() && _lyDoThoiGianController.text.isEmpty) {
     //   controller.showError("Vui lòng nhập lý do thời gian phỏng vấn ngắn");
     //   return;

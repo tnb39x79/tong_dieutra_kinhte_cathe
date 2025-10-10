@@ -17,6 +17,7 @@ String soDienThoaiBase = 'SoDienThoai';
 String nguoiTraLoiBase = "NguoiTraLoi";
 String soDienThoaiDTVBase = 'SoDienThoaiDTV';
 String hoTenDTVBase = "HoTenDTV";
+String  trangThaiCoSo="TrangThaiCoSo";
 
 abstract class BaseController extends FullLifeCycleController
     with FullLifeCycleMixin {

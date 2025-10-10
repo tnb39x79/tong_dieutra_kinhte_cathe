@@ -82,7 +82,7 @@ class WidgetFieldInputVcpa extends StatelessWidget {
                 prefixIcon: prefix,
                 suffixIcon: suffix,
                 hintText: hint,
-                errorMaxLines: 2,
+                errorMaxLines: 5,
                 fillColor: bgColor ??
                     (enable != null && enable != true
                         ? backgroundDisableColor
