@@ -613,7 +613,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                       children: [
                 TextSpan(
                     text: '${widget.maNganhCap5} - ${widget.moTaMaNganhCap5}',
-                    style: TextStyle(color: primaryColor)),
+                    style: styleSmallBold),
               ])))
         ])
       ]);

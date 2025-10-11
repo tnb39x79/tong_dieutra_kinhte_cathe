@@ -4,19 +4,21 @@ import 'package:gov_statistics_investigation_economic/modules/question_module/qu
 import 'package:gov_statistics_investigation_economic/resource/model/model.dart';
 
 class InputStringVcpa extends StatefulWidget {
-  const InputStringVcpa(
-      {required this.question,
-      required this.onChange,
-      this.validator,
-      this.value,
-      this.enable = true,
-      this.subName,
-      this.maxLine = 1,
-      super.key,
-      this.readOnly = true,
-      this.onTap,
-      this.focusNode,
-      this.suffix});
+  const InputStringVcpa({
+    required this.question,
+    required this.onChange,
+    this.validator,
+    this.value,
+    this.enable = true,
+    this.subName,
+    this.maxLine = 1,
+    super.key,
+    this.readOnly = true,
+    this.onTap,
+    this.focusNode,
+    this.suffix,
+    this.warningText,
+  });
 
   final QuestionCommonModel question;
   final Function(String?)? onChange;
@@ -29,6 +31,8 @@ class InputStringVcpa extends StatefulWidget {
   final Function()? onTap;
   final FocusNode? focusNode;
   final Widget? suffix;
+  final String? warningText;
+
   @override
   InputIntVcpaState createState() => InputIntVcpaState();
 }
@@ -71,6 +75,7 @@ class InputIntVcpaState extends State<InputStringVcpa> {
           suffix: wSuffix(),
           onTap: widget.onTap,
         ),
+        wWarningText(),
         const SizedBox(height: 12),
       ],
     );
@@ -107,6 +112,16 @@ class InputIntVcpaState extends State<InputStringVcpa> {
             ),
           ],
         ),
+      );
+    }
+    return const SizedBox();
+  }
+
+  Widget wWarningText() {
+    if (widget.warningText != null && widget.warningText != '') {
+      return Text(
+        widget.warningText!,
+        style: const TextStyle(color: Colors.orange),
       );
     }
     return const SizedBox();

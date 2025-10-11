@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:gov_statistics_investigation_economic/config/config.dart';
 
 class CheckBoxCircleDm extends StatelessWidget {
-  const CheckBoxCircleDm({
-    super.key,
-    required this.text,
-    required this.index,
-    required this.currentIndex,
-    required this.onPressed,
-    this.showIndex = true,
-    this.styles,
-    this.isSelected = false,
-    this.loaiGhiRo
-
-  });
+  const CheckBoxCircleDm(
+      {super.key,
+      required this.text,
+      required this.index,
+      required this.currentIndex,
+      required this.onPressed,
+      this.showIndex = true,
+      this.styles,
+      this.isSelected = false,
+      this.loaiGhiRo,
+      this.enable=true});
 
   final String text;
   final int index;
@@ -23,11 +22,12 @@ class CheckBoxCircleDm extends StatelessWidget {
   final bool isSelected;
   final TextStyle? styles;
   final int? loaiGhiRo;
+  final bool? enable;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => onPressed(index),
+      onTap: () => (enable != null && enable == true) ? onPressed(index) : {},
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppValues.padding / 2),
         child: Row(
@@ -47,13 +47,19 @@ class CheckBoxCircleDm extends StatelessWidget {
       width: 28,
       height: 28,
       decoration: BoxDecoration(
-        color:
-            isSelected || currentIndex == index ? primaryColor : Colors.white,
+        color: isSelected || currentIndex == index
+            ? (enable != null && enable == true)
+                ? primaryColor
+                : Colors.grey
+            : Colors.white,
         shape: BoxShape.circle,
         border: Border.all(
           width: 1,
-          color:
-              isSelected || currentIndex == index ? primaryColor : greyCheckBox,
+          color: isSelected || currentIndex == index
+              ? (enable != null && enable == true)
+                  ? primaryColor
+                  : Colors.grey
+              : greyCheckBox,
         ),
       ),
       child: Image.asset(AppIcons.icTick),
@@ -65,7 +71,11 @@ class CheckBoxCircleDm extends StatelessWidget {
 
     return Text(
       _text,
-      style: styles ?? styleMediumBold.copyWith(color: blackText, height: 1.0),
+      style: styles ??
+          styleMediumBold.copyWith(
+              color:
+                  (enable != null && enable == true) ? blackText : Colors.grey,
+              height: 1.0),
     );
   }
 }

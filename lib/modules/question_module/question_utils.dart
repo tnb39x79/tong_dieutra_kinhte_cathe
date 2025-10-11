@@ -527,7 +527,7 @@ mixin QuestionUtils {
     return value == null || value == "" || value == "null";
   }
 
-  validate0InputValue(inputValue) {
+  validateEqual0InputValue(inputValue) {
     return inputValue == '0' ||
         inputValue == '0.0' ||
         inputValue == '0.00' ||

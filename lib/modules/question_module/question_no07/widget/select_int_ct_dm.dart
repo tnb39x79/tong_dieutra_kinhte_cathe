@@ -5,7 +5,7 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_color
 import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/checkbox_circle_dm.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/input_string_dm.dart';
- 
+
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_gioitinh.dart';
@@ -22,7 +22,8 @@ class SelectIntCTDm extends StatefulWidget {
   final String? titleGhiRoText;
   final bool? hienThiTenCauHoi;
   final Function(String?, dynamic)? onChangeGhiRo;
-  final bool? isbg; 
+  final bool? isbg;
+  final bool? enable;
 
   const SelectIntCTDm(
       {super.key,
@@ -36,7 +37,8 @@ class SelectIntCTDm extends StatefulWidget {
       this.titleGhiRoText,
       this.onChangeGhiRo,
       this.hienThiTenCauHoi,
-      this.isbg });
+      this.isbg,
+      this.enable = true});
 
   @override
   SelectIntCTDmState createState() => SelectIntCTDmState();
@@ -108,11 +110,11 @@ class SelectIntCTDmState extends State<SelectIntCTDm> {
             itemDyn = item;
             maVal = item.ma!;
             tenVal = item.ten!;
-          // } else if (widget.tenDanhMuc == tableDmCap) {
-          //   TableDmCap item = widget.listValue[index];
-          //   itemDyn = item;
-          //   maVal = item.ma!;
-          //   tenVal = item.ten!;
+            // } else if (widget.tenDanhMuc == tableDmCap) {
+            //   TableDmCap item = widget.listValue[index];
+            //   itemDyn = item;
+            //   maVal = item.ma!;
+            //   tenVal = item.ten!;
           } else if (widget.tenDanhMuc == tableCTDmHoatDongLogistic) {
             TableCTDmHoatDongLogistic item = widget.listValue[index];
             itemDyn = item;
@@ -171,6 +173,7 @@ class SelectIntCTDmState extends State<SelectIntCTDm> {
                     _value = val;
                   });
                 },
+                enable: widget.enable,
               ),
               //   buildGhiRo(ghiRo, itemDyn)
             ],
@@ -189,6 +192,4 @@ class SelectIntCTDmState extends State<SelectIntCTDm> {
     }
     return const SizedBox();
   }
-
-  
 }

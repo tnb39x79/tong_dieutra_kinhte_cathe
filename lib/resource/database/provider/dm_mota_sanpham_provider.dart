@@ -630,6 +630,24 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return result.length;
   }
 
+Future<List<String>> getMaSanPhamBetween(String fromSp,String toSp) async {
+    List<String> result = []; 
+     
+    String sql =
+        "SELECT MaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham  between '$fromSp' and  '$toSp'";
+    print('sql $sql');
+    List<Map> maps = await db!.rawQuery(sql);
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result.add(value);
+        }
+      });
+    }
+    print('getMaSanPhamBetween result $result');
+    return result;
+  }
+
   Future<int> countAll() async {
     var result = await db!.rawQuery('SELECT COUNT(*) FROM $tableDmMoTaSanPham');
     int? count = Sqflite.firstIntValue(result);
