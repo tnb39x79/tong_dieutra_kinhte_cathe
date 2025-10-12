@@ -112,7 +112,8 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
   }
 
   Future<List<Map>> searchVcpaCap5ByLinhVuc(
-      String keyword, String maLV, int capSo,{String? maNganhCap5}) async {
+      String keyword, String maLV, int capSo,
+      {String? maNganhCap5}) async {
     if (keyword != '') {
       // List<String> kws = keyword.split(' ');
       // List<String> whs = [];
@@ -144,7 +145,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
       if (maLV != '' && maLV != '0') {
         sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
       }
-      if(maNganhCap5!=null && maNganhCap5!=''){ 
+      if (maNganhCap5 != null && maNganhCap5 != '') {
         sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
       }
       if (capSo > 0) {
@@ -159,10 +160,10 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
     return [];
   }
- 
+
   Future<List<Map>> mapResultAIToDmSanPham(
       List<ProductAiModel> products, String maLV,
-      {int? capSo,String? maNganhCap5}) async {
+      {int? capSo, String? maNganhCap5}) async {
     List<String> vcpas = [];
     if (products != null && products.isNotEmpty) {
       for (var item in products) {
@@ -189,8 +190,8 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     if (maLV != '' && maLV != '0') {
       sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
     }
-    if(maNganhCap5!=null && maNganhCap5!=''){ 
-     sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
+    if (maNganhCap5 != null && maNganhCap5 != '') {
+      sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
     }
     if (capSo != null && capSo > 0) {
       sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
@@ -202,13 +203,11 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return maps;
   }
 
-   
-
   ///
   ///capSo: mã cấp 1,2,3,4,5,6,7,8
   Future<List<Map>> mapResultAIToDmSanPhamOffline(
       List<PredictionResult> products, String maLV,
-      {int? capSo,String? maNganhCap5}) async {
+      {int? capSo, String? maNganhCap5}) async {
     List<String> vcpas = [];
     if (products != null && products.isNotEmpty) {
       for (var item in products) {
@@ -235,8 +234,8 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     if (maLV != '' && maLV != '0') {
       sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
     }
-    if(maNganhCap5!=null && maNganhCap5!=''){ 
-     sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
+    if (maNganhCap5 != null && maNganhCap5 != '') {
+      sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
     }
     if (capSo != null && capSo > 0) {
       sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
@@ -247,7 +246,6 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
 
     return maps;
   }
- 
 
   Future<List<Map>> selectAlls() async {
     final List<Map> maps = await db!.query(tableDmMoTaSanPham);
@@ -479,7 +477,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
 
     String sqlL =
-        "SELECT MaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5Inputs.map((e) => "'$e'").join(', ')})   AND substr($columnDmMoTaSPMaSanPham,1,4) =$maVcpaL6810 AND $columnDmMoTaSPMaLV ='L'";
+        "SELECT MaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5Inputs.map((e) => "'$e'").join(', ')})   AND substr($columnDmMoTaSPMaSanPham,1,4) ='$maVcpaL6810' AND $columnDmMoTaSPMaLV ='L'";
     print('sqlL $sqlL');
     List<Map> mapsL = await db!.rawQuery(sqlL);
     List<String> cap5L = [];
@@ -630,9 +628,9 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return result.length;
   }
 
-Future<List<String>> getMaSanPhamBetween(String fromSp,String toSp) async {
-    List<String> result = []; 
-     
+  Future<List<String>> getMaSanPhamBetween(String fromSp, String toSp) async {
+    List<String> result = [];
+
     String sql =
         "SELECT MaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham  between '$fromSp' and  '$toSp'";
     print('sql $sql');
@@ -641,6 +639,24 @@ Future<List<String>> getMaSanPhamBetween(String fromSp,String toSp) async {
       item.forEach((key, value) {
         if (value != null) {
           result.add(value);
+        }
+      });
+    }
+    print('getMaSanPhamBetween result $result');
+    return result;
+  }
+
+  Future<String> getMaLVByMaSanPham(String maSanPham) async {
+    String result = '';
+
+    String sql =
+        "SELECT MaLV FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham  ='$maSanPham";
+    print('sql $sql');
+    List<Map> maps = await db!.rawQuery(sql);
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result = value;
         }
       });
     }

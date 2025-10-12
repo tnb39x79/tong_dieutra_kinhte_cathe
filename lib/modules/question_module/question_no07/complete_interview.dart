@@ -54,6 +54,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
 
   @override
   void initState() {
+   
     super.initState();
     completeInfo = controller.completeInfo;
     _initData();
@@ -62,6 +63,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     _giaiTrinhController.addListener(_setEdited);
     _lyDoThoiGianController.addListener(_setEdited);
     _lyDoDinhViController.addListener(_setEdited);
+    
   }
 
   @override

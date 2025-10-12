@@ -135,7 +135,7 @@ class HomeController extends BaseController with SyncMixin {
         onGetDuLieuPhieu();
       }
     }
-    
+
     mainMenuController.setLoading(false);
     super.onInit();
 
@@ -404,11 +404,9 @@ class HomeController extends BaseController with SyncMixin {
     await doiTuongDieuTraProvider.insert(dsDoiTuongDT, dtSaveDB);
   }
 
-  Future insertIntoTableCoSoSxkd(
-      dynamic tableData, String dtSaveDB) async {
+  Future insertIntoTableCoSoSxkd(dynamic tableData, String dtSaveDB) async {
     List<TableDmDiaBanCosoSxkd> dmDiaBanCosoSxkd =
         TableData.toListDiaBanCoSoSXKDs(tableData);
-    
 
     List<TableBkCoSoSXKD> danhSachBkCsSxkd = [];
     for (var element in dmDiaBanCosoSxkd) {
@@ -611,7 +609,7 @@ class HomeController extends BaseController with SyncMixin {
 
   /// END::TẢI DỮ LIỆU PHỎNG VẤN
 
-  onInterViewScreen() async {
+  onInterViewScreen() async { 
     Map? isHad = await hasGetDataPv();
     if (isHad != null) {
       //if (isDefaultUserType()) {

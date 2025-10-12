@@ -21,7 +21,7 @@ const String columnMa = 'Ma';
 const String columnTen = 'Ten';
 const String columnSTT = 'STT';
 const String columnSTTSanpham = 'STT_SanPham'; 
-
+const String columnMaLV = 'MaLV';
 const String columnGhiChu = 'GhiChu';
 String giaiTrinhToaDo = "GiaiTrinhToaDo";
 

@@ -24,6 +24,8 @@ class TablePhieuMauTBSanPham {
   String? a5_1_2;
   double? a5_2;
 
+  String? maLV;
+  
   int? isDefault;
   int? isSync;
 
@@ -39,6 +41,7 @@ class TablePhieuMauTBSanPham {
       this.a5_1_1,
       this.a5_1_2,
       this.a5_2,
+      this.maLV, 
       this.isDefault,
       this.isSync,
       this.maDTV,
@@ -54,6 +57,7 @@ class TablePhieuMauTBSanPham {
     a5_1_2 = json['A5_1_2'];
     a5_2 = json['A5_2'];
 
+    maLV = json['MaLV'];
     isDefault = json['IsDefault'];
     isSync = json['IsSync'];
     maDTV = json['MaDTV'];
@@ -72,6 +76,7 @@ class TablePhieuMauTBSanPham {
     json['A5_1_2'] = a5_1_2;
     json['A5_2'] = a5_2;
 
+    json['MaLV'] = maLV;
     json['IsDefault'] = isDefault;
     json['IsSync'] = isSync;
     json['MaDTV'] = maDTV;
@@ -213,5 +218,5 @@ class TablePhieuMauTBSanPham {
     '39'
   ];
 
-   static final vcpaCap5Range62010To62090 = ['62010', '62020', '62090'];
+  static final vcpaCap5Range62010To62090 = ['62010', '62020', '62090'];
 }

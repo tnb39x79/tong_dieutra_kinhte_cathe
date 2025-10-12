@@ -29,7 +29,8 @@ class TablePhieuNganhCN {
 
   ///1: Đơn vị tính lấy từ danh mục sản phẩm;
   ///2: Đơn vị tính người dùng tự nhập
- // int? loaiDvt;
+  // int? loaiDvt;
+  String? maLV;
   int? isDefault;
   int? isSync;
   String? maDTV;
@@ -45,7 +46,8 @@ class TablePhieuNganhCN {
       this.a1_2,
       this.a2_1,
       this.a2_2,
-  //    this.loaiDvt,
+      //    this.loaiDvt,
+      this.maLV,
       this.isDefault,
       this.isSync,
       this.maDTV,
@@ -63,7 +65,8 @@ class TablePhieuNganhCN {
     a2_1 = json['A2_1'];
     a2_2 = json['A2_2'];
 
-  //  loaiDvt = json['LoaiDvt'];
+    //  loaiDvt = json['LoaiDvt'];
+    maLV = json['MaLV'];
     isDefault = json['IsDefault'];
     isSync = json['IsSync'];
 
@@ -83,7 +86,8 @@ class TablePhieuNganhCN {
     json['A1_2'] = a1_2;
     json['A2_1'] = a2_1;
     json['A2_2'] = a2_2;
-   // json['LoaiDvt'] = loaiDvt;
+    // json['LoaiDvt'] = loaiDvt;
+    json['MaLV'] = maLV;
     json['IsDefault'] = isDefault;
     json['IsSync'] = isSync;
     json['MaDTV'] = maDTV;

@@ -23,8 +23,7 @@ class WidgetFieldInputVcpa extends StatelessWidget {
       this.txtStyle,
       this.readOnly = true,
       this.onTap,
-      this.focusNode
-      });
+      this.focusNode});
 
   final TextEditingController controller;
   final String? Function(String?)? validator;
@@ -67,76 +66,80 @@ class WidgetFieldInputVcpa extends StatelessWidget {
           child: Form(
             autovalidateMode: AutovalidateMode.always,
             child: TextFormField(
-              readOnly: readOnly ?? false,
-              maxLength: maxLength,
-              //  maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              controller: controller,
-              style: styleCustomize,
-              obscureText: isHideContent ?? false,
-              enabled: enable ?? true,
-              validator: validator,
-              maxLines: maxLine,
-              minLines: 1,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                prefixIcon: prefix,
-                suffixIcon: suffix,
-                hintText: hint,
-                errorMaxLines: 5,
-                fillColor: bgColor ??
-                    (enable != null && enable != true
-                        ? backgroundDisableColor
-                        : backgroundWhiteColor),
-                filled: true,
-                contentPadding:
-                    const EdgeInsets.only(top: 4, left: 16, right: 16),
-                hintStyle: styleSmall.copyWith(color: greyColor),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                  borderSide: BorderSide(
-                    color: (enable != null && enable != true)
-                        ? greyBorder
-                        : primaryLightColor,
-                    width: 1.0,
+                readOnly: readOnly ?? false,
+                maxLength: maxLength,
+                //  maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                controller: controller,
+                style: styleCustomize,
+                obscureText: isHideContent ?? false,
+                enabled: enable ?? true,
+                validator: validator,
+                maxLines: maxLine,
+                minLines: 1,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  prefixIcon: prefix,
+                  suffixIcon: suffix,
+                  hintText: hint,
+                  errorMaxLines: 5,
+                  fillColor: bgColor ??
+                      (enable != null && enable != true
+                          ? backgroundDisableColor
+                          : backgroundWhiteColor),
+                  filled: true,
+                  // contentPadding: const EdgeInsets.only(top: 4, left: 16, right: 16),
+                  contentPadding:
+                      const EdgeInsets.only(bottom: 0.0, top: 4.0, left: 0),
+                  prefix: const Padding(padding: EdgeInsets.only(left: 16.0)),
+                  hintStyle: styleSmall.copyWith(color: greyColor),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                    borderSide: BorderSide(
+                      color: (enable != null && enable != true)
+                          ? greyBorder
+                          : primaryLightColor,
+                      width: 1.0,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                    borderSide: BorderSide(
+                      color: (enable != null && enable != true)
+                          ? greyBorder
+                          : primaryColor,
+                      width: 1.0,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                    borderSide: const BorderSide(
+                      color: errorColor,
+                      width: 1.0,
+                    ),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                    borderSide: const BorderSide(
+                      color: errorColor,
+                      width: 1.0,
+                    ),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                    borderSide: const BorderSide(
+                      color: greyBorder,
+                      width: 1.0,
+                    ),
+                  ),
+                  errorStyle: TextStyle(
+                    fontSize: 14.0,
                   ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                  borderSide: BorderSide(
-                    color: (enable != null && enable != true)
-                        ? greyBorder
-                        : primaryColor,
-                    width: 1.0,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                  borderSide: const BorderSide(
-                    color: errorColor,
-                    width: 1.0,
-                  ),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                  borderSide: const BorderSide(
-                    color: errorColor,
-                    width: 1.0,
-                  ),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                  borderSide: const BorderSide(
-                    color: greyBorder,
-                    width: 1.0,
-                  ),
-                ),
-              ),
-              keyboardType: keyboardType,
-              onChanged: onChanged,
-              inputFormatters: inputFormatters,
-              onTap: onTap,
-              focusNode: focusNode
-            ),
+                keyboardType: keyboardType,
+                onChanged: onChanged,
+                inputFormatters: inputFormatters,
+                onTap: onTap,
+                focusNode: focusNode),
           ),
         ),
       ],

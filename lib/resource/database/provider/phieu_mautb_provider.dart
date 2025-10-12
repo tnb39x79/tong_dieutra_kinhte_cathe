@@ -37,7 +37,7 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     for (var element in value) {
       element.createdAt = createdAt;
       //   element.updatedAt = createdAt;
-     element.maDTV = AppPref.uid;
+      element.maDTV = AppPref.uid;
       ids.add(await db!.insert(tablePhieuMauTB, element.toJson()));
     }
     return ids;
@@ -194,8 +194,8 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
       fieldName: value,
       columnUpdatedAt: DateTime.now().toIso8601String(),
     };
-    var i = await db!
-        .update(tablePhieuMauTB, values, where: '$columnId = ?', whereArgs: [id]);
+    var i = await db!.update(tablePhieuMauTB, values,
+        where: '$columnId = ?', whereArgs: [id]);
 
     log('UPDATE PHIEU 04: $i');
   }
@@ -213,6 +213,7 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
 
     log('UPDATE PHIEU 04: $i');
   }
+
   Future updateValueByIdCoSo(String fieldName, value, idCoSo) async {
     String createAt = AppPref.dateTimeSaveDB!;
     Map<String, Object?> values = {
@@ -226,6 +227,7 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
 
     log('UPDATE PHIEU 04: $i');
   }
+
   ///update multi field
   Future updateValuesMultiFields(fieldName, value, String idCoSo,
       {Map<String, Object?>? multiValue}) async {
@@ -246,7 +248,6 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     }
   }
 
- 
   Future updateMultiValues(String idCoSo,
       {Map<String, Object?>? multiValue}) async {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
@@ -267,6 +268,32 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
           AND $columnCreatedAt = '$createdAt'
         ''');
     return map.isNotEmpty ? map[0] : {};
+  }
+
+  Future<List<String>> selectA6_1ByIdCoSo(String idCoso) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<String> result = [];
+    List<String> fieldNames = [];
+    for (var i = 1; i <= 11; i++) {
+      var field = 'A6_1_${i}_1';
+      fieldNames.add(field);
+    }
+    List<Map> map = await db!.rawQuery('''
+          SELECT ${fieldNames.join(',')}  FROM $tablePhieuMauTB 
+          WHERE $columnIDCoSo = '$idCoso' 
+          AND $columnCreatedAt = '$createdAt'
+        ''');
+    for (var item in map) {
+      item.forEach((key, value) {
+        if (value != null && value==1) {
+          if (fieldNames.contains(key)) {
+             var maso=key.toString().split('_');
+             result.add(maso[2]);
+          }
+        }
+      });
+    }
+    return result;
   }
 
   Future<bool> isExistQuestion(String idCoso) async {
@@ -376,7 +403,24 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     }
     return result;
   }
- 
+ Future<double> tongDoanhThuTatCaSanPham(String idCoSo) async {
+    double result = 0.0;
+
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    String sql =
+        "SELECT SUM($colPhieuMauTBSanPhamA5_2) as total FROM $tablePhieuMauTBSanPham  WHERE $columnIDCoSo = '$idCoSo'  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+    List<Map> map = await db!.rawQuery(sql);
+
+    for (var item in map) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result = value;
+        }
+      });
+    }
+    return result;
+  }
   // Future<bool> kiemTraPhanVIVIIValues(
   //     String idCoso, List<String> fieldNames) async {
   //   List<int> result = [];

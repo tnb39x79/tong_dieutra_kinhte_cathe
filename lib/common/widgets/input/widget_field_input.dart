@@ -80,8 +80,11 @@ class WidgetFieldInput extends StatelessWidget {
                         ? backgroundDisableColor
                         : backgroundWhiteColor),
                 filled: true,
+                // contentPadding: const EdgeInsets.only(top: 4, left: 16, right: 16),
                 contentPadding:
-                    const EdgeInsets.only(top: 4, left: 16, right: 16),
+                    const EdgeInsets.only(bottom: 0.0, top: 4.0, left: 0),
+                prefix: const Padding(padding: EdgeInsets.only(left: 16.0)),
+
                 hintStyle: styleSmall.copyWith(color: greyColor),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppValues.borderLv1),
@@ -121,14 +124,18 @@ class WidgetFieldInput extends StatelessWidget {
                     color: greyBorder,
                     width: 1.0,
                   ),
-                ), 
+                ),
+                errorStyle: TextStyle( 
+                  fontSize: 14.0,
+                ),
               ),
               keyboardType: keyboardType,
               onChanged: onChanged,
               inputFormatters: inputFormatters,
+
               // onTap: () {
               //   var textFieldNum = controller.value.text;
-              //   if(textFieldNum!=''){ 
+              //   if(textFieldNum!=''){
               //   var numSanitized = numSanitizedFormat.parse(textFieldNum);
               //   controller.value = TextEditingValue(
               //     /// Clear if TextFormField value is 0
@@ -140,7 +147,7 @@ class WidgetFieldInput extends StatelessWidget {
               // },
               // onFieldSubmitted: (valueInput) {
               //   /// Set value to 0 if TextFormField value is empty
-              //   if (valueInput == '') { 
+              //   if (valueInput == '') {
               //   final formattedPrice =
               //       numFormat.format(double.parse(valueInput));
               //   debugPrint('Formatted $formattedPrice');

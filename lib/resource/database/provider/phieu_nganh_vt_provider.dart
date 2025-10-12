@@ -4,6 +4,8 @@ import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart
 import 'package:gov_statistics_investigation_economic/resource/database/database_helper.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/base_db_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_mautb_sanpham.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_tm_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_vt.dart';
 
 import 'package:sqflite/sqflite.dart';
@@ -405,6 +407,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     return result.isNotEmpty;
   }
 
+ 
   Future<int> deleteById(int id) {
     var res = db!.delete(tablePhieuNganhVT, where: '''  $columnId = '$id'  ''');
     return res;

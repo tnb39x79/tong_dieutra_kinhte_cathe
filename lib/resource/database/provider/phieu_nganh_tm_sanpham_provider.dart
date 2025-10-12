@@ -60,6 +60,7 @@ class PhieuNganhTMSanPhamProvider
       $colPhieuNganhTMSanPhamMaNganhC5  TEXT,
       $colPhieuNganhTMSanPhamMoTaSanPham  TEXT,
       $colPhieuNganhTMSanPhamA1_2  REAL,
+      $columnMaLV  TEXT,
       $columnMaDTV  TEXT,
       $columnCreatedAt TEXT,
       $columnUpdatedAt TEXT
@@ -153,7 +154,8 @@ class PhieuNganhTMSanPhamProvider
       String idCoso, List<String> maSanPhamCap1GL8610B) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
-    var sql = "  SELECT distinct $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamIDCoSo, ";
+    var sql =
+        "  SELECT distinct $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamIDCoSo, ";
     sql +=
         " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham AS STT_SanPham, ";
     sql +=
@@ -161,6 +163,8 @@ class PhieuNganhTMSanPhamProvider
     sql +=
         " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_1 as MoTaSanPham, ";
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamA1_2, ";
+     sql +=
+        " $tablePhieuMauTBSanPham.$columnMaLV, ";
     sql += " '${AppPref.uid}' as MADTV ";
     sql += " FROM $tablePhieuMauTBSanPham ";
     sql +=
@@ -173,6 +177,31 @@ class PhieuNganhTMSanPhamProvider
         " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2 in (${maSanPhamCap1GL8610B.map((e) => "'$e'").join(', ')})";
     List<Map> maps = await db!.rawQuery(sql);
     return maps;
+  }
+
+  //C5.2_Dthu tại Phiếu 7TB của các sản phẩm TM cho phiếu TM
+  Future tongDoanhThuSanPhamTM(idCoSo) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    ///Tính tổng
+    var total = 0.0;
+    String sql =
+        " SELECT SUM($tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_2) as totalA5_2 FROM $tablePhieuMauTBSanPham ";
+    sql += "  WHERE $tablePhieuMauTBSanPham.$columnIDCoSo = '$idCoSo' ";
+    sql += "  AND $tablePhieuMauTBSanPham.$columnCreatedAt = '$createdAt'";
+    sql +=
+        "  AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2 in (SELECT $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5 FROM $tablePhieuNganhTMSanPham WHERE $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamIDCoSo='$idCoSo' )";
+    log('tongDoanhThuSanPhamTM:: sql: $sql');
+
+    List<Map> map = await db!.rawQuery(sql);
+    if (map.isNotEmpty) {
+      if (map[0] != null) {
+        total = map[0]['totalA5_2'] ?? 0;
+      }
+    }
+
+    log('tongDoanhThuSanPhamTM: $total');
+    return total;
   }
 
   Future<int> getMaxSTTByIdCoso(String idCoso) async {
@@ -189,7 +218,6 @@ class PhieuNganhTMSanPhamProvider
       }
     }
     return 0;
-     
   }
 
   Future<bool> isExistQuestion(String idCoso) async {
@@ -298,4 +326,6 @@ class PhieuNganhTMSanPhamProvider
     return await database
         .rawQuery('DROP TABLE IF EXISTS $tablePhieuNganhTMSanPham');
   }
+
+  
 }

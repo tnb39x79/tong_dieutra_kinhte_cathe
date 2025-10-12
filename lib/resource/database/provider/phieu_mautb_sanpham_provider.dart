@@ -58,6 +58,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
       $colPhieuMauTBSanPhamA5_1_1  TEXT,
       $colPhieuMauTBSanPhamA5_1_2  TEXT,
       $colPhieuMauTBSanPhamA5_2  REAL,
+      $columnMaLV TEXT,
       $columnPhieuMauSanPhamDefault INTEGER, 
       $columnPhieuMauSanPhamIsSync INTEGER, 
       $columnMaDTV  TEXT,
@@ -176,7 +177,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
         where:
             "$columnIDCoSo = '$idCoSo'  AND $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'");
 
-    log('UPDATE PHIEU 04: $i');
+    log('UPDATE PHIEU  : $i');
   }
 
   Future updateMultiFieldNullValueById(
@@ -515,6 +516,72 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
       });
     }
     return result;
+  }
+
+  ///nganh:
+  ///CN: Công nghiệp; VTHK: Vận tải hành khách; VTHH; LT: Thương mại; TM: Thương mại
+  ///maVcpAQuiDinh:
+  ///   => Nếu là VTHK là: vcpaCap5VanTaiHanhKhach =  "49210;49220;49290;49312;49313;49319;49321;49329;50111;50112;50211;50212"
+  ///   => Nếu là VTHH là: vcpaCap5VanTaiHangHoa = "49331;49332;49333;49334;49339;50121;50122;50221;50222";
+  ///   => LT là: Cấp 2 = 55
+  ///   => TM là: HOẠT ĐỘNG BÁN BUÔN; BÁN LẺ; SỬA CHỮA Ô TÔ, MÔ TÔ, XE MÁY, XE CÓ ĐỘNG CƠ KHÁC VÀ HOẠT ĐỘNG KINH DOANH BẤT ĐỘNG SẢN CẤP 1 LÀ G VÀ NGÀNH L6810  (TRỪ CÁC MÃ 4513-4520-45413-4542-461)]
+  ///   => TM là : Cấp 2 = 56
+  Future doanhThuNganh(idCoSo, String nganh, String maVcpAQuiDinh) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+
+    ///Tính tổng
+    var total = 0.0;
+    String sql = '';
+    String sWhere = '';
+    if (nganh == 'CN') {
+      sWhere = " $colPhieuMauTBSanPhamA5_1_2 in ('B','C','D','E') ";
+    } else if (nganh == 'VTHK' || nganh == 'VTHH') {
+      var maVcpAQuiDinhs = maVcpAQuiDinh.split(';');
+      sWhere =
+          "   substr($colPhieuMauTBSanPhamA5_1_2,1,5) in (${maVcpAQuiDinhs.map((e) => "'$e'").join(', ')})";
+    } else if (nganh == 'LT') {
+      String vcpaCap2LT = "55";
+      sWhere = " (substr($colPhieuMauTBSanPhamA5_1_2,1,2) = '$vcpaCap2LT')";
+    } else if (nganh == 'TM') {
+      ///Bán buôn bán lẻ;
+      ///"45413";
+      String maVcpaLoaiTruG_C5 = "45413";
+
+      ///"4513;4520;4542";
+      String maVcpaLoaiTruG_C4 = "4513;4520;4542";
+
+      ///"461";
+      String maVcpaLoaiTruG_C3 = "461";
+      String maVcpaL6810 = "6810";
+      var arrG_C5 = maVcpaLoaiTruG_C5.split(';');
+      var arrG_C4 = maVcpaLoaiTruG_C4.split(';');
+      var arrG_C3 = maVcpaLoaiTruG_C3.split(';');
+      sWhere =
+          " ((substr($colPhieuMauTBSanPhamA5_1_2,1,3) not in (${arrG_C3.map((e) => "'$e'").join(', ')}) AND substr($colPhieuMauTBSanPhamA5_1_2,1,4) not in (${arrG_C4.map((e) => "'$e'").join(', ')}) AND substr($colPhieuMauTBSanPhamA5_1_2,1,5) not in (${arrG_C5.map((e) => "'$e'").join(', ')}) )AND $columnMaLV ='G')";
+
+      ///
+      sWhere +=
+          " OR (substr($colPhieuMauTBSanPhamA5_1_2,1,4) =$maVcpaL6810 AND $columnMaLV ='L')";
+
+      String vcpaCap2TM = "56";
+      sWhere += " OR (substr($colPhieuMauTBSanPhamA5_1_2,1,2) = '$vcpaCap2TM')";
+    }
+    
+    sql =
+        " SELECT SUM($colPhieuMauTBSanPhamA5_2) as totalA5_2 FROM $tablePhieuMauTBSanPham ";
+    sql += "  WHERE  $columnIDCoSo = '$idCoSo' ";
+    sql += "  AND  $columnCreatedAt = '$createdAt'";
+    sql += " AND $sWhere";
+log('doanhThuNganh CN:: sql: $sql');
+    List<Map> map = await db!.rawQuery(sql);
+    if (map.isNotEmpty) {
+      if (map[0] != null) {
+        total = map[0]['totalA5_2'] ?? 0;
+      }
+    }
+
+    log('doanhThuNganh $nganh: $total');
+    return total;
   }
 
   Future updateSuccess(List idCoSos) async {
