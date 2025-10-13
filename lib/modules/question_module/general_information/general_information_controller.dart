@@ -281,7 +281,7 @@ class GeneralInformationController extends BaseController {
         "DienThoai": dienThoaiController.text,
       });
 
-      await insertNewRecordSanPham();
+    //  await insertNewRecordSanPham();
     }
     setLoading(false);
     if (screenNos.isEmpty) {

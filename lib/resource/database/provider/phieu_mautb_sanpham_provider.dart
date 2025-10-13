@@ -57,8 +57,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
       $colPhieuMauTBSanPhamMaNganhC5  TEXT,
       $colPhieuMauTBSanPhamA5_1_1  TEXT,
       $colPhieuMauTBSanPhamA5_1_2  TEXT,
-      $colPhieuMauTBSanPhamA5_2  REAL,
-      $columnMaLV TEXT,
+      $colPhieuMauTBSanPhamA5_2  REAL, 
       $columnPhieuMauSanPhamDefault INTEGER, 
       $columnPhieuMauSanPhamIsSync INTEGER, 
       $columnMaDTV  TEXT,
@@ -195,6 +194,20 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
             "$columnIDCoSo = '$idCoSo'  AND $columnMaDTV = '${AppPref.uid}'  AND  $columnId=$id ");
 
     log('UPDATE PHIEU 04: $i');
+  }
+
+  //update isdefault=null neu ko phai la nganh co so ở bảng tblBkCoSoSXKDNganhSanPham
+  Future updateDefaultByIdCoso(iDCoSo, maNganhC5, value) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    Map<String, Object?> values = {
+      columnPhieuMauSanPhamDefault: value,
+      columnUpdatedAt: DateTime.now().toIso8601String(),
+    };
+    var res = await db!.update(tablePhieuMauTBSanPham, values,
+        where:
+            "$columnIDCoSo = '$iDCoSo'  AND $columnCreatedAt = '$createdAt' AND $colPhieuMauTBSanPhamA5_1_2<> $maNganhC5 AND $columnMaDTV = '${AppPref.uid}'");
+    log('updateDefaultByIdCoso: $res');
+    return res;
   }
 
   Future<int> deleteById(int id) {
@@ -566,13 +579,13 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
       String vcpaCap2TM = "56";
       sWhere += " OR (substr($colPhieuMauTBSanPhamA5_1_2,1,2) = '$vcpaCap2TM')";
     }
-    
+
     sql =
         " SELECT SUM($colPhieuMauTBSanPhamA5_2) as totalA5_2 FROM $tablePhieuMauTBSanPham ";
     sql += "  WHERE  $columnIDCoSo = '$idCoSo' ";
     sql += "  AND  $columnCreatedAt = '$createdAt'";
     sql += " AND $sWhere";
-log('doanhThuNganh CN:: sql: $sql');
+    log('doanhThuNganh CN:: sql: $sql');
     List<Map> map = await db!.rawQuery(sql);
     if (map.isNotEmpty) {
       if (map[0] != null) {

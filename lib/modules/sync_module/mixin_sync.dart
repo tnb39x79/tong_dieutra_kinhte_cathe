@@ -96,6 +96,7 @@ mixin SyncMixin {
         "TenDiaBan": item.tenDiaBan,
         "TenCoso": item.tenCoSo,
         "DiaChi": item.diaChi,
+        "TenChuCoSo":item.tenChuCoSo,
         "DienThoai": item.dienThoai,
         "Email": item.email,
         "MaTinhTrangHD": item.maTinhTrangHD,

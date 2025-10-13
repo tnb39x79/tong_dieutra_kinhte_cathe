@@ -100,7 +100,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   ///table
   ///
-  final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
+  //final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
   final tblPhieu = TablePhieu().obs;
   final tblPhieuMauTB = TablePhieuMauTB().obs;
   final tblPhieuMauTBSanPham = <TablePhieuMauTBSanPham>[].obs;
@@ -928,6 +928,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     if (currentScreenNo.value > 0) {
       currentScreenNo(currentScreenNo.value - 1);
       currentScreenIndex(currentScreenIndex.value - 1);
+      if (currentScreenNo.value == 0) {
+        Get.back();
+      }
       await getQuestionContent();
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
         if (currentScreenNo.value == 9) {
@@ -1934,7 +1937,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String maCauHoi,
       String? fieldName,
       idValue,
-      String? valueInput,
+      String? inputValue,
       minLen,
       maxLen,
       minValue,
@@ -1942,10 +1945,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       int loaiCauHoi,
       int sttSanPham,
       bool typing) {
-    if (valueInput == null || valueInput == '' || valueInput == 'null') {
+    if (validateEmptyString(inputValue)) {
       return 'Vui lòng nhập giá trị.';
     }
     if (fieldName == colPhieuMauTBSanPhamA5_1_1) {
+      if (inputValue!.length > 250) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(1, 250)}';
+      }
+      return null;
     } else if (fieldName == colPhieuMauTBSanPhamA5_1_2) {
       var validRes = validateMaSanPhamPhanV(
           maPhieu,
@@ -1953,7 +1960,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           maCauHoi,
           fieldName,
           idValue,
-          valueInput,
+          inputValue,
           minLen,
           maxLen,
           minValue,
@@ -1970,7 +1977,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           maCauHoi,
           fieldName,
           idValue,
-          valueInput,
+          inputValue,
           minLen,
           maxLen,
           minValue,
@@ -1999,7 +2006,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String maCauHoi,
       String? fieldName,
       idValue,
-      String? valueInput,
+      String? inputValue,
       minLen,
       maxLen,
       minValue,
@@ -2010,14 +2017,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     var c1_1Value =
         getValueByFieldNameFromDB(tablePhieuMauTB, colPhieuMauTBA1_1);
     if (tblPhieuMauTBSanPham.value.isNotEmpty) {
-      var checkRes = isDuplicateVCPAA5_1_2(valueInput ?? '');
+      var checkRes = isDuplicateVCPAA5_1_2(inputValue ?? '');
       if (checkRes) {
         return 'Mã sản phẩm này đã có. Vui lòng chọn mã sản phẩm khác.';
       }
+      // var (resNganhCoSo, tenNganh) = hasVCPABangKeA5_1_2();
+      // if (!resNganhCoSo) {
+      //   return 'Chưa có mã ngành chính của cơ sở ($tenNganh).';
+      // }
 
       if (tblPhieuMauTBSanPham.value.length == 1) {
         var maVcpaCap5 = tblPhieuMauTBSanPham.value
-            .where((x) => x.a5_1_2 == valueInput)
+            .where((x) => x.a5_1_2 == inputValue)
             .firstOrNull;
         if (maVcpaCap5 != null) {
           if (maVcpaCap5.a5_1_2 != null) {
@@ -2040,7 +2051,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           .where((x) =>
               TablePhieuMauTBSanPham.vcpaCap5Range47811To47899
                   .contains(x.a5_1_2) &&
-              x.a5_1_2 == valueInput)
+              x.a5_1_2 == inputValue)
           .toList();
       if (maVcpaCap5.isNotEmpty) {
         if (c1_1Value != null && c1_1Value != 3) {
@@ -2054,7 +2065,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           .where((x) =>
               x.a5_1_2 != null &&
               (x.a5_1_2 == '46492' || x.a5_1_2 == '47721') &&
-              x.a5_1_2 == valueInput)
+              x.a5_1_2 == inputValue)
           .toList();
       if (maVcpaCap5.isNotEmpty) {
         if ((c1_1Value != null && c1_1Value == 2) ||
@@ -2076,7 +2087,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           .where((x) =>
               TablePhieuMauTBSanPham.vcpaCap5Range86101To86990
                   .contains(x.a5_1_2) &&
-              x.a5_1_2 == valueInput)
+              x.a5_1_2 == inputValue)
           .toList();
       if (maVcpaCap586101.isNotEmpty) {
         if (c2_1Value != null &&
@@ -2087,7 +2098,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
       }
       var maVcpaCap596310 = tblPhieuMauTBSanPham.value
-          .where((x) => x.a5_1_2 == '96310' && x.a5_1_2 == valueInput)
+          .where((x) => x.a5_1_2 == '96310' && x.a5_1_2 == inputValue)
           .toList();
       if (maVcpaCap596310.isNotEmpty) {
         if (c2_1Value != null &&
@@ -2101,7 +2112,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           .where((x) =>
               TablePhieuMauTBSanPham.vcpaCap5Range71101To71109
                   .contains(x.a5_1_2) &&
-              x.a5_1_2 == valueInput)
+              x.a5_1_2 == inputValue)
           .toList();
       if (maVcpaCap571101To71109.isNotEmpty) {
         if (c2_1Value != null &&
@@ -2127,6 +2138,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       return true;
     }
     return false;
+  }
+
+  (bool, String) hasVCPABangKeA5_1_2() {
+    List<String> res = [];
+    var maNganhCoSo =
+        generalInformationController.tblBkCoSoSXKDNganhSanPham.value;
+    if (maNganhCoSo != null) {
+      for (var item in tblPhieuMauTBSanPham) {
+        if (item.a5_1_2 == maNganhCoSo.maNganh!) {
+          res.add(item.a5_1_2!);
+        }
+      }
+      if (res.isNotEmpty) {
+        return (true, '${maNganhCoSo.maNganh} - ${maNganhCoSo.tenNganh}');
+      }
+    }
+    return (false, '${maNganhCoSo.maNganh} - ${maNganhCoSo.tenNganh}');
   }
 
   validateAllMaSanPhamPhanV() {
@@ -2240,7 +2268,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String maCauHoi,
       String? fieldName,
       idValue,
-      String? valueInput,
+      String? inputValue,
       minLen,
       maxLen,
       minValue,
@@ -2248,8 +2276,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       int loaiCauHoi,
       int sttSanPham,
       bool typing) {
-    if (valueInput == null || valueInput == '' || valueInput == 'null') {
+    num minVal = minValue ?? 1;
+    num maxVal = maxValue ?? 999999;
+    if (validateEmptyString(inputValue)) {
       return 'Vui lòng nhập giá trị.';
+    }
+    inputValue = inputValue!.replaceAll(' ', '');
+    num intputVal =
+        inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+    if (intputVal < minVal) {
+      return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+    } else if (intputVal > maxVal) {
+      return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
     }
     if (fieldName == colPhieuMauTBSanPhamA5_2) {}
     return null;
@@ -2261,7 +2299,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String maCauHoi,
       String? fieldName,
       idValue,
-      String? valueInput,
+      String? inputValue,
       minLen,
       maxLen,
       minValue,
@@ -2269,15 +2307,43 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       int loaiCauHoi,
       int sttSanPham,
       bool typing) {
+    if (validateEmptyString(inputValue)) {
+      return 'Vui lòng nhập giá trị.';
+    }
     if (maCauHoi != 'A2_1') {
-      if (valueInput == null || valueInput == '' || valueInput == 'null') {
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
       }
     }
     if (fieldName == colPhieuNganhCNA1_1) {
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      if (inputValue!.length > 250) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(1, 250)}';
+      }
+      return null;
     } else if (fieldName == colPhieuNganhCNA1_2) {
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
     } else if (fieldName == colPhieuNganhCNA2_1) {
-    } else if (fieldName == colPhieuNganhCNA2_2) {}
+    } else if (fieldName == colPhieuNganhCNA2_2) {
+      num minVal = minValue ?? 1;
+      num maxVal = maxValue ?? 999999999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+      return null;
+    }
     return null;
   }
 
@@ -2286,7 +2352,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String maCauHoi,
       String? fieldName,
       idValue,
-      String? valueInput,
+      String? inputValue,
       minLen,
       maxLen,
       minValue,
@@ -2295,11 +2361,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       int sttSanPham,
       bool typing) {
     // if (fieldName == columnPhieuMauSanPhamA5_5) {
-    //   if (valueInput == null || valueInput == '' || valueInput == 'null') {
+    //   if (inputValue == null || inputValue == '' || inputValue == 'null') {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   double a5_5Value =
-    //       AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
+    //       AppUtils.convertStringToDouble(inputValue.replaceAll(' ', ''));
     //   var a5_2Value = getValueSanPham(
     //       tablePhieuMauSanPham, columnPhieuMauSanPhamA5_2, idValue);
     //   if (a5_2Value != null) {
@@ -2317,7 +2383,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String maCauHoi,
       String? fieldName,
       idValue,
-      String? valueInput,
+      String? inputValue,
       minLen,
       maxLen,
       minValue,
@@ -2326,14 +2392,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       int sttSanPham,
       bool typing) {
     // if (fieldName == columnPhieuMauSanPhamA5_6_1) {
-    //   // if (valueInput == null || valueInput == '' || valueInput == 'null') {
+    //   // if (inputValue == null || inputValue == '' || inputValue == 'null') {
     //   //   return 'Vui lòng nhập giá trị.';
     //   // }
-    //   double a5_6_1Value = AppUtils.convertStringToDouble(valueInput);
+    //   double a5_6_1Value = AppUtils.convertStringToDouble(inputValue);
     //   var a5_6Value = getValueSanPham(
     //       tablePhieuMauSanPham, columnPhieuMauSanPhamA5_6, idValue);
     //   if (a5_6Value == 1) {
-    //     if (valueInput == null || valueInput == '' || valueInput == 'null') {
+    //     if (inputValue == null || inputValue == '' || inputValue == 'null') {
     //       return 'Vui lòng nhập giá trị.';
     //     }
     //   }
@@ -2388,164 +2454,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   ///
 
   onValidateInputA6_8(String table, String maCauHoi, String? fieldName, idValue,
-      String? valueInput, minLen, maxLen, minValue, maxValue, int loaiCauHoi) {
+      String? inputValue, minLen, maxLen, minValue, maxValue, int loaiCauHoi) {
     return ValidateQuestionNo07.onValidateInputA6_8(table, maCauHoi, fieldName,
-        idValue, valueInput, minLen, maxLen, minValue, maxValue, loaiCauHoi);
+        idValue, inputValue, minLen, maxLen, minValue, maxValue, loaiCauHoi);
   }
 
   onValidateInput(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? valueInput) {
+      ChiTieuDongModel? chiTieuDong, String? inputValue) {
     var table = question.bangDuLieu;
     var maCauHoi = question.maCauHoi;
     var minValue = chiTieuCot!.giaTriNN;
     var maxValue = chiTieuCot.giaTriLN;
-  }
-
-  ///
-  addNewRowPhieuMauAA6_1(String table, String maCauHoi) async {
-    // if (table == tablePhieuMauA61) {
-    //   await insertNewRecordPhieuMauA6_1();
-    //   await getTablePhieuMauA61();
-    // } else if (table == tablePhieuMauA68) {
-    //   await insertNewRecordPhieuMauA6_8();
-    //   await getTablePhieuMauA68();
-    // }
-  }
-
-  ///
-  ///A6_1
-  ///
-  // Future<TablePhieuMauA61> createPhieuMauA61Item() async {
-  //   var maxStt = await phieuMauA61Provider.getMaxSTTByIdCoso(currentIdCoSo!);
-  //   maxStt = maxStt + 1;
-  //   var table04C8 = TablePhieuMauA61(
-  //       iDCoSo: currentIdCoSo, sTT: maxStt, maDTV: AppPref.uid);
-  //   return table04C8;
-  // }
-
-  ///
-  // Future insertNewRecordPhieuMauA6_1({bool? isInsert = true}) async {
-  //   var tableA61 = await createPhieuMauA61Item();
-
-  //   List<TablePhieuMauA61> tablePhieuMauA6_1s = [];
-  //   tablePhieuMauA6_1s.add(tableA61);
-  //   await phieuMauA61Provider.insert(
-  //       tablePhieuMauA6_1s, AppPref.dateTimeSaveDB!);
-  // }
-
-  Future deleteA61Item(
-      String table, String maCauHoi, dynamic recordValue) async {
-    Get.dialog(DialogBarrierWidget(
-      onPressedNegative: () async {
-        Get.back();
-      },
-      onPressedPositive: () async {
-        await excueteDeleteA61Item(table, maCauHoi, recordValue);
-        Get.back();
-      },
-      title: 'dialog_title_warning'.tr,
-      content: 'dialog_content_warning_delete'.trParams({'param': 'sản phẩm'}),
-    ));
-  }
-
-  Future excueteDeleteA61Item(
-      String table, String maCauHoi, dynamic recordValue) async {
-    // if (table == tablePhieuMauA61) {
-    //   TablePhieuMauA61 record = recordValue;
-    //   if (record.id != null) {
-    //     await phieuMauA61Provider.deleteById(record.id!);
-    //     await getTablePhieuMauA61();
-    //   }
-    // } else if (table == tablePhieuMauA68) {
-    //   TablePhieuMauA68 record = recordValue;
-    //   if (record.id != null) {
-    //     await phieuMauA68Provider.deleteById(record.id!);
-    //     await getTablePhieuMauA68();
-    //   }
-    // }
-  }
-
-  checkExistA6_1() async {
-    //return await phieuMauA61Provider.isExistQuestion(currentIdCoSo!);
-    return false;
-  }
-
-  ///END:: A6_1 event
-  /***********/
-  ///A6_8
-  ///
-  updateToDbA6_8(String table, String fieldName, idValue, value,
-      {List<String>? fieldNames,
-      String? fieldNameTotal,
-      String? maCauHoi}) async {
-    // var res = await phieuMauA68Provider.isExistQuestion(currentIdCoSo!);
-    // if (res) {
-    //   await phieuMauA68Provider.updateValueByIdCoso(
-    //       fieldName, value, currentIdCoSo, idValue!);
-    //   if (fieldNameTotal != null &&
-    //       fieldNameTotal != '' &&
-    //       fieldNames != null &&
-    //       fieldNames.isNotEmpty) {
-    //     var total = await phieuMauA68Provider.totalDoubleByMaCauHoi(
-    //         currentIdCoSo!, idValue, fieldNames, "*");
-    //     var totalRounded = AppUtils.roundDouble(total, 2);
-    //     await phieuMauA68Provider.updateValueByIdCoso(
-    //         fieldNameTotal, totalRounded, currentIdCoSo, idValue!);
-    //   }
-    // } else {
-    //   await insertNewRecordPhieuMauA6_8();
-    // }
-    // await getTablePhieuMauA68();
-  }
-
-  ///
-  // Future<TablePhieuMauA68> createPhieuMauA68Item() async {
-  //   var maxStt = await phieuMauA68Provider.getMaxSTTByIdCoso(currentIdCoSo!);
-  //   maxStt = maxStt + 1;
-  //   var tableA68 = TablePhieuMauA68(
-  //       iDCoSo: currentIdCoSo, sTT: maxStt, maDTV: AppPref.uid);
-  //   return tableA68;
-  // }
-
-  // ///
-  // Future insertNewRecordPhieuMauA6_8({bool? isInsert = true}) async {
-  //   var tableA68 = await createPhieuMauA68Item();
-
-  //   List<TablePhieuMauA68> tablePhieuMauA6_8s = [];
-  //   tablePhieuMauA6_8s.add(tableA68);
-  //   await phieuMauA68Provider.insert(
-  //       tablePhieuMauA6_8s, AppPref.dateTimeSaveDB!);
-  // }
-
-  Future deleteA68Item(
-      String table, String maCauHoi, dynamic recordValue) async {
-    Get.dialog(DialogBarrierWidget(
-      onPressedNegative: () async {
-        Get.back();
-      },
-      onPressedPositive: () async {
-        await excueteDeleteA68Item(table, maCauHoi, recordValue);
-        Get.back();
-      },
-      title: 'dialog_title_warning'.tr,
-      content: 'dialog_content_warning_delete'
-          .trParams({'param': 'loại phương tiện'}),
-    ));
-  }
-
-  Future excueteDeleteA68Item(
-      String table, String maCauHoi, dynamic recordValue) async {
-    // if (table == tablePhieuMauA68) {
-    //   TablePhieuMauA68 record = recordValue;
-    //   if (record.id != null) {
-    //     await phieuMauA68Provider.deleteById(record.id!);
-    //     await getTablePhieuMauA68();
-    //   }
-    // }
-  }
-
-  checkExistA6_8() async {
-    // return await phieuMauA68Provider.isExistQuestion(currentIdCoSo!);
   }
 
   ///END:: A6_8 event
@@ -2645,18 +2564,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               getValueByFieldName(question.bangDuLieu!, colPhieuMauTBA7_3_M);
           var a7_5_MValue =
               getValueByFieldName(question.bangDuLieu!, colPhieuMauTBA7_5_M);
-          if ((a7_3_MValue != null && a7_3_MValue == 1) 
-              ) {
+          if ((a7_3_MValue != null && a7_3_MValue == 1)) {
             String wrnText =
                 'Cơ sở có hoạt động cung cấp sản phẩm dịch vụ qua website, ứng dụng trực tuyến, nền tảng trung gian (shoppee, booking,…) C3 = 1 mà lại không có hoạt động logistic (vận chuyển hàng hóa…) C9=2?';
             warningA9MDialog(wrnText);
-          }
-          else if((a7_5_MValue != null && a7_5_MValue == 1)){
+          } else if ((a7_5_MValue != null && a7_5_MValue == 1)) {
             String wrnText =
                 'Cơ sở có hoạt động cung cấp sản phẩm dịch vụ qua website, ứng dụng trực tuyến, nền tảng trung gian (shoppee, booking,…) C5=1 mà lại không có hoạt động logistic (vận chuyển hàng hóa…) C9=2?';
-                warningA9MDialog(wrnText);
-          }
-           else {
+            warningA9MDialog(wrnText);
+          } else {
             onKetThucPhongVan();
           }
         }
@@ -2802,8 +2718,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateInputDanToc(String table, String maCauHoi, String? fieldName,
-      String? valueInput, int? loaiCauHoi) {
-    if (valueInput == null || valueInput == '' || valueInput == 'null') {
+      String? inputValue, int? loaiCauHoi) {
+    if (inputValue == null || inputValue == '' || inputValue == 'null') {
       return 'Vui lòng nhập giá trị.';
     }
     return null;
@@ -2817,10 +2733,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         String maDanToc = '';
         String tenDanToc = '';
         if (value is TableDmDanToc) {
-          TableDmDanToc valueInput = value;
-          if (valueInput != null) {
-            maDanToc = valueInput.maDanToc!;
-            tenDanToc = valueInput.tenDanToc!;
+          TableDmDanToc inputValue = value;
+          if (inputValue != null) {
+            maDanToc = inputValue.maDanToc!;
+            tenDanToc = inputValue.tenDanToc!;
           }
         } else if (value is String) {
           maDanToc = value;
@@ -2972,7 +2888,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       QuestionCommonModel question,
       ChiTieuModel? chiTieuCot,
       ChiTieuDongModel? chiTieuDong,
-      String? valueInput,
+      String? inputValue,
       {bool typing = true,
       String? fieldName,
       TablePhieuNganhVTGhiRo? ghiRoItem}) {
@@ -2986,7 +2902,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         var a1_1Value = '';
         a1_1Value = tblPhieuCT[colPhieuMauTBA1_1];
         if (a1_1Value.toString() == '5') {
-          if (valueInput == null || valueInput == "null" || valueInput == "") {
+          if (inputValue == null || inputValue == "null" || inputValue == "") {
             return 'Vui lòng nhập giá trị Ghi rõ.';
           }
         }
@@ -2996,7 +2912,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     if (question.maCauHoi == "A3_1" &&
         question.maPhieu == AppDefine.maPhieuTB) {
       var resValid = onValidateA3_1(
-          question, chiTieuCot, chiTieuDong, valueInput,
+          question, chiTieuCot, chiTieuDong, inputValue,
+          typing: typing);
+      if (resValid != null && resValid != '') {
+        return resValid;
+      }
+      return null;
+    }
+    if (question.maCauHoi == "A6_1" &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var resValid = onValidateA6_1(
+          question, chiTieuCot, chiTieuDong, fieldName, inputValue,
           typing: typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -3005,7 +2931,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (question.maCauHoi == "A7_4") {
       var resValid = onValidateA7_4(
-          question, chiTieuCot, chiTieuDong, fieldName, valueInput,
+          question, chiTieuCot, chiTieuDong, fieldName, inputValue,
           typing: typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -3014,7 +2940,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuVT) {
       var resValid = onValidateA1VTHK(
-          question, chiTieuCot, chiTieuDong, fieldName, valueInput,
+          question, chiTieuCot, chiTieuDong, fieldName, inputValue,
           ghiRoItem: ghiRoItem, typing: typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -3023,7 +2949,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (question.maCauHoi == "A7" && question.maPhieu == AppDefine.maPhieuVT) {
       var resValid = onValidateA7VTHH(
-          question, chiTieuCot, chiTieuDong, fieldName, valueInput,
+          question, chiTieuCot, chiTieuDong, fieldName, inputValue,
           ghiRoItem: ghiRoItem, typing: typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -3032,7 +2958,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (question.maCauHoi == "A1" && question.maPhieu == AppDefine.maPhieuLT) {
       var resValid = onValidateA1LT(
-          question, chiTieuCot, chiTieuDong, fieldName, valueInput,
+          question, chiTieuCot, chiTieuDong, fieldName, inputValue,
           ghiRoItem: ghiRoItem, typing: typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -3042,7 +2968,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     if (question.maCauHoi == "A6_1_M" &&
         question.maPhieu == AppDefine.maPhieuMau) {
       var resValid = onValidateA6_1_MMau(
-          question, chiTieuCot, chiTieuDong, fieldName, valueInput,
+          question, chiTieuCot, chiTieuDong, fieldName, inputValue,
           ghiRoItem: ghiRoItem, typing: typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -3053,7 +2979,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   if (typing) {
     //     var a4_3 = answerTblPhieuMau['A4_3'];
     //     if (a4_3.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     } else {
@@ -3063,7 +2989,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //     var phieuMau = tblPhieuMau.value.toJson();
     //     var a4_3 = phieuMau['A4_3'].toString();
     //     if (a4_3.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     } else {
@@ -3073,7 +2999,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     // }
     // if (maCauHoi == "A2_2") {
     //   var resValid = onValidateA2_2(
-    //       question, chiTieuCot, chiTieuDong, valueInput,
+    //       question, chiTieuCot, chiTieuDong, inputValue,
     //       typing: typing);
     //   if (resValid != null && resValid != '') {
     //     return resValid;
@@ -3082,7 +3008,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     // }
     // if (maCauHoi == "A2_3") {
     //   var resValid = onValidateA2_3(
-    //       question, chiTieuCot, chiTieuDong, valueInput,
+    //       question, chiTieuCot, chiTieuDong, inputValue,
     //       typing: typing);
     //   if (resValid != null && resValid != '') {
     //     return resValid;
@@ -3092,7 +3018,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     // if (maCauHoi == "A4_5") {
     //   var resValid = onValidateA4_5(
-    //       question, chiTieuCot, chiTieuDong, fieldName, valueInput);
+    //       question, chiTieuCot, chiTieuDong, fieldName, inputValue);
     //   if (resValid != null && resValid != '') {
     //     return resValid;
     //   }
@@ -3100,7 +3026,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     // }
     // if (maCauHoi == "A4_7") {
     //   var resValid = onValidateA4_7(
-    //       question, chiTieuCot, chiTieuDong, fieldName, valueInput,
+    //       question, chiTieuCot, chiTieuDong, fieldName, inputValue,
     //       typing: typing);
     //   if (resValid != null && resValid != '') {
     //     return resValid;
@@ -3109,7 +3035,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     // }
     // if (maCauHoi == "A7_1") {
     //   var resValid = onValidateA7_1(
-    //       question, chiTieuCot, chiTieuDong, fieldName, valueInput);
+    //       question, chiTieuCot, chiTieuDong, fieldName, inputValue);
     //   if (resValid != null && resValid != '') {
     //     return resValid;
     //   }
@@ -3117,7 +3043,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     // }
     // if (maCauHoi == "A8_1") {
     //   var resValid = onValidateA8_1(
-    //       question, chiTieuCot, chiTieuDong, fieldName, valueInput);
+    //       question, chiTieuCot, chiTieuDong, fieldName, inputValue);
     //   if (resValid != null && resValid != '') {
     //     return resValid;
     //   }
@@ -3127,7 +3053,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   if (typing) {
     //     var a9_1 = answerTblPhieuMau['A9_1'];
     //     if (a9_1.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     } else {
@@ -3137,7 +3063,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //     var phieuMau = tblPhieuMau.value.toJson();
     //     var a9_1 = phieuMau['A9_1'].toString();
     //     if (a9_1.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     } else {
@@ -3145,20 +3071,20 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //     }
     //   }
     // } else {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     // }
   }
 
   onValidateA7_1(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false}) {
     // if (typing == false) {
     //   for (var i = 1; i <= 5; i++) {
     //     var fName = 'A7_1_${i.toString()}_0';
     //     if (fieldName == fName) {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     }
@@ -3177,9 +3103,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //         fieldName == fName4 ||
     //         fieldName == fName5) {
     //       if (a7_1_x_0Value.toString() == '1') {
-    //         if (valueInput == null ||
-    //             valueInput == "null" ||
-    //             valueInput == "") {
+    //         if (inputValue == null ||
+    //             inputValue == "null" ||
+    //             inputValue == "") {
     //           return 'Vui lòng nhập giá trị.';
     //         }
     //       }
@@ -3190,13 +3116,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateA6_1(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false}) {
     if (typing == false) {
       for (var i = 1; i <= 11; i++) {
         var fName = 'A6_1_${i.toString()}_1';
         if (fieldName == fName) {
-          if (valueInput == null || valueInput == "null" || valueInput == "") {
+          if (inputValue == null || inputValue == "null" || inputValue == "") {
             return 'Vui lòng nhập giá trị.';
           }
         }
@@ -3213,16 +3139,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       for (var i = 1; i <= 9; i++) {
         var fName1 = 'A6_1_${i.toString()}_1';
         var a8_1_x_1Value = tblPhieu[fName1];
-        if (fieldName == fName1) {
-          if (a8_1_x_1Value != null) {
-            if (a8_1_x_1Value.toString() == '2') {
-              a6_1Cot1Val.add(a8_1_x_1Value.toString());
-            }
+
+        if (a8_1_x_1Value != null) {
+          if (a8_1_x_1Value.toString() == '2') {
+            a6_1Cot1Val.add(a8_1_x_1Value.toString());
           }
         }
       }
 
-      if (a6_1Cot1Val.isNotEmpty) {
+      if (a6_1Cot1Val.isNotEmpty && a6_1Cot1Val.length == 9) {
         var vcpa49_50 = validateA6_1MaSanPhamPhanV();
         if (vcpa49_50 == '49') {
           return 'Cơ sở thuộc ngành 49. Dịch vụ vận tải đường sắt, đường bộ và đường ống mà không sử dụng năng lượng điện/than/xăng/các loại dầu (C6.1 mã 1 đến mã 5 đều chọn mã 2. Không)?';
@@ -3236,15 +3161,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       for (var i = 1; i <= 11; i++) {
         var fName1 = 'A6_1_${i.toString()}_1';
         var a8_1_x_1Value = tblPhieu[fName1];
-        if (fieldName == fName1) {
-          if (a8_1_x_1Value != null) {
-            if (a8_1_x_1Value.toString() == '2') {
-              a6_1Cot1Val2.add(a8_1_x_1Value.toString());
-            }
+        // if (fieldName == fName1) {
+        if (a8_1_x_1Value != null) {
+          if (a8_1_x_1Value.toString() == '2') {
+            a6_1Cot1Val2.add(a8_1_x_1Value.toString());
           }
         }
+        //  }
       }
-      if (a6_1Cot1Val2.isNotEmpty) {
+      if (a6_1Cot1Val2.isNotEmpty && a6_1Cot1Val2.length == 9) {
         var vcpa49_50 = validateA6_1MaSanPhamPhanV();
         if (vcpa49_50 == '50') {
           return 'Ngành là dịch vụ lưu trú (Mã ngành cấp 2 là 55) mà không sử dụng bất kỳ loại năng lượng nào?';
@@ -3305,12 +3230,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateA7_4(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false}) {
+    num minVal = chiTieuCot!.giaTriNN ?? 1;
+    num maxVal = chiTieuCot!.giaTriLN ?? 999999;
+
+    inputValue = inputValue!.replaceAll(' ', '');
+    num intputVal =
+        inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+    if (intputVal < minVal) {
+      return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+    } else if (intputVal > maxVal) {
+      return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+    }
     for (var i = 1; i <= question.danhSachChiTieuIO!.length; i++) {
       var fName = 'A7_4_${i.toString()}_1';
       if (fieldName == fName) {
-        if (valueInput == null || valueInput == "null" || valueInput == "") {
+        if (validateEmptyString(inputValue)) {
           return 'Vui lòng nhập giá trị.';
         }
       }
@@ -3325,7 +3261,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a4_5_x_1Value = tblPhieu[fName1];
       if (fieldName == fName2) {
         if (a4_5_x_1Value.toString() == '1') {
-          if (valueInput == null || valueInput == "null" || valueInput == "") {
+          if (validateEmptyString(inputValue)) {
             return 'Vui lòng nhập giá trị.';
           }
         }
@@ -3336,12 +3272,62 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateA1VTHK(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false, TablePhieuNganhVTGhiRo? ghiRoItem}) {
+    if (chiTieuCot!.maChiTieu == "2" &&
+        chiTieuDong!.maSo != "13" &&
+        chiTieuDong!.maSo != "15") {
+      num minVal = chiTieuCot.giaTriNN ?? 1;
+      num maxVal = chiTieuCot.giaTriLN ?? 999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+    if (chiTieuCot!.maChiTieu == "2" &&
+        (chiTieuDong!.maSo == "13" || chiTieuDong!.maSo == "15")) {
+      num minVal = chiTieuCot.giaTriNN ?? 1;
+      num maxVal = chiTieuCot.giaTriLN ?? 999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+    if (chiTieuCot!.maChiTieu == "3" &&
+        (chiTieuDong!.maSo == "13" || chiTieuDong!.maSo == "15")) {
+      num minVal = chiTieuCot.giaTriNN ?? 1;
+      num maxVal = chiTieuCot.giaTriLN ?? 9999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+
     for (var i = 1; i <= question.danhSachChiTieuIO!.length; i++) {
       var fName = 'A1_${i.toString()}_1';
       if (fieldName == fName) {
-        if (valueInput == null || valueInput == "null" || valueInput == "") {
+        if (inputValue == null || inputValue == "null" || inputValue == "") {
           return 'Vui lòng nhập giá trị.';
         }
       }
@@ -3356,7 +3342,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a1_x_1Value = tblPhieu[fName1];
       if (fieldName == fName2) {
         if (a1_x_1Value.toString() == '1') {
-          if (valueInput == null || valueInput == "null" || valueInput == "") {
+          if (inputValue == null || inputValue == "null" || inputValue == "") {
             return 'Vui lòng nhập giá trị.';
           }
         }
@@ -3373,10 +3359,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a1_x_1Value = tblPhieu[fName1];
       if (a1_x_1Value.toString() == '1') {
         if (fieldName == fName2) {
-          if (valueInput == null ||
-              valueInput == "null" ||
-              valueInput == "" ||
-              validateEqual0InputValue(valueInput)) {
+          if (inputValue == null ||
+              inputValue == "null" ||
+              inputValue == "" ||
+              validateEqual0InputValue(inputValue)) {
             if (a6_1Dien != null &&
                 a6_1Dien == 2 &&
                 a6_1Diezel != null &&
@@ -3396,10 +3382,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (fieldName == fName3) {
         var a1_x_1Value = tblPhieu[fName1];
         if (a1_x_1Value.toString() == '1') {
-          if (valueInput == null ||
-              valueInput == "null" ||
-              valueInput == "" ||
-              validateEqual0InputValue(valueInput)) {
+          if (inputValue == null ||
+              inputValue == "null" ||
+              inputValue == "" ||
+              validateEqual0InputValue(inputValue)) {
             return '$tenChiTieu có tải trọng phải lớn hơn 0';
           }
         }
@@ -3407,7 +3393,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (chiTieuDong!.maSo == "13" || chiTieuDong.maSo == "15") {
       if (fieldName == colPhieuNganhVTGhiRoC2) {
-        if (valueInput == null || valueInput == "null" || valueInput == "") {
+        if (inputValue == null || inputValue == "null" || inputValue == "") {
           return 'Vui lòng nhập giá trị.';
         }
       }
@@ -3420,10 +3406,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 : chiTieuDong.tenChiTieu ?? '';
         if (fieldName == colPhieuNganhVTGhiRoC3) {
           if (ghiRoItem.c_1 != null && ghiRoItem.c_1 == 1) {
-            if (valueInput == null ||
-                valueInput == "null" ||
-                valueInput == "" ||
-                validateEqual0InputValue(valueInput)) {
+            if (inputValue == null ||
+                inputValue == "null" ||
+                inputValue == "" ||
+                validateEqual0InputValue(inputValue)) {
               return '$tenChiTieu có tải trọng phải lớn hơn 0';
             }
           }
@@ -3434,12 +3420,46 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateA7VTHH(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false, TablePhieuNganhVTGhiRo? ghiRoItem}) {
+    if (chiTieuCot!.maChiTieu == "2" &&
+        chiTieuDong!.maSo != "17" &&
+        chiTieuDong!.maSo != "18") {
+      num minVal = chiTieuCot.giaTriNN ?? 1;
+      num maxVal = chiTieuCot.giaTriLN ?? 999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+    if ((chiTieuCot!.maChiTieu == "2" || chiTieuCot!.maChiTieu == "3") &&
+        (chiTieuDong!.maSo == "17" || chiTieuDong!.maSo == "18")) {
+      num minVal = chiTieuCot.giaTriNN ?? 1;
+      num maxVal = chiTieuCot.giaTriLN ?? 999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+
     for (var i = 1; i <= question.danhSachChiTieuIO!.length; i++) {
       var fName = 'A7_${i.toString()}_1';
       if (fieldName == fName) {
-        if (valueInput == null || valueInput == "null" || valueInput == "") {
+        if (inputValue == null || inputValue == "null" || inputValue == "") {
           return 'Vui lòng nhập giá trị.';
         }
       }
@@ -3454,7 +3474,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a1_x_1Value = tblPhieu[fName1];
       if (fieldName == fName2) {
         if (a1_x_1Value.toString() == '1') {
-          if (valueInput == null || valueInput == "null" || valueInput == "") {
+          if (inputValue == null || inputValue == "null" || inputValue == "") {
             return 'Vui lòng nhập giá trị.';
           }
         }
@@ -3473,10 +3493,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a1_x_1Value = tblPhieu[fName1];
       if (a1_x_1Value.toString() == '1') {
         if (fieldName == fName2) {
-          if (valueInput == null ||
-              valueInput == "null" ||
-              valueInput == "" ||
-              validateEqual0InputValue(valueInput)) {
+          if (inputValue == null ||
+              inputValue == "null" ||
+              inputValue == "" ||
+              validateEqual0InputValue(inputValue)) {
             if (a6_1Dien != null &&
                 a6_1Dien == 2 &&
                 a6_1Diezel != null &&
@@ -3492,7 +3512,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     if (chiTieuDong!.maSo == "17" || chiTieuDong.maSo == "18") {
       if (fieldName == colPhieuNganhVTGhiRoC2) {
-        if (valueInput == null || valueInput == "null" || valueInput == "") {
+        if (inputValue == null || inputValue == "null" || inputValue == "") {
           return 'Vui lòng nhập giá trị.';
         }
       }
@@ -3504,10 +3524,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 : chiTieuDong.tenChiTieu ?? '';
         if (fieldName == colPhieuNganhVTGhiRoC3) {
           if (ghiRoItem.c_1 != null && ghiRoItem.c_1 == 1) {
-            if (valueInput == null ||
-                valueInput == "null" ||
-                valueInput == "" ||
-                validateEqual0InputValue(valueInput)) {
+            if (inputValue == null ||
+                inputValue == "null" ||
+                inputValue == "" ||
+                validateEqual0InputValue(inputValue)) {
               return '$tenChiTieu có tải trọng phải lớn hơn 0';
             }
           }
@@ -3518,13 +3538,46 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateA1LT(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false, TablePhieuNganhVTGhiRo? ghiRoItem}) {
+    if (chiTieuCot!.maChiTieu == "2") {
+      num minVal = chiTieuCot.giaTriNN ?? 1;
+      num maxVal = chiTieuCot.giaTriLN ?? 999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+    if (chiTieuCot.maChiTieu == "3" ||
+        chiTieuCot.maChiTieu == "4" ||
+        chiTieuCot.maChiTieu == "5" ||
+        chiTieuCot.maChiTieu == "6") {
+      num minVal = chiTieuCot.giaTriNN ?? 0;
+      num maxVal = chiTieuCot.giaTriLN ?? 999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
     //Câu 1 để trống;
     for (var i = 1; i <= question.danhSachChiTieuIO!.length; i++) {
       var fName = 'A1_${i.toString()}_1';
       if (fieldName == fName) {
-        if (valueInput == null || valueInput == "null" || valueInput == "") {
+        if (inputValue == null || inputValue == "null" || inputValue == "") {
           return 'Vui lòng nhập giá trị. Số lượng cơ sở của ${chiTieuDong!.tenChiTieu} phải lớn hơn 0';
         }
       }
@@ -3540,7 +3593,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a1_x_1Value = tblPhieu[fName1];
       if (fieldName == fName2) {
         if (a1_x_1Value.toString() == '1') {
-          if (valueInput == null || valueInput == "null" || valueInput == "") {
+          if (inputValue == null || inputValue == "null" || inputValue == "") {
             return 'Vui lòng nhập giá trị.';
           }
         }
@@ -3599,8 +3652,53 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateA6_1_MMau(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false, TablePhieuNganhVTGhiRo? ghiRoItem}) {
+    if (chiTieuCot!.maChiTieu == "1" && chiTieuDong!.maSo == "1") {
+      num minVal = 1;
+      num maxVal = 999999999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+    if (chiTieuCot!.maChiTieu == "1" && chiTieuDong!.maSo != "1") {
+      num minVal = 1;
+      num maxVal = 999999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
+    if (chiTieuCot!.maChiTieu == "2") {
+      num minVal = 1;
+      num maxVal = 999999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+    }
     var tblPhieu = getTableByTableName(question.bangDuLieu!, typing);
     if (tblPhieu == null) {
       return 'khonglay_duoc_dulieu_kiemtra'.tr;
@@ -3616,7 +3714,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //     var a6_1_x_2Value = tblPhieu[fName2];
     //     var a6_1_x_3Value = tblPhieu[fName3];
     //     if (fieldName == fName2 || fieldName == fName3) {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     }
@@ -3858,13 +3956,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   onValidateA8_1(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
       {bool typing = false}) {
     // if (typing == false) {
     //   for (var i = 1; i <= 4; i++) {
     //     var fName = 'A8_1_1_${i.toString()}_1';
     //     if (fieldName == fName) {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     }
@@ -3872,7 +3970,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   for (var i = 1; i <= 11; i++) {
     //     var fName = 'A8_1_${i.toString()}_1';
     //     if (fieldName == fName) {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //       if (inputValue == null || inputValue == "null" || inputValue == "") {
     //         return 'Vui lòng nhập giá trị.';
     //       }
     //     }
@@ -3888,9 +3986,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //     var a8_1_x_3Value = tblPhieu[fName3];
     //     if (fieldName == fName2 || fieldName == fName3) {
     //       if (a8_1_x_1Value.toString() == '1') {
-    //         if (valueInput == null ||
-    //             valueInput == "null" ||
-    //             valueInput == "") {
+    //         if (inputValue == null ||
+    //             inputValue == "null" ||
+    //             inputValue == "") {
     //           return 'Vui lòng nhập giá trị.';
     //         }
     //       }
@@ -3918,9 +4016,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //       //   }
     //       // }
     //       if (a8_1_x_1Value.toString() == '1') {
-    //         if (valueInput == null ||
-    //             valueInput == "null" ||
-    //             valueInput == "") {
+    //         if (inputValue == null ||
+    //             inputValue == "null" ||
+    //             inputValue == "") {
     //           // if (fieldName == "A8_1_3_1_2") {
     //           //   if (isCap1H_VT.value == true &&
     //           //       (isCap5VanTaiHanhKhach.value == true ||
@@ -3943,7 +4041,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   if (fieldName == "A8_1_3_1_2") {
     //     var a8_1_3_1Value = tblPhieu['A8_1_3_1'];
     //     // if (a8_1_3_1Value.toString() == '1') {
-    //     if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //     if (inputValue == null || inputValue == "null" || inputValue == "") {
     //       if (isCap1H_VT.value == true &&
     //           (isCap5VanTaiHanhKhach.value == true ||
     //               isCap5VanTaiHangHoa.value)) {
@@ -3955,7 +4053,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   if (fieldName == "A8_1_5_1_2") {
     //     var a8_1_3_1Value = tblPhieu['A8_1_5_1'];
     //     //if (a8_1_3_1Value.toString() == '1') {
-    //     if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //     if (inputValue == null || inputValue == "null" || inputValue == "") {
     //       if (isCap1H_VT.value == true &&
     //           (isCap5VanTaiHanhKhach.value == true ||
     //               isCap5VanTaiHangHoa.value)) {
@@ -4184,7 +4282,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String table,
       String maCauHoi,
       String? fieldName,
-      String? valueInput,
+      String? inputValue,
       minValue,
       maxValue,
       int loaiCauHoi,
@@ -4195,13 +4293,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       return 'khonglay_duoc_dulieu_kiemtra'.tr;
     }
     if (maCauHoi == colPhieuMauTBA1_1 && maPhieu == AppDefine.maPhieuTB) {
-      //if(valueInput!)
+      //if(inputValue!)
     }
     if (maCauHoi == colPhieuMauTBA1_3_2 && maPhieu == AppDefine.maPhieuTB) {
-      if (validateEmptyString(valueInput)) {
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập Năm sinh.';
       }
-      var nSinh = valueInput!.replaceAll(' ', '');
+      var nSinh = inputValue!.replaceAll(' ', '');
       //nam sinh
       if (nSinh.length != 4) {
         return 'Vui lòng nhập năm sinh 4 chũ số';
@@ -4211,23 +4309,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         return "Năm sinh phải >= 1900 và <= 2025";
       }
     }
-    if (maCauHoi == colPhieuMauTBA1_5 && maPhieu == AppDefine.maPhieuTB) {
-      var a1_5Value = '';
-      a1_5Value = tblPhieuCT[colPhieuMauTBA1_5];
+    if (maCauHoi == colPhieuMauTBA1_5_1 && maPhieu == AppDefine.maPhieuTB) {
+      var a1_5Value = tblPhieuCT[colPhieuMauTBA1_5];
       if (a1_5Value.toString() == '1') {
-        if (valueInput == null || valueInput == "null" || valueInput == "") {
+        if (validateEmptyString(inputValue)) {
           return 'Vui lòng nhập giá trị Mã số thuế.';
         }
-        if (valueInput.length != 10 || valueInput.length != 12) {
+        if (inputValue!.length != 10 && inputValue.length != 12) {
           return 'Mã số thuế của cơ sở không thể khác 10 hoặc 12 chữa số được.';
         }
+        return null;
       } else {
         return null;
       }
     }
     if ((maCauHoi == "A2_1" || maCauHoi == "A2_1_1") &&
         maPhieu == AppDefine.maPhieuTB) {
-      var resValid = onValidateA2_1(table, maCauHoi, fieldName, valueInput,
+      var resValid = onValidateA2_1(table, maCauHoi, fieldName, inputValue,
           minValue, maxValue, loaiCauHoi, typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -4236,7 +4334,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if ((maCauHoi == "A3_2" || maCauHoi == "A3_2_1") &&
         maPhieu == AppDefine.maPhieuTB) {
-      var resValid = onValidateA3_2(table, maCauHoi, fieldName, valueInput,
+      var resValid = onValidateA3_2(table, maCauHoi, fieldName, inputValue,
           minValue, maxValue, loaiCauHoi, typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -4244,10 +4342,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       return null;
     }
     if (maCauHoi == "A4_1" && maPhieu == AppDefine.maPhieuTB) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
       }
-      var a4_1 = AppUtils.convertStringToInt(valueInput.replaceAll(' ', ''));
+      inputValue = inputValue!.replaceAll(' ', '');
+      var a4_1 = AppUtils.convertStringToInt(inputValue.replaceAll(' ', ''));
       if (a4_1 > 12) {
         return 'Vui lòng nhập giá trị 1 - 12.';
       }
@@ -4256,7 +4355,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     }
     if ((maCauHoi == "A4_2") && maPhieu == AppDefine.maPhieuTB) {
-      var resValid = onValidateA3_2(table, maCauHoi, fieldName, valueInput,
+      var resValid = onValidateA4_2(table, maCauHoi, fieldName, inputValue,
           minValue, maxValue, loaiCauHoi, typing);
       if (resValid != null && resValid != '') {
         return resValid;
@@ -4264,34 +4363,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       return null;
     } else if (maCauHoi == colPhieuMauTBA4_3 &&
         maPhieu == AppDefine.maPhieuTB) {
-      var a1_2Value = tblPhieuCT[colPhieuMauTBA1_2] != null
-          ? tblPhieuCT[colPhieuMauTBA1_2].toString()
-          : '';
-
-      if (!validateEmptyString(a1_2Value) && a1_2Value == '1') {
-        var a3_2Value = tblPhieuCT[colPhieuMauTBA3_2] != null
-            ? AppUtils.convertStringToDouble(
-                tblPhieuCT[colPhieuMauTBA3_2].toString())
-            : null;
-        var a4_3Value = tblPhieuCT[colPhieuMauTBA4_3] != null
-            ? AppUtils.convertStringToDouble(
-                tblPhieuCT[colPhieuMauTBA4_3].toString())
-            : null;
-        if (!validateEmptyString(a4_3Value.toString()) &&
-            !validateEmptyString(a3_2Value.toString()) &&
-            a4_3Value > a3_2Value) {
-          var a4_3ValueText = toCurrencyString(a4_3Value.toString(),
-              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-              mantissaLength: 2);
-          var a3_2ValueText = toCurrencyString(a3_2Value.toString(),
-              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-              mantissaLength: 2);
-          return 'Số tiền thuê địa điểm SXKD tại C4.3 ($a4_3ValueText) > Số tiền vốn bỏ ra để SXKD ($a3_2ValueText)? (Số tiền thuê địa điểm phải được tính vào số tiền vốn)';
-        }
+      var resValid = onValidateA4_3(table, maCauHoi, fieldName, inputValue,
+          minValue, maxValue, loaiCauHoi, typing);
+      if (resValid != null && resValid != '') {
+        return resValid;
       }
+      return null;
     } else if (maCauHoi == colPhieuMauTBA7_1 &&
         maPhieu == AppDefine.maPhieuTB) {
-      if (valueInput != null && valueInput == '1') {
+      if (inputValue != null && inputValue == '1') {
         var a6_1_1_1Dien = tblPhieuCT[colPhieuMauTBA6_1_1_1] != null
             ? tblPhieuCT[colPhieuMauTBA1_2].toString()
             : '';
@@ -4301,13 +4381,24 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuMauTBA7_2 &&
         maPhieu == AppDefine.maPhieuTB) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
       }
     } else if (maCauHoi == colPhieuMauTBA7_3 &&
         maPhieu == AppDefine.maPhieuTB) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      num minVal = 1;
+      num maxVal = 100;
+
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
       var a7_3Value = tblPhieuCT[colPhieuMauTBA7_3] != null
           ? AppUtils.convertStringToDouble(
@@ -4354,12 +4445,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhVTA1_M &&
         maPhieu == AppDefine.maPhieuVTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///- C5.2_Doanh thu sản phẩm từ ngành vận tải >0 và C1=0
-      if (validateEqual0InputValue(valueInput.toString().replaceAll(' ', ''))) {
+      if (validateEqual0InputValue(inputValue.toString().replaceAll(' ', ''))) {
         if (doanhThuNganhVTHK.value > 0) {
           String doanhThuVTHKValue = toCurrencyString(
               doanhThuNganhVTHK.value.toString(),
@@ -4370,12 +4471,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhVTA2_M &&
         maPhieu == AppDefine.maPhieuVTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 9999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///- C1>0 và C2=0;
-      if (validateEqual0InputValue(valueInput.toString())) {
+      if (validateEqual0InputValue(inputValue.toString())) {
         var a1MValue = tblPhieuCT[colPhieuNganhVTA1_M] != null
             ? AppUtils.convertStringToInt(
                 tblPhieuCT[colPhieuNganhVTA1_M].toString())
@@ -4390,12 +4501,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhVTA3_M &&
         maPhieu == AppDefine.maPhieuVTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 99999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///- C3=0 &C1>0
-      if (validateEqual0InputValue(valueInput.toString().replaceAll(' ', ''))) {
+      if (validateEqual0InputValue(inputValue.toString().replaceAll(' ', ''))) {
         var a1MValue = tblPhieuCT[colPhieuNganhVTA1_M] != null
             ? AppUtils.convertStringToInt(
                 tblPhieuCT[colPhieuNganhVTA1_M].toString())
@@ -4410,10 +4531,20 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhVTA6_M &&
         maPhieu == AppDefine.maPhieuVTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
       }
-      if (validateEqual0InputValue(valueInput.toString().replaceAll(' ', ''))) {
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+      if (validateEqual0InputValue(inputValue.toString().replaceAll(' ', ''))) {
         if (doanhThuNganhVTHH.value > 0) {
           String doanhThuVTHHValue = toCurrencyString(
               doanhThuNganhVTHH.value.toString(),
@@ -4424,12 +4555,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhVTA7_M &&
         maPhieu == AppDefine.maPhieuVTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///- C6>0 và C7=0;
-      if (validateEqual0InputValue(valueInput.toString().replaceAll(' ', ''))) {
+      if (validateEqual0InputValue(inputValue.toString().replaceAll(' ', ''))) {
         var a6MValue = tblPhieuCT[colPhieuNganhVTA6_M] != null
             ? AppUtils.convertStringToInt(
                 tblPhieuCT[colPhieuNganhVTA6_M].toString())
@@ -4444,12 +4585,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhVTA8_M &&
         maPhieu == AppDefine.maPhieuVTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 99999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///- C8=0 & C6>0
-      if (validateEqual0InputValue(valueInput.toString().replaceAll(' ', ''))) {
+      if (validateEqual0InputValue(inputValue.toString().replaceAll(' ', ''))) {
         var a6MValue = tblPhieuCT[colPhieuNganhVTA6_M] != null
             ? AppUtils.convertStringToInt(
                 tblPhieuCT[colPhieuNganhVTA6_M].toString())
@@ -4464,13 +4615,33 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhLTA1_M &&
         maPhieu == AppDefine.maPhieuLTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 99999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
     } else if (maCauHoi == colPhieuNganhLTA1_1_M &&
         maPhieu == AppDefine.maPhieuLTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 99999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///C1.1> C1
@@ -4479,9 +4650,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           ? AppUtils.convertStringToInt(
               tblPhieuCT[colPhieuNganhLTA1_M].toString())
           : 0;
-      var a1_1MValue = valueInput != null
+      var a1_1MValue = inputValue != null
           ? AppUtils.convertStringToInt(
-              valueInput.toString().replaceAll(' ', ''))
+              inputValue.toString().replaceAll(' ', ''))
           : 0;
 
       if (a1_1MValue > a1MValue) {
@@ -4495,17 +4666,27 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhLTA2_M &&
         maPhieu == AppDefine.maPhieuLTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 99999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
       //- C5.2_Doanh thu sản phẩm từ ngành vận tải >0 và C1+C2=0
       var a1MValue = tblPhieuCT[colPhieuNganhLTA1_M] != null
           ? AppUtils.convertStringToInt(
               tblPhieuCT[colPhieuNganhLTA1_M].toString())
           : 0;
-      var a2MValue = valueInput != null
+      var a2MValue = inputValue != null
           ? AppUtils.convertStringToInt(
-              valueInput.toString().replaceAll(' ', ''))
+              inputValue.toString().replaceAll(' ', ''))
           : 0;
       var totalC1C2 = a1MValue + a2MValue;
       if (doanhThuNganhLT.value > 0 && totalC1C2 == 0) {
@@ -4521,8 +4702,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhLTA2_1_M &&
         maPhieu == AppDefine.maPhieuLTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 99999;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///C2.1> C2
@@ -4531,8 +4722,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           ? AppUtils.convertStringToInt(
               tblPhieuCT[colPhieuNganhLTA2_M].toString())
           : 0;
-      var a2_1MValue = valueInput != null
-          ? AppUtils.convertStringToInt(valueInput.toString())
+      var a2_1MValue = inputValue != null
+          ? AppUtils.convertStringToInt(inputValue.toString())
           : 0;
 
       if (a2_1MValue > a2MValue) {
@@ -4546,7 +4737,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhLTA4_M &&
         maPhieu == AppDefine.maPhieuLTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
       }
 
@@ -4556,9 +4747,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           ? AppUtils.convertStringToDouble(
               tblPhieuCT[colPhieuNganhLTA3_M].toString())
           : 0;
-      var a4MValue = valueInput != null
+      var a4MValue = inputValue != null
           ? AppUtils.convertStringToDouble(
-              valueInput.toString().replaceAll(' ', ''))
+              inputValue.toString().replaceAll(' ', ''))
           : 0;
 
       if (a4MValue < a3MValue) {
@@ -4572,8 +4763,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (maCauHoi == colPhieuNganhLTA5_M &&
         maPhieu == AppDefine.maPhieuLTMau) {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = 0;
+      num maxVal = 100;
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
 
       ///" Nếu C1>0 và C5=0; C5=100% và C2>0"
@@ -4586,9 +4787,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           ? AppUtils.convertStringToInt(
               tblPhieuCT[colPhieuNganhLTA2_M].toString())
           : 0;
-      var a5MValue = valueInput != null
+      var a5MValue = inputValue != null
           ? AppUtils.convertStringToDouble(
-              valueInput.toString().replaceAll(' ', ''))
+              inputValue.toString().replaceAll(' ', ''))
           : 0;
 
       if (a1MValue != null &&
@@ -4611,324 +4812,43 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
         return 'Doanh thu khách ngủ qua đêm chiếm 100% (C5 =100) nhưng cơ sở lại có số lượt khách không ngủ qua đêm ($a2MValueText)?';
       }
+    } else if (maCauHoi == colPhieuNganhLTA6_M &&
+        maPhieu == AppDefine.maPhieuLTMau) {
+      num minVal = minValue ?? 1;
+      num maxVal = maxValue ?? 9999;
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
     }
-    // else if (maCauHoi == "A4_4_1") {
-    //   if (typing) {
-    //     var a4_3s = answerTblPhieuMau['A4_4'];
-    //     if (a4_3s != null && a4_3s != '') {
-    //       var arrA4_3 = a4_3s.toString().split(';');
-    //       if (arrA4_3.isNotEmpty) {
-    //         if (arrA4_3.contains('1')) {
-    //           if (valueInput == null ||
-    //               valueInput == "null" ||
-    //               valueInput == "") {
-    //             return 'Vui lòng nhập giá trị.';
-    //           }
-    //         } else {
-    //           return null;
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     var phieuMau = tblPhieuMau.value.toJson();
-    //     var a4_3s = phieuMau['A4_4'].toString();
-    //     if (a4_3s != null && a4_3s != '') {
-    //       var arrA4_3 = a4_3s.toString().split(';');
-    //       if (arrA4_3.isNotEmpty) {
-    //         if (arrA4_3.contains('1')) {
-    //           if (valueInput == null ||
-    //               valueInput == "null" ||
-    //               valueInput == "") {
-    //             return 'Vui lòng nhập giá trị.';
-    //           }
-    //         } else {
-    //           return null;
-    //         }
-    //       }
-    //     }
-    //     return null;
-    //   }
-    // } else if (maCauHoi == "A4_4_2") {
-    //   if (typing) {
-    //     var a4_3s = answerTblPhieuMau['A4_4'];
-    //     if (a4_3s != null && a4_3s != '') {
-    //       var arrA4_3 = a4_3s.toString().split(';');
-    //       if (arrA4_3.isNotEmpty && arrA4_3.length > 1) {
-    //         if (arrA4_3.contains('2')) {
-    //           if (valueInput == null ||
-    //               valueInput == "null" ||
-    //               valueInput == "") {
-    //             return 'Vui lòng nhập giá trị.';
-    //           }
-    //         } else {
-    //           return null;
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     var phieuMau = tblPhieuMau.value.toJson();
-    //     var a4_3s = phieuMau['A4_4'].toString();
-    //     if (a4_3s != 'null' && a4_3s != '') {
-    //       var arrA4_3 = a4_3s.toString().split(';');
-    //       if (arrA4_3.isNotEmpty && arrA4_3.length > 1) {
-    //         if (arrA4_3.contains('2')) {
-    //           if (valueInput == null ||
-    //               valueInput == "null" ||
-    //               valueInput == "") {
-    //             return 'Vui lòng nhập giá trị.';
-    //           }
-    //         } else {
-    //           return null;
-    //         }
-    //       }
-    //     }
-    //     return null;
-    //   }
-    // } else if (maCauHoi == "A4_6") {
-    //   ///Bổ sung logic cho câu A4.6 ngày 19/02/2025
-    //   ///Nếu câu A1.4=1 => 4.6 phải lớn hơn 0
-    //   var a1_4Value =
-    //       tblPhieuCT['A1_4'] != null ? tblPhieuCT['A1_4'].toString() : '';
-
-    //   if (!validateEmptyString(a1_4Value) && a1_4Value == '2') {
-    //     var a4_6Value = tblPhieuCT['A4_6'] != null
-    //         ? AppUtils.convertStringToDouble(tblPhieuCT['A4_6'].toString())
-    //         : null;
-    //     if (!validateEmptyString(a4_6Value.toString()) && a4_6Value > 0) {
-    //       return 'Câu 1.4 Địa điểm thuộc sở hữu của chủ cơ sở nên câu 4.6 Tiền thuê địa điểm SXKD phải = 0';
-    //     }
-    //   } else {
-    //     if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //       return 'Vui lòng nhập giá trị.';
-    //     }
-    //     if (validateEqual0InputValue(valueInput)) {
-    //       return 'Câu 1.4 đã chọn "Địa điểm đi thuê/mượn" nên giá trị câu 4.6 giá trị lớn hơn 0.';
-    //     }
-    //   }
-    // } else if (maCauHoi == "A7_9") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //     return 'Vui lòng nhập giá trị.';
-    //   }
-    //   var a7_9 = AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-    //   if (a7_9 > 100) {
-    //     return 'Vui lòng nhập giá trị 0 - 100.';
-    //   }
-    // } else if (maCauHoi == "A9_5") {
-    //   if (typing) {
-    //     var a9_4_1 = answerTblPhieuMau['A9_4_1'];
-    //     if (a9_4_1.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //       var a7_9 =
-    //           AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-    //       if (a7_9 > 100) {
-    //         return 'Vui lòng nhập giá trị 0 - 100.';
-    //       }
-    //     } else {
-    //       return null;
-    //     }
-    //   } else {
-    //     var phieuMau = tblPhieuMau.value.toJson();
-    //     var a9_4_1 = phieuMau['A9_4_1'].toString();
-    //     if (a9_4_1.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //       var a7_9 =
-    //           AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-    //       if (a7_9 > 100) {
-    //         return 'Vui lòng nhập giá trị 0 - 100.';
-    //       }
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // } else if (maCauHoi == "A9_6") {
-    //   if (typing) {
-    //     if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //       return 'Vui lòng nhập giá trị.';
-    //     }
-    //     var a9_6 =
-    //         AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-    //     if (a9_6 > 100) {
-    //       return 'Vui lòng nhập giá trị 0 - 100.';
-    //     }
-    //   } else {
-    //     if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //       return 'Vui lòng nhập giá trị.';
-    //     }
-    //     var a9_6 =
-    //         AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-    //     if (a9_6 > 100) {
-    //       return 'Vui lòng nhập giá trị 0 - 100.';
-    //     }
-    //   }
-    // } else if (maCauHoi == "A9_7_1") {
-    //   if (typing == false) {
-    //     var a9_7 = answerTblPhieuMau['A9_7'];
-    //     if (a9_7.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //       return null;
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // } else if (maCauHoi == "A9_8") {
-    //   if (typing) {
-    //     var a9_4_2 = answerTblPhieuMau['A9_4_2'];
-    //     if (a9_4_2.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //       var a9_8 =
-    //           AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-    //       if (a9_8 > 100) {
-    //         return 'Vui lòng nhập giá trị 0 - 100.';
-    //       }
-    //     } else {
-    //       return null;
-    //     }
-    //   } else {
-    //     var phieuMau = tblPhieuMau.value.toJson();
-    //     var a9_4_2 = phieuMau['A9_4_2'].toString();
-    //     if (a9_4_2.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //       var a9_8 =
-    //           AppUtils.convertStringToDouble(valueInput.replaceAll(' ', ''));
-    //       if (a9_8 > 100) {
-    //         return 'Vui lòng nhập giá trị 0 - 100.';
-    //       }
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // } else if (maCauHoi == "A9_10") {
-    //   if (typing) {
-    //     var a9_9 = answerTblPhieuMau['A9_9'];
-    //     if (a9_9.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //     } else {
-    //       return null;
-    //     }
-    //   } else {
-    //     var phieuMau = tblPhieuMau.value.toJson();
-    //     var a9_9 = phieuMau['A9_9'].toString();
-    //     if (a9_9.toString() == '1') {
-    //       if (valueInput == null || valueInput == "null" || valueInput == "") {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //     } else {
-    //       return null;
-    //     }
-    //   }
-    // }
-    // if (maCauHoi == "A2_1" ||
-    //     maCauHoi == "A2_1_1" ||
-    //     maCauHoi == "A2_1_2" ||
-    //     maCauHoi == "A2_1_3") {
-    //   var resValid = onValidateA2_1(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (maCauHoi == "A3_3" || maCauHoi == "A3_3_1") {
-    //   var resValid = onValidateA3_3(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-
-    // if (maCauHoi == "A7_2") {
-    //   var resValid = onValidateA7_2(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (maCauHoi == "A7_2_1") {
-    //   var resValid = onValidateA7_2_1(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (maCauHoi == "A7_4") {
-    //   var resValid = onValidateA7_4(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (maCauHoi == "A7_4_1") {
-    //   var resValid = onValidateA7_4_1(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (maCauHoi == "A7_5") {
-    //   var resValid = onValidateA7_5(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (maCauHoi == "A7_6" || maCauHoi == "A7_6_1") {
-    //   var resValid = onValidateA7_6_1(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (maCauHoi == "A7_7" || maCauHoi == "A7_7_1") {
-    //   var resValid = onValidateA7_7_1(table, maCauHoi, fieldName, valueInput,
-    //       minValue, maxValue, loaiCauHoi, typing);
-    //   if (resValid != null && resValid != '') {
-    //     return resValid;
-    //   }
-    //   return null;
-    // }
-    // if (valueInput == null || valueInput == "" || valueInput == "null") {
-    //   if ((loaiCauHoi == AppDefine.loaiCauHoi_1 ||
-    //           loaiCauHoi == AppDefine.loaiCauHoi_5) &&
-    //       !fieldName!.contains('_GhiRo')) {
-    //     return 'Vui lòng chọn giá trị.';
-    //   }
-    //   return !fieldName!.contains('_GhiRo')
-    //       ? 'Vui lòng nhập giá trị.'
-    //       : 'Ghi rõ. Vui lòng nhập giá trị.';
-    // }
-    // return ValidateQuestionNo07.onValidate(
-    //     table, maCauHoi, fieldName, valueInput, minValue, maxValue, loaiCauHoi);
   }
 
   String? onValidateA2_1(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
-    if (valueInput == null || valueInput == "null" || valueInput == "") {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
+    if (validateEmptyString(inputValue)) {
       return 'Vui lòng nhập giá trị.';
     }
+    inputValue = inputValue!.replaceAll(' ', '');
+
     var tblPhieuCT = getTableByTableName(table, typing);
     if (tblPhieuCT == null) {
       return 'khonglay_duoc_dulieu_kiemtra'.tr;
     }
-
+    num intputVal = inputValue != null
+        ? AppUtils.convertStringToInt(inputValue.replaceAll(' ', ''))
+        : 0;
+    if (intputVal < minValue) {
+      return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minValue, maxValue)}';
+    } else if (intputVal > maxValue) {
+      return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minValue, maxValue)}';
+    }
     int a2_1Value = tblPhieuCT['A2_1'] != null
         ? AppUtils.convertStringToInt(tblPhieuCT['A2_1'].toString())
         : 0;
@@ -4957,10 +4877,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA2_2(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? inputValue,
       {bool typing = true, String? fieldName}) {
     // if (question.maCauHoi == "A2_2") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   var tblPhieuCT;
@@ -5007,10 +4927,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA2_3(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? inputValue,
       {bool typing = true, String? fieldName}) {
     // if (question.maCauHoi == "A2_3") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   var tblPhieuCT;
@@ -5048,11 +4968,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA3_1(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? valueInput,
+      ChiTieuDongModel? chiTieuDong, String? inputValue,
       {bool typing = true, String? fieldName}) {
     if (question.maCauHoi == "A3_1") {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minValue = chiTieuCot!.giaTriNN ?? 0;
+      num maxValue = chiTieuCot.giaTriLN ?? 999999;
+
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal = inputValue != null
+          ? AppUtils.convertStringToDouble(inputValue.replaceAll(' ', ''))
+          : 0;
+      if (intputVal < minValue) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minValue, maxValue)}';
+      } else if (intputVal > maxValue) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minValue, maxValue)}';
       }
       var tblPhieuCT = getTableByTableName(question.bangDuLieu!, typing);
       if (tblPhieuCT == null) {
@@ -5093,10 +5025,21 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA3_2(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     if (maCauHoi == "A3_2" || maCauHoi == "A3_2_1") {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 999999;
+
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
       var tblPhieuCT = getTableByTableName(table, typing);
       if (tblPhieuCT == null) {
@@ -5124,10 +5067,21 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA4_2(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     if (maCauHoi == "A4_2") {
-      if (valueInput == null || valueInput == "null" || valueInput == "") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 999999;
+
+      if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
       var tblPhieuCT = getTableByTableName(table, typing);
       if (tblPhieuCT == null) {
@@ -5147,10 +5101,62 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return null;
   }
 
+  String? onValidateA4_3(String table, String maCauHoi, String? fieldName,
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
+    if (maCauHoi == "A4_3") {
+      num minVal = minValue ?? 0;
+      num maxVal = maxValue ?? 999999;
+
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
+      }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+      var tblPhieuCT = getTableByTableName(table, typing);
+      if (tblPhieuCT == null) {
+        return 'khonglay_duoc_dulieu_kiemtra'.tr;
+      }
+
+      var a1_2Value = tblPhieuCT[colPhieuMauTBA1_2] != null
+          ? tblPhieuCT[colPhieuMauTBA1_2].toString()
+          : '';
+
+      if (!validateEmptyString(a1_2Value) && a1_2Value == '1') {
+        var a3_2Value = tblPhieuCT[colPhieuMauTBA3_2] != null
+            ? AppUtils.convertStringToDouble(
+                tblPhieuCT[colPhieuMauTBA3_2].toString())
+            : null;
+        var a4_3Value = tblPhieuCT[colPhieuMauTBA4_3] != null
+            ? AppUtils.convertStringToDouble(
+                tblPhieuCT[colPhieuMauTBA4_3].toString())
+            : null;
+        if (!validateEmptyString(a4_3Value.toString()) &&
+            !validateEmptyString(a3_2Value.toString()) &&
+            a4_3Value > a3_2Value) {
+          var a4_3ValueText = toCurrencyString(a4_3Value.toString(),
+              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+              mantissaLength: 2);
+          var a3_2ValueText = toCurrencyString(a3_2Value.toString(),
+              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+              mantissaLength: 2);
+          return 'Số tiền thuê địa điểm SXKD tại C4.3 ($a4_3ValueText) > Số tiền vốn bỏ ra để SXKD ($a3_2ValueText)? (Số tiền thuê địa điểm phải được tính vào số tiền vốn)';
+        }
+      }
+      return null;
+    }
+    return null;
+  }
+
   String? onValidateA7_2(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     // if (maCauHoi == "A7_2") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   if (typing) {
@@ -5216,9 +5222,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA7_2_1(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     // if (maCauHoi == "A7_2_1") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   if (typing) {
@@ -5284,9 +5290,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return null;
   }
 
-  //String? onValidateA7_4(String table, String maCauHoi, String? fieldName,  String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+  //String? onValidateA7_4(String table, String maCauHoi, String? fieldName,  String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
   // if (maCauHoi == "A7_4") {
-  //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+  //   if (inputValue == null || inputValue == "null" || inputValue == "") {
   //     return 'Vui lòng nhập giá trị.';
   //   }
   //   if (typing) {
@@ -5352,9 +5358,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   //}
 
   String? onValidateA7_4_1(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     // if (maCauHoi == "A7_4_1") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   if (typing) {
@@ -5421,9 +5427,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA7_5(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     // if (maCauHoi == "A7_5") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   if (typing) {
@@ -5452,9 +5458,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA7_6_1(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     // if (maCauHoi == "A7_6" || maCauHoi == "A7_6_1") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   if (typing) {
@@ -5497,9 +5503,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   String? onValidateA7_7_1(String table, String maCauHoi, String? fieldName,
-      String? valueInput, minValue, maxValue, int loaiCauHoi, bool typing) {
+      String? inputValue, minValue, maxValue, int loaiCauHoi, bool typing) {
     // if (maCauHoi == "A7_7" || maCauHoi == "A7_7_1") {
-    //   if (valueInput == null || valueInput == "null" || valueInput == "") {
+    //   if (inputValue == null || inputValue == "null" || inputValue == "") {
     //     return 'Vui lòng nhập giá trị.';
     //   }
     //   if (typing) {
@@ -5817,7 +5823,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           }
         }
 
-        if (item.danhSachCauHoiCon!.isNotEmpty) {
+        if (item.danhSachCauHoiCon != null &&
+            item.danhSachCauHoiCon!.isNotEmpty) {
           var res =
               await getListFieldToValidateCauHoiConV2(item.danhSachCauHoiCon!);
           if (res.isNotEmpty) {
@@ -6136,7 +6143,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           }
         }
 
-        if (item.danhSachCauHoiCon!.isNotEmpty) {
+        if (item.danhSachCauHoiCon != null &&
+            item.danhSachCauHoiCon!.isNotEmpty) {
           var res =
               await getListFieldToValidateCauHoiConV2(item.danhSachCauHoiCon!);
           result.addAll(res);
@@ -6332,12 +6340,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   //}
 
   Future onKetThucPhongVan({int? lyDoKetThucPV}) async {
-   
     final resultRoute = await Get.to(
       () => CompleteInterviewScreen(),
       fullscreenDialog: true,
     );
-   
+
     if (resultRoute != null && resultRoute is CompletedResult) {
       final result = resultRoute.completeInfo;
       if (generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT != 9) {
@@ -6424,7 +6431,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     ));
   }
 
-  warningA9MDialog(String message)   {
+  warningA9MDialog(String message) {
     return Get.dialog(DialogBarrierWidget(
       onPressedNegative: () async {
         Get.back();
@@ -6432,7 +6439,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       onPressedPositive: () async {
         Get.back();
         onKetThucPhongVan();
-        
       },
       title: 'dialog_title_warning'.tr,
       content: message,
@@ -6536,7 +6542,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
         String vcpaCapx = '';
         String donViTinh = '';
-        String maLV = item.maLV ?? '';
+        // String maLV = item.maLV ?? '';
         int idVal = spItem.id!;
         int stt = spItem.sTTSanPham!;
         vcpaCapx = item.maSanPham!;
@@ -6553,8 +6559,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           } else {
             await updateToDbSanPham(tablePhieuMauTBSanPham,
                 colPhieuMauTBSanPhamA5_1_2, idVal, vcpaCapx);
-            await updateToDbSanPham(
-                tablePhieuMauTBSanPham, columnMaLV, idVal, maLV);
+            // await updateToDbSanPham(
+            //     tablePhieuMauTBSanPham, columnMaLV, idVal, maLV);
           }
           updateNganhAll();
 
@@ -6586,7 +6592,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       } else if (spItem is TablePhieuNganhCN) {
         String vcpaCap8 = '';
         String donViTinh = '';
-        String maLV = item.maLV ?? '';
+        //  String maLV = item.maLV ?? '';
         int idVal = spItem.id!;
         int stt = spItem.sTT_SanPham!;
         vcpaCap8 = item.maSanPham!;
@@ -6606,7 +6612,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 tablePhieuNganhCN, colPhieuNganhCNA1_2, idVal, vcpaCap8);
             await updateToDbSanPham(
                 tablePhieuNganhCN, colPhieuNganhCNA2_1, idVal, donViTinh);
-            await updateToDbSanPham(tablePhieuNganhCN, columnMaLV, idVal, maLV);
+            // await updateToDbSanPham(tablePhieuNganhCN, columnMaLV, idVal, maLV);
           }
           snackBar('Thông báo', 'Đã cập nhật');
           log('ON onChangeListViewItem ĐÃ cập nhật mã VCPA cấp 8 vào bảng $tablePhieuNganhCN');
@@ -6638,10 +6644,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       //   String vcpaCap5 = '';
       //   String donViTinh = '';
       //   if (value is TableDmMotaSanpham) {
-      //     TableDmMotaSanpham valueInput = value;
-      //     if (valueInput != null) {
-      //       vcpaCap5 = valueInput.maSanPham!;
-      //       donViTinh = valueInput.donViTinh ?? '';
+      //     TableDmMotaSanpham inputValue = value;
+      //     if (inputValue != null) {
+      //       vcpaCap5 = inputValue.maSanPham!;
+      //       donViTinh = inputValue.donViTinh ?? '';
       //     }
       //   } else if (value is String) {
       //     vcpaCap5 = value;
@@ -6679,21 +6685,21 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-  kiemTraMaVCPACap5(valueInput) {
-    // if (valueInput is TableDmMotaSanpham) {
-    //   if (valueInput != null) {
-    //     if (valueInput.maSanPham != null && valueInput.maSanPham != '') {
+  kiemTraMaVCPACap5(inputValue) {
+    // if (inputValue is TableDmMotaSanpham) {
+    //   if (inputValue != null) {
+    //     if (inputValue.maSanPham != null && inputValue.maSanPham != '') {
     //       var res = tblDmMoTaSanPhamSearch
-    //           .where((x) => x.maSanPham == valueInput.maSanPham!)
+    //           .where((x) => x.maSanPham == inputValue.maSanPham!)
     //           .firstOrNull;
     //       if (res != null) {
     //         return res.maSanPham != '';
     //       }
     //     }
     //   }
-    // } else if (valueInput is String) {
+    // } else if (inputValue is String) {
     //   var res = tblDmMoTaSanPhamSearch
-    //       .where((x) => x.maSanPham == valueInput!)
+    //       .where((x) => x.maSanPham == inputValue!)
     //       .firstOrNull;
     //   if (res != null) {
     //     return res.maSanPham != '';
@@ -6704,7 +6710,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return true;
   }
 
-  kiemTraMaVCPACap8(valueInput) {
+  kiemTraMaVCPACap8(inputValue) {
     return true;
   }
 
@@ -8820,7 +8826,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           }
         }
 
-        if (item.danhSachCauHoiCon!.isNotEmpty) {
+        if (item.danhSachCauHoiCon != null &&
+            item.danhSachCauHoiCon!.isNotEmpty) {
           var res =
               await getListFieldToValidateCauHoiCon(item.danhSachCauHoiCon!);
           if (res.isNotEmpty) {
@@ -8886,7 +8893,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             result.addAll(resCtDongIOs);
           }
         }
-        if (item.danhSachCauHoiCon!.isNotEmpty) {
+        if (item.danhSachCauHoiCon != null &&
+            item.danhSachCauHoiCon!.isNotEmpty) {
           var res =
               await getListFieldToValidateCauHoiCon(item.danhSachCauHoiCon!);
           result.addAll(res);

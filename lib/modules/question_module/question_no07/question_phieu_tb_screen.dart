@@ -1313,8 +1313,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     }
 
     if (question.maCauHoi == colPhieuMauTBA7_8_M) {
-      decimalDigits = 2;
       return Obx(() {
+        decimalDigits = 2;
         var a9_7Value = controller.getValueByFieldName(
             question.bangDuLieu!, colPhieuMauTBA7_7_M);
         // var a9_8Value = controller.getValueByFieldName(
@@ -1857,11 +1857,15 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         ),
         if (mainQuestion.maCauHoi == "A6_1" &&
             mainQuestion.maPhieu == AppDefine.maPhieuTB) ...[
-          buildWarningText(mainQuestion, 0, isShow: true)
+          Obx(() => buildWarningText(mainQuestion, 0, isShow: true))
         ],
         if (mainQuestion.maCauHoi == "A6_1_M" &&
             mainQuestion.maPhieu == AppDefine.maPhieuMau) ...[
-          buildError(mainQuestion, 0)
+          Obx(() => buildError(mainQuestion, 0))
+        ],
+        if (mainQuestion.maCauHoi == "A6_1" &&
+            mainQuestion.maPhieu == AppDefine.maPhieuTB) ...[
+          Obx(() => buildError(mainQuestion, null))
         ],
         ListView.builder(
             key: ObjectKey(chiTieuCots),
@@ -3307,16 +3311,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       //return Obx(() {
       var a5_1_1 = controller.getValueSanPham(
           question.bangDuLieu!, colPhieuMauTBSanPhamA5_1_1, product.id!);
-      // if (product != null) {
-      //   a5_1_1 = product.a5_1_1;
-      // }
 
       String vkey =
           '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTTSanPham}_1';
-      // if (a5_1_1 != null && a5_1_1 != '') {
-      //   vkey =
-      //       '${question.maCauHoi}_${product.id}_${product.sTTSanPham}_1_';
-      // }
+
       return InputString(
         //  key: ValueKey<TablePhieuMauTBSanPham>(product),
         key: ValueKey(vkey),
@@ -4279,7 +4277,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "${idx}. Mã sản phẩm: ${product.maNganhC5} - Ngành: ${product.maLV}",
+                                        "${idx}. Mã sản phẩm: ${product.maNganhC5}", // - Ngành: ${product.maLV}",
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -4460,13 +4458,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       var validRes = controller.onValidateInputA5T(
           question.maPhieu!, question.bangDuLieu!, question.maCauHoi!, true);
       if (validRes != null && validRes != '') {
-        return Padding(
-          padding: EdgeInsets.only(left: 16.0),
-          child: Text(
-            validRes,
-            style: const TextStyle(color: errorColor, fontSize: 13.0),
-            textAlign: TextAlign.left,
-          ),
+        return Text(
+          validRes,
+          style: const TextStyle(color: errorColor, fontSize: 13.0),
+          textAlign: TextAlign.left,
         );
       }
     }
@@ -4497,13 +4492,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             controller.doanhThuNganhVTHK.value.toString(),
             thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
             mantissaLength: 2);
-        return Padding(
-          padding: EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Doanh thu tại C5.2_ngành Vận tải hành khách ($doanhThuHKText) > 0 và C1_Khối lượng tiêu dùng tất cả năng lượng = 0',
-            style: const TextStyle(color: errorColor, fontSize: 13.0),
-            textAlign: TextAlign.left,
-          ),
+        return Text(
+          'Doanh thu tại C5.2_ngành Vận tải hành khách ($doanhThuHKText) > 0 và C1_Khối lượng tiêu dùng tất cả năng lượng = 0',
+          style: const TextStyle(color: errorColor, fontSize: 13.0),
+          textAlign: TextAlign.left,
         );
       }
       if (validResHH) {
@@ -4511,14 +4503,74 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             controller.doanhThuNganhVTHH.value.toString(),
             thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
             mantissaLength: 2);
-        return Padding(
-          padding: EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Doanh thu tại C5.2_ngành Vận tải hàng hóa ($doanhThuHHText) > 0 và C1_Khối lượng tiêu dùng tất cả năng lượng = 0',
+        return Text(
+          'Doanh thu tại C5.2_ngành Vận tải hàng hóa ($doanhThuHHText) > 0 và C1_Khối lượng tiêu dùng tất cả năng lượng = 0',
+          style: const TextStyle(color: errorColor, fontSize: 13.0),
+          textAlign: TextAlign.left,
+        );
+      }
+    } else if (question.maCauHoi == "A6_1" &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      //Cơ sở thuộc ngành 49. Dịch vụ vận tải đường sắt, đường bộ và đường ống hoặc mã 50.
+      //Dịch vụ vận tải đường thủy (trừ mã 49313 hoặc 49334) mà C6.1 mã 1 đến mã 9 đều =2. không;
+
+      List<String> a6_1Cot1Val = [];
+      for (var i = 1; i <= 9; i++) {
+        var fName1 = 'A6_1_${i.toString()}_1';
+        var a8_1_x_1Value =
+            controller.getValueByFieldName(question.bangDuLieu!, fName1);
+        if (a8_1_x_1Value != null) {
+          if (a8_1_x_1Value.toString() == '2') {
+            a6_1Cot1Val.add(a8_1_x_1Value.toString());
+          }
+        }
+      }
+
+      if (a6_1Cot1Val.isNotEmpty && a6_1Cot1Val.length == 9) {
+        var vcpa49_50 = controller.validateA6_1MaSanPhamPhanV();
+        if (vcpa49_50 == '49') {
+          String msg =
+              'Cơ sở thuộc ngành 49. Dịch vụ vận tải đường sắt, đường bộ và đường ống mà không sử dụng năng lượng điện/than/xăng/các loại dầu (C6.1 mã 1 đến mã 5 đều chọn mã 2. Không)?';
+          return Text(
+            msg,
             style: const TextStyle(color: errorColor, fontSize: 13.0),
             textAlign: TextAlign.left,
-          ),
-        );
+          );
+        }
+        if (vcpa49_50 == '50') {
+          String msg =
+              'Cơ sở thuộc ngành 50. Dịch vụ vận tải đường thủy (trừ mã 49313 hoặc 49334) mà không sử dụng năng lượng điện/than/xăng/các loại dầu (C6.1 mã 1 đến mã 5 đều chọn mã 2. Không)?';
+          return Text(
+            msg,
+            style: const TextStyle(color: errorColor, fontSize: 13.0),
+            textAlign: TextAlign.left,
+          );
+        }
+      }
+
+      List<String> a6_1Cot1Val2 = [];
+      for (var i = 1; i <= 11; i++) {
+        var fName1 = 'A6_1_${i.toString()}_1';
+        var a8_1_x_1Value =
+            controller.getValueByFieldName(question.bangDuLieu!, fName1);
+
+        if (a8_1_x_1Value != null) {
+          if (a8_1_x_1Value.toString() == '2') {
+            a6_1Cot1Val2.add(a8_1_x_1Value.toString());
+          }
+        }
+      }
+      if (a6_1Cot1Val2.isNotEmpty && a6_1Cot1Val2.length == 9) {
+        var vcpa49_50 = controller.validateA6_1MaSanPhamPhanV();
+        if (vcpa49_50 == '50') {
+          String msg =
+              'Ngành là dịch vụ lưu trú (Mã ngành cấp 2 là 55) mà không sử dụng bất kỳ loại năng lượng nào?';
+          return Text(
+            msg,
+            style: const TextStyle(color: errorColor, fontSize: 13.0),
+            textAlign: TextAlign.left,
+          );
+        }
       }
     }
     return const SizedBox();
@@ -4939,7 +4991,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               'Cơ sở có hoạt động cung cấp sản phẩm dịch vụ qua website, ứng dụng trực tuyến, nền tảng trung gian (shoppee, booking,…) C3=| C5=1 mà lại không có hoạt động logistic (vận chuyển hàng hóa … ) C9=2?');
         }
       }
-    } 
+    }
     return const SizedBox();
   }
 
@@ -5093,14 +5145,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         if (product != null) {
           TablePhieuNganhTMSanPham? productTMSP =
               product as TablePhieuNganhTMSanPham;
-          if (productTMSP != null && productTMSP.maLV == 'G') {
-            if (selectedValue < 5) {
-              return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra nhỏ hơn 5 triệu đồng có đúng không?';
-            }
-            if (selectedValue > 500) {
-              return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra lớn hơn 500 triệu đồng có đúng không?';
-            }
-          }
+          // if (productTMSP != null && productTMSP.maLV == 'G') {
+          //   if (selectedValue < 5) {
+          //     return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra nhỏ hơn 5 triệu đồng có đúng không?';
+          //   }
+          //   if (selectedValue > 500) {
+          //     return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra lớn hơn 500 triệu đồng có đúng không?';
+          //   }
+          // }
           //Đối với ngành 6810: 5000 < Số tiền vốn < 500
           if (productTMSP.maNganhC5 != null) {
             if (productTMSP.maNganhC5!.substring(0, 4) == '6810') {
@@ -5149,8 +5201,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       if (a7_8_MVal > 100000) {
         return 'Doanh thu giao đến khách hàng quá lớn >=100 tỷ có đúng không?';
       }
-    }
-    else if (question.maCauHoi == "A10_1_M" &&
+    } else if (question.maCauHoi == "A10_1_M" &&
         question.maPhieu == AppDefine.maPhieuMau) {
       var a10_1_MValue = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA10_1_M);
@@ -5169,10 +5220,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         var a4TValueText = toCurrencyString(a4TValue.toString(),
             thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
             mantissaLength: 2);
-        return  
-            'Số tiền chi hoạt động logistic tại 10.1 là $a10_1_MValText triệu đồng > Tổng doanh thu cả năm của cơ sở là $a4TValueText triệu đồng?';
+        return 'Số tiền chi hoạt động logistic tại 10.1 là $a10_1_MValText triệu đồng > Tổng doanh thu cả năm của cơ sở là $a4TValueText triệu đồng?';
       }
-    }else if (question.maCauHoi == "A10_2_M" &&
+    } else if (question.maCauHoi == "A10_2_M" &&
         question.maPhieu == AppDefine.maPhieuMau) {
       var a10_2_MValue = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA10_2_M);
@@ -5191,7 +5241,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         var a4TValueText = toCurrencyString(a4TValue.toString(),
             thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
             mantissaLength: 2);
-        return  'Số tiền chi hoạt động logistic tại 10.2 là $a10_1_MValText triệu đồng > Tổng doanh thu cả năm của cơ sở là $a4TValueText triệu đồng?';
+        return 'Số tiền chi hoạt động logistic tại 10.2 là $a10_1_MValText triệu đồng > Tổng doanh thu cả năm của cơ sở là $a4TValueText triệu đồng?';
       }
     }
   }

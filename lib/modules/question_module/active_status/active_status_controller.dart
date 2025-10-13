@@ -19,6 +19,7 @@ import 'package:gov_statistics_investigation_economic/resource/database/provider
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/errorlog/errorlog_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/reponse/response_cmm_model.dart';
@@ -71,6 +72,7 @@ class ActiveStatusController extends BaseController {
   TableDmTinhTrangHD tableDmTinhTrangHD = TableDmTinhTrangHD();
 
   final tblBkCoSoSXKD = TableBkCoSoSXKD().obs;
+  final tblBkCoSoSXKDNganhSanPham = TableBkCoSoSXKDNganhSanPham().obs;
 
   String? currentMaDoiTuongDT;
   String? currentTenDoiTuongDT;
@@ -114,7 +116,8 @@ class ActiveStatusController extends BaseController {
       currentTenPhieu.value = currentTenDoiTuongDT ?? '';
       await fetchDataPhieu();
       await getTinhTrangHD();
-        subTitleBar.value = '${tblBkCoSoSXKD.value.tenCoSo} Địa bàn.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
+      subTitleBar.value =
+          '${tblBkCoSoSXKD.value.tenCoSo} Địa bàn.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
       setLoading(false);
     } on Exception catch (e) {
       errorLogRepository.sendErrorLog(
@@ -152,9 +155,18 @@ class ActiveStatusController extends BaseController {
         currentIndex.value = (tblBkCoSoSXKD.value.maTinhTrangHD ?? 0) - 1;
         // var phieu07Mau = await phieuMauProvider.selectByIdCoso(currentIdCoSo!);
         // tablePhieuMau = TablePhieuMau.fromJson(phieu07Mau);
+        var bkNganh =
+            await bkCoSoSXKDNganhSanPhamProvider.selectByIdCoSo(currentIdCoSo!);
+        if (bkNganh != null) {
+          var res = TableBkCoSoSXKDNganhSanPham.listFromJson(bkNganh);
+          if (res.isNotEmpty) {
+            tblBkCoSoSXKDNganhSanPham.value = res.first;
+          }
+        }
       }
     }
-     subTitleBar.value ='${tblBkCoSoSXKD.value.tenCoSo} Địa bàn.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
+    subTitleBar.value =
+        '${tblBkCoSoSXKD.value.tenCoSo} Địa bàn.$currentMaDiaBan - $currentTenDiaBan ${AppUtils.getXaPhuong(currentTenXa ?? '')}.$currentMaXa - $currentTenXa';
   }
 
   onPressNext() async {
@@ -185,6 +197,7 @@ class ActiveStatusController extends BaseController {
 
           return;
         } else {
+          //TODO NHÓ KIỂM TRA LẠI MÃ TÌNH TRẠNG MÀ GỌI HÀM insert sản phẩm cho đúng.
           await insertNewPhieu07MauTBCxx();
           Get.toNamed(
             AppRoutes.generalInformation,
@@ -254,9 +267,10 @@ class ActiveStatusController extends BaseController {
           maNganhMau = maNganhs.first;
           await initRecordPhieu(tblBkCoSoSXKD.value, maNganhMau, maTrangThaiHD);
           await initRecordPhieuMauTB(tblBkCoSoSXKD.value);
+          await initRecordPhieuMauTBNganhSanPham();
         }
-        //await initRecordPhieu07Mau(tblBkCoSoSXKD.value, maTrangThaiHD);
-      }
+        
+      } 
     }
   }
 
@@ -311,6 +325,50 @@ class ActiveStatusController extends BaseController {
     }
   }
 
+  Future initRecordPhieuMauTBNganhSanPham() async {
+    var phieuSp = await phieuMauTBSanPhamProvider.isExistProductByMaNganhC5(
+        currentIdCoSo!, tblBkCoSoSXKDNganhSanPham.value.maNganh!);
+    if (!phieuSp) {
+      var tblMauTBSp = TablePhieuMauTBSanPham(
+          iDCoSo: currentIdCoSo,
+          sTTSanPham: 1,
+          maNganhC5: tblBkCoSoSXKDNganhSanPham.value.maNganh!,
+          a5_1_1: tblBkCoSoSXKDNganhSanPham.value.tenNganh!,
+          a5_1_2: tblBkCoSoSXKDNganhSanPham.value.maNganh!,
+          isDefault: 1,
+          maDTV: AppPref.uid);
+      List<TablePhieuMauTBSanPham> tblSanPhams = [];
+      tblSanPhams.add(tblMauTBSp);
+      await phieuMauTBSanPhamProvider.insert(
+          tblSanPhams, AppPref.dateTimeSaveDB!);
+      await phieuMauTBSanPhamProvider.updateDefaultByIdCoso(
+          currentIdCoSo, tblBkCoSoSXKDNganhSanPham.value.maNganh!, null);
+    }
+  }
+
+Future insertNewRecordSanPham() async {
+    var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
+    if (res == false) {
+      //var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
+      //     .selectMaNganhByIdCoSo(tblBkCoSoSXKD.value.iDCoSo!);
+      // var maNganhVcpa = '';
+      // if (maNganhs.isNotEmpty) {
+      //   maNganhVcpa = maNganhs.first;
+      // }
+      // var maxStt =
+      //     await phieuMauTBSanPhamProvider.getMaxSTTByIdCoso(currentIdCoSo!);
+      // maxStt = maxStt + 1;
+      var tblSp = TablePhieuMauTBSanPham(
+          iDCoSo: currentIdCoSo,
+          sTTSanPham: 1,
+          isDefault: 1,
+          maDTV: AppPref.uid);
+      List<TablePhieuMauTBSanPham> tblSps = [];
+      tblSps.add(tblSp);
+
+      await phieuMauTBSanPhamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
+    }
+  }
   ///END:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
   ///
 

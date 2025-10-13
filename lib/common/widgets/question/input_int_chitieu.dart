@@ -241,9 +241,12 @@ class InputIntChiTieuState extends State<InputIntChiTieu> {
 
   Widget wWarningText() {
     if (widget.warningText != null && widget.warningText != '') {
-      return Text(
-        widget.warningText!,
-        style: const TextStyle(color: Colors.orange),
+     return Padding(
+        padding: const EdgeInsets.only(left: 4),
+        child: Text(
+          widget.warningText!,
+          style: const TextStyle(color: Colors.orange,fontSize: 14),
+        ),
       );
     }
     return const SizedBox();

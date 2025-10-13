@@ -60,8 +60,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
       $colPhieuNganhCNA1_1  TEXT,
       $colPhieuNganhCNA1_2  TEXT,
       $colPhieuNganhCNA2_1  TEXT,
-      $colPhieuNganhCNA2_2  REAL,
-      $columnMaLV  TEXT,
+      $colPhieuNganhCNA2_2  REAL, 
       $colPhieuNganhCNIsDefault INTEGER, 
       $colPhieuNganhCNIsSync INTEGER,
       $columnMaDTV  TEXT,
@@ -177,8 +176,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     sql += " $tablePhieuNganhCN.$colPhieuNganhCNA1_1, ";
     sql += " $tablePhieuNganhCN.$colPhieuNganhCNA1_2, ";
     sql += "$tablePhieuNganhCN.$colPhieuNganhCNA2_1, ";
-    sql += " $tablePhieuNganhCN.$colPhieuNganhCNA2_2, ";
-     sql += "$tablePhieuMauTBSanPham.$columnMaLV, ";
+    sql += " $tablePhieuNganhCN.$colPhieuNganhCNA2_2, "; 
     sql += " '${AppPref.uid}' as MADTV ";
     sql += " FROM $tablePhieuMauTBSanPham";
     sql +=

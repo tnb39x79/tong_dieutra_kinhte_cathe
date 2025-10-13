@@ -18,8 +18,7 @@ class TablePhieuNganhTMSanPham {
   int? sTT_SanPham;
   String? maNganhC5;
   double? a1_2;
-  String? moTaSanPham;
-  String? maLV;
+  String? moTaSanPham; 
   String? maDTV;
   String? createdAt;
   String? updatedAt;
@@ -30,8 +29,7 @@ class TablePhieuNganhTMSanPham {
       this.sTT_SanPham,
       this.maNganhC5,
       this.a1_2,
-      this.moTaSanPham,
-      this.maLV,
+      this.moTaSanPham, 
       this.maDTV,
       this.createdAt,
       this.updatedAt});
@@ -42,8 +40,7 @@ class TablePhieuNganhTMSanPham {
     sTT_SanPham = json['STT_SanPham'];
     maNganhC5 = json['MaNganhC5'];
     a1_2 = json['A1_2'];
-    moTaSanPham = json['MoTaSanPham'];
-    maLV = json['MaLV'];
+    moTaSanPham = json['MoTaSanPham']; 
     maDTV = json['MaDTV'];
     createdAt = json['CreatedAt'];
     updatedAt = json['UpdatedAt'];
@@ -57,8 +54,7 @@ class TablePhieuNganhTMSanPham {
     json['STT_SanPham'] = sTT_SanPham;
     json['MaNganhC5'] = maNganhC5;
     json['A1_2'] = a1_2;
-    json['MoTaSanPham'] = moTaSanPham;
-    json['MaLV'] = maLV;
+    json['MoTaSanPham'] = moTaSanPham; 
     json['MaDTV'] = maDTV;
     json['CreatedAt'] = createdAt;
     json['UpdatedAt'] = updatedAt;

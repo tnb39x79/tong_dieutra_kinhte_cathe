@@ -60,7 +60,7 @@ class PhieuNganhTMSanPhamProvider
       $colPhieuNganhTMSanPhamMaNganhC5  TEXT,
       $colPhieuNganhTMSanPhamMoTaSanPham  TEXT,
       $colPhieuNganhTMSanPhamA1_2  REAL,
-      $columnMaLV  TEXT,
+      
       $columnMaDTV  TEXT,
       $columnCreatedAt TEXT,
       $columnUpdatedAt TEXT
@@ -163,8 +163,7 @@ class PhieuNganhTMSanPhamProvider
     sql +=
         " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_1 as MoTaSanPham, ";
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamA1_2, ";
-     sql +=
-        " $tablePhieuMauTBSanPham.$columnMaLV, ";
+    
     sql += " '${AppPref.uid}' as MADTV ";
     sql += " FROM $tablePhieuMauTBSanPham ";
     sql +=
