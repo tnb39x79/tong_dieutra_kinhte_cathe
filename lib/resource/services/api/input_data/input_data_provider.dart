@@ -15,7 +15,7 @@ class InputDataProvider extends GetConnect {
     httpClient.addResponseModifier(responseInterceptor);
   }
 
-  Future<Response> getData() {
+  Future<Response> getData() async {
     String loginData0 = AppPref.loginData;
     var json = jsonDecode(loginData0);
     TokenModel loginData = TokenModel.fromJson(json);
@@ -25,10 +25,27 @@ class InputDataProvider extends GetConnect {
     String versionDm = AppPref.versionDanhMuc == ""
         ? AppValues.versionDanhMuc
         : AppPref.versionDanhMuc;
-    return get(
-      'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getData}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}&versionDm=$versionDm',
-      headers: headers,
-    );
+    try {
+      String urlGet =
+          'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getData}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}&versionDm=$versionDm';
+
+      // return get(
+      //   'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getData}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}&versionDm=$versionDm',
+      //   headers: headers,
+      // );
+      var response = await get(
+        urlGet,
+        headers: headers,
+      ) ;
+      return response;
+    } on TimeoutException catch (e) {
+      // catch timeout here..
+      return Response(
+          statusCode: HttpStatus.requestTimeout, statusText: e.message);
+    } catch (e) {
+      return Response(
+          statusCode: ApiConstants.errorException, statusText: e.toString());
+    }
   }
 
   Future<Response> getKyDieuTra() async {

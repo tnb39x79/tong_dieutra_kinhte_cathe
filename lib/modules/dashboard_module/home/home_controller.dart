@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -386,8 +387,25 @@ class HomeController extends BaseController with SyncMixin {
           data.body!.versionDanhMuc ?? AppValues.versionDanhMuc;
       return 1;
     } else {
-      snackBar('some_error'.tr, data.body!.responseDesc ?? data.message ?? '',
-          style: ToastSnackType.error);
+      //  snackBar('some_error'.tr, data.body!.responseDesc ?? data.message ?? '',   style: ToastSnackType.error);
+      String? msg = data.body!=null ? data.body!.responseDesc : data.message ?? 'Có lỗi lấy dữ liệu phỏng vấn';
+      
+      Get.dialog(AlertDialog(
+        scrollable: true,
+        title: const Text('Thông báo'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              msg??'Có lỗi lấy dữ liệu phỏng vấn',
+              style: TextStyle(color: Color(0xFFB00020)),
+            )
+          ],
+        ),
+        actions: <Widget>[
+          WidgetButton(title: 'Đóng', onPressed: () => Get.back()),
+        ],
+      ));
       return null;
     }
   }
@@ -609,7 +627,7 @@ class HomeController extends BaseController with SyncMixin {
 
   /// END::TẢI DỮ LIỆU PHỎNG VẤN
 
-  onInterViewScreen() async { 
+  onInterViewScreen() async {
     Map? isHad = await hasGetDataPv();
     if (isHad != null) {
       //if (isDefaultUserType()) {

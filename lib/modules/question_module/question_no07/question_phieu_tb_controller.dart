@@ -110,6 +110,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   final tblPhieuNganhTM = TablePhieuNganhTM().obs;
   final tblPhieuNganhTMSanPham = <TablePhieuNganhTMSanPham>[].obs;
+  final tblPhieuNganhTMSanPhamView = <TablePhieuNganhTMSanPhamView>[].obs;
 
   final tblPhieuNganhVT = TablePhieuNganhVT().obs;
   final tblPhieuNganhVTGhiRos = <TablePhieuNganhVTGhiRo>[].obs;
@@ -289,6 +290,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     silderTitleBar =
         '${generalInformationController.tblBkCoSoSXKD.value.tenCoSo}\nĐịa bàn.$currentMaDiaBan - ${generalInformationController.tblBkCoSoSXKD.value.tenDiaBan}'; //\n${AppUtils.getXaPhuong(generalInformationController.tblBkCoSoSXKD.value.tenXa ?? '')}.$currentMaXa - ${generalInformationController.tblBkCoSoSXKD.value.tenXa}';
     log('Màn hình ${currentScreenNo.value}');
+    await updateNganhAll();
     await getDanhMuc();
     await fetchData();
     await getQuestionContent();
@@ -532,11 +534,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   Future getTablePhieuNganhTMSanPham() async {
     List<Map> questionTMSanPhamMap =
-        await phieuNganhTMSanphamProvider.selectByIdCoSo(currentIdCoSo!);
+        await phieuNganhTMSanphamProvider.selectA1TMByIdCoSo(currentIdCoSo!);
 
     tblPhieuNganhTMSanPham.assignAll(
         TablePhieuNganhTMSanPham.fromListJson(questionTMSanPhamMap)!);
     tblPhieuNganhTMSanPham.refresh();
+
+    List<Map> questionTMSanPhamMapView =
+        await phieuNganhTMSanphamProvider.selectA1TMByIdCoSo(currentIdCoSo!);
+
+    tblPhieuNganhTMSanPhamView.assignAll(
+        TablePhieuNganhTMSanPhamView.fromListJson(questionTMSanPhamMap)!);
+    tblPhieuNganhTMSanPhamView.refresh();
   }
 
   ///Danh dau san pham
@@ -907,7 +916,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   Future onBack() async {
     await fetchData();
 
-    // String validateResult = await validateAllFormV2();
+    String validateResult = await validateAllFormV2();
     // if (validateResult != '') {
     //   await insertUpdateXacNhanLogicWithoutEnable(
     //       currentScreenNo.value,
@@ -931,12 +940,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (currentScreenNo.value == 0) {
         Get.back();
       }
-      await getQuestionContent();
+      //   await getQuestionContent();
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
         if (currentScreenNo.value == 9) {
           currentScreenNo(currentScreenNo.value - 1);
           currentScreenIndex(currentScreenIndex.value - 1);
-          await getQuestionContent();
+          //    await getQuestionContent();
         }
         if (currentScreenNo.value == 8) {
           if (isCap2_55LT.value == false) {
@@ -1147,7 +1156,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //   await getQuestionContent();
             }
           }
         }
@@ -1157,7 +1166,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //  await getQuestionContent();
             }
           }
         }
@@ -1167,7 +1176,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //  await getQuestionContent();
             }
           }
         }
@@ -1177,21 +1186,21 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //  await getQuestionContent();
             }
           }
         }
         if (currentScreenNo.value == 9) {
           if (isCap2_56TM.value == false && isCap2G_6810TM.value == false) {
-            await getQuestionContent();
-            await setSelectedQuestionGroup();
+            //  await getQuestionContent();
+            //   await setSelectedQuestionGroup();
 
-            var result = await validateCompleted();
-            if (result != null && result != '') {
-              result = result.replaceAll('^', '\r\n');
-              return showError(result);
-            }
-            onKetThucPhongVan();
+            // var result = await validateCompleted();
+            // if (result != null && result != '') {
+            //   result = result.replaceAll('^', '\r\n');
+            //   return showError(result);
+            // }
+            // onKetThucPhongVan();
           }
         }
       } else if (currentMaDoiTuongDT ==
@@ -1202,7 +1211,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //   await getQuestionContent();
             }
           }
         }
@@ -1212,7 +1221,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //   await getQuestionContent();
             }
           }
         }
@@ -1222,7 +1231,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              // await getQuestionContent();
             }
           }
         }
@@ -1232,7 +1241,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //   await getQuestionContent();
             }
           }
         }
@@ -1242,7 +1251,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //  await getQuestionContent();
             }
           }
         }
@@ -1252,7 +1261,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //  await getQuestionContent();
             }
           }
         }
@@ -1262,7 +1271,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //     await getQuestionContent();
             }
           }
         }
@@ -1272,21 +1281,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              await getQuestionContent();
+              //  await getQuestionContent();
             }
           }
         }
         if (currentScreenNo.value == 13) {
           await tongDoanhThuTatcaSanPhamA5_2();
           await getMaNganhCN10To39();
-          await getQuestionContent();
-          await setSelectedQuestionGroup();
+          // await getQuestionContent();
+          // await setSelectedQuestionGroup();
 
-          scrollController.animateTo(0.0,
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.fastOutSlowIn);
+          // scrollController.animateTo(0.0,
+          //     duration: const Duration(milliseconds: 400),
+          //     curve: Curves.fastOutSlowIn);
         }
       }
+      await getQuestionContent();
       await setSelectedQuestionGroup();
 
       scrollController.animateTo(0.0,
@@ -2034,7 +2044,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           if (maVcpaCap5.a5_1_2 != null) {
             ///- Chỉ có 1 ngành san phẩm và Mã VCPA cấp 2=68 và  C1.1=1|2|3|4|5; =>
             ///Cơ sở chỉ có 1 Ngành là 41. Dịch vụ kinh doanh Bất động sản (Mã ngành cấp 2=68) mà địa điểm tại C1.1 khác mã 6. Cơ sở không có địa điểm cố định ;
-            var cap2 = maVcpaCap5.a5_1_1!.substring(0, 2);
+            var cap2 = maVcpaCap5.a5_1_2!.substring(0, 2);
             if (cap2 == '68') {
               if (c1_1Value != null && a1_1_DiaDiem.contains(c1_1Value)) {
                 return 'Cơ sở chỉ có 1 Ngành là 68. Dịch vụ kinh doanh Bất động sản (Mã ngành cấp 2=68) mà địa điểm tại C1.1 khác mã 6. Cơ sở không có địa điểm cố định';
@@ -5571,7 +5581,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   Future<String> validateAllFormV2() async {
     String result = '';
     var fieldNames = await getListFieldToValidateV2();
-    var res = getValidationFields();
+    var res = await getValidationFields();
 
     ///1. Lấy danh sách các bảng dữ liệu
     ///2. validationFields=Lặp fieldNames với các bảng dữ liệu đó để lấy ra các trường cần validate
@@ -6559,6 +6569,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           } else {
             await updateToDbSanPham(tablePhieuMauTBSanPham,
                 colPhieuMauTBSanPhamA5_1_2, idVal, vcpaCapx);
+            // if (spItem.a5_1_1 == null || spItem.a5_1_1 == '') {
+            //   if (item.tenSanPham != null && item.tenSanPham != '') {
+            //     await updateToDbSanPham(tablePhieuMauTBSanPham,
+            //         colPhieuMauTBSanPhamA5_1_1, idVal, item.tenSanPham);
+            //   }
+            // }
             // await updateToDbSanPham(
             //     tablePhieuMauTBSanPham, columnMaLV, idVal, maLV);
           }

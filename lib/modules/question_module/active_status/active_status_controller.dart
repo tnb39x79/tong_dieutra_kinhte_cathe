@@ -349,15 +349,7 @@ class ActiveStatusController extends BaseController {
 Future insertNewRecordSanPham() async {
     var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
     if (res == false) {
-      //var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
-      //     .selectMaNganhByIdCoSo(tblBkCoSoSXKD.value.iDCoSo!);
-      // var maNganhVcpa = '';
-      // if (maNganhs.isNotEmpty) {
-      //   maNganhVcpa = maNganhs.first;
-      // }
-      // var maxStt =
-      //     await phieuMauTBSanPhamProvider.getMaxSTTByIdCoso(currentIdCoSo!);
-      // maxStt = maxStt + 1;
+      
       var tblSp = TablePhieuMauTBSanPham(
           iDCoSo: currentIdCoSo,
           sTTSanPham: 1,
@@ -369,6 +361,7 @@ Future insertNewRecordSanPham() async {
       await phieuMauTBSanPhamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
     }
   }
+   
   ///END:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
   ///
 

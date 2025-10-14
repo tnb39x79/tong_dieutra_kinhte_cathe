@@ -44,6 +44,7 @@ class PhieuNganhTMSanPhamProvider
       element.createdAt = createdAt;
       //  element.updatedAt = createdAt;
       element.maDTV = AppPref.uid;
+
       ids.add(await db!.insert(tablePhieuNganhTMSanPham, element.toJson()));
     }
     return ids;
@@ -125,6 +126,28 @@ class PhieuNganhTMSanPhamProvider
     return maps;
   }
 
+  Future<List<Map>> selectA1TMByIdCoSo(String idCoso) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    String sql =
+        " SELECT $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamId, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamIDCoSo, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamSTT_SanPham, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMoTaSanPham, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamA1_2, ";
+    sql +=
+        " (SELECT MaLV FROM CT_DM_MoTaSanPham WHERE MaSanPham="'$tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5'" LIMIT 1) AS MaLV, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamCreatedAt, ";
+    sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamUpdatedAt ";
+    sql += " FROM $tablePhieuNganhTMSanPham ";
+    sql += "  WHERE $columnIDCoSo = '$idCoso' ";
+    sql += " AND $columnCreatedAt = '$createdAt' ";
+
+    log('selectA1TMByIdCoSo: $sql');
+    List<Map> maps = await db!.rawQuery(sql);
+    return maps;
+  }
+
   Future<List<Map>> selectByIdMaNganhC5(String idCoso, String maNganhC5) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
@@ -163,7 +186,7 @@ class PhieuNganhTMSanPhamProvider
     sql +=
         " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_1 as MoTaSanPham, ";
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamA1_2, ";
-    
+
     sql += " '${AppPref.uid}' as MADTV ";
     sql += " FROM $tablePhieuMauTBSanPham ";
     sql +=
@@ -325,6 +348,4 @@ class PhieuNganhTMSanPhamProvider
     return await database
         .rawQuery('DROP TABLE IF EXISTS $tablePhieuNganhTMSanPham');
   }
-
-  
 }

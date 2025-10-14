@@ -336,7 +336,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           String moTaSanPhamCau5_1 =
               controller.tblPhieuNganhCNDistinctCap5.isNotEmpty
                   ? controller.tblPhieuNganhCNDistinctCap5!
-                      .map((p) => p.moTaSanPham!)
+                      .map((p) => p.moTaSanPham ?? '')
                       .toList()
                       .join('; ')
                   : '';
@@ -355,9 +355,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         } else if (question.maCauHoi == maCauHoiTMGL6810 &&
             question.maPhieu == 4) {
           String moTaSanPhamCau5_1 =
-              controller.tblPhieuNganhTMSanPham.isNotEmpty
-                  ? controller.tblPhieuNganhTMSanPham!
-                      .map((p) => p.moTaSanPham!)
+              controller.tblPhieuNganhTMSanPhamView.isNotEmpty
+                  ? controller.tblPhieuNganhTMSanPhamView!
+                      .map((p) => p.moTaSanPham ?? '')
                       .toList()
                       .join('; ')
                   : '';
@@ -432,7 +432,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuVT) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamVTHanhKhach.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamVTHanhKhach
-              .map((p) => p.a5_1_1!)
+              .map((p) => p.a5_1_1 ?? '')
               .toList()
               .join('; ')
           : '';
@@ -440,7 +440,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuVT) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamVTHangHoa.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamVTHangHoa
-              .map((p) => p.a5_1_1!)
+              .map((p) => p.a5_1_1 ?? '')
               .toList()
               .join('; ')
           : '';
@@ -450,7 +450,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             question.maPhieu == AppDefine.maPhieuLTMau)) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamLT.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamLT
-              .map((p) => p.a5_1_1!)
+              .map((p) => p.a5_1_1 ?? '')
               .toList()
               .join('; ')
           : '';
@@ -458,7 +458,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuTM) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTMGL6810.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamTMGL6810
-              .map((p) => p.a5_1_1!)
+              .map((p) => p.a5_1_1 ?? '')
               .toList()
               .join('; ')
           : '';
@@ -466,7 +466,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuTM) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTM56.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamTM56
-              .map((p) => p.a5_1_1!)
+              .map((p) => p.a5_1_1 ?? '')
               .toList()
               .join('; ')
           : '';
@@ -2177,6 +2177,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                         ghiRoItem);
                                               },
                                               style: ElevatedButton.styleFrom(
+                                                  splashFactory:
+                                                      InkRipple.splashFactory,
                                                   fixedSize: const Size(80, 28),
                                                   foregroundColor: Colors.red,
                                                   backgroundColor: Colors.white,
@@ -2186,7 +2188,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               AppValues
-                                                                  .borderLv5)),
+                                                                  .borderLv1)),
                                                   elevation: 1.0,
                                                   side: const BorderSide(
                                                       color: Colors.red)),
@@ -3085,6 +3087,15 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                         margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                         padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
                         decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade200,
+                              offset: const Offset(0, 2),
+                              spreadRadius: 1,
+                              blurRadius: 4,
+                            ),
+                          ],
                           border: Border.all(color: greyDarkBorder, width: 1),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(5.0)),
@@ -3097,7 +3108,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                               Container(
                                   width: double.infinity,
                                   padding:
-                                      const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                                      const EdgeInsets.fromLTRB(16, 8, 16, 8),
                                   decoration: const BoxDecoration(
                                       gradient: LinearGradient(
                                         begin: Alignment.topLeft,
@@ -3141,6 +3152,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                         product.id);
                                                   },
                                                   style: ElevatedButton.styleFrom(
+                                                      splashFactory: InkRipple
+                                                          .splashFactory,
                                                       foregroundColor:
                                                           Colors.red,
                                                       backgroundColor:
@@ -3150,7 +3163,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius: BorderRadius
                                                               .circular(AppValues
-                                                                  .borderLv5)),
+                                                                  .borderLv1)),
                                                       elevation: 1.0,
                                                       side: const BorderSide(
                                                           color: Colors.red)),
@@ -3203,6 +3216,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                           label: const Text("Thêm sản phẩm"),
                           onPressed: () => controller.addNewRowProduct(),
                           style: ElevatedButton.styleFrom(
+                              splashFactory: InkRipple.splashFactory,
                               side: const BorderSide(
                                   width: 1.0, color: primaryLightColor),
                               shape: RoundedRectangleBorder(
@@ -3687,7 +3701,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           return Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-            margin: const EdgeInsets.only(top: 24),
+            margin: const EdgeInsets.fromLTRB(0, 16, 0, 16),
             decoration: BoxDecoration(
               border: Border.all(color: greyDarkBorder, width: 1),
               borderRadius: const BorderRadius.all(Radius.circular(5.0)),
@@ -3822,7 +3836,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                               Container(
                                   width: double.infinity,
                                   padding:
-                                      const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                                      const EdgeInsets.fromLTRB(16, 8, 16, 8),
                                   decoration: const BoxDecoration(
                                       gradient: LinearGradient(
                                         begin: Alignment.topLeft,
@@ -3869,6 +3883,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                             productCap5);
                                                   },
                                                   style: ElevatedButton.styleFrom(
+                                                      splashFactory: InkRipple
+                                                          .splashFactory,
                                                       fixedSize: Size(80, 24),
                                                       foregroundColor:
                                                           Colors.red,
@@ -3879,7 +3895,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius: BorderRadius
                                                               .circular(AppValues
-                                                                  .borderLv5)),
+                                                                  .borderLv1)),
                                                       elevation: 1.0,
                                                       side: const BorderSide(
                                                           color: Colors.red)),
@@ -4212,11 +4228,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Obx(() {
       var a1TValue =
           controller.getValueByFieldName(tablePhieuNganhTM, colPhieuNganhTMA1T);
-      if (controller.tblPhieuNganhTMSanPham != null &&
-          controller.tblPhieuNganhTMSanPham.isNotEmpty) {
+      if (controller.tblPhieuNganhTMSanPhamView != null &&
+          controller.tblPhieuNganhTMSanPhamView.isNotEmpty) {
         if (mainQuestion.danhSachCauHoiCon != null &&
             mainQuestion.danhSachCauHoiCon!.isNotEmpty) {
-          var lastProduct = controller.tblPhieuNganhTMSanPham.lastOrNull;
+          var lastProduct = controller.tblPhieuNganhTMSanPhamView.lastOrNull;
           int lastStt = 0;
           if (lastProduct != null) {
             lastStt = lastProduct.sTT_SanPham!;
@@ -4225,7 +4241,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               .where((x) => x.maCauHoi == colPhieuNganhTMA1T)
               .first;
           return Column(
-              children: controller.tblPhieuNganhTMSanPham
+              children: controller.tblPhieuNganhTMSanPhamView
                   .asMap()
                   .entries
                   .map((entry) {
@@ -4242,6 +4258,15 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
                     decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade200,
+                          offset: const Offset(0, 4),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                        ),
+                      ],
                       border: Border.all(color: greyDarkBorder, width: 1),
                       borderRadius:
                           const BorderRadius.all(Radius.circular(5.0)),
@@ -4277,7 +4302,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "${idx}. Mã sản phẩm: ${product.maNganhC5}", // - Ngành: ${product.maLV}",
+                                        "${idx}. Mã sản phẩm: ${product.maNganhC5}",// - Ngành: ${product.maLV}",
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -4285,16 +4310,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                               Color.fromARGB(255, 62, 65, 68),
                                         ),
                                       ),
-                                      // if (product.maLV != null &&
-                                      //     product.maLV != '')
-                                      //   Text(
-                                      //     "Mã SP: ${product.maNganhC5}",
-                                      //     style: const TextStyle(
-                                      //       fontSize: 18,
-                                      //       color:
-                                      //           Color.fromARGB(255, 62, 65, 68),
-                                      //     ),
-                                      //   ),
+                                      if (product.maLV != null &&
+                                          product.maLV != '')
+                                        Text(
+                                          "Ngành: ${product.maLV}",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color:
+                                                Color.fromARGB(255, 62, 65, 68),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ])),
@@ -4343,7 +4368,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   }
 
   buildNganhTMItem(
-      QuestionCommonModel question, TablePhieuNganhTMSanPham product,
+      QuestionCommonModel question, TablePhieuNganhTMSanPhamView product,
       {QuestionCommonModel? parentQestion}) {
     // controller.getValueSanPham(question.bangDuLieu!, 'A5_1_2', product.id!);
     //  switch (question.maCauHoi) {
@@ -4359,7 +4384,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   }
 
   renderNganhTMType(
-      QuestionCommonModel question, TablePhieuNganhTMSanPham product) {
+      QuestionCommonModel question, TablePhieuNganhTMSanPhamView product) {
     if (question.maCauHoi == "A1_1") {
       var a1_1Val = controller.getValueSanPhamByStt(tablePhieuMauTBSanPham,
           colPhieuMauTBSanPhamA5_1_1, product.sTT_SanPham!);
@@ -5143,16 +5168,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       if (selectedValue != null && selectedValue != '') {
         // Đối với ngành G: 500 < Số tiền vốn < 5
         if (product != null) {
-          TablePhieuNganhTMSanPham? productTMSP =
-              product as TablePhieuNganhTMSanPham;
-          // if (productTMSP != null && productTMSP.maLV == 'G') {
-          //   if (selectedValue < 5) {
-          //     return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra nhỏ hơn 5 triệu đồng có đúng không?';
-          //   }
-          //   if (selectedValue > 500) {
-          //     return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra lớn hơn 500 triệu đồng có đúng không?';
-          //   }
-          // }
+          TablePhieuNganhTMSanPhamView? productTMSP =
+              product as TablePhieuNganhTMSanPhamView;
+          if (productTMSP != null && productTMSP.maLV == 'G') {
+            if (selectedValue < 5) {
+              return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra nhỏ hơn 5 triệu đồng có đúng không?';
+            }
+            if (selectedValue > 500) {
+              return 'Cảnh báo: Đối với ngành G: C1 số tiền vốn đã bỏ ra lớn hơn 500 triệu đồng có đúng không?';
+            }
+          }
           //Đối với ngành 6810: 5000 < Số tiền vốn < 500
           if (productTMSP.maNganhC5 != null) {
             if (productTMSP.maNganhC5!.substring(0, 4) == '6810') {
