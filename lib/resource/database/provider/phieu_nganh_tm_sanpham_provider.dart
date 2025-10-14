@@ -193,6 +193,8 @@ class PhieuNganhTMSanPhamProvider
         " LEFT JOIN $tablePhieuNganhTMSanPham  ON $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2=$tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5 ";
     sql +=
         " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham=$tablePhieuNganhTMSanPham.$colPhieuMauTBSanPhamSTTSanPham ";
+    sql +=
+        " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamIDCoSo=$tablePhieuNganhTMSanPham.$columnIDCoSo ";
     sql += " WHERE $tablePhieuMauTBSanPham.$columnIDCoSo = '$idCoso'  ";
     sql += " AND $tablePhieuMauTBSanPham.$columnCreatedAt = '$createdAt' ";
     sql +=

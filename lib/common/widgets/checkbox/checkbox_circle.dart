@@ -67,7 +67,7 @@ class CheckBoxCircle extends StatelessWidget {
     }
     return Text(
       _text,
-      style: styles ?? styleMediumBold.copyWith(color: textColor, height: 1.3),
+      style: styles ?? styleMediumBold.copyWith(color: textColor, height: 1),
     );
   }
 }

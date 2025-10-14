@@ -171,7 +171,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
 
     String sql = "SELECT distinct $tablePhieuMauTBSanPham.$columnIDCoSo, ";
     sql +=
-        " IFNULL($tablePhieuNganhCN.$colPhieuNganhCNSTT_SanPham,1) AS STT_SanPham, ";
+        " $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham AS STT_SanPham, ";
     sql += "$tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2 as MaNganhC5, ";
     sql += " $tablePhieuNganhCN.$colPhieuNganhCNA1_1, ";
     sql += " $tablePhieuNganhCN.$colPhieuNganhCNA1_2, ";
@@ -180,7 +180,8 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     sql += " '${AppPref.uid}' as MADTV ";
     sql += " FROM $tablePhieuMauTBSanPham";
     sql +=
-        " LEFT JOIN $tablePhieuNganhCN ON $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2=$tablePhieuNganhCN.$colPhieuNganhCNMaNganhC5";
+        " LEFT JOIN $tablePhieuNganhCN ON $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2=$tablePhieuNganhCN.$colPhieuNganhCNMaNganhC5 ";
+        sql +=   " AND $tablePhieuMauTBSanPham.$columnIDCoSo=$tablePhieuNganhCN.$columnIDCoSo ";
    //sql +=   " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham=$tablePhieuNganhCN.$colPhieuNganhCNSTT_SanPham";
     sql += " WHERE $tablePhieuMauTBSanPham.$columnIDCoSo = '$idCoso' ";
     sql += " AND $tablePhieuMauTBSanPham.$columnCreatedAt = '$createdAt'";

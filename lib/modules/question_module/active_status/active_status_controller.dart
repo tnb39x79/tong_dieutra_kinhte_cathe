@@ -181,7 +181,9 @@ class ActiveStatusController extends BaseController {
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
           currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
         if (tblBkCoSoSXKD.value.maTinhTrangHD != null &&
-            tblBkCoSoSXKD.value.maTinhTrangHD != 1 && tblBkCoSoSXKD.value.isSyncSuccess!=null && tblBkCoSoSXKD.value.isSyncSuccess==1 ) {
+            tblBkCoSoSXKD.value.maTinhTrangHD != 1 &&
+            tblBkCoSoSXKD.value.isSyncSuccess != null &&
+            tblBkCoSoSXKD.value.isSyncSuccess == 1) {
           String msgContent =
               'Cơ sở này đã được xác nhận mất mẫu, không thể cập nhật trạng thái "Phỏng vấn"';
           Get.dialog(DialogWidget(
@@ -200,7 +202,8 @@ class ActiveStatusController extends BaseController {
           return;
         } else {
           //TODO NHÓ KIỂM TRA LẠI MÃ TÌNH TRẠNG MÀ GỌI HÀM insert sản phẩm cho đúng.
-          await insertNewPhieu07MauTBCxx();
+          int maTTHD = currentIndex.value + 1;
+          await insertNewPhieu07MauTBCxx(maTTHD);
           Get.toNamed(
             AppRoutes.generalInformation,
             arguments: currentIndex.value + 1,
@@ -247,7 +250,8 @@ class ActiveStatusController extends BaseController {
       int tinhTrangHD = currentIndex.value + 1;
       var item = tinhTrangHDs[currentIndex.value];
 
-      String msgContent = 'Cơ sở rơi vào tình trạng mất mẫu/không điều tra được cơ sở này.';
+      String msgContent =
+          'Cơ sở rơi vào tình trạng mất mẫu/không điều tra được cơ sở này.';
       if (item != null) {
         msgContent = '${item.tenTinhTrang}';
       }
@@ -289,7 +293,7 @@ class ActiveStatusController extends BaseController {
     }
   }
 
-  insertNewPhieu07MauTBCxx() async {
+  insertNewPhieu07MauTBCxx(int maTTHD) async {
     var maTrangThaiHD = currentIndex.value + 1;
     if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
@@ -303,7 +307,12 @@ class ActiveStatusController extends BaseController {
           maNganhMau = maNganhs.first;
           await initRecordPhieu(tblBkCoSoSXKD.value, maNganhMau, maTrangThaiHD);
           await initRecordPhieuMauTB(tblBkCoSoSXKD.value);
+          //if (maTTHD == 1) {
           await initRecordPhieuMauTBNganhSanPham();
+          // }
+          // else{
+          //   await insertNewRecordSanPham();
+          // }
         }
       }
     }
@@ -381,25 +390,24 @@ class ActiveStatusController extends BaseController {
     }
   }
 
-  // Future insertNewRecordSanPham() async {
-  //   var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
-  //   if (res == false) {
-  //     var tblSp = TablePhieuMauTBSanPham(
-  //         iDCoSo: currentIdCoSo,
-  //         sTTSanPham: 1,
-  //         isDefault: 1,
-  //         maDTV: AppPref.uid);
-  //     List<TablePhieuMauTBSanPham> tblSps = [];
-  //     tblSps.add(tblSp);
+//Cho tình trạng hoạt động là
+  Future insertNewRecordSanPham() async {
+    var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
+    if (res == false) {
+      var tblSp = TablePhieuMauTBSanPham(
+          iDCoSo: currentIdCoSo,
+          sTTSanPham: 1,
+          isDefault: 1,
+          maDTV: AppPref.uid);
+      List<TablePhieuMauTBSanPham> tblSps = [];
+      tblSps.add(tblSp);
 
-  //     await phieuMauTBSanPhamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
-  //   }
-  // }
+      await phieuMauTBSanPhamProvider.insert(tblSps, AppPref.dateTimeSaveDB!);
+    }
+  }
 
   ///END:: Phieu07 - Khởi tạo 1 record mặc định nếu bảng chưa có record nào.
   ///
-
-   
 
   @override
   void onDetached() {

@@ -3834,8 +3834,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (product.sTT_SanPham! !=
-                                controller.sttProduct.value)
+                            if (product.sTT_SanPham! !=productCap5.sTT_SanPham)
                               Container(
                                   width: double.infinity,
                                   padding:
@@ -4457,25 +4456,25 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     if (question.maCauHoi == colPhieuMauTBA1_3_5) {
       var a1_3_2val = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA1_3_2);
-      if (value == 6 && a1_3_2val > 2008) {
+      if (value == 6 && a1_3_2val!=null && a1_3_2val > 2008) {
         return Text(
           'Lỗi: Dưới 17 tuổi mà đã tốt nghiệp cao đẳng.',
           style: const TextStyle(color: errorColor),
         );
       }
-      if (value == 7 && a1_3_2val > 2006) {
+      if (value == 7 && a1_3_2val!=null && a1_3_2val > 2006) {
         return Text(
           'Lỗi: Tuổi dưới 19 mà tốt nghiệp đại học.',
           style: const TextStyle(color: errorColor),
         );
       }
-      if (value == 8 && a1_3_2val > 2005) {
+      if (value == 8 && a1_3_2val!=null && a1_3_2val > 2005) {
         return Text(
           'Lỗi: Dưới 20 tuổi mà đã tốt nghiệp thạc sỹ.',
           style: const TextStyle(color: errorColor),
         );
       }
-      if ((value == 9 || value == 10) && a1_3_2val > 2002) {
+      if ((value == 9 || value == 10) && a1_3_2val!=null && a1_3_2val > 2002) {
         return Text(
           'Lỗi: Dưới 23 tuổi mà tốt nghiệp trình độ tiến sỹ hoặc sau tiến sỹ.',
           style: const TextStyle(color: errorColor),
