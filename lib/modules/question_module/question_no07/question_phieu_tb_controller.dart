@@ -917,23 +917,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await fetchData();
 
     String validateResult = await validateAllFormV2();
-    // if (validateResult != '') {
-    //   await insertUpdateXacNhanLogicWithoutEnable(
-    //       currentScreenNo.value,
-    //       currentIdCoSo!,
-    //       int.parse(currentMaDoiTuongDT!),
-    //       0,
-    //       validateResult,
-    //       int.parse(currentMaTinhTrangDT!));
-    // } else {
-    //   await insertUpdateXacNhanLogicWithoutEnable(
-    //       currentScreenNo.value,
-    //       currentIdCoSo!,
-    //       int.parse(currentMaDoiTuongDT!),
-    //       1,
-    //       '',
-    //       int.parse(currentMaTinhTrangDT!));
-    // }
+    if (validateResult != '') {
+      await insertUpdateXacNhanLogicWithoutEnable(
+          currentScreenNo.value,
+          currentIdCoSo!,
+          int.parse(currentMaDoiTuongDT!),
+          0,
+          validateResult,
+          int.parse(currentMaTinhTrangDT!));
+    } else {
+      await insertUpdateXacNhanLogicWithoutEnable(
+          currentScreenNo.value,
+          currentIdCoSo!,
+          int.parse(currentMaDoiTuongDT!),
+          1,
+          '',
+          int.parse(currentMaTinhTrangDT!));
+    }
     if (currentScreenNo.value > 0) {
       currentScreenNo(currentScreenNo.value - 1);
       currentScreenIndex(currentScreenIndex.value - 1);
@@ -2908,13 +2908,36 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (question.maCauHoi == colPhieuMauTBA1_1 &&
         question.maPhieu == AppDefine.maPhieuTB) {
+      if (fieldName != null &&
+          fieldName != '' &&
+          fieldName == colPhieuMauTBA1_1) {
+        var a1_1Value = tblPhieuCT[colPhieuMauTBA1_1];
+        if (validateEmptyString(a1_1Value.toString())) {
+          return 'Vui lòng chọn giá trị Ghi rõ.';
+        }
+        return null;
+      }
+    }
+    if (question.maCauHoi == colPhieuMauTBA1_1 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
       if (fieldName != null && fieldName != '' && fieldName.contains('GhiRo')) {
-        var a1_1Value = '';
-        a1_1Value = tblPhieuCT[colPhieuMauTBA1_1];
+        var a1_1Value = tblPhieuCT[colPhieuMauTBA1_1];
         if (a1_1Value.toString() == '5') {
           if (inputValue == null || inputValue == "null" || inputValue == "") {
             return 'Vui lòng nhập giá trị Ghi rõ.';
           }
+        }
+        return null;
+      }
+    }
+    if (question.maCauHoi == colPhieuMauTBA1_2 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (fieldName != null &&
+          fieldName != '' &&
+          fieldName == colPhieuMauTBA1_2) {
+        var a1_2Value = tblPhieuCT[colPhieuMauTBA1_2];
+        if (validateEmptyString(a1_2Value)) {
+          return 'Vui lòng chọn giá trị Ghi rõ.';
         }
         return null;
       }
@@ -5578,16 +5601,41 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   ///VALIDATE KHI NHẤN NÚT Tiếp tục V2
+  ///1. Lấy danh sách các bảng dữ liệu
+  ///2. validationFields=Lặp fieldNames với các bảng dữ liệu đó để lấy ra các trường cần validate
   Future<String> validateAllFormV2() async {
     String result = '';
-    var fieldNames = await getListFieldToValidateV2();
-    var res = await getValidationFields();
+    // var fieldNames = await getListFieldToValidateV2();
+    var fieldNames = await getValidationFields();
 
-    ///1. Lấy danh sách các bảng dữ liệu
-    ///2. validationFields=Lặp fieldNames với các bảng dữ liệu đó để lấy ra các trường cần validate
-    ///3.
-    // var tblPMauTB = tblPhieuMauTB.value.toJson();
-    // var tblPMauTB = tblPhieuMauTB.value.toJson();
+    var tblTB = tblPhieuMauTB.value.toJson();
+    var tblVT = tblPhieuNganhVT.value.toJson();
+    var tblLT = tblPhieuNganhLT.value.toJson();
+    var tblTM = tblPhieuNganhTM.value.toJson();
+
+    for (var item in fieldNames) {
+      if (currentScreenNo.value == item.manHinh) {
+        if (item.tenTruong != null && item.tenTruong != '') {
+          if (item.bangDuLieu == tablePhieuMauTB &&
+              item.maPhieu == AppDefine.maPhieuTB) {
+            if (tblTB.containsKey(item.tenTruong)) {
+              var val = tblTB[item.tenTruong];
+              if (item.bangChiTieu == "2" ||
+                  (item.bangChiTieu != null && item.bangChiTieu != '') ||
+                  (item.bangChiTieu!.contains('CT_DM'))) {
+                var validRes = onValidateInputChiTieuDongCot(item.question!,
+                    item.chiTieuCot, item.chiTieuDong, val.toString(),
+                    typing: false, fieldName: item.tenTruong);
+                if (validRes != null && validRes != '') {
+                  result = await generateMessageV2(item.mucCauHoi, validRes);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 
     return result;
   }
@@ -8741,9 +8789,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       String? mucCauHoi, String? validResultMessage,
       {int? loaiCauHoi, String? maCauHoi}) async {
     String result = '';
-    if (maCauHoi == 'E') {
-      return 'Vui lòng kiểm tra lại phần E:\r\n${validResultMessage!}';
-    }
+
     result = '$mucCauHoi: Vui lòng nhập giá trị.';
     if (loaiCauHoi == AppDefine.loaiCauHoi_1) {
       result = '$mucCauHoi: Vui lòng chọn giá trị.';

@@ -66,7 +66,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
                 index: controller.tinhTrangHDs.indexOf(e),
                 currentIndex: controller.currentIndex.value,
                 //  indexFillColor: controller.tinhTrangHDs.lastIndexOf(controller.tinhTrangHDs.last),
-                indexFillColor: AppDefine.maTinhTrangHDTuKeKhai - 1,
+                
                 onPressed: controller.onPressedCheckBox,
               ),
             ),

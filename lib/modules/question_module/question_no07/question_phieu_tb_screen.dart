@@ -471,6 +471,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               .join('; ')
           : '';
     }
+    else if(question.maCauHoi=="A1_3" && question.maPhieu==AppDefine.maPhieuTB){
+      moTaSanPhamCaux=controller.tblPhieu.value.tenChuCoSo??'';
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
