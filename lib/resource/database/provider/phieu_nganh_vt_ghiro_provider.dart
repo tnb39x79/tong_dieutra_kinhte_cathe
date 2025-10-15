@@ -286,7 +286,7 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
         }
       });
     }
-   int res=result.toInt();
+    int res = result.toInt();
     return res;
   }
 
@@ -360,6 +360,14 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
   Future<int> deleteByCoSoId(String coSoId) {
     var res = db!.delete(tablePhieuNganhVTGhiRo,
         where: '''  $columnIDCoSo = '$coSoId'  ''');
+    return res;
+  }
+
+  Future<int> deleteByCoSoIdMaCauHoi(String coSoId, String maCauHois) {
+    var maCauHoi=maCauHois.split(';');
+    var res = db!.delete(tablePhieuNganhVTGhiRo,
+        where:
+            '''  $columnIDCoSo = '$coSoId' AND $colPhieuNganhVTGhiRoMaCauHoi in (${maCauHoi.map((e) => "'$e'").join(', ')}''');
     return res;
   }
 

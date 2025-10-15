@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -470,9 +472,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               .toList()
               .join('; ')
           : '';
-    }
-    else if(question.maCauHoi=="A1_3" && question.maPhieu==AppDefine.maPhieuTB){
-      moTaSanPhamCaux=controller.tblPhieu.value.tenChuCoSo??'';
+    } else if (question.maCauHoi == "A1_3" &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      moTaSanPhamCaux = controller.tblPhieu.value.tenChuCoSo ?? '';
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2134,7 +2136,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                         if (ghiRoItem.sTT! != 1)
                           Container(
                               width: double.infinity,
-                              padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                               decoration: const BoxDecoration(
                                   gradient: LinearGradient(
                                     begin: Alignment.topLeft,
@@ -3152,7 +3154,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                               ElevatedButton(
                                                   onPressed: () {
                                                     controller.onDeleteProduct(
-                                                        product.id);
+                                                        product.id,
+                                                        maNganhCap5:
+                                                            product.a5_1_2 ??
+                                                                '');
                                                   },
                                                   style: ElevatedButton.styleFrom(
                                                       splashFactory: InkRipple
@@ -3793,6 +3798,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           var tblNganhCN = controller.tblPhieuNganhCN
               .where((x) => x.maNganhC5 == productCap5.maNganhC5)
               .toList();
+          var minStt = controller.tblPhieuNganhCN
+              .where((x) => x.maNganhC5 == productCap5.maNganhC5)
+              .reduce((a, b) => a.sTT_SanPham! < b.sTT_SanPham! ? a : b);
+
           // var lastProduct = controller.tblPhieuNganhCN.lastOrNull;
           // int lastStt = 0;
           // if (lastProduct != null) {
@@ -3808,122 +3817,137 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
             return Column(
               children: [
-                if (product.sTT_SanPham! == controller.sttProduct.value)
-                  ListView.builder(
-                      //   key: ValueKey(product),
-                      itemCount: questionsCon.length,
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        QuestionCommonModel questionC = questionsCon[index];
-                        return questionNganhCNItem(
-                            questionC, product, productCap5);
-                      })
-                else
-                  Obx(() {
-                    return Container(
-                        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: const Color.fromARGB(255, 4, 116, 228),
-                              width: 1),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5.0)),
+                // if (product.sTT_SanPham! == minStt.sTT_SanPham)
+                //   ListView.builder(
+                //       //   key: ValueKey(product),
+                //       itemCount: questionsCon.length,
+                //       physics: const NeverScrollableScrollPhysics(),
+                //       shrinkWrap: true,
+                //       itemBuilder: (context, index) {
+                //         QuestionCommonModel questionC = questionsCon[index];
+                //         return questionNganhCNItem(
+                //             questionC, product, productCap5);
+                //       })
+                //   else
+                //   Obx(() {
+                Container(
+                    margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                    decoration: BoxDecoration(
+                      // boxShadow: [
+                      //   BoxShadow(
+                      //     color: Colors.white70,
+                      //     offset: const Offset(0, 4),
+                      //     spreadRadius: 2,
+                      //     blurRadius: 8,
+                      //   ),
+                      // ],
+                      // border: Border.all(color: primary1LighterColor, width: 1),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white60,
+                          offset: const Offset(0, 2),
+                          spreadRadius: 1,
+                          blurRadius: 4,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (product.sTT_SanPham! !=productCap5.sTT_SanPham)
-                              Container(
-                                  width: double.infinity,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                                  decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Color.fromARGB(255, 234, 232, 226),
-                                          Color.fromARGB(255, 234, 232, 226),
-                                          Color.fromARGB(255, 234, 232, 226),
-                                          Color.fromARGB(255, 234, 232, 226),
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(5.0),
-                                          topRight: Radius.circular(
-                                              5.0))), // Adds a gradient background and rounded corners to the container
-                                  child: Column(
+                      ],
+                      border: Border.all(color: primary1LighterColor, width: 1),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (product.sTT_SanPham! != productCap5.sTT_SanPham)
+                          Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      //  Color(0xFFD7D0B4),
+                                      //  Color(0xFFD7D0B4),
+                                      //  Color(0xFFD7D0B4),
+                                      //   Color(0xFFD7D0B4)
+                                      primary1LighterColor,
+                                      primary1LighterColor,
+                                      primary1LighterColor,
+                                      primary1LighterColor
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5.0),
+                                      topRight: Radius.circular(
+                                          5.0))), // Adds a gradient background and rounded corners to the container
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Sản phẩm thứ ${idxSp}",
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color.fromARGB(
-                                                    255, 62, 65, 68),
-                                              ),
-                                            ),
-                                            if (controller
-                                                    .allowDeleteProductNganhCN(
-                                                        product) ==
-                                                true)
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    controller
-                                                        .onDeleteProductNganhCN(
-                                                            product,
-                                                            productCap5);
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                      splashFactory: InkRipple
-                                                          .splashFactory,
-                                                      fixedSize: Size(80, 24),
-                                                      foregroundColor:
-                                                          Colors.red,
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      surfaceTintColor:
-                                                          Colors.white,
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius
-                                                              .circular(AppValues
-                                                                  .borderLv1)),
-                                                      elevation: 1.0,
-                                                      side: const BorderSide(
-                                                          color: Colors.red)),
-                                                  child: const Text('Xoá')),
-                                          ],
+                                        Text(
+                                          "Sản phẩm thứ ${idxSp}",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Color.fromARGB(255, 62, 65, 68),
+                                          ),
                                         ),
-                                      ])),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                              child: ListView.builder(
-                                  key: ValueKey<QuestionCommonModel>(
-                                      mainQuestion),
-                                  itemCount: questionsCon.length,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    QuestionCommonModel questionC =
-                                        questionsCon[index];
-                                    return questionNganhCNItem(
-                                        questionC, product, productCap5);
-                                  }),
-                            )
-                          ],
-                        ));
-                  }),
+                                        if (controller
+                                                .allowDeleteProductNganhCN(
+                                                    product) ==
+                                            true)
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                controller
+                                                    .onDeleteProductNganhCN(
+                                                        product, productCap5);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                  splashFactory:
+                                                      InkRipple.splashFactory,
+                                                  fixedSize: Size(80, 24),
+                                                  foregroundColor: Colors.red,
+                                                  backgroundColor: Colors.white,
+                                                  surfaceTintColor:
+                                                      Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              AppValues
+                                                                  .borderLv1)),
+                                                  elevation: 1.0,
+                                                  side: const BorderSide(
+                                                      color: Colors.red)),
+                                              child: const Text('Xoá')),
+                                      ],
+                                    ),
+                                  ])),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                          child: ListView.builder(
+                              key: ValueKey<QuestionCommonModel>(mainQuestion),
+                              itemCount: questionsCon.length,
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                QuestionCommonModel questionC =
+                                    questionsCon[index];
+                                return questionNganhCNItem(
+                                    questionC, product, productCap5);
+                              }),
+                        )
+                      ],
+                    )),
+                //   }),
                 const SizedBox(
                   height: 8,
                 )
@@ -4304,7 +4328,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "${idx}. Mã sản phẩm: ${product.maNganhC5}",// - Ngành: ${product.maLV}",
+                                        "${idx}. Mã sản phẩm: ${product.maNganhC5}", // - Ngành: ${product.maLV}",
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -4456,25 +4480,27 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     if (question.maCauHoi == colPhieuMauTBA1_3_5) {
       var a1_3_2val = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA1_3_2);
-      if (value == 6 && a1_3_2val!=null && a1_3_2val > 2008) {
+      if (value == 6 && a1_3_2val != null && a1_3_2val > 2008) {
         return Text(
           'Lỗi: Dưới 17 tuổi mà đã tốt nghiệp cao đẳng.',
           style: const TextStyle(color: errorColor),
         );
       }
-      if (value == 7 && a1_3_2val!=null && a1_3_2val > 2006) {
+      if (value == 7 && a1_3_2val != null && a1_3_2val > 2006) {
         return Text(
           'Lỗi: Tuổi dưới 19 mà tốt nghiệp đại học.',
           style: const TextStyle(color: errorColor),
         );
       }
-      if (value == 8 && a1_3_2val!=null && a1_3_2val > 2005) {
+      if (value == 8 && a1_3_2val != null && a1_3_2val > 2005) {
         return Text(
           'Lỗi: Dưới 20 tuổi mà đã tốt nghiệp thạc sỹ.',
           style: const TextStyle(color: errorColor),
         );
       }
-      if ((value == 9 || value == 10) && a1_3_2val!=null && a1_3_2val > 2002) {
+      if ((value == 9 || value == 10) &&
+          a1_3_2val != null &&
+          a1_3_2val > 2002) {
         return Text(
           'Lỗi: Dưới 23 tuổi mà tốt nghiệp trình độ tiến sỹ hoặc sau tiến sỹ.',
           style: const TextStyle(color: errorColor),

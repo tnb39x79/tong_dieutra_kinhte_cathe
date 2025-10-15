@@ -176,13 +176,14 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     sql += " $tablePhieuNganhCN.$colPhieuNganhCNA1_1, ";
     sql += " $tablePhieuNganhCN.$colPhieuNganhCNA1_2, ";
     sql += "$tablePhieuNganhCN.$colPhieuNganhCNA2_1, ";
-    sql += " $tablePhieuNganhCN.$colPhieuNganhCNA2_2, "; 
+    sql += " $tablePhieuNganhCN.$colPhieuNganhCNA2_2, ";
     sql += " '${AppPref.uid}' as MADTV ";
     sql += " FROM $tablePhieuMauTBSanPham";
     sql +=
         " LEFT JOIN $tablePhieuNganhCN ON $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2=$tablePhieuNganhCN.$colPhieuNganhCNMaNganhC5 ";
-        sql +=   " AND $tablePhieuMauTBSanPham.$columnIDCoSo=$tablePhieuNganhCN.$columnIDCoSo ";
-   //sql +=   " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham=$tablePhieuNganhCN.$colPhieuNganhCNSTT_SanPham";
+    sql +=
+        " AND $tablePhieuMauTBSanPham.$columnIDCoSo=$tablePhieuNganhCN.$columnIDCoSo ";
+    //sql +=   " AND $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamSTTSanPham=$tablePhieuNganhCN.$colPhieuNganhCNSTT_SanPham";
     sql += " WHERE $tablePhieuMauTBSanPham.$columnIDCoSo = '$idCoso' ";
     sql += " AND $tablePhieuMauTBSanPham.$columnCreatedAt = '$createdAt'";
     sql +=
@@ -206,7 +207,6 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
       }
     }
     return 0;
-    
   }
 
   Future<int> getIsDefaultByIdCoso(String idCoso) async {
@@ -241,7 +241,9 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     }
     return 0;
   }
-    Future<int> countMaNganhCap5ByIdCoso(String idCoso,String maNganhCap5) async {
+
+  Future<int> countMaNganhCap5ByIdCoso(
+      String idCoso, String maNganhCap5) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     List<Map> map = await db!.rawQuery('''
@@ -366,8 +368,8 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     return result;
   }
 
-  ///Mã ngành cấp 2 là ngành công nghiệp (mã ngành >=10 và <=39) 
- Future<List<String>> getMaNganhCN10To39(String idCoso) async {
+  ///Mã ngành cấp 2 là ngành công nghiệp (mã ngành >=10 và <=39)
+  Future<List<String>> getMaNganhCN10To39(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> result = [];
     List<Map> maps = await db!.rawQuery('''
@@ -386,6 +388,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     }
     return result;
   }
+
   Future<int> deleteById(int id) {
     var res = db!.delete(tablePhieuNganhCN, where: '''  $columnId = '$id'  ''');
     return res;
@@ -397,9 +400,15 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     return res;
   }
 
+  Future<int> deleteByCoSoIdMaNganhCap5(String coSoId, String maNganhCap5) {
+    var res = db!.delete(tablePhieuNganhCN,
+        where:
+            '''  $columnIDCoSo = '$coSoId' AND $colPhieuNganhCNMaNganhC5='$maNganhCap5'  ''');
+    return res;
+  }
+
   @override
   Future deletedTable(Database database) async {
     return await database.rawQuery('DROP TABLE IF EXISTS $tablePhieuNganhCN');
   }
- 
 }

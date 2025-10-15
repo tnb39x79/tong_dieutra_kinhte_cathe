@@ -17,7 +17,8 @@ class DialogBarrierWidget extends StatelessWidget {
       this.isCancelButton = true,
       this.color,
       this.content2Color,
-      this.content2StyleText});
+      this.content2StyleText,
+      this.btnAcceptColor});
 
   ///Agree Acrtion
   final Function() onPressedPositive;
@@ -34,6 +35,7 @@ class DialogBarrierWidget extends StatelessWidget {
   final String? content2;
   final Color? content2Color;
   final TextStyle? content2StyleText;
+  final Color? btnAcceptColor;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +111,7 @@ class DialogBarrierWidget extends StatelessWidget {
         const SizedBox(width: AppValues.padding),
         Expanded(
           child: WidgetButton(
-              title: confirmText ?? "agree".tr, onPressed: onPressedPositive),
+              title: confirmText ?? "agree".tr, onPressed: onPressedPositive,background: btnAcceptColor,),
         ),
       ],
     );

@@ -109,7 +109,20 @@ class PhieuNganhTMProvider extends BaseDBProvider<TablePhieuNganhTM> {
 
     log('UPDATE PHIEU 04_C32: ${i.toString()}');
   }
+Future<int> updateNullValues(String idCoso, List<String> fieldNames) async {
+    int result = 0;
 
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<String> fields = [];
+    for (var item in fieldNames) {
+      fields.add(" $item = null ");
+    }
+    String sql =
+        "UPDATE $tablePhieuNganhTM SET ${fields.join(',')} WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+    result = await db!.rawUpdate(sql);
+
+    return result;
+  }
   Future<List<Map>> selectListByIdCoSo(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
