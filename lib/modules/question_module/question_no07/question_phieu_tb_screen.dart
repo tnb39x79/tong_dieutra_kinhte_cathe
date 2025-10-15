@@ -2409,10 +2409,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   : true,
               value: a1Val,
               validator: (inputValue) =>
-                  controller.onValidateInputChiTieuDongCot(
-                      question, chiTieuCot, chiTieuDong, inputValue,
-                      typing: true,
-                      fieldName: fieldNameMaCauHoiMaSo,
+                  controller.onValidateInputChiTieuDongCotGhiRo(
+                      question, chiTieuCot, chiTieuDong,  fieldNameMaCauHoiMaSo,inputValue,
+                      typing: true, 
                       ghiRoItem: ghiRoItem),
               warningText: warningWithText(question, a1Val,
                   fieldName: fieldNameMaCauHoiMaSo),
@@ -2469,9 +2468,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 ? false
                 : true,
             value: a1Val,
-            validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
-                question, chiTieuCot, chiTieuDong, inputValue,
-                fieldName: fieldNameMaCauHoiMaSo),
+            validator: (inputValue) => controller.onValidateInputChiTieuDongCotGhiRo(
+                question, chiTieuCot, chiTieuDong, fieldNameMaCauHoiMaSo,inputValue,ghiRoItem: ghiRoItem,
+                typing: true  ),
             flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
           ),
@@ -2506,9 +2505,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         titleText: 'Ghi rõ',
         level: 3,
         value: a1GhiRoVal,
-        validator: (inputValue) => controller.onValidateInputChiTieuDongCot(
-            question, chiTieuCot, chiTieuDong, inputValue,
-            fieldName: fieldNameMaCauHoiMaSo),
+        validator: (inputValue) => controller.onValidateInputChiTieuDongCotGhiRo(
+            question, chiTieuCot, chiTieuDong, 
+             fieldNameMaCauHoiMaSo,inputValue,typing: true,ghiRoItem: ghiRoItem),
       );
     });
   }
@@ -2572,40 +2571,80 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               '${question.maPhieu}${question.maCauHoi}_$fieldNameMaCauHoiMaSo$val';
         }
       }
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InputIntChiTieu(
-              key: ValueKey(vKey),
-              type: 'int',
-              onChange: (value) => controller.onChangeInputChiTieuDongCot(
-                  question.bangDuLieu!, question.maCauHoi, fieldNameMaCauHoiMaSo, value,
-                  question: question,
-                  chiTieuCot: chiTieuCot,
-                  chiTieuDong: chiTieuDong),
-              chiTieuCot: chiTieuCot,
-              chiTieuDong: chiTieuDong,
-              showDvtTheoChiTieuDong:
-                  question.buocNhay == 'exit' ? true : false,
-              subName: subName,
-              enable: (chiTieuDong.loaiCauHoi == AppDefine.loaiCauHoi_9 ||
-                      ((question.maCauHoi == "A1" || question.maCauHoi == "A7") &&
-                          question.maPhieu == AppDefine.maPhieuVT &&
-                          chiTieuDong.loaiChiTieu == "2" &&
-                          (chiTieuCot.maChiTieu == AppDefine.maChiTieu_3 ||
-                              chiTieuCot.maChiTieu == AppDefine.maChiTieu_4)))
-                  ? false
-                  : true,
-              value: val,
-              validator: (inputValue) =>
-                  controller.onValidateInputChiTieuDongCot(
-                      question, chiTieuCot, chiTieuDong, inputValue,
-                      typing: true, fieldName: fieldNameMaCauHoiMaSo),
-              flteringTextInputFormatterRegExp: wFilterInput,
-              warningText: buildWarningTextDongCot(question, chiTieuDong, chiTieuCot, fieldNameMaCauHoiMaSo, val)),
-        ],
-      );
+      bool msall = (question.maCauHoi == "A1" || question.maCauHoi == "A7") &&
+          question.maPhieu == AppDefine.maPhieuVT &&
+          (chiTieuCot.maChiTieu == AppDefine.maChiTieu_3 ||
+              chiTieuCot.maChiTieu == AppDefine.maChiTieu_4);
+      bool mso14 = (question.maCauHoi == "A1" || question.maCauHoi == "A7") &&
+          question.maPhieu == AppDefine.maPhieuVT &&
+          chiTieuCot.maChiTieu == AppDefine.maChiTieu_4 &&
+          chiTieuDong.maSo == '14';
+      if (chiTieuDong.maSo == '14' &&
+          chiTieuCot.maChiTieu == AppDefine.maChiTieu_3) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InputIntChiTieu(
+                key: ValueKey(vKey),
+                type: 'int',
+                onChange: (value) => controller.onChangeInputChiTieuDongCot(
+                    question.bangDuLieu!,
+                    question.maCauHoi,
+                    fieldNameMaCauHoiMaSo,
+                    value,
+                    question: question,
+                    chiTieuCot: chiTieuCot,
+                    chiTieuDong: chiTieuDong),
+                chiTieuCot: chiTieuCot,
+                chiTieuDong: chiTieuDong,
+                showDvtTheoChiTieuDong: question.buocNhay == 'exit'
+                    ? true
+                    : false,
+                subName: subName,
+                enable: (  mso14) ? false : true,
+                value: val,
+                validator: (inputValue) =>
+                    controller.onValidateInputChiTieuDongCot(
+                        question, chiTieuCot, chiTieuDong, inputValue,
+                        typing: true, fieldName: fieldNameMaCauHoiMaSo),
+                flteringTextInputFormatterRegExp: wFilterInput,
+                warningText: buildWarningTextDongCot(question, chiTieuDong,
+                    chiTieuCot, fieldNameMaCauHoiMaSo, val)),
+          ],
+        );
+      } else {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InputIntChiTieu(
+                key: ValueKey(vKey),
+                type: 'int',
+                onChange: (value) => controller.onChangeInputChiTieuDongCot(
+                    question.bangDuLieu!,
+                    question.maCauHoi,
+                    fieldNameMaCauHoiMaSo,
+                    value,
+                    question: question,
+                    chiTieuCot: chiTieuCot,
+                    chiTieuDong: chiTieuDong),
+                chiTieuCot: chiTieuCot,
+                chiTieuDong: chiTieuDong,
+                showDvtTheoChiTieuDong: question.buocNhay == 'exit'
+                    ? true
+                    : false,
+                subName: subName,
+                enable: (msall) ? false : true,
+                value: val,
+                validator: (inputValue) =>
+                    controller.onValidateInputChiTieuDongCot(
+                        question, chiTieuCot, chiTieuDong, inputValue,
+                        typing: true, fieldName: fieldNameMaCauHoiMaSo),
+                flteringTextInputFormatterRegExp: wFilterInput,
+                warningText: buildWarningTextDongCot(question, chiTieuDong,
+                    chiTieuCot, fieldNameMaCauHoiMaSo, val)),
+          ],
+        );
+      }
     });
   }
 

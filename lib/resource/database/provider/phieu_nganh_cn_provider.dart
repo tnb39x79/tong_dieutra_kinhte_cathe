@@ -48,6 +48,29 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     return ids;
   }
 
+  Future<List<int>> insertCN(
+      List<TablePhieuNganhCN> value, String createdAt) async {
+    if (value.isNotEmpty) {
+      var stt = value
+          .where((x) => x.a1_2 != null)
+          .reduce((a, b) => a.sTT_SanPham! < b.sTT_SanPham! ? a : b)
+          .sTT_SanPham;
+      var sttTemp = stt ?? 1;
+      List<int> ids = [];
+      for (var element in value) {
+        element.createdAt = createdAt;
+        element.updatedAt = createdAt;
+        element.maDTV = AppPref.uid;
+        element.sTT_SanPham = sttTemp;
+        ids.add(await db!.insert(tablePhieuNganhCN, element.toJson()));
+        sttTemp += 1;
+      }
+
+      return ids;
+    }
+    return [];
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''

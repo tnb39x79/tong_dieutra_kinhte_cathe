@@ -203,6 +203,8 @@ class ActiveStatusController extends BaseController {
         } else {
           //TODO NHÓ KIỂM TRA LẠI MÃ TÌNH TRẠNG MÀ GỌI HÀM insert sản phẩm cho đúng.
           int maTTHD = currentIndex.value + 1;
+           bKCoSoSXKDProvider.updateTrangThaiDTTinhTrangHD(
+                currentIdCoSo!, maTTHD);
           await insertNewPhieu07MauTBCxx(maTTHD);
           Get.toNamed(
             AppRoutes.generalInformation,

@@ -79,8 +79,7 @@ class _SearchDanTocState extends State<SearchDanToc> {
                 itemBuilder: (BuildContext context, int index) {
                   final TableDmDanToc option = options.elementAt(index);
                   String title = option.tenDanToc!;
-                  String subTitle =
-                      'Tên gọi khác: ${option.tenGoiKhac}';
+                  String subTitle = 'Tên gọi khác: ${option.tenGoiKhac}';
                   return Column(
                     children: [
                       GestureDetector(
@@ -95,7 +94,7 @@ class _SearchDanTocState extends State<SearchDanToc> {
                                 fontStyle: FontStyle.normal,
                                 fontWeight: FontWeight.w500),
                           ),
-                           subtitle: Text(
+                          subtitle: Text(
                             subTitle,
                             style: const TextStyle(
                                 fontStyle: FontStyle.italic,
@@ -128,8 +127,10 @@ class _SearchDanTocState extends State<SearchDanToc> {
               onFieldSubmitted();
             },
             decoration: InputDecoration(
+                //  contentPadding: const EdgeInsets.only(top: 4, left: 16, right: 16),
                 contentPadding:
-                    const EdgeInsets.only(top: 4, left: 16, right: 16),
+                    const EdgeInsets.only(bottom: 0.0, top: 4.0, left: 0),
+                prefix: const Padding(padding: EdgeInsets.only(left: 16.0)),
                 hintStyle: styleSmall.copyWith(color: greyColor),
                 hintText: 'Nhập vào đây',
                 fillColor: backgroundWhiteColor,
