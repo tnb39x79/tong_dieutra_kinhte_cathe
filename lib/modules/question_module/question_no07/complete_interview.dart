@@ -9,6 +9,7 @@ import 'package:gov_statistics_investigation_economic/config/constants/app_color
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
+import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_phieu_tb_controller.dart';
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
@@ -28,7 +29,6 @@ class CompletedResult {
 class CompleteInterviewScreen extends StatefulWidget {
   const CompleteInterviewScreen({super.key});
 
- 
   @override
   State<CompleteInterviewScreen> createState() =>
       _CompleteInterviewScreenState();
@@ -54,7 +54,6 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
 
   @override
   void initState() {
-   
     super.initState();
     completeInfo = controller.completeInfo;
     _initData();
@@ -63,7 +62,6 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     _giaiTrinhController.addListener(_setEdited);
     _lyDoThoiGianController.addListener(_setEdited);
     _lyDoDinhViController.addListener(_setEdited);
-    
   }
 
   @override
@@ -361,13 +359,27 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     //   controller.showError("Vui lòng nhập lý do thời gian phỏng vấn ngắn");
     //   return;
     // }
-
+    if (controller.validateEmptyString(hoTenController.text) ||
+        hoTenController.text.isEmpty) {
+      controller.showError("Vui lòng nhập Họ và tên người cung cấp thông tin");
+      return;
+    }
+    if (controller.validateEmptyString(soDienThoaiController.text) ||
+        soDienThoaiController.text.isEmpty) {
+      controller
+          .showError("Vui lòng nhập Số điện thoại người cung cấp thông tin");
+      return;
+    }
     if (!_hasCoordinates() && _lyDoDinhViController.text.isEmpty) {
       controller.showError("Vui lòng nhập lý do định vị không chính xác");
       return;
     }
 
     final completeInfoNew = controller.completeInfo;
+
+    mapDataInfo(completeInfoNew, columnNguoiTraLoi, hoTenController.text);
+    mapDataInfo(completeInfoNew, columnSoDienThoai, soDienThoaiController.text);
+
     mapDataInfo(
         completeInfoNew, columnKinhDo, double.tryParse(_lngController.text));
     mapDataInfo(

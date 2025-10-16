@@ -375,7 +375,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 ),
                 buildNganhTM(question)
               ]);
-        } else if (question.bangChiTieu == "2") {
+        } 
+        
+        else if (question.bangChiTieu == "2") {
           return buildQuestionChiTieuDongCot(question);
         } else {
           //Bỏ không kiểm tra B, C, E
@@ -2410,8 +2412,12 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               value: a1Val,
               validator: (inputValue) =>
                   controller.onValidateInputChiTieuDongCotGhiRo(
-                      question, chiTieuCot, chiTieuDong,  fieldNameMaCauHoiMaSo,inputValue,
-                      typing: true, 
+                      question,
+                      chiTieuCot,
+                      chiTieuDong,
+                      fieldNameMaCauHoiMaSo,
+                      inputValue,
+                      typing: true,
                       ghiRoItem: ghiRoItem),
               warningText: warningWithText(question, a1Val,
                   fieldName: fieldNameMaCauHoiMaSo),
@@ -2468,9 +2474,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 ? false
                 : true,
             value: a1Val,
-            validator: (inputValue) => controller.onValidateInputChiTieuDongCotGhiRo(
-                question, chiTieuCot, chiTieuDong, fieldNameMaCauHoiMaSo,inputValue,ghiRoItem: ghiRoItem,
-                typing: true  ),
+            validator: (inputValue) =>
+                controller.onValidateInputChiTieuDongCotGhiRo(question,
+                    chiTieuCot, chiTieuDong, fieldNameMaCauHoiMaSo, inputValue,
+                    ghiRoItem: ghiRoItem, typing: true),
             flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
           ),
@@ -2505,9 +2512,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         titleText: 'Ghi rõ',
         level: 3,
         value: a1GhiRoVal,
-        validator: (inputValue) => controller.onValidateInputChiTieuDongCotGhiRo(
-            question, chiTieuCot, chiTieuDong, 
-             fieldNameMaCauHoiMaSo,inputValue,typing: true,ghiRoItem: ghiRoItem),
+        validator: (inputValue) =>
+            controller.onValidateInputChiTieuDongCotGhiRo(question, chiTieuCot,
+                chiTieuDong, fieldNameMaCauHoiMaSo, inputValue,
+                typing: true, ghiRoItem: ghiRoItem),
       );
     });
   }
@@ -2601,7 +2609,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                     ? true
                     : false,
                 subName: subName,
-                enable: (  mso14) ? false : true,
+                enable: (mso14) ? false : true,
                 value: val,
                 validator: (inputValue) =>
                     controller.onValidateInputChiTieuDongCot(
@@ -4279,7 +4287,16 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               QuestionCommonModel questionC = questionsCon[index];
-              return buildNganhTMDetail(questionC, parentQuestion: question);
+              return Column(
+                children: [
+                  if (questionC.maCauHoi != "A1T")
+                    RichTextQuestion(
+                      questionC.tenCauHoi ?? '',
+                      level: questionC.cap ?? 2,
+                    ),
+                  buildNganhTMDetail(questionC, parentQuestion: question)
+                ],
+              );
             })
       ]);
     }
@@ -4290,146 +4307,166 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
   buildNganhTMDetail(QuestionCommonModel mainQuestion,
       {QuestionCommonModel? parentQuestion, String? subName}) {
-    return Obx(() {
-      var a1TValue =
-          controller.getValueByFieldName(tablePhieuNganhTM, colPhieuNganhTMA1T);
-      if (controller.tblPhieuNganhTMSanPhamView != null &&
-          controller.tblPhieuNganhTMSanPhamView.isNotEmpty) {
-        if (mainQuestion.danhSachCauHoiCon != null &&
-            mainQuestion.danhSachCauHoiCon!.isNotEmpty) {
-          var lastProduct = controller.tblPhieuNganhTMSanPhamView.lastOrNull;
-          int lastStt = 0;
-          if (lastProduct != null) {
-            lastStt = lastProduct.sTT_SanPham!;
-          }
-          var questionA1T = parentQuestion!.danhSachCauHoiCon!
-              .where((x) => x.maCauHoi == colPhieuNganhTMA1T)
-              .first;
-          return Column(
-              children: controller.tblPhieuNganhTMSanPhamView
-                  .asMap()
-                  .entries
-                  .map((entry) {
-            var idx = entry.key;
-            idx = idx + 1;
-            var product = entry.value;
-            List<QuestionCommonModel> questionsCon =
-                mainQuestion.danhSachCauHoiCon!;
-
+    if (mainQuestion.maCauHoi == "A1T") {
+      return Obx(() {
+        var a1TValue = controller.getValueByFieldName(
+            tablePhieuNganhTM, colPhieuNganhTMA1T);
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          InputIntView(
+            key: ValueKey(
+                '${mainQuestion.maPhieu}${mainQuestion.maCauHoi}_$a1TValue'),
+            question: mainQuestion,
+            onChange: (value) => (),
+            value: a1TValue,
+            enable: false,
+            type: "double",
+            hintText: "Tự động tính",
+            decimalDigits: 2,
+            txtStyle: styleMedium.copyWith(color: primaryColor),
+          )
+        ]);
+      });
+    } else {
+      return Obx(() {
+        if (controller.tblPhieuNganhTMSanPhamView != null &&
+            controller.tblPhieuNganhTMSanPhamView.isNotEmpty) {
+          if (mainQuestion.danhSachCauHoiCon != null &&
+              mainQuestion.danhSachCauHoiCon!.isNotEmpty) {
+            var lastProduct = controller.tblPhieuNganhTMSanPhamView.lastOrNull;
+            int lastStt = 0;
+            if (lastProduct != null) {
+              lastStt = lastProduct.sTT_SanPham!;
+            }
+            // var questionA1T = parentQuestion!.danhSachCauHoiCon!
+            //     .where((x) => x.maCauHoi == colPhieuNganhTMA1T)
+            //     .first;
             return Column(
-              children: [
-                //  Obx(() {
-                Container(
-                    margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade200,
-                          offset: const Offset(0, 4),
-                          spreadRadius: 2,
-                          blurRadius: 8,
-                        ),
-                      ],
-                      border: Border.all(color: greyDarkBorder, width: 1),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(5.0)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                            decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color.fromARGB(255, 240, 212, 154),
-                                    Color.fromARGB(255, 234, 232, 226),
-                                    Color.fromARGB(255, 234, 232, 226),
-                                    Color.fromARGB(255, 240, 212, 154),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(5.0),
-                                    topRight: Radius.circular(
-                                        5.0))), // Adds a gradient background and rounded corners to the container
-                            child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "${idx}. Mã sản phẩm: ${product.maNganhC5}", // - Ngành: ${product.maLV}",
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              Color.fromARGB(255, 62, 65, 68),
-                                        ),
-                                      ),
-                                      if (product.maLV != null &&
-                                          product.maLV != '')
+                children: controller.tblPhieuNganhTMSanPhamView
+                    .asMap()
+                    .entries
+                    .map((entry) {
+              var idx = entry.key;
+              idx = idx + 1;
+              var product = entry.value;
+              List<QuestionCommonModel> questionsCon =
+                  mainQuestion.danhSachCauHoiCon!;
+
+              return Column(
+                children: [
+                  //  Obx(() {
+                  Container(
+                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            offset: const Offset(0, 4),
+                            spreadRadius: 2,
+                            blurRadius: 8,
+                          ),
+                        ],
+                        border: Border.all(color: greyDarkBorder, width: 1),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5.0)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color.fromARGB(255, 240, 212, 154),
+                                      Color.fromARGB(255, 234, 232, 226),
+                                      Color.fromARGB(255, 234, 232, 226),
+                                      Color.fromARGB(255, 240, 212, 154),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5.0),
+                                      topRight: Radius.circular(
+                                          5.0))), // Adds a gradient background and rounded corners to the container
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
                                         Text(
-                                          "Ngành: ${product.maLV}",
+                                          "${idx}. Mã sản phẩm: ${product.maNganhC5}", // - Ngành: ${product.maLV}",
                                           style: const TextStyle(
                                             fontSize: 18,
+                                            fontWeight: FontWeight.bold,
                                             color:
                                                 Color.fromARGB(255, 62, 65, 68),
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                ])),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                          child: ListView.builder(
-                              key: ValueKey<QuestionCommonModel>(mainQuestion),
-                              itemCount: questionsCon.length,
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                QuestionCommonModel questionC =
-                                    questionsCon[index];
-                                return buildNganhTMItem(questionC, product);
-                              }),
-                        )
-                      ],
-                    )),
-                //}),
-                if (lastStt > 0 && lastStt == product.sTT_SanPham!) ...[
-                  InputIntView(
-                    key: ValueKey(
-                        '${questionA1T.maPhieu}${questionA1T.maCauHoi}_$a1TValue'),
-                    question: questionA1T,
-                    onChange: (value) => (),
-                    value: a1TValue,
-                    enable: false,
-                    type: "double",
-                    hintText: "Tự động tính",
-                    decimalDigits: 2,
-                    txtStyle: styleMedium.copyWith(color: primaryColor),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                ]
-              ],
-            );
-          }).toList());
+                                        if (product.maLV != null &&
+                                            product.maLV != '')
+                                          Text(
+                                            "Ngành: ${product.maLV}",
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              color: Color.fromARGB(
+                                                  255, 62, 65, 68),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ])),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                            child: ListView.builder(
+                                key:
+                                    ValueKey<QuestionCommonModel>(mainQuestion),
+                                itemCount: questionsCon.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  QuestionCommonModel questionC =
+                                      questionsCon[index];
+                                  return buildNganhTMItem(questionC, product);
+                                }),
+                          )
+                        ],
+                      )),
+                  //}),
+                  if (lastStt > 0 && lastStt == product.sTT_SanPham!) ...[
+                    // InputIntView(
+                    //   key: ValueKey(
+                    //       '${questionA1T.maPhieu}${questionA1T.maCauHoi}_$a1TValue'),
+                    //   question: questionA1T,
+                    //   onChange: (value) => (),
+                    //   value: a1TValue,
+                    //   enable: false,
+                    //   type: "double",
+                    //   hintText: "Tự động tính",
+                    //   decimalDigits: 2,
+                    //   txtStyle: styleMedium.copyWith(color: primaryColor),
+                    // ),
+                    // const SizedBox(
+                    //   height: 15,
+                    // ),
+                  ]
+                ],
+              );
+            }).toList());
+          }
+          return const SizedBox();
         }
         return const SizedBox();
-      }
-      return const SizedBox();
-    });
+      });
+    }
   }
 
   buildNganhTMItem(
@@ -4490,7 +4527,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 value),
             value: val,
             type: "double",
-            validator: (String? value) => controller.onValidate(
+            validator: (String? value) => controller.onValidateNganhTM(
                 question.bangDuLieu!,
                 question.maCauHoi!,
                 question.maCauHoi,
@@ -4499,7 +4536,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.giaTriLN,
                 question.loaiCauHoi!,
                 true,
-                question.maPhieu!),
+                question.maPhieu!,
+                product: product),
             flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
             showDtv: true,
