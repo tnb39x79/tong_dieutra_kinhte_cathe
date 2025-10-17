@@ -102,6 +102,7 @@ class ActiveStatusController extends BaseController {
 
   @override
   void onInit() async {
+    super.onInit();
     setLoading(true);
 
     try {
@@ -123,7 +124,6 @@ class ActiveStatusController extends BaseController {
       errorLogRepository.sendErrorLog(
           ErrorLogModel(errorCode: "", errorMessage: e.toString()));
     }
-    super.onInit();
   }
 
   onPressedCheckBox(int p1) {
@@ -203,8 +203,8 @@ class ActiveStatusController extends BaseController {
         } else {
           //TODO NHÓ KIỂM TRA LẠI MÃ TÌNH TRẠNG MÀ GỌI HÀM insert sản phẩm cho đúng.
           int maTTHD = currentIndex.value + 1;
-           bKCoSoSXKDProvider.updateTrangThaiDTTinhTrangHD(
-                currentIdCoSo!, maTTHD);
+          bKCoSoSXKDProvider.updateTrangThaiDTTinhTrangHD(
+              currentIdCoSo!, maTTHD);
           await insertNewPhieu07MauTBCxx(maTTHD);
           Get.toNamed(
             AppRoutes.generalInformation,
@@ -311,6 +311,7 @@ class ActiveStatusController extends BaseController {
           await initRecordPhieuMauTB(tblBkCoSoSXKD.value);
           //if (maTTHD == 1) {
           await initRecordPhieuMauTBNganhSanPham();
+          // await insertNewRecordSanPham();
           // }
           // else{
           //   await insertNewRecordSanPham();
@@ -371,10 +372,30 @@ class ActiveStatusController extends BaseController {
     }
   }
 
+  // Future initRecordPhieuMauTBNganhSanPham() async {
+  //   var phieuSp = await phieuMauTBSanPhamProvider.isExistProductByMaNganhC5(
+  //       currentIdCoSo!, tblBkCoSoSXKDNganhSanPham.value.maNganh!);
+  //   if (!phieuSp) {
+  //     var tblMauTBSp = TablePhieuMauTBSanPham(
+  //         iDCoSo: currentIdCoSo,
+  //         sTTSanPham: 1,
+  //         maNganhC5: tblBkCoSoSXKDNganhSanPham.value.maNganh!,
+  //         a5_1_1: tblBkCoSoSXKDNganhSanPham.value.tenNganh!,
+  //         a5_1_2: tblBkCoSoSXKDNganhSanPham.value.maNganh!,
+  //         isDefault: 1,
+  //         maDTV: AppPref.uid);
+  //     List<TablePhieuMauTBSanPham> tblSanPhams = [];
+  //     tblSanPhams.add(tblMauTBSp);
+  //     await phieuMauTBSanPhamProvider.insert(
+  //         tblSanPhams, AppPref.dateTimeSaveDB!);
+  //     await phieuMauTBSanPhamProvider.updateDefaultByIdCoso(
+  //         currentIdCoSo, tblBkCoSoSXKDNganhSanPham.value.maNganh!, null);
+  //   }
+  // }
+
   Future initRecordPhieuMauTBNganhSanPham() async {
-    var phieuSp = await phieuMauTBSanPhamProvider.isExistProductByMaNganhC5(
-        currentIdCoSo!, tblBkCoSoSXKDNganhSanPham.value.maNganh!);
-    if (!phieuSp) {
+    var res = await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
+    if (res == false) {
       var tblMauTBSp = TablePhieuMauTBSanPham(
           iDCoSo: currentIdCoSo,
           sTTSanPham: 1,

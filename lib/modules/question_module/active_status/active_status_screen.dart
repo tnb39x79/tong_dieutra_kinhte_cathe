@@ -30,8 +30,8 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
   }
 
   Widget appBarTitle() {
-     var t =
-        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
+    var t ='status_active'.tr  ;
+    var s='${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
     return (controller.subTitleBar == null || controller.subTitleBar == "")
         ? Text(t, style: styleMediumBold)
         : ListTile(
@@ -41,7 +41,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
               style: styleMediumBoldAppBarHeader,
               textAlign: TextAlign.left,
             ),
-            subtitle: Text(controller.subTitleBar.value,
+            subtitle: Text(s,
                 style: const TextStyle(color: Colors.white)),
             titleAlignment: ListTileTitleAlignment.center,
           );
@@ -51,9 +51,82 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
     return Padding(
       padding: const EdgeInsets.all(AppValues.padding),
       child: Column(
-        children: [Expanded(child: Obx(() => _question())), _button()],
+        children: [
+        Obx(() =>  wTitle()),
+          const SizedBox(height: 16),
+          Expanded(child: Obx(() => _question())),
+          _button()
+        ],
       ),
     );
+  }
+
+  Widget wTitle() {
+    
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+            text: TextSpan(style: styleLargeBold, children: [
+          TextSpan(
+              text: 'Tên cơ sở: ',
+              style: styleLargeBold.copyWith(color: blackText)),
+          TextSpan(
+              text: '${controller.tblBkCoSoSXKD.value.tenCoSo??''.toUpperCase()}',
+              style: styleLargeBold.copyWith(color: primaryColor))
+        ])),
+        RichText(
+            text: TextSpan(style: styleLargeBold, children: [
+          TextSpan(
+              text: 'Tên chủ cơ sở: ',
+              style: styleLargeBold.copyWith(color: blackText)),
+          TextSpan(
+              text:
+                  '${controller.tblBkCoSoSXKD.value.tenChuCoSo??''.toUpperCase()}',
+              style: styleLargeBold.copyWith(color: primaryColor))
+        ])),
+        RichText(
+            text: TextSpan(style: styleLargeBold, children: [
+          TextSpan(
+              text: 'Ngành sản phẩm: ',
+              style: styleLargeBold.copyWith(color: blackText)),
+          TextSpan(
+              text:
+                  '${controller.tblBkCoSoSXKDNganhSanPham.value.maNganh??''} - ${controller.tblBkCoSoSXKDNganhSanPham.value.tenNganh??''}.',
+              style: styleLargeBold.copyWith(color: primaryColor))
+        ])),
+         const SizedBox(height: 16),
+          Text(
+            'Chọn tình trạng hoạt động của sơ cở:',
+            style: styleLargeBold.copyWith(color: blackText),
+          )
+      ],
+    );
+  }
+
+  Widget wTitleV() {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+              text: TextSpan(style: styleLargeBold, children: [
+            TextSpan(
+                text:
+                    'Cơ sở "${controller.tblBkCoSoSXKD.value.tenCoSo!.toUpperCase()}" của ${controller.tblBkCoSoSXKD.value.tenChuCoSo} đang SXKD ngành sản phẩm là: ',
+                style: styleLargeBold.copyWith(color: blackText)),
+            TextSpan(
+                text:
+                    '${controller.tblBkCoSoSXKDNganhSanPham.value.maNganh} - ${controller.tblBkCoSoSXKDNganhSanPham.value.tenNganh}.',
+                style: styleLargeBold.copyWith(color: primaryColor))
+          ])),
+          const SizedBox(height: 16),
+          Text(
+            'Chọn tình trạng hoạt động của sơ cở:',
+            style: styleLargeBold.copyWith(color: blackText),
+          )
+        ]);
   }
 
   Widget _question() {
@@ -66,7 +139,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
                 index: controller.tinhTrangHDs.indexOf(e),
                 currentIndex: controller.currentIndex.value,
                 //  indexFillColor: controller.tinhTrangHDs.lastIndexOf(controller.tinhTrangHDs.last),
-                
+
                 onPressed: controller.onPressedCheckBox,
               ),
             ),

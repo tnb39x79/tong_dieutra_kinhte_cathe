@@ -3893,7 +3893,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.white60,
+                          color:greyLight,
                           offset: const Offset(0, 2),
                           spreadRadius: 1,
                           blurRadius: 4,

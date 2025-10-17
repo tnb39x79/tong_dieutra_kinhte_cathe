@@ -138,10 +138,10 @@ const String colPhieuNganhVTA10_M = 'A10_M';
 const String colPhieuNganhVTCreatedAt = 'CreatedAt';
 const String colPhieuNganhVTpdatedAt = 'UpdatedAt';
 
-String maCauHoiVTHK="A_I_0";
-String maCauHoiVTHKMau="A_I_M_0";
-String maCauHoiVTHH="A_II_0";
-String maCauHoiHHMau="A_II_M_0";
+String maCauHoiVTHK = "A_I_0";
+String maCauHoiVTHKMau = "A_I_M_0";
+String maCauHoiVTHH = "A_II_0";
+String maCauHoiHHMau = "A_II_M_0";
 
 List<String> fieldNamesPhan6HKTB = [
   colPhieuNganhVTA1_1_1,
@@ -199,7 +199,6 @@ List<String> fieldNamesPhan6HKTB = [
   colPhieuNganhVTA5,
   colPhieuNganhVTA6,
 ];
- 
 
 List<String> fieldNamesPhan6HKMau = [
   colPhieuNganhVTA1_1_1,
@@ -412,7 +411,23 @@ List<String> fieldNamesPhan6HHMau = [
   colPhieuNganhVTA10_M,
 ];
 
- 
+List<String> fieldNamesVTHKHHMau = [
+  colPhieuNganhVTA1_M,
+  colPhieuNganhVTA2_M,
+  colPhieuNganhVTA3_M,
+  colPhieuNganhVTA4_M,
+  colPhieuNganhVTA5_M,
+  colPhieuNganhVTA1_M,
+  colPhieuNganhVTA2_M,
+  colPhieuNganhVTA3_M,
+  colPhieuNganhVTA4_M,
+  colPhieuNganhVTA5_M,
+  colPhieuNganhVTA6_M,
+  colPhieuNganhVTA7_M,
+  colPhieuNganhVTA8_M,
+  colPhieuNganhVTA9_M,
+  colPhieuNganhVTA10_M
+];
 
 class TablePhieuNganhVT {
   int? id;

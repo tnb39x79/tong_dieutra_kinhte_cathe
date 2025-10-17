@@ -29,6 +29,7 @@ class WidgetButtonNext extends StatelessWidget {
             overlayColor: WidgetStateProperty.all(primaryLightColor),
             splashFactory: InkRipple.splashFactory,
           ),
+          
           child: Row(
             children: [
               Expanded(

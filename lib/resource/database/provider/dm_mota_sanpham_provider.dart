@@ -343,7 +343,22 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
     return result.isNotEmpty;
   }
- 
+
+Future<List<String>> kiemTraMaNganhCap1BCDEXoaByMaVCPA(String vcpaCap5Inputs) async {
+    List<String> result = [];
+    var vcpa5Inputs = vcpaCap5Inputs.split(';');
+    String sql =
+        "SELECT $columnDmMoTaSPMaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5Inputs.map((e) => "'$e'").join(', ')})  AND $columnDmMoTaSPMaLV in ('B','C','D','E')";
+    List<Map> maps = await db!.rawQuery(sql);
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result.add(value);
+        }
+      });
+    }
+    return result;
+  }
 
   ///G: 4513, 4520, 45413, 4542, 461,.....
   ///L 6810
@@ -551,6 +566,27 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return result.isNotEmpty;
   }
 
+  Future<List<String>> kiemTraMaNganhCap2XoaByMaSanPham5(
+      String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
+    List<String> result = [];
+    //var vcpas = vcpaCap5s.map((e) => "'$e'").join(', ');
+    var vcpaQuiDinhs = vcpaQuiDinh.split(';');
+    var vcpa2DieuKiens = maSanPhamPhieuMauTBSanPham.split(';');
+    String sql =
+        "SELECT $columnDmMoTaSPMaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa2DieuKiens.map((e) => "'$e'").join(', ')}) AND substr($columnDmMoTaSPMaSanPham,1,2) in (${vcpaQuiDinhs.map((e) => "'$e'").join(', ')})";
+    print('sql $sql');
+    List<Map> maps = await db!.rawQuery(sql);
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result.add(value);
+        }
+      });
+    }
+    print('kiemTraMaNganhCap2ByMaSanPham5result $result');
+    return result;
+  }
+
   Future<bool> kiemTraMaNganhCap5ByMaSanPham5(
       String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
     List<String> result = [];
@@ -569,7 +605,24 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
     return result.isNotEmpty;
   }
-
+ Future<List<String>> kiemTraMaNganhCap5XoaByMaSanPham5(
+      String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
+    List<String> result = [];
+    //var vcpas = vcpaCap5s.map((e) => "'$e'").join(', ');
+    var vcpaQuiDinhs = vcpaQuiDinh.split(';');
+    var vcpa5DieuKiens = maSanPhamPhieuMauTBSanPham.split(';');
+    String sql =
+        "SELECT $tableDmMoTaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5DieuKiens.map((e) => "'$e'").join(', ')}) AND substr($columnDmMoTaSPMaSanPham,1,5) in (${vcpaQuiDinhs.map((e) => "'$e'").join(', ')})";
+    List<Map> maps = await db!.rawQuery(sql);
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result.add(value);
+        }
+      });
+    }
+    return result;
+  }
   Future<List<String>> getMaNganhCap5ByMaSanPham5(
       String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
     List<String> result = [];

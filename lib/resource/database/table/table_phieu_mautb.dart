@@ -135,6 +135,51 @@ var fieldNameA3T = [
   colPhieuMauTBA3_2,
 ];
 
+var fieldNamePhieuMau = [
+  colPhieuMauTBA6_1_1_2,
+  colPhieuMauTBA6_1_1_3,
+  colPhieuMauTBA6_1_1_1_2,
+  colPhieuMauTBA6_1_1_1_3,
+  colPhieuMauTBA6_1_1_2_2,
+  colPhieuMauTBA6_1_1_2_3,
+  colPhieuMauTBA6_1_2_2,
+  colPhieuMauTBA6_1_2_3,
+  colPhieuMauTBA6_1_3_2,
+  colPhieuMauTBA6_1_3_3,
+  colPhieuMauTBA6_1_4_2,
+  colPhieuMauTBA6_1_4_3,
+  colPhieuMauTBA6_1_5_2,
+  colPhieuMauTBA6_1_5_3,
+  colPhieuMauTBA6_1_6_2,
+  colPhieuMauTBA6_1_6_3,
+  colPhieuMauTBA6_1_6_1_2,
+  colPhieuMauTBA6_1_6_1_3,
+  colPhieuMauTBA6_1_7_2,
+  colPhieuMauTBA6_1_7_3,
+  colPhieuMauTBA6_1_7_1_2,
+  colPhieuMauTBA6_1_7_1_3,
+  colPhieuMauTBA6_1_8_2,
+  colPhieuMauTBA6_1_8_3,
+  colPhieuMauTBA6_1_9_2,
+  colPhieuMauTBA6_1_9_3,
+  colPhieuMauTBA6_1_10_2,
+  colPhieuMauTBA6_1_10_3,
+  colPhieuMauTBA6_1_10_1_2,
+  colPhieuMauTBA6_1_10_1_3,
+  colPhieuMauTBA6_1_11_2,
+  colPhieuMauTBA6_1_11_3,
+  colPhieuMauTBA7_3_M,
+  colPhieuMauTBA7_4_M,
+  colPhieuMauTBA7_5_M,
+  colPhieuMauTBA7_6_M,
+  colPhieuMauTBA7_7_M,
+  colPhieuMauTBA7_8_M,
+  colPhieuMauTBA9_M,
+  colPhieuMauTBA10_M,
+  colPhieuMauTBA10_1_M,
+  colPhieuMauTBA10_2_M
+];
+
 class TablePhieuMauTB {
   int? id;
   String? iDCoSo;

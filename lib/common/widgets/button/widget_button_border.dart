@@ -18,7 +18,8 @@ class WidgetButtonBorder extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppValues.borderLv5),
           ),
-          side: BorderSide(width: 1, color: btnColor ?? primaryColor),
+          side: BorderSide(width: 1, color: btnColor!=null ? btnColor!.withValues(alpha:  0.5) : primaryColor),
+           splashFactory: InkRipple.splashFactory,
         ),
         child: Text(title,
             style: styleSmallBold.copyWith(color: btnColor ?? primaryColor)),

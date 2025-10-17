@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:stream_transform/stream_transform.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/common/money_formatters/formatters/formatter_utils.dart';
@@ -323,6 +325,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await getLinhVucSanPham();
     await getMoTaSanPham();
     await getDsMaSanPhamNganhCN();
+
     setLoading(false);
     super.onInit();
   }
@@ -818,6 +821,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         idManHinh == 14) {
       await getLoaiNangLuongA6_1();
     }
+    if (idManHinh == 2) {
+      await kiemTraCau4T();
+    }
     if (idManHinh == 13) {
       await tongDoanhThuTatcaSanPhamA5_2();
       await getMaNganhCN10To39();
@@ -1053,6 +1059,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (currentScreenNo.value == 3) {
       await updateNganhAll();
+      var res = await warningMaNganhVoiBangKe(true, isCancel: true);
+      if (res == 'cancel') {
+        return;
+      }
+      await kiemTraCacNganh();
+    }
+    if (currentScreenNo.value == 2) {
+      var res = await kiemTraCau4T();
+      if (res == 'kethucpv' || res == 'cancel') {
+        return;
+      }
     }
     await fetchData();
 
@@ -1704,6 +1721,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           ///Hiển thị popup
           ///KIỂM TRA: CÂU 4T. TỔNG DOANH THU NĂM 2025 < 100 TRIỆU ĐỒNG
           ///VÀ CÂU 4.1_SỐ THÁNG CƠ SỞ CÓ HOẠT ĐỘNG SXKD < 3 THÁNG -> CƠ SỞ KHÔNG THUỘC ĐỐI TƯỢNG ĐIỀU TRA -> KẾT THÚC PHỎNG VẤN
+
           await kiemTraCau4T();
         } else if (maCauHoi == colPhieuMauTBA4_2) {
           ///Hiển thị popup
@@ -1785,6 +1803,39 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   ///KIỂM TRA: CÂU 4T. TỔNG DOANH THU NĂM 2025 < 100 TRIỆU ĐỒNG
   ///VÀ CÂU 4.1_SỐ THÁNG CƠ SỞ CÓ HOẠT ĐỘNG SXKD < 3 THÁNG -> CƠ SỞ KHÔNG THUỘC ĐỐI TƯỢNG ĐIỀU TRA -> KẾT THÚC PHỎNG VẤN
   kiemTraCau4T() async {
+    String result = '';
+
+    ///Lấy giá trị 4T
+    var a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
+    var a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+    if (a4TValue != null &&
+        a4TValue < 100 &&
+        a4_1Value != null &&
+        a4_1Value < 3) {
+      // await Future.delayed(Duration(seconds:1));
+      var backResult = await Get.dialog(DialogBarrierWidget(
+          onPressedNegative: () async {
+            Get.back(result: 'cancel');
+          },
+          onPressedPositive: () async {
+            Future.delayed(const Duration(milliseconds: 100), () {
+              onKetThucPhongVan(
+                  lyDoKetThucPV: AppDefine.khongThuocDoiTuongDieuTra);
+            });
+
+            Get.back(result: 'kethucpv');
+          },
+          title: 'dialog_title_warning'.tr,
+          content:
+              'Câu 4T: Tổng doanh thu năm 2025 < 100 triệu và Câu 4.1: số tháng cơ sở có hoạt động SXKD < 3 tháng.',
+          content2: 'Cơ sở không thuộc đối tượng điều tra.',
+          content2StyleText: styleLargeBold.copyWith(color: warningColor)));
+      result = await backResult.toString();
+    }
+    return result;
+  }
+
+  showDialogKiemTraCau4T() async {
     ///Lấy giá trị 4T
     var a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
     var a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
@@ -2143,7 +2194,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
       }
     }
-
+    //  warningMaNganhVoiBangKe(false);
     return null;
   }
 
@@ -2188,6 +2239,97 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     }
     return (false, '${maNganhCoSo.maNganh} - ${maNganhCoSo.tenNganh}');
+  }
+
+  ///Kiểm tra các mã sản phẩm so với sản phẩm của bảng kê.
+  warningMaNganhVoiBangKe(bool showDialog, {bool? isCancel = false}) async {
+    String result = '';
+    if (generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh ==
+        null) {
+    } else {
+      String subItem = '';
+      String message =
+          'Cơ sở được chọn mẫu ngành ${generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh} - ${generalInformationController.tblBkCoSoSXKDNganhSanPham.value.tenNganh} mà tại Câu 5.1 không xuất hiện ngành này.';
+      message +=
+          ' Cơ sở mất mẫu ngành ${generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh} - ${generalInformationController.tblBkCoSoSXKDNganhSanPham.value.tenNganh} và chuyển sang điều tra [phiếu toàn bộ] có đúng không?';
+      subItem = 'phiếu toàn bộ';
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        message =
+            'Giai đoạn bảng kê cơ sở hoạt động trong ngành ${generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh} - ${generalInformationController.tblBkCoSoSXKDNganhSanPham.value.tenNganh} mà hiện nay tại Câu 5.1 không xuất hiện ngành này có đúng không?';
+        // message2 = '';
+      }
+
+      var maVcpaCap5 = tblPhieuMauTBSanPham.where((x) =>
+          x.maNganhC5 ==
+          generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh);
+      if (maVcpaCap5.isEmpty) {
+        if (showDialog) {
+          result = await Get.dialog(DialogBarrierWidget(
+            onPressedNegative: () async {
+              Get.back(result: 'cancel');
+            },
+            onPressedPositive: () async {
+              Get.back(result: 'accept');
+            },
+            title: 'Cảnh báo',
+            content: message,
+            isCancelButton: isCancel ?? false,
+            color: primaryColor,
+            content2Color: primaryColor,
+            subItem: subItem,
+            isHighlight: true,
+          ));
+        } else {
+          return snackBar('Cảnh báo', '$message',
+              style: ToastSnackType.warning);
+        }
+      }
+    }
+    return result;
+  }
+
+  ///Kiểm tra các ngành theo mã sản phẩm
+  kiemTraCacNganh() async {
+    var validResCN = await kiemTraNganhCN();
+    var validResVT = await kiemTraNganhVT();
+    var validResLT = await kiemTraNganhLT();
+    var validResTM = await kiemTraNganhTM();
+
+    if (validResCN == "nganhCN") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có hoạt động công nghiệp. Dữ liệu mục hoạt động công nghiệp sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResCN!, warningMsg);
+    } else if (validResVT == "nganhVThh") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có hoạt động vận tải hàng hoá. Dữ liệu mục hoạt động vận tải hàng hoá sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResVT!, warningMsg);
+    } else if (validResVT == "nganhVThk") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có hoạt động vận tải hành khách. Dữ liệu mục hoạt động vận tải hành khách sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResVT!, warningMsg);
+    } else if (validResVT == "nganhVT") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có hoạt động vận tải. Dữ liệu mục hoạt động vận tải sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResVT!, warningMsg);
+    } else if (validResLT == "nganhLT") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có hoạt động kinh doanh dịch vụ lưu trú. Dữ liệu mục hoạt động kinh doanh dịch vụ lưu trú sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResLT!, warningMsg);
+    } else if (validResTM == "nganhTM56") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có thông tin về kết quả hoạt động ăn uống. Dữ liệu mục thông tin về kết quả hoạt động ăn uống sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResTM!, warningMsg);
+    } else if (validResTM == "nganhTMG6810") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có thông tin về hoạt động buôn bán; bán lẻ,.... Dữ liệu mục thông tin về hoạt động buôn bán; bán lẻ,... sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResTM!, warningMsg);
+    } else if (validResTM == "nganhTM") {
+      String warningMsg =
+          'Thông tin về nhóm sản phẩm không có thông tin về kết quả hoạt động ăn uống và oạt động buôn bán; bán lẻ,.... Dữ liệu mục thông tin về kết quả hoạt động ăn uống và oạt động buôn bán; bán lẻ,... sẽ bị xoá. Bạn có đồng ý?.';
+      await showDialogValidNganh(validResTM!, warningMsg);
+    } else {
+      return '';
+    }
   }
 
   validateAllMaSanPhamPhanV() {
@@ -3987,23 +4129,24 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     }
 
-    //C4<C3;
+    //C4 số gường (field name: A1_5_5 <C3 số phòng A1_5_3;
     for (var i = 1; i <= question.danhSachChiTieuIO!.length; i++) {
       var fName1 = 'A1_${i.toString()}_1';
       var fName3 = 'A1_${i.toString()}_3';
       var fName4 = 'A1_${i.toString()}_4';
+      var fName5 = 'A1_${i.toString()}_5';
       var a1_x_1Value = tblPhieu[fName1];
       if (fieldName == fName3) {
         if (a1_x_1Value.toString() == '1') {
-          int a1_5_4Value = tblPhieu[fName4] != null
-              ? AppUtils.convertStringToInt(tblPhieu[fName4])
+          int a1_5_5Value = tblPhieu[fName5] != null
+              ? AppUtils.convertStringToInt(tblPhieu[fName5])
               : 0;
           int a1_5_3Value = tblPhieu[fName3] != null
               ? AppUtils.convertStringToInt(tblPhieu[fName3])
               : 0;
 
-          if (a1_5_4Value < a1_5_3Value) {
-            return 'Số giường tại C4 là $a1_5_4Value < Số phòng C3 là $a1_5_3Value -> (Số giường không thể < số phòng)';
+          if (a1_5_5Value < a1_5_3Value) {
+            return 'Số giường tại C4 là $a1_5_5Value < Số phòng C3 là $a1_5_3Value -> (Số giường không thể < số phòng)';
           }
         }
       }
@@ -6316,9 +6459,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                     false,
                     item.maPhieu!);
                 if (validRes != null && validRes != '') {
-                  result = await generateMessageV2(
-                      '${item.tenHienThi} Mã số ${item.chiTieuDong!.maSo} - ${item.chiTieuDong!.tenChiTieu}',
-                      validRes);
+                  result =
+                      await generateMessageV2('${item.tenHienThi} ', validRes);
                   break;
                 }
               }
@@ -6526,8 +6668,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     if (fieldNameA1CNs.isNotEmpty) {
       if (tblPhieuNganhCN.isNotEmpty) {
         //  var isReturn = false;
+
         for (var itemA1 in tblPhieuNganhCN) {
           var tblA1 = itemA1.toJson();
+
           for (var fieldA5 in fieldNames) {
             if (tblA1.containsKey(fieldA5.tenTruong)) {
               var val = tblA1[fieldA5.tenTruong];
@@ -6535,8 +6679,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               int sttSanPham =
                   int.parse(tblA1[colPhieuNganhCNSTT_SanPham].toString());
               //  int idx = tblPhieuNganhCN.indexWhere((x) => x.sTT_SanPham ==sttSanPham && x.id==itemA1.id);
-              int idx = tblPhieuNganhCN.indexOf(itemA1);
-              idx = idx + 1;
+              //  int idx = tblPhieuNganhCN.indexOf(itemA1);
+              // idx = idx + 1;
               String maSPMoTa = '';
               if (!validateEmptyString(tblA1[colPhieuNganhCNA1_1].toString()) &&
                   !validateEmptyString(tblA1[colPhieuNganhCNA1_2].toString())) {
@@ -6560,7 +6704,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                   false);
 
               if (validRes != null && validRes != '') {
-                String msg = 'STT = ${idx.toString()}';
+                var s = tblPhieuNganhCN
+                    .where((x) => x.maNganhC5 == itemA1.maNganhC5)
+                    .toList();
+                int idx = s.indexOf(itemA1);
+                idx = idx + 1;
+                String msg = 'Sản phẩm thứ ${idx.toString()}';
                 if (!validateEmptyString(maSPMoTa)) {
                   msg = '$msg Mã sản phẩm: ${maSPMoTa}';
                 }
@@ -7863,6 +8012,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               'Thông báo', 'Cập nhật không thành công. Mã cấp 8 không hợp lệ.');
         }
       }
+      // warningMaNganhVoiBangKe(true);
     } catch (e) {
       printError(info: e.toString());
     }
@@ -8103,7 +8253,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   onDeleteProduct(id, {String? maNganhCap5}) async {
     var checkRes = isDuplicateVCPAA5_1_2(maNganhCap5 ?? '');
 
-    if (validateEmptyString(maNganhCap5) || checkRes) {
+    if (!validateEmptyString(maNganhCap5) || checkRes) {
       Get.dialog(DialogBarrierWidget(
         onPressedNegative: () async {
           Get.back();
@@ -8115,12 +8265,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         },
         title: 'dialog_title_warning'.tr,
         content: 'Bạn có chắc muốn xoá sản phẩm này?',
+        btnAcceptColor: errorColor,
+        btnCancelColor: Colors.grey.shade400,
       ));
       return;
     }
 
     //Ngành CN
-    var (nganh, messageContent) = await kiemTraNganhXoaCN(id, maNganhCap5!);
+    var (nganh, messageContent,dsMa) = await kiemTraXoaNganhCN(id, maNganhCap5!);
 
     if (nganh == 'CN' && messageContent != '') {
       Get.dialog(DialogBarrierWidget(
@@ -8139,7 +8291,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       ));
     }
     //Ngành VT
-    (nganh, messageContent) = await kiemTraNganhXoaCN(id, maNganhCap5!);
+    (nganh, messageContent,dsMa) = await kiemTraXoaNganhVT(id, maNganhCap5!);
     if ((nganh == 'VT' || nganh == 'VTHK' || nganh == 'VTHH') &&
         messageContent != '') {
       Get.dialog(DialogBarrierWidget(
@@ -8158,7 +8310,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       ));
     }
     //Ngành LT
-    (nganh, messageContent) = await kiemTraNganhXoaLT(id, maNganhCap5!);
+    (nganh, messageContent) = await kiemTraXoaNganhLT(id, maNganhCap5!);
     if (nganh == 'LT' && messageContent != '') {
       Get.dialog(DialogBarrierWidget(
         onPressedNegative: () async {
@@ -8176,7 +8328,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       ));
     }
     //Ngành TM
-    (nganh, messageContent) = await kiemTraNganhXoaTM(id, maNganhCap5!);
+    (nganh, messageContent,dsMa) = await kiemTraXoaNganhTM(id, maNganhCap5!);
     if ((nganh == 'TM' || nganh == 'TMG8610' || nganh == 'TM56') &&
         messageContent != '') {
       Get.dialog(DialogBarrierWidget(
@@ -8196,14 +8348,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-  Future<(String, String)> kiemTraNganhXoaCN(int id, String maNganhCap5) async {
+  Future<(String, String,List<String>)> kiemTraXoaNganhCN(int id, String maNganhCap5) async {
     ///
     String nganh = '';
     String messageContent = '';
 
     ///Ngành CN
-    var isCap1BCDE = await hasA5_3BCDE(maNganhCap5);
-    if (isCap1BCDE) {
+    var isCap1BCDE =await hasAllXoaSanPhamBCDE(); // await hasA5_3BCDE(maNganhCap5);
+    if (isCap1BCDE.isNotEmpty && isCap1BCDE.length==1) {
       var map = await phieuNganhCNProvider.getByMaNganhC5(
           currentIdCoSo!, maNganhCap5);
       if (map.isNotEmpty) {
@@ -8212,21 +8364,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động công nghiệp. Dữ liệu này sẽ bị xoá.';
       }
     }
-    return (nganh, messageContent);
+    return (nganh, messageContent,isCap1BCDE);
   }
 
-  Future<(String, String)> kiemTraNganhXoaVT(int id, String maNganhCap5) async {
+  Future<(String, String,List<String>)> kiemTraXoaNganhVT(int id, String maNganhCap5) async {
     ///
     String nganh = '';
     String messageContent = '';
 
     ///Ngành VT
-    var hasVTHK = await hasCap5NganhVT(vcpaCap5VanTaiHanhKhach);
-    var hasVTHH = await hasCap5NganhVT(vcpaCap5VanTaiHangHoa);
-    if (hasVTHK && hasVTHH) {
+    var hasVTHK = await hasCap5XoaNganhVT(vcpaCap5VanTaiHanhKhach);
+    var hasVTHH = await hasCap5XoaNganhVT(vcpaCap5VanTaiHangHoa);
+    if (hasVTHK.isNotEmpty && hasVTHH.isNotEmpty) {
       var hasDataTVHK = await hasMucVTHanhKhach();
       var hasDataTVHH = await hasMucVTHangHoa();
-      if (hasDataTVHK && hasDataTVHH) {
+      if (hasDataTVHK &&
+          hasDataTVHH &&
+          (hasVTHK.length == 1 || hasVTHH.length == 1)) {
         nganh = 'VT';
         messageContent =
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động vận tải hành khách và vận tải hàng hoá. Dữ liệu này sẽ bị xoá.';
@@ -8239,14 +8393,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         messageContent =
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động vận tải hàng hoá. Dữ liệu này sẽ bị xoá.';
       }
-    } else if (hasVTHK && !hasVTHH) {
+    } else if (hasVTHK.isNotEmpty && hasVTHK.length == 1 && hasVTHH.isEmpty) {
       var hasDataTVHK = await hasMucVTHanhKhach();
       if (hasDataTVHK) {
         nganh = 'VTHK';
         messageContent =
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động vận tải hành khách. Dữ liệu này sẽ bị xoá.';
       }
-    } else if (!hasVTHK && hasVTHH) {
+    } else if (hasVTHK.isEmpty && hasVTHH.isNotEmpty && hasVTHH.length == 1) {
       var hasDataTVHK = await hasMucVTHanhKhach();
       if (hasDataTVHK) {
         nganh = 'VTHH';
@@ -8254,19 +8408,19 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động vận tải hàng hoá. Dữ liệu này sẽ bị xoá.';
       }
     }
-    return (nganh, messageContent);
+    List<String> res=[];
+    return (nganh, messageContent,res);
   }
 
-  Future<(String, String)> kiemTraNganhXoaLT(int id, String maNganhCap5) async {
+  Future<(String, String)> kiemTraXoaNganhLT(int id, String maNganhCap5) async {
     ///
     String nganh = '';
     String messageContent = '';
 
     ///Ngành LT
-    var hasLT55 = await dmMotaSanphamProvider.kiemTraMaNganhCap2ByMaSanPham5(
-        '55', maNganhCap5);
+    var hasLT55 = await hasCap2XoaNganhLT('55');
 
-    if (hasLT55) {
+    if (hasLT55.isNotEmpty && hasLT55.length == 1) {
       var map = await phieuNganhLTProvider.selectByIdCoSo(currentIdCoSo!);
       if (map.isNotEmpty) {
         nganh = 'LT';
@@ -8277,16 +8431,16 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return (nganh, messageContent);
   }
 
-  Future<(String, String)> kiemTraNganhXoaTM(int id, String maNganhCap5) async {
+  Future<(String, String,List<String>)> kiemTraXoaNganhTM(int id, String maNganhCap5) async {
     ///
     String nganh = '';
     String messageContent = '';
 
     ///Ngành LT
-    var hasG8610 = await hasA5_5G_L6810(maNganhCap5);
-    var has56TM = await hasCap2_56TM('56', maNganhCap5);
+    var hasG8610 = await hasXoaNganh5G_L6810TM();// await hasA5_5G_L6810(maNganhCap5);
+    var has56TM = await hasCap2XoaNganhTM('56');// await hasCap2_56TM('56', maNganhCap5);
 
-    if (hasG8610 && has56TM) {
+    if (hasG8610.isNotEmpty && hasG8610.length==1 && has56TM.isNotEmpty && has56TM.length==1) {
       var g8610 =
           await phieuNganhTMSanphamProvider.selectByIdCoSo(currentIdCoSo!);
       var map56 = await phieuNganhTMProvider.selectByIdCoSo(currentIdCoSo!);
@@ -8295,7 +8449,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         messageContent =
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động bán buôn; bán lẻ...và hoạt động ăn uống. Dữ liệu này sẽ bị xoá.';
       }
-    } else if (hasG8610 && !has56TM) {
+    } else if (hasG8610.isNotEmpty && hasG8610.length==1 &&  has56TM.isEmpty) {
       var g8610 =
           await phieuNganhTMSanphamProvider.selectByIdCoSo(currentIdCoSo!);
       if (g8610.isNotEmpty) {
@@ -8303,7 +8457,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         messageContent =
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động bán buôn; bánl lẻ... Dữ liệu này sẽ bị xoá.';
       }
-    } else if (!hasG8610 && has56TM) {
+    } else if (hasG8610.isEmpty && has56TM.isNotEmpty && has56TM.length==1) {
       var map56 = await phieuNganhTMProvider.selectByIdCoSo(currentIdCoSo!);
       if (map56.isNotEmpty) {
         nganh = 'TM56';
@@ -8311,10 +8465,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             'Sản phẩm này đã có dữ liệu ở phiếu hoạt động ăn uống. Dữ liệu này sẽ bị xoá.';
       }
     }
-    return (nganh, messageContent);
+    return (nganh, messageContent,hasG8610);
   }
 
-  executeConfirmDeleteProduct(id, String nganh, String maNganhCap5) async {
+  executeConfirmDeleteProduct(id, String nganh, String maNganhCap5,{List<String>? maSanPhamPhieuMauTBSanPhams}) async {
     await xacNhanLogicProvider.deleteByIdHoManHinh(
         currentIdCoSo!, currentScreenNo.value);
 
@@ -8588,12 +8742,38 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     return false;
   }
-
+Future<List<String>> hasAllXoaSanPhamBCDE() async {
+    var resMaSPs =
+        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    if (resMaSPs.isNotEmpty) {
+      var result = await dmMotaSanphamProvider
+          .kiemTraMaNganhCap1BCDEXoaByMaVCPA(resMaSPs.join(';'));
+      return result;
+    }
+    return [];
+  }
   ///[MÃ SẢN PHẨM CẤP 1 LÀ G VÀ NGÀNH L6810  (TRỪ CÁC MÃ 4513-4520-45413-4542-461)] => HỎI CÂU 5.5
   ///maVCPAs: 42343;24234;...
   ///maSanPham: 42343x,42343xx;24234xxx;...
   ///Return: true => Hiển thị phần/câu hỏi; false: không hiển thị phần/câu hỏi
   Future<bool> hasA5_5G_L6810(String maSanPham) async {
+    // if (maSanPham == '') {
+    //   return true;
+    // }
+
+    var arrG_C5 = maVcpaLoaiTruG_C5.split(';');
+    var arrG_C4 = maVcpaLoaiTruG_C4.split(';');
+    var arrG_C3 = maVcpaLoaiTruG_C3.split(';');
+    //var result = false;
+    // var result = await dmNhomNganhVcpaProvider.hasA5_5G_L6810(
+    //     maSanPham, arrG_C3, arrG_C4, arrG_C5, maVcpaL6810);
+    var result = await dmMotaSanphamProvider.hasA5_5G_L6810(
+        maSanPham, arrG_C3, arrG_C4, arrG_C5, maVcpaL6810);
+
+    return result;
+  }
+
+  Future<bool> hasA5_5G_L6810Xoa(String maSanPham) async {
     // if (maSanPham == '') {
     //   return true;
     // }
@@ -8679,6 +8859,50 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return false;
   }
 
+  Future<List<String>> hasCap5XoaNganhVT(String maQuiDinh) async {
+    var resMaSPs =
+        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    if (resMaSPs.isNotEmpty) {
+      return await dmMotaSanphamProvider.kiemTraMaNganhCap5XoaByMaSanPham5(
+          maQuiDinh, resMaSPs.join(';'));
+    }
+    return [];
+  }
+
+  Future<List<String>> hasCap2XoaNganhLT(String maQuiDinh) async {
+    var resMaSPs =
+        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    if (resMaSPs.isNotEmpty) {
+      return await dmMotaSanphamProvider.kiemTraMaNganhCap2XoaByMaSanPham5(
+          maQuiDinh, resMaSPs.join(';'));
+    }
+    return [];
+  }
+   Future<List<String>> hasXoaNganh5G_L6810TM() async {
+     var arrG_C5 = maVcpaLoaiTruG_C5.split(';');
+    var arrG_C4 = maVcpaLoaiTruG_C4.split(';');
+    var arrG_C3 = maVcpaLoaiTruG_C3.split(';');
+
+    var resMaSPs =
+        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    if (resMaSPs.isNotEmpty) {
+      return await dmMotaSanphamProvider.getSanPhamBy_5G_L6810(
+         resMaSPs.join(';'),arrG_C3, arrG_C4, arrG_C5,maVcpaL6810);
+    } 
+
+    return [];
+  }
+
+   Future<List<String>> hasCap2XoaNganhTM(String maQuiDinh) async {
+    var resMaSPs =
+        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    if (resMaSPs.isNotEmpty) {
+      return await dmMotaSanphamProvider.kiemTraMaNganhCap2XoaByMaSanPham5(
+          maQuiDinh, resMaSPs.join(';'));
+    }
+    return [];
+  }
+  //getSanPhamBy_5G_L6810
   // Future<List<TablePhieuMauTBSanPham>> getMaSanPhamNganhCN() async {
   //      List<TablePhieuMauTBSanPham> result = [];
   //   var resMaSPs =
@@ -8996,6 +9220,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         },
         title: 'dialog_title_warning'.tr,
         content: 'Không tìm thấy mã cấp 5 của mục này?',
+        btnAcceptColor: errorColor,
       ));
       return;
     }
@@ -9014,8 +9239,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         title: 'dialog_title_warning'.tr,
         content: 'Phải có ít nhất một sản phẩm cấp 8 của mã cấp 5:',
         content2: '${phieuNganhCN.maNganhC5} - ${productCap5.moTaSanPham}.',
-        content2Color: warningColor,
+        content2Color: primaryColor,
         isCancelButton: false,
+        btnAcceptColor: errorColor,
       ));
     } else {
       await onConfirmDeleteProductNganhCN(phieuNganhCN.id!);

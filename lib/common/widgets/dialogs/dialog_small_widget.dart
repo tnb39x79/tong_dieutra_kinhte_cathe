@@ -70,7 +70,7 @@ class DialogSmallWidget extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           content,
-          style: styleSmallBold.copyWith(color: greyColor),
+          style: styleSmallBold.copyWith(color: greyColor,fontSize: 16),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16),

@@ -74,9 +74,12 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   String? responseMessage;
   bool hasLocalAI = false;
 
+  bool hasShowDialogSearchMode = false;
+
   ///Defaut: 100
   int topK = 100;
   int? selectedIndex;
+  bool isOnline = true;
 
   /// Get the current Documents directory path (iOS-safe)
   Future<String> _getDocumentsDirectoryPath() async {
@@ -118,11 +121,23 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
     searchController.text = widget.keywordText ?? "";
     // log('Search api: ${widget.search}');
     canClear = searchController.text.isNotEmpty;
+    linhVucItem=null;
+   // loadSavedPreference();
     initData();
     // Handle initial fetch if there's search text
     if (searchController.text.isNotEmpty) {
       handleInitialFetch();
     }
+  }
+
+  /// Load saved preference for search mode
+  Future<void> loadSavedPreference() async {
+    await checkLocalAI();
+
+    // Always show choice dialog when opening
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showSearchChoiceDialog();
+    });
   }
 
   /// Check if local AI data is available
@@ -152,19 +167,20 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
 
     final itemSps = await phieuTBController.dmMotaSanphamProvider
         .getByVcpaCap5(widget.initialValue ?? '');
-    if (itemSps.isNotEmpty) {
-      var itemSp = TableDmMotaSanpham.fromJson(itemSps);
+    // if (itemSps.isNotEmpty) {
+    //   var itemSp = TableDmMotaSanpham.fromJson(itemSps);
 
-      final initLinhVuc =
-          linhVucs.firstWhereOrNull((l) => l.maLV == itemSp?.maLV);
-      linhVucItem = initLinhVuc;
-    }
+    //   final initLinhVuc =
+    //       linhVucs.firstWhereOrNull((l) => l.maLV == itemSp?.maLV);
+    //   linhVucItem = initLinhVuc;
+    // }
     setState(() {});
   }
 
   /// Handle initial fetch during initialization
   Future<void> handleInitialFetch() async {
     if (widget.searchType == 0) {
+      if (hasShowDialogSearchMode) return;
       await checkLocalAI();
 
       // If local AI is available, use it directly
@@ -174,8 +190,9 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
       }
 
       // If no local AI, show choice dialog
-      showInitialChoiceDialog();
+      //   showInitialChoiceDialog();
     } else if (widget.searchType == 1) {
+      hasShowDialogSearchMode = true;
       await searchFromDanhMuc();
     } else {
       return;
@@ -220,22 +237,164 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   }
 
   /// Show choice dialog when search button is clicked
+  // void showSearchChoiceDialog() {
+  //   if (hasShowDialogSearchMode) return;
+  //   hasShowDialogSearchMode = true;
+  //   Get.dialog(
+  //     AlertDialog(
+  //       title: const Text('Chọn phương thức tìm kiếm'),
+  //       content: const Text('Bạn muốn sử dụng online hay tải xuống AI?'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Get.back(); // Close dialog
+  //             setState(() {
+  //               isOnline = true;
+  //             });
+  //             handleOnlineAPICall();
+  //           },
+  //           child: const Text('Dùng Online'),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             Get.back(); // Close dialog
+  //             Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
+  //               debugPrint('Downloaded AI: $value');
+  //               setState(() {
+  //                 isLoading = true;
+  //               });
+  //               await checkLocalAI();
+  //               setState(() {
+  //                 isLoading = false;
+  //               });
+  //             }); // Navigate to AI download screen
+  //           },
+  //           child: const Text('Tải xuống'),
+  //         ),
+  //       ],
+  //     ),
+  //     barrierDismissible: false,
+  //   );
+  // }
   void showSearchChoiceDialog() {
+    // Prevent showing the dialog multiple times in the same session
+    if (hasShowDialogSearchMode) return;
+
+    hasShowDialogSearchMode = true;
+
     Get.dialog(
       AlertDialog(
         title: const Text('Chọn phương thức tìm kiếm'),
-        content: const Text('Bạn muốn sử dụng online hay tải xuống AI?'),
+        content: const Text(
+            'Bạn muốn sử dụng tìm kiếm Online hay Offline?\n\nOnline: Sử dụng API trực tuyến\nOffline: Sử dụng AI đã tải xuống'),
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () {
-              Get.back(); // Close dialog
+              Get.back();
+              setState(() {
+                isOnline = true;
+              });
+              // Call API when user chooses Online
+              if (searchController.text.trim().isNotEmpty) {
+                handleOnlineAPICall();
+              }
+            },
+            child: const Text('Dùng Online'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+              // Check if AI is downloaded
+              if (hasLocalAI) {
+                setState(() {
+                  isOnline = false;
+                });
+                // Call local AI if search text exists
+                if (searchController.text.trim().isNotEmpty) {
+                  await searchOffline();
+                }
+              } else {
+                // Show download dialog
+                showDownloadDialog();
+              }
+            },
+            child: const Text('Dùng Offline'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  /// Show download dialog when AI is not available
+  void showDownloadDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Chưa có dữ liệu AI'),
+        content:
+            const Text('Chưa có dữ liệu AI Offline. Bạn muốn tải xuống ngay?'),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              // Default to online mode
+              setState(() {
+                isOnline = true;
+              });
+              if (searchController.text.trim().isNotEmpty) {
+                handleOnlineAPICall();
+              }
+            },
+            child: const Text('Dùng Online'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
+                debugPrint('Downloaded AI: $value');
+                setState(() {
+                  isLoading = true;
+                });
+                await checkLocalAI();
+                if (hasLocalAI) {
+                  setState(() {
+                    isOnline = false;
+                  });
+                }
+                setState(() {
+                  isLoading = false;
+                });
+              });
+            },
+            child: const Text('Tải xuống'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  void _showOfflineNotAvailableDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Chưa có dữ liệu AI'),
+        content: const Text(
+            'Chưa có dữ liệu AI Offline. Bạn muốn tải xuống ngay hay chuyển sang Online?'),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              // Switch to online mode
+              setState(() {
+                isOnline = true;
+              });
               handleOnlineAPICall();
             },
             child: const Text('Dùng Online'),
           ),
           ElevatedButton(
             onPressed: () {
-              Get.back(); // Close dialog
+              Get.back();
               Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
                 debugPrint('Downloaded AI: $value');
                 setState(() {
@@ -245,7 +404,14 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                 setState(() {
                   isLoading = false;
                 });
-              }); // Navigate to AI download screen
+                // If AI is now available, perform the search
+                if (hasLocalAI && searchController.text.trim().isNotEmpty) {
+                  setState(() {
+                    isOnline = false;
+                  });
+                  await searchOffline();
+                }
+              });
             },
             child: const Text('Tải xuống'),
           ),
@@ -479,18 +645,80 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      DropdownButtonHideUnderline(
-          child: DropdownCategory(
-        onLinhVucSelected: (item) {
-          setState(() {
-            linhVucItem = item;
-          });
-          //onLinhVucSelected(item);
-        },
-        danhSachLinhVuc: linhVucs,
-        linhVucItemSelected: linhVucItem,
-      )),
-      Divider(),
+      Row(children: [
+        Expanded(
+          child: InputDecorator(
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0)),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: primaryColor, width: 1.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: primaryLightColor, width: 2.0),
+                ),
+              ),
+              child: DropdownButtonHideUnderline(
+                  child: DropdownCategory(
+                onLinhVucSelected: (item) {
+                  setState(() {
+                    linhVucItem = item;
+                  });
+                },
+                danhSachLinhVuc: linhVucs,
+                linhVucItemSelected: linhVucItem,
+              ))),
+        ),
+        if (widget.searchType == 0)
+          IntrinsicWidth(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 8,
+                top: 0,
+              ),
+              child: Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(200, 48),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 14),
+                    backgroundColor: Colors.grey.shade200,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                    ),
+                    elevation: 0,
+                    minimumSize: Size.fromHeight(40),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    side: BorderSide(
+                      color: Colors.grey.shade200, // Your desired border color
+                      width: 1, // Optional: border width
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isOnline = !isOnline; // Toggle the state
+                    });
+                    if (isOnline == false) {
+                      if (!hasLocalAI) {
+                        showDownloadDialog();
+                      }
+                    }
+                  },
+                  child: Text(
+                    isOnline ? 'Online' : 'Offline',
+                    style: TextStyle(
+                        color: isOnline ? Colors.green : Colors.black),
+                  ), // Change label based on state
+                ),
+              ),
+            ),
+          )
+      ]),
+
+      // Divider(),
+      const SizedBox(height: 8),
       Row(
         children: [
           Expanded(
@@ -576,6 +804,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
 
   /// Handle search button press (always show choice dialog)
   void onSearchButtonPressed() async {
+    FocusScope.of(context).unfocus();
     if (searchController.text.trim().isEmpty) {
       setState(() {
         dataResult = [];
@@ -587,12 +816,17 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
     if (widget.searchType == 0) {
       // await checkLocalAI();
       // Always show choice dialog when search button is clicked
-      if (hasLocalAI) {
-        await searchOffline();
-        return;
+      if (isOnline) {
+        await handleOnlineAPICall();
+      } else {
+        if (hasLocalAI) {
+          await searchOffline();
+          return;
+        } else {
+          _showOfflineNotAvailableDialog();
+        }
       }
-
-      showSearchChoiceDialog();
+      // showSearchChoiceDialog();
     } else if (widget.searchType == 1) {
       await searchFromDanhMuc();
     } else {
@@ -603,7 +837,9 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   Widget buildMoTaCap5() {
     if (widget.maNganhCap5 != null && widget.maNganhCap5 != '') {
       return Column(children: [
-        const SizedBox(height: 8,),
+        const SizedBox(
+          height: 8,
+        ),
         Row(children: [
           Expanded(
               child: RichText(

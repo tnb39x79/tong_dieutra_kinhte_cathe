@@ -106,6 +106,7 @@ class IButton extends StatelessWidget {
         ),
         minimumSize: Size.fromHeight(height),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+         splashFactory: InkRipple.splashFactory,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

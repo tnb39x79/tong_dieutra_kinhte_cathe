@@ -50,7 +50,7 @@ class DialogWidget extends StatelessWidget {
         children: [
           Text(
             title,
-            style: styleLargeBold.copyWith(color: warningColor),
+            style: styleLargeBold.copyWith(color: primaryColor),
           ),
           const SizedBox(height: 8),
           Container(
@@ -67,12 +67,12 @@ class DialogWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: styleLargeBold.copyWith(color: warningColor),
+          style: styleLargeBold.copyWith(color: primaryColor),
         ),
         const SizedBox(height: 8),
         Text(
           content,
-          style: styleSmallBold.copyWith(color: blackText),
+          style: styleSmallBold.copyWith(color: blackText,fontSize: 16),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),

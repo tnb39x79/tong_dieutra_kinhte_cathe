@@ -152,6 +152,23 @@ List<String> fieldNamesPhan7LTMau = [
   colPhieuNganhLTA10_M,
 ];
 
+List<String> fieldNamesPhhieu7LTMau = [
+  colPhieuNganhLTA1_M,
+  colPhieuNganhLTA1_1_M,
+  colPhieuNganhLTA2_M,
+  colPhieuNganhLTA2_1_M,
+  colPhieuNganhLTA3_M,
+  colPhieuNganhLTA4_M,
+  colPhieuNganhLTA5_M,
+  colPhieuNganhLTA6_M,
+  colPhieuNganhLTA7_M,
+  colPhieuNganhLTA7_1_M,
+  colPhieuNganhLTA8_M,
+  colPhieuNganhLTA9_M,
+  colPhieuNganhLTA10_M
+];
+
+
 class TablePhieuNganhLT {
   int? id;
   String? iDCoSo;
