@@ -30,8 +30,9 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
   }
 
   Widget appBarTitle() {
-    var t ='status_active'.tr  ;
-    var s='${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
+    var t = 'status_active'.tr;
+    var s =
+        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
     return (controller.subTitleBar == null || controller.subTitleBar == "")
         ? Text(t, style: styleMediumBold)
         : ListTile(
@@ -41,8 +42,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
               style: styleMediumBoldAppBarHeader,
               textAlign: TextAlign.left,
             ),
-            subtitle: Text(s,
-                style: const TextStyle(color: Colors.white)),
+            subtitle: Text(s, style: const TextStyle(color: Colors.white)),
             titleAlignment: ListTileTitleAlignment.center,
           );
   }
@@ -52,7 +52,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
       padding: const EdgeInsets.all(AppValues.padding),
       child: Column(
         children: [
-        Obx(() =>  wTitle()),
+          Obx(() => wTitle()),
           const SizedBox(height: 16),
           Expanded(child: Obx(() => _question())),
           _button()
@@ -61,46 +61,79 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
     );
   }
 
+  Widget wContainer() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(
+        AppValues.padding / 8,
+        0,
+        AppValues.padding / 8,
+        AppValues.padding / 8,
+      ),
+      padding: const EdgeInsets.all(0),
+      width: Get.width,
+      decoration: BoxDecoration(
+        border: BoxBorder.all(width: 1, color: backgroundColorSync),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(AppValues.borderLv2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade100,
+            spreadRadius: 2,
+            blurRadius: 7,
+            offset: Offset(0, 2), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: wTitle()),
+        ],
+      ),
+    );
+  }
+
   Widget wTitle() {
-    
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
-            text: TextSpan(style: styleLargeBold, children: [
+            text: TextSpan(style: styleMediumBold, children: [
           TextSpan(
               text: 'Tên cơ sở: ',
-              style: styleLargeBold.copyWith(color: blackText)),
+              style: styleMediumBold.copyWith(color: blackText)),
           TextSpan(
-              text: '${controller.tblBkCoSoSXKD.value.tenCoSo??''.toUpperCase()}',
-              style: styleLargeBold.copyWith(color: primaryColor))
+              text:
+                  '${controller.tblBkCoSoSXKD.value.tenCoSo ?? ''.toUpperCase()}',
+              style: styleMediumBold.copyWith(color: primaryColor))
         ])),
         RichText(
-            text: TextSpan(style: styleLargeBold, children: [
+            text: TextSpan(style: styleMediumBold, children: [
           TextSpan(
               text: 'Tên chủ cơ sở: ',
-              style: styleLargeBold.copyWith(color: blackText)),
+              style: styleMediumBold.copyWith(color: blackText)),
           TextSpan(
               text:
-                  '${controller.tblBkCoSoSXKD.value.tenChuCoSo??''.toUpperCase()}',
-              style: styleLargeBold.copyWith(color: primaryColor))
+                  '${controller.tblBkCoSoSXKD.value.tenChuCoSo ?? ''.toUpperCase()}',
+              style: styleMediumBold.copyWith(color: primaryColor))
         ])),
         RichText(
-            text: TextSpan(style: styleLargeBold, children: [
+            text: TextSpan(style: styleMediumBold, children: [
           TextSpan(
               text: 'Ngành sản phẩm: ',
-              style: styleLargeBold.copyWith(color: blackText)),
+              style: styleMediumBold.copyWith(color: blackText)),
           TextSpan(
               text:
-                  '${controller.tblBkCoSoSXKDNganhSanPham.value.maNganh??''} - ${controller.tblBkCoSoSXKDNganhSanPham.value.tenNganh??''}.',
-              style: styleLargeBold.copyWith(color: primaryColor))
+                  '${controller.tblBkCoSoSXKDNganhSanPham.value.maNganh ?? ''} - ${controller.tblBkCoSoSXKDNganhSanPham.value.tenNganh ?? ''}.',
+              style: styleMediumBold.copyWith(color: primaryColor))
         ])),
-         const SizedBox(height: 16),
-          Text(
-            'Chọn tình trạng hoạt động của sơ cở:',
-            style: styleLargeBold.copyWith(color: blackText),
-          )
+        Divider(),
+        const SizedBox(height: 16),
+        Text(
+          'Chọn tình trạng hoạt động của sơ cở:',
+          style: styleLargeBold.copyWith(color: blackText),
+        )
       ],
     );
   }
@@ -111,20 +144,20 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(
-              text: TextSpan(style: styleLargeBold, children: [
+              text: TextSpan(style: styleMediumBold, children: [
             TextSpan(
                 text:
                     'Cơ sở "${controller.tblBkCoSoSXKD.value.tenCoSo!.toUpperCase()}" của ${controller.tblBkCoSoSXKD.value.tenChuCoSo} đang SXKD ngành sản phẩm là: ',
-                style: styleLargeBold.copyWith(color: blackText)),
+                style: styleMediumBold.copyWith(color: blackText)),
             TextSpan(
                 text:
                     '${controller.tblBkCoSoSXKDNganhSanPham.value.maNganh} - ${controller.tblBkCoSoSXKDNganhSanPham.value.tenNganh}.',
-                style: styleLargeBold.copyWith(color: primaryColor))
+                style: styleMediumBold.copyWith(color: primaryColor))
           ])),
           const SizedBox(height: 16),
           Text(
             'Chọn tình trạng hoạt động của sơ cở:',
-            style: styleLargeBold.copyWith(color: blackText),
+            style: styleMediumBold.copyWith(color: blackText),
           )
         ]);
   }

@@ -20,6 +20,7 @@ class WTitleHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
               Container(
+                margin: EdgeInsets.only(left: 8),
                 padding: const EdgeInsets.fromLTRB(
                     AppValues.padding, 0, AppValues.padding, 4),
                 child: Text(titleHeader, style: isSuccess!? styleLargeBold.copyWith(color: successColor): styleLargeBold.copyWith(color: errorColor)),

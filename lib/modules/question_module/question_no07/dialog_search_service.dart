@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/button/i_button.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/searchable/dropdown_category.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_phieu_tb_controller.dart';
+import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/animated_toggle_switch.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_linhvuc.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_mota_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/linh_vuc/linh_vuc_model.dart';
@@ -32,7 +33,8 @@ class VcpaSearchService extends StatefulWidget {
       this.productItem,
       this.searchType,
       this.maNganhCap5,
-      this.moTaMaNganhCap5});
+      this.moTaMaNganhCap5,
+      this.isInitSearch});
 
   final String? keywordText;
   final String? linhVuc;
@@ -41,6 +43,7 @@ class VcpaSearchService extends StatefulWidget {
   final dynamic productItem;
   final String? maNganhCap5;
   final String? moTaMaNganhCap5;
+  final bool? isInitSearch;
 
   ///0: AI; 1: Danh muc
   final int? searchType;
@@ -79,7 +82,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   ///Defaut: 100
   int topK = 100;
   int? selectedIndex;
-  bool isOnline = true;
+  //bool isOnline = true;
 
   /// Get the current Documents directory path (iOS-safe)
   Future<String> _getDocumentsDirectoryPath() async {
@@ -121,8 +124,8 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
     searchController.text = widget.keywordText ?? "";
     // log('Search api: ${widget.search}');
     canClear = searchController.text.isNotEmpty;
-    linhVucItem=null;
-   // loadSavedPreference();
+    linhVucItem = null;
+    // loadSavedPreference();
     initData();
     // Handle initial fetch if there's search text
     if (searchController.text.isNotEmpty) {
@@ -292,7 +295,8 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
             onPressed: () {
               Get.back();
               setState(() {
-                isOnline = true;
+                //  isOnline = true;
+                phieuTBController.isSearchOnline.value = true;
               });
               // Call API when user chooses Online
               if (searchController.text.trim().isNotEmpty) {
@@ -307,7 +311,8 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
               // Check if AI is downloaded
               if (hasLocalAI) {
                 setState(() {
-                  isOnline = false;
+                  //isOnline = false;
+                  phieuTBController.isSearchOnline.value = false;
                 });
                 // Call local AI if search text exists
                 if (searchController.text.trim().isNotEmpty) {
@@ -339,7 +344,8 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
               Get.back();
               // Default to online mode
               setState(() {
-                isOnline = true;
+                //  isOnline = true;
+                phieuTBController.isSearchOnline.value = true;
               });
               if (searchController.text.trim().isNotEmpty) {
                 handleOnlineAPICall();
@@ -358,7 +364,8 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                 await checkLocalAI();
                 if (hasLocalAI) {
                   setState(() {
-                    isOnline = false;
+                    //  isOnline = false;
+                    phieuTBController.isSearchOnline.value = false;
                   });
                 }
                 setState(() {
@@ -385,9 +392,10 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
             onPressed: () {
               Get.back();
               // Switch to online mode
-              setState(() {
-                isOnline = true;
-              });
+              // setState(() {
+              //   isOnline = true;
+              // });
+              phieuTBController.isSearchOnline.value = true;
               handleOnlineAPICall();
             },
             child: const Text('Dùng Online'),
@@ -406,9 +414,10 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                 });
                 // If AI is now available, perform the search
                 if (hasLocalAI && searchController.text.trim().isNotEmpty) {
-                  setState(() {
-                    isOnline = false;
-                  });
+                  // setState(() {
+                  //   isOnline = false;
+                  // });
+                  phieuTBController.isSearchOnline.value = false;
                   await searchOffline();
                 }
               });
@@ -645,7 +654,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [
+      Row(children: [ 
         Expanded(
           child: InputDecorator(
               decoration: InputDecoration(
@@ -671,50 +680,64 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                 linhVucItemSelected: linhVucItem,
               ))),
         ),
-        if (widget.searchType == 0)
-          IntrinsicWidth(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 8,
-                top: 0,
-              ),
-              child: Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(200, 48),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 14),
-                    backgroundColor: Colors.grey.shade200,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                    ),
-                    elevation: 0,
-                    minimumSize: Size.fromHeight(40),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    side: BorderSide(
-                      color: Colors.grey.shade200, // Your desired border color
-                      width: 1, // Optional: border width
-                    ),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      isOnline = !isOnline; // Toggle the state
-                    });
-                    if (isOnline == false) {
-                      if (!hasLocalAI) {
-                        showDownloadDialog();
-                      }
-                    }
-                  },
-                  child: Text(
-                    isOnline ? 'Online' : 'Offline',
-                    style: TextStyle(
-                        color: isOnline ? Colors.green : Colors.black),
-                  ), // Change label based on state
-                ),
-              ),
-            ),
-          )
+        // if (widget.searchType == 0)
+        // IntrinsicWidth(
+        //   child: Padding(
+        //     padding: const EdgeInsets.only(
+        //       left: 10,
+        //       top: 0,
+        //     ),
+        //     child: Center(
+        //       child: ElevatedButton(
+        //         style: ElevatedButton.styleFrom(
+        //           splashFactory: InkRipple.splashFactory,
+        //           overlayColor: phieuTBController.isSearchOnline.value ?successColor.withValues(alpha: 0.2): Colors.grey.shade100,
+        //           fixedSize: const Size(200, 48),
+        //           padding: const EdgeInsets.symmetric(
+        //               horizontal: 12, vertical: 14),
+        //           backgroundColor:phieuTBController.isSearchOnline.value ?successColor.withValues(alpha: 0.1): Colors.grey.shade200,
+        //           shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(AppValues.borderLv1),
+        //           ),
+        //           elevation: 0,
+        //           minimumSize: Size.fromHeight(40),
+        //           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        //           side: BorderSide(
+        //             color: Colors.grey.shade200, // Your desired border color
+        //             width: 1, // Optional: border width
+        //           ),
+        //         ),
+        //         onPressed: () {
+        //           setState(() {
+        //            // isOnline = !isOnline; // Toggle the state
+        //             phieuTBController.isSearchOnline.value=!phieuTBController.isSearchOnline.value;
+        //           });
+        //           if (phieuTBController.isSearchOnline.value == false) {
+        //             if (!hasLocalAI) {
+        //               showDownloadDialog();
+        //             }
+        //           }
+        //         },
+        //         child: Text(
+        //           phieuTBController.isSearchOnline.value ? 'Online' : 'Offline',
+        //           style: TextStyle(
+        //               color: phieuTBController.isSearchOnline.value ?successColor : Colors.black),
+        //         ), // Change label based on state
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        // IntrinsicWidth(
+        //   child: Padding(
+        //     padding: const EdgeInsets.only(
+        //       left: 10,
+        //       top: 0,
+        //     ),
+        //     child: Center(
+        //       child: AnimatedToggleSwitch(tagList: [Tags('Offline', Icons.search_outlined)],fillRandomColor: false,)
+        //     ),
+        //   ),
+        // )
       ]),
 
       // Divider(),
@@ -816,7 +839,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
     if (widget.searchType == 0) {
       // await checkLocalAI();
       // Always show choice dialog when search button is clicked
-      if (isOnline) {
+      if (phieuTBController.isSearchOnline.value) {
         await handleOnlineAPICall();
       } else {
         if (hasLocalAI) {

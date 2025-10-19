@@ -42,8 +42,10 @@ class DialogBarrierWidget extends StatelessWidget {
   final bool? isHighlight;
   final String? subItem;
 final Color? btnCancelColor;
+
   @override
   Widget build(BuildContext context) {
+     
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppValues.padding),
@@ -104,7 +106,7 @@ final Color? btnCancelColor;
             title: confirmText ?? "agree".tr, onPressed: onPressedPositive,
             background: btnCancelColor,
             overlayColor:  btnCancelColor != null
-                ? btnCancelColor!.withValues(alpha: 0.5)
+                ? btnCancelColor!.withValues(alpha: 0.1)
                 : btnCancelColor),
       );
     }
@@ -121,7 +123,7 @@ final Color? btnCancelColor;
             onPressed: onPressedPositive,
             background: btnAcceptColor,
             overlayColor: btnAcceptColor != null
-                ? btnAcceptColor!.withValues(alpha: 0.3)
+                ? btnAcceptColor!.withValues(alpha: 0.1)
                 : btnAcceptColor,
           ),
         ),

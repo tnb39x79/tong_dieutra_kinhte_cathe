@@ -47,7 +47,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         onTap: () => controller.unFocus(context),
         child: Scaffold(
           key: controller.scaffoldKey,
-          endDrawerEnableOpenDragGesture: false,
+          endDrawerEnableOpenDragGesture: false, 
           appBar: CustomAppBar(
             title: '${controller.currentTenDoiTuongDT!}',
             questionCode: 4,
@@ -168,9 +168,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichTextQuestion(question.tenCauHoi ?? '',
-            level: question.cap!, notes: question.giaiThich ?? ''),
-        // const SizedBox(height: 50),
+        if (question.maPhieu == AppDefine.maPhieuTM) ...[
+          if (controller.isCap2_56TM.value == true)
+            RichTextQuestion(question.tenCauHoi ?? '',
+                level: question.cap!, notes: question.giaiThich ?? ''),
+        ] else
+          RichTextQuestion(question.tenCauHoi ?? '',
+              level: question.cap!, notes: question.giaiThich ?? ''),
         if (question.maCauHoi == "A_V")
           buildPhanV(question)
         // else if (question.maCauHoi == "A_I" && question.maPhieu == 1)
@@ -355,6 +359,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 buildNganhCN(question)
               ]);
         } else if (question.maCauHoi == maCauHoiTMGL6810 &&
+            controller.isCap2G_6810TM.value &&
             question.maPhieu == 4) {
           String moTaSanPhamCau5_1 =
               controller.tblPhieuNganhTMSanPhamView.isNotEmpty
@@ -375,9 +380,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 ),
                 buildNganhTM(question)
               ]);
-        } 
-        
-        else if (question.bangChiTieu == "2") {
+        } else if (question.maCauHoi == maCauHoiTM56 && question.maPhieu == 4) {
+          return buildNganhTMII(question);
+        } else if (question.bangChiTieu == "2") {
           return buildQuestionChiTieuDongCot(question);
         } else {
           //Bỏ không kiểm tra B, C, E
@@ -1030,6 +1035,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       return Obx(() {
         var a3_3Value = controller.getValueByFieldName(
             question.bangDuLieu!, colPhieuMauTBA3_2);
+        var a3TValue = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA3T);
+        var a3TValueText = a3TValue != null
+            ? toCurrencyString(a3TValue.toString(),
+                thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+                mantissaLength: 2)
+            : '';
         return InputInt(
           key: ValueKey('${question.maPhieu}_${question.cauHoiUUID}'),
           question: question,
@@ -1039,7 +1051,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               question.maCauHoi,
               question.maCauHoi,
               value),
-          subName: subName,
+          subName: '${a3TValueText} ${question.dVT ?? ''}',
           value: val,
           type: 'double',
           validator: (String? value) => controller.onValidate(
@@ -2181,7 +2193,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                         question,
                                                         chiTieuDong,
                                                         chiTieuCot,
-                                                        ghiRoItem);
+                                                        ghiRoItem,orderCaption);
                                               },
                                               style: ElevatedButton.styleFrom(
                                                   splashFactory:
@@ -3795,8 +3807,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               // if (lastStt > 0 && lastStt == productCap5.sTT_SanPham!) ...[
 
               if (controller.countHasMoreProductNganhCN(
-                      tablePhieuNganhCN, productCap5.maNganhC5 ?? '') >
-                  0) ...[
+                      tablePhieuNganhCN, productCap5.maNganhC5 ?? '') ==
+               controller.tblPhieuNganhCN.length) ...[
                 const SizedBox(
                   height: 15,
                 ),
@@ -3893,7 +3905,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color:greyLight,
+                          color: greyLight,
                           offset: const Offset(0, 2),
                           spreadRadius: 1,
                           blurRadius: 4,
@@ -4278,6 +4290,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     //  return Obx(() {
     if (question.danhSachCauHoiCon != null &&
         question.danhSachCauHoiCon!.isNotEmpty) {
+      var tongDTA5_2TB = toCurrencyString(
+          controller.tongDoanhThuTatCaSanPham.value.toString(),
+          thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+          mantissaLength: 2);
+
       List<QuestionCommonModel> questionsCon = question.danhSachCauHoiCon!;
       return Column(children: [
         ListView.builder(
@@ -4293,6 +4310,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                     RichTextQuestion(
                       questionC.tenCauHoi ?? '',
                       level: questionC.cap ?? 2,
+                      moTaSanPham: tongDTA5_2TB,
                     ),
                   buildNganhTMDetail(questionC, parentQuestion: question)
                 ],
@@ -4490,6 +4508,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     if (question.maCauHoi == "A1_1") {
       var a1_1Val = controller.getValueSanPhamByStt(tablePhieuMauTBSanPham,
           colPhieuMauTBSanPhamA5_1_1, product.sTT_SanPham!);
+
       String vkey =
           '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTT_SanPham}';
 
@@ -4548,6 +4567,26 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       );
     }
     return const SizedBox();
+  }
+
+  buildNganhTMII(QuestionCommonModel question, {String? subName}) {
+    var moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTM56.isNotEmpty
+        ? controller.tblPhieuMauTBSanPhamTM56
+            .map((p) => p.a5_1_1 ?? '')
+            .toList()
+            .join('; ')
+        : '';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichTextQuestion(
+          question.tenCauHoi ?? '',
+          level: question.cap ?? 2,
+          moTaSanPham: moTaSanPhamCaux,
+        ),
+        _buildQuestion2(question)
+      ],
+    );
   }
 
   buildError(

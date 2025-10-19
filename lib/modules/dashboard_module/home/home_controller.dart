@@ -627,7 +627,7 @@ class HomeController extends BaseController with SyncMixin {
 
   /// END::TẢI DỮ LIỆU PHỎNG VẤN
 
-  onInterViewScreen() async {
+  onInterViewScreen() async { 
     Map? isHad = await hasGetDataPv();
     if (isHad != null) {
       //if (isDefaultUserType()) {

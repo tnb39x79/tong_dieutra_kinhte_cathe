@@ -113,12 +113,13 @@ Future<int> updateNullValues(String idCoso, List<String> fieldNames) async {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
+    var updatedAt=DateTime.now().toIso8601String();
     List<String> fields = [];
     for (var item in fieldNames) {
       fields.add(" $item = null ");
     }
     String sql =
-        "UPDATE $tablePhieuNganhTM SET ${fields.join(',')} WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "UPDATE $tablePhieuNganhTM SET ${fields.join(',')},$columnUpdatedAt= '$updatedAt' WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     result = await db!.rawUpdate(sql);
 
     return result;
@@ -199,7 +200,7 @@ Future<int> updateNullValues(String idCoso, List<String> fieldNames) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhTM  WHERE $columnIDCoSo = '$idCoso' AND $columnId=$id  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";

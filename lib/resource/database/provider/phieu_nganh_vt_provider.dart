@@ -346,10 +346,11 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso'    AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        log('totalDoubleByMaCauHoi sql $sql');
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {

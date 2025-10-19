@@ -28,7 +28,7 @@ import 'package:archive/archive_io.dart';
 mixin SyncMixin {
   Map body = {};
 
-   final MainMenuController mainMenuController = Get.find();
+  final MainMenuController mainMenuController = Get.find();
 
   final bkCoSoSXKDMixProvider = BKCoSoSXKDProvider();
   final diaBanCoSoSXKDMixProvider = DiaBanCoSoSXKDProvider();
@@ -71,7 +71,7 @@ mixin SyncMixin {
     List<Map>? interviewedCoSoSXKD =
         await bkCoSoSXKDMixProvider.selectAllListInterviewedSync();
     danhSachBkCoSoSXKDInterviewed.clear();
-    developer.log('interviewedCoSoSXKD: $interviewedCoSoSXKD');
+    // developer.log('interviewedCoSoSXKD: $interviewedCoSoSXKD');
     if (interviewedCoSoSXKD.isNotEmpty) {
       for (var element in interviewedCoSoSXKD) {
         developer.log('CSSXKD: $element');
@@ -86,17 +86,17 @@ mixin SyncMixin {
     await Future.wait(danhSachBkCoSoSXKDInterviewed.map((item) async {
       var map = {
         "LoaiPhieu": item.loaiPhieu,
-        "IDCoso": item.iDCoSo, 
+        "IDCoso": item.iDCoSo,
         "MaTinh": item.maTinh,
         "MaTKCS": item.maTKCS,
-        "MaXa": item.maXa, 
+        "MaXa": item.maXa,
         "MaThon": item.maThon,
         "TenThon": item.tenThon,
-         "MaDiaBan": item.maDiaBan,
+        "MaDiaBan": item.maDiaBan,
         "TenDiaBan": item.tenDiaBan,
         "TenCoso": item.tenCoSo,
         "DiaChi": item.diaChi,
-        "TenChuCoSo":item.tenChuCoSo,
+        "TenChuCoSo": item.tenChuCoSo,
         "DienThoai": item.dienThoai,
         "Email": item.email,
         "MaTinhTrangHD": item.maTinhTrangHD,
@@ -126,6 +126,12 @@ mixin SyncMixin {
     List<Map> phieuNganhCNs =
         await phieuNganhCNMixProvider.selectByIdCosoSync(iDCoSo);
 
+    Map phieuNganhVTs =
+        await phieuNganhVTMixProvider.selectByIdCoSoSync(iDCoSo);
+
+    List<Map> phieuNganhVTGhiRos =
+        await phieuNganhVTGhiRoMixProvider.selectByIdCosoSync(iDCoSo);
+
     Map phieuNganhLTs =
         await phieuNganhLTMixProvider.selectByIdCoSoSync(iDCoSo);
 
@@ -134,12 +140,6 @@ mixin SyncMixin {
 
     List<Map> phieuNganhTMSanPhams =
         await phieuNganhTMSanphamMixProvider.selectByIdCoSoSync(iDCoSo);
-
-    Map phieuNganhVTs =
-        await phieuNganhVTMixProvider.selectByIdCoSoSync(iDCoSo);
-
-    List<Map> phieuNganhVTGhiRos =
-        await phieuNganhVTGhiRoMixProvider.selectByIdCosoSync(iDCoSo);
 
     if (phieu.isNotEmpty) {
       mapPhieu['PhieuDto'] = phieu;
@@ -211,8 +211,7 @@ mixin SyncMixin {
           errorMessage = "Khóa CAPI đang bật.";
         } else if (syncData.responseCode == ApiConstants.duLieuDongBoRong) {
           errorMessage = "${syncData.responseMessage}";
-        }
-         else {
+        } else {
           errorMessage = "Lỗi đồng bộ:${syncData.responseMessage}";
         }
         uploadFullDataJson(syncRepository, sendErrorRepository, progress,
@@ -274,7 +273,9 @@ mixin SyncMixin {
 
     if (_request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
       var resp = await syncRepository.getToken(
-          userName: AppPref.userName, password: AppPref.password,iMei: mainMenuController.userModel.value.iMei);
+          userName: AppPref.userName,
+          password: AppPref.password,
+          iMei: mainMenuController.userModel.value.iMei);
       AppPref.accessToken = resp.body?.accessToken;
       uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: true);
@@ -347,7 +348,7 @@ mixin SyncMixin {
     }
 
     var fileModel = await getZipDbFileContent();
-   // developer.log('FILE MODEL: ${fileModel.toJson()}');
+    // developer.log('FILE MODEL: ${fileModel.toJson()}');
     if (fileModel.dataFileContent == '') {
       fileModel = await getDbFileContent();
     }
@@ -358,7 +359,9 @@ mixin SyncMixin {
 
     if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
       var resp = await syncRepository.getToken(
-          userName: AppPref.userName, password: AppPref.password,iMei: mainMenuController.userModel.value.iMei);
+          userName: AppPref.userName,
+          password: AppPref.password,
+          iMei: mainMenuController.userModel.value.iMei);
       AppPref.accessToken = resp.body?.accessToken;
       uploadFullDataJson(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: true);

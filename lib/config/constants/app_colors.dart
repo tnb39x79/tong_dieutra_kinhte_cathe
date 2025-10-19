@@ -24,7 +24,7 @@ const Color warningColor = Color(0xFF0078d4);
 const Color errorColorOld = Color(0xFFFF6363);
 const Color dangerColor = Color.fromARGB(222, 220,53,69);
 //const Color errorColor = Color(0xFFb80424);
-const Color errorColor = Color(0xFFda4f49);
+const Color errorColor = Color(0xFFe74c3c);
 
 
 // other

@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/config/config.dart';
@@ -87,7 +88,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
         $colBkCoSoSXKDDienThoaiNguoiCungCap  TEXT,
         $colBkCoSoSXKDMaDTV  TEXT,
         $colBkCoSoSXKDMaTrangThaiDT  INTEGER, 
-
+        $colBkCoSoSXKDMaTrangThaiDT2  INTEGER, 
         $colBkCoSoSXKDTrangThaiLogic INTEGER, 
         $colBkCoSoSXKDIsSyncSuccess INTEGER, 
         $columnCreatedAt TEXT,
@@ -296,10 +297,13 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return await db!.query(tablebkCoSoSXKD, where: '''
       $columnCreatedAt = '$createdAt'
       AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
+      AND $colBkCoSoSXKDMaTrangThaiDT2 = ${AppDefine.hoanThanhPhongVan}
       AND NOT $columnUpdatedAt = '$createdAt'
       AND $columnMaDTV='${AppPref.uid}'
+    
     ''');
   }
+  // // AND ($colBkCoSoSXKDIDCoSo in (SELECT $colPhieuIDCoSo FROM $tablePhieu WHERE $colPhieuThoiGianBD IS NOT NULL AND $colPhieuThoiGianKT IS NOT NULL ))
 
   Future<List<Map>> selectAllListInterviewed() async {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
@@ -342,6 +346,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   Future updateTrangThai(String idCoSo) async {
     Map<String, Object?> values = {
       "MaTrangThaiDT": AppDefine.hoanThanhPhongVan,
+      "MaTrangThaiDT2": AppDefine.hoanThanhPhongVan,
       "UpdatedAt": DateTime.now().toIso8601String()
     };
     String createdAt = AppPref.dateTimeSaveDB ?? "";

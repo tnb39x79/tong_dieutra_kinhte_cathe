@@ -50,6 +50,20 @@ class PhieuNganhTMSanPhamProvider
     return ids;
   }
 
+  Future<List<int>> insertSanPhamTM(
+      List<TablePhieuNganhTMSanPham> value, String createdAt) async {
+    var updatedAt = DateTime.now().toIso8601String();
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.updatedAt = updatedAt;
+      element.maDTV = AppPref.uid;
+
+      ids.add(await db!.insert(tablePhieuNganhTMSanPham, element.toJson()));
+    }
+    return ids;
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -135,8 +149,9 @@ class PhieuNganhTMSanPhamProvider
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5, ";
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMoTaSanPham, ";
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamA1_2, ";
-    sql +=
-        " (SELECT MaLV FROM CT_DM_MoTaSanPham WHERE MaSanPham="'$tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5'" LIMIT 1) AS MaLV, ";
+    sql += " (SELECT MaLV FROM CT_DM_MoTaSanPham WHERE MaSanPham="
+        '$tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5'
+        " LIMIT 1) AS MaLV, ";
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamCreatedAt, ";
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamUpdatedAt ";
     sql += " FROM $tablePhieuNganhTMSanPham ";
@@ -176,6 +191,7 @@ class PhieuNganhTMSanPhamProvider
   Future<List<Map>> selectCap1GL8610ByIdCoSo(
       String idCoso, List<String> maSanPhamCap1GL8610B) async {
     String createdAt = AppPref.dateTimeSaveDB!;
+    var updatedAt = DateTime.now().toIso8601String();
 
     var sql =
         "  SELECT distinct $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamIDCoSo, ";
@@ -188,6 +204,7 @@ class PhieuNganhTMSanPhamProvider
     sql += " $tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamA1_2, ";
 
     sql += " '${AppPref.uid}' as MADTV ";
+    // sql += " '$updatedAt' as $columnUpdatedAt ";
     sql += " FROM $tablePhieuMauTBSanPham ";
     sql +=
         " LEFT JOIN $tablePhieuNganhTMSanPham  ON $tablePhieuMauTBSanPham.$colPhieuMauTBSanPhamA5_1_2=$tablePhieuNganhTMSanPham.$colPhieuNganhTMSanPhamMaNganhC5 ";
@@ -283,7 +300,7 @@ class PhieuNganhTMSanPhamProvider
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhTMSanPham  WHERE $columnIDCoSo = '$idCoso' AND $columnId=$id  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";

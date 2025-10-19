@@ -132,6 +132,8 @@ class ActiveStatusController extends BaseController {
     // if (p1 == AppDefine.maTinhTrangHDTuKeKhai - 1) {
     //   showDialogNhapSDT(p1);
     // }
+    bKCoSoSXKDProvider.updateValue(
+        colBkCoSoSXKDMaTrangThaiDT2, AppDefine.dangPhongVan, currentIdCoSo!);
   }
 
   getTinhTrangHD() async {
@@ -174,7 +176,8 @@ class ActiveStatusController extends BaseController {
       showError("Vui lòng chọn tình trạng hoạt động!");
       return;
     }
-
+    await bKCoSoSXKDProvider.updateValue(
+        colBkCoSoSXKDMaTrangThaiDT2, AppDefine.dangPhongVan, currentIdCoSo!);
     if (currentIndex.value == 0 || currentIndex.value == 1) {
       //Hộ còn sản xuất kinh doanh (SXKD)
       //Hộ ngừng hoạt động SXKD và liên hệ được

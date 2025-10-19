@@ -612,7 +612,7 @@ Future<List<String>> kiemTraMaNganhCap1BCDEXoaByMaVCPA(String vcpaCap5Inputs) as
     var vcpaQuiDinhs = vcpaQuiDinh.split(';');
     var vcpa5DieuKiens = maSanPhamPhieuMauTBSanPham.split(';');
     String sql =
-        "SELECT $tableDmMoTaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5DieuKiens.map((e) => "'$e'").join(', ')}) AND substr($columnDmMoTaSPMaSanPham,1,5) in (${vcpaQuiDinhs.map((e) => "'$e'").join(', ')})";
+        "SELECT $columnDmMoTaSPMaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5DieuKiens.map((e) => "'$e'").join(', ')}) AND substr($columnDmMoTaSPMaSanPham,1,5) in (${vcpaQuiDinhs.map((e) => "'$e'").join(', ')})";
     List<Map> maps = await db!.rawQuery(sql);
     for (var item in maps) {
       item.forEach((key, value) {

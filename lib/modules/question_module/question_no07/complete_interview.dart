@@ -50,7 +50,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   bool _isFirstLoading = true;
   bool _allowEdit = true;
   bool _isEdited = false;
-  Map<dynamic, dynamic>? completeInfo;
+  Map<dynamic, dynamic> completeInfo= <dynamic, dynamic>{}.obs;
+  Map<dynamic, dynamic> completeInfoNew= <dynamic, dynamic>{}.obs;
 
   @override
   void initState() {
@@ -375,25 +376,25 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
       return;
     }
 
-    final completeInfoNew = controller.completeInfo;
+      completeInfoNew = controller.completeInfo;
 
-    mapDataInfo(completeInfoNew, columnNguoiTraLoi, hoTenController.text);
-    mapDataInfo(completeInfoNew, columnSoDienThoai, soDienThoaiController.text);
+    mapDataInfo(  columnNguoiTraLoi, hoTenController.text);
+    mapDataInfo(  columnSoDienThoai, soDienThoaiController.text);
 
     mapDataInfo(
-        completeInfoNew, columnKinhDo, double.tryParse(_lngController.text));
+          columnKinhDo, _lngController.text);
     mapDataInfo(
-        completeInfoNew, columnViDo, double.tryParse(_latController.text));
+         columnViDo, _latController.text);
 
     /// kiểm tra nếu phiếu đã có kinh độ và vĩ độ thì cập nhật lý do định vị không chính xác = null
     if (completeInfo?[columnKinhDo] != null &&
         completeInfo?[columnViDo] != null) {
-      mapDataInfo(completeInfoNew, giaiTrinhToaDo, null);
+      mapDataInfo(  giaiTrinhToaDo, null);
     } else {
       mapDataInfo(
-          completeInfoNew, columnKinhDo, double.tryParse(_lngController.text));
+            columnKinhDo, _lngController.text);
       mapDataInfo(
-          completeInfoNew, columnViDo, double.tryParse(_latController.text));
+            columnViDo, _latController.text);
     }
 
     // if (_lyDoThoiGianController.text.isNotEmpty) {
@@ -401,13 +402,13 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     // }
 
     if (_lyDoDinhViController.text.isNotEmpty) {
-      mapDataInfo(completeInfoNew, giaiTrinhToaDo, _lyDoDinhViController.text);
+      mapDataInfo( giaiTrinhToaDo, _lyDoDinhViController.text);
     }
 
     /// cập nhật mới có toạ độ -> xoá lý do
     if (completeInfo?[columnKinhDo] != null &&
         completeInfo?[columnViDo] != null) {
-      mapDataInfo(completeInfoNew, giaiTrinhToaDo, null);
+      mapDataInfo(  giaiTrinhToaDo, null);
     }
 
     // if (_isEdited) {
@@ -424,11 +425,11 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     );
   }
 
-  mapDataInfo(Map<dynamic, dynamic> completeInfo, key, value) {
-    Map<String, dynamic> map = Map<String, dynamic>.from(completeInfo);
+  mapDataInfo( key, value) {
+    Map<String, dynamic> map = Map<String, dynamic>.from(completeInfoNew);
     map.update(key, (val) => value, ifAbsent: () => value);
-    completeInfo = map;
-    return completeInfo;
+    completeInfoNew = map;
+    return completeInfoNew;
   }
 
   /// ----- validate ------

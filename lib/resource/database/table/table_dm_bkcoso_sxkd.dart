@@ -38,6 +38,9 @@ const String colBkCoSoSXKDMaTrangThaiDT = 'MaTrangThaiDT';
 //const String columnBkCoSoSXKDMauBoSung = 'MauBoSung';
 ///0: chưa insert; 1: đã insert logic; vào bảng Xác nhận logic
 const String colBkCoSoSXKDTrangThaiLogic = 'TrangThaiLogic';
+///Trạng thái dữ liệu đang edit: 2; hoàn thành: 9: Giống y trạng thái của MaTrangThaiDT nhưng chỉ dùng cho thao tác sửa/nhập
+///9: Khi đã hoàn thành pv ở form hoàn thành pv
+const String colBkCoSoSXKDMaTrangThaiDT2 = 'MaTrangThaiDT2';
 const String colBkCoSoSXKDIsSyncSuccess = 'SyncSuccess';
 
 /// tablebkCoSoSXKD -> TablebkCoSoSXKD gồm
@@ -72,6 +75,7 @@ class TableBkCoSoSXKD {
   String? dienThoaiNguoiCungCap;
   String? maDTV;
   int? maTrangThaiDT;
+  int? maTrangThaiDT2;
   int? trangThaiLogic;
   int? isSyncSuccess;
   String? createdAt;
@@ -106,6 +110,7 @@ class TableBkCoSoSXKD {
       this.dienThoaiNguoiCungCap,
       this.maDTV,
       this.maTrangThaiDT,
+      this.maTrangThaiDT2,
       this.tablePhieu,
       this.tableNganhSanPhams,
       this.trangThaiLogic,
@@ -142,7 +147,7 @@ class TableBkCoSoSXKD {
     dienThoaiNguoiCungCap = json['DienThoaiNguoiCungCap'];
     maDTV = json['MaDTV'];
     maTrangThaiDT = json['MaTrangThaiDT'];
-
+    maTrangThaiDT2 = json['MaTrangThaiDT2'];
     isSyncSuccess = json['SyncSuccess'];
     createdAt = json['CreatedAt'];
     updatedAt = json['UpdatedAt'];
@@ -186,6 +191,7 @@ class TableBkCoSoSXKD {
     json['DienThoaiNguoiCungCap'] = dienThoaiNguoiCungCap;
     json['MaDTV'] = maDTV;
     json['MaTrangThaiDT'] = maTrangThaiDT;
+    json['MaTrangThaiDT2'] = maTrangThaiDT2;
     json['TrangThaiLogic'] = trangThaiLogic;
     json['SyncSuccess'] = isSyncSuccess;
     json['CreatedAt'] = createdAt;

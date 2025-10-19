@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gov_statistics_investigation_economic/config/config.dart'; 
+import 'package:gov_statistics_investigation_economic/config/config.dart';
 
 enum IButtonType { inline, outline, text }
 
@@ -52,9 +52,12 @@ class IButton extends StatelessWidget {
   }
 
   Widget _buildInlineButton() {
+    Color oColor = primaryColor.withValues(alpha: 0.1);
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
+        splashFactory: InkRipple.splashFactory,
+        overlayColor: oColor,
         padding: padding,
         backgroundColor: _isDisabled
             ? (disabledColor ?? backgroundDisableColor)
@@ -106,7 +109,7 @@ class IButton extends StatelessWidget {
         ),
         minimumSize: Size.fromHeight(height),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-         splashFactory: InkRipple.splashFactory,
+        splashFactory: InkRipple.splashFactory, 
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

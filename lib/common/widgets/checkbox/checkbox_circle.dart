@@ -28,7 +28,7 @@ class CheckBoxCircle extends StatelessWidget {
     return InkWell(
       onTap: () => onPressed(index),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppValues.padding / 2),
+        padding: const EdgeInsets.symmetric(vertical: AppValues.padding / 4),
         child: Row(
           children: [
             _icon(),
@@ -60,14 +60,14 @@ class CheckBoxCircle extends StatelessWidget {
   }
 
   Widget _content() {
-    String _text = showIndex ? '${index + 1}.$text' : text;
+    String _text = showIndex ? '${index + 1}. $text' : text;
     Color textColor = blackText;
     if (indexFillColor != null && indexFillColor == index) {
       textColor = dangerColor;
     }
     return Text(
       _text,
-      style: styles ?? styleMediumBold.copyWith(color: textColor, height: 1),
+      style: styles ?? styleMedium.copyWith(color: textColor, height: textHeight),
     );
   }
 }

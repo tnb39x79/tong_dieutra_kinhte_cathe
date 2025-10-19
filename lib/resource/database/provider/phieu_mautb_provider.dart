@@ -334,7 +334,7 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join('+')} as total FROM $tablePhieuMauTB  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
@@ -361,7 +361,7 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join('*')} as total FROM $tablePhieuMauTB  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
@@ -447,12 +447,13 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
+    var updateAt=DateTime.now().toIso8601String();
     List<String> fields = [];
     for (var item in fieldNames) {
       fields.add(" $item = null ");
     }
     String sql =
-        "UPDATE $tablePhieuMauTB SET ${fields.join(',')} WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+        "UPDATE $tablePhieuMauTB SET ${fields.join(',')}, $columnUpdatedAt= '$updateAt' WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
     result = await db!.rawUpdate(sql);
 
     return result;

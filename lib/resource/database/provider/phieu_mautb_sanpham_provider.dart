@@ -158,7 +158,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
       }
     }
 
-    log('UPDATE totalA5_2: $total');
+    log('Cal totalA5_2: $total');
     return total;
   }
 
@@ -416,7 +416,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join('+')} as total FROM $tablePhieuMauTBSanPham  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
@@ -452,7 +452,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
       }
     }
 
-    log('UPDATE totalA5_2ByMaVcpaCap2 totalA5_2: $total');
+    log('Cal totalA5_2ByMaVcpaCap2 totalA5_2: $total');
     return total;
   }
 

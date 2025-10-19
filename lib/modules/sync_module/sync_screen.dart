@@ -205,7 +205,7 @@ class SyncScreen extends GetView<SyncController> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(
-                height: 15,
+                height: 16,
               ),
               WTitleHeader(titleHeader: syncResultTitle, isSuccess: isSuccess!),
               Container(
@@ -215,14 +215,19 @@ class SyncScreen extends GetView<SyncController> {
                   AppValues.padding / 8,
                   AppValues.padding / 8,
                 ),
-                padding: const EdgeInsets.all(AppValues.padding / 8),
+                padding: const EdgeInsets.all(0),
                 width: Get.width,
                 decoration: BoxDecoration(
+                  border: syncResultTitle == 'Đồng bộ lỗi'
+                      ? BoxBorder.all(width: 1, color: errorColor)
+                      : BoxBorder.all(width: 1, color: backgroundColorSync),
                   color: backgroundColorSync,
                   borderRadius: BorderRadius.circular(AppValues.borderLv2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: syncResultTitle == 'Đồng bộ lỗi'
+                          ? Colors.grey.shade200
+                          : Colors.grey.shade100,
                       spreadRadius: 2,
                       blurRadius: 7,
                       offset: Offset(0, 2), // changes position of shadow
@@ -267,15 +272,16 @@ class SyncScreen extends GetView<SyncController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                if (index > 0) const SizedBox(height: 16),
                 ListTile(
+                  tileColor: Colors.blue[100],
                   title: Text(
                     tenDT!,
-                    style: styleMediumBold.copyWith(color: primaryColor),
+                    style: styleLargeBold.copyWith(color: primaryColor),
                   ),
                 ),
-               
+                Divider(color: Colors.grey.shade300),
                 wCardSyncItem(syncResultDetail!, maDT!, isSuccess)
-                
               ],
             );
           }

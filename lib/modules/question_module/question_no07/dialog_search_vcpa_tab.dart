@@ -17,7 +17,8 @@ class DialogSearchVcpaTab extends StatefulWidget {
       this.searchType,
       this.capSo,
       this.maNganhCap5,
-      this.moTaMaNganhCap5});
+      this.moTaMaNganhCap5,
+      this.isInitSearch});
 
   final String? keyword;
   final String? initialValue;
@@ -26,11 +27,12 @@ class DialogSearchVcpaTab extends StatefulWidget {
 
   ///Để đảm bảo mã sản phẩm cấp 8 đang tìm kiếm thuộc phạm vi mã sản phẩm cấp 5 này.
   final String? maNganhCap5;
-    final String? moTaMaNganhCap5;
+  final String? moTaMaNganhCap5;
 
   ///0: AI; 1: Danh muc
   final int? searchType;
   final int? capSo;
+  final bool? isInitSearch;
 
   @override
   State<DialogSearchVcpaTab> createState() => _DialogSearchVcpaTabState();
@@ -41,6 +43,7 @@ class _DialogSearchVcpaTabState extends State<DialogSearchVcpaTab>
   final phieuTBController = Get.find<QuestionPhieuTBController>();
   late TabController _tabController;
   int? selectedIndex;
+
   @override
   void initState() {
     super.initState();
@@ -52,17 +55,20 @@ class _DialogSearchVcpaTabState extends State<DialogSearchVcpaTab>
     _tabController.dispose();
     super.dispose();
   }
+  
 
   @override
   Widget build(BuildContext context) {
+   
     return Dialog.fullscreen(
       backgroundColor: Colors.white,
+      
       child: Container(
         height: Get.height * 0.8,
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: [  
             Row(
               children: [
                 Expanded(
@@ -168,7 +174,7 @@ class _DialogSearchVcpaTabState extends State<DialogSearchVcpaTab>
                       productItem: widget.productItem,
                       searchType: 0,
                       capSo: widget.capSo,
-                      maNganhCap5:widget.maNganhCap5,
+                      maNganhCap5: widget.maNganhCap5,
                       moTaMaNganhCap5: widget.moTaMaNganhCap5),
                   VcpaSearchService(
                       keywordText: widget.keyword,
@@ -177,7 +183,7 @@ class _DialogSearchVcpaTabState extends State<DialogSearchVcpaTab>
                       productItem: widget.productItem,
                       searchType: 1,
                       capSo: widget.capSo,
-                      maNganhCap5:widget.maNganhCap5,
+                      maNganhCap5: widget.maNganhCap5,
                       moTaMaNganhCap5: widget.moTaMaNganhCap5)
                 ],
               ),

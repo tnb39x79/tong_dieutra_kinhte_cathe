@@ -50,16 +50,20 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
 
   Future<List<int>> insertCN(
       List<TablePhieuNganhCN> value, String createdAt) async {
+        var updatedAt = DateTime.now().toIso8601String();
     if (value.isNotEmpty) {
-      var stt = value
-          .where((x) => x.a1_2 != null)
-          .reduce((a, b) => a.sTT_SanPham! < b.sTT_SanPham! ? a : b)
-          .sTT_SanPham;
+      var stt = null;
+      if (value != null && value.isNotEmpty && value.length > 1) {
+        stt = value
+            .where((x) => x.a1_2 != null)
+            .reduce((a, b) => a.sTT_SanPham! < b.sTT_SanPham! ? a : b)
+            .sTT_SanPham;
+      }
       var sttTemp = stt ?? 1;
       List<int> ids = [];
       for (var element in value) {
         element.createdAt = createdAt;
-        element.updatedAt = createdAt;
+        element.updatedAt = updatedAt;
         element.maDTV = AppPref.uid;
         element.sTT_SanPham = sttTemp;
         ids.add(await db!.insert(tablePhieuNganhCN, element.toJson()));
@@ -375,7 +379,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhCN  WHERE $columnIDCoSo = '$idCoso' AND $columnId=$id  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";

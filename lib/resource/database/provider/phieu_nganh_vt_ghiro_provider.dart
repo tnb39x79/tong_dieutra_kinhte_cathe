@@ -335,7 +335,7 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
     String createdAt = AppPref.dateTimeSaveDB!;
     List<String> fields = [];
     for (var item in fieldNames) {
-      fields.add("IFNULL($item,0)");
+      fields.add("IFNULL($item,0.0)");
     }
     String sql =
         "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhVTGhiRo  WHERE $columnIDCoSo = '$idCoso' AND $columnId=$id  AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
