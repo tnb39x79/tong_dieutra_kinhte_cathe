@@ -346,6 +346,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
               setState(() {
                 //  isOnline = true;
                 phieuTBController.isSearchOnline.value = true;
+                phieuTBController.isSearchOnlineSwitch.value = true;
               });
               if (searchController.text.trim().isNotEmpty) {
                 handleOnlineAPICall();
@@ -366,6 +367,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                   setState(() {
                     //  isOnline = false;
                     phieuTBController.isSearchOnline.value = false;
+                    phieuTBController.isSearchOnlineSwitch.value =false;
                   });
                 }
                 setState(() {
@@ -654,7 +656,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [ 
+      Row(children: [
         Expanded(
           child: InputDecorator(
               decoration: InputDecoration(
@@ -727,17 +729,29 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
         //     ),
         //   ),
         // ),
-        // IntrinsicWidth(
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(
-        //       left: 10,
-        //       top: 0,
-        //     ),
-        //     child: Center(
-        //       child: AnimatedToggleSwitch(tagList: [Tags('Offline', Icons.search_outlined)],fillRandomColor: false,)
-        //     ),
-        //   ),
-        // )
+        if (widget.searchType == 0)
+          IntrinsicWidth(
+              child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    top: 0,
+                  ),
+                  child: Center(
+                      child: AdvancedSwitch(
+                    controller: phieuTBController.isSearchOnlineSwitch,
+                    initialValue: phieuTBController.isSearchOnline.value,
+                    activeColor: Colors.green,
+                    inactiveColor: Color.fromARGB(255, 242, 196, 105),
+                    activeChild: Text('Online'),
+                    inactiveChild: Text('Offline'),
+                    borderRadius: BorderRadius.all(
+                        const Radius.circular(AppValues.borderLv1)),
+                    width: 70.0,
+                    height: 30.0,
+                    enabled: true,
+                    disabledOpacity: 0.5,
+                    onChanged: (value) => onSearchModeChange(value),
+                  )))),
       ]),
 
       // Divider(),
@@ -823,6 +837,16 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
     setState(() {
       canClear = searchController.text.isNotEmpty;
     });
+  }
+
+  void onSearchModeChange(value) {
+    phieuTBController.isSearchOnline.value = value;
+    phieuTBController.isSearchOnlineSwitch.value=value;
+    if (phieuTBController.isSearchOnline.value == false) {
+      if (!hasLocalAI) {
+        showDownloadDialog();
+      }
+    }
   }
 
   /// Handle search button press (always show choice dialog)

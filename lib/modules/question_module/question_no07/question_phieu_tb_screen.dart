@@ -3807,8 +3807,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               // if (lastStt > 0 && lastStt == productCap5.sTT_SanPham!) ...[
 
               if (controller.countHasMoreProductNganhCN(
-                      tablePhieuNganhCN, productCap5.maNganhC5 ?? '') ==
-               controller.tblPhieuNganhCN.length) ...[
+                      tablePhieuNganhCN, productCap5.maNganhC5 ?? '') >0) ...[
                 const SizedBox(
                   height: 15,
                 ),

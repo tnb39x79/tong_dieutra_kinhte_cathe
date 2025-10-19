@@ -55,20 +55,17 @@ class _DialogSearchVcpaTabState extends State<DialogSearchVcpaTab>
     _tabController.dispose();
     super.dispose();
   }
-  
 
   @override
   Widget build(BuildContext context) {
-   
     return Dialog.fullscreen(
       backgroundColor: Colors.white,
-      
       child: Container(
         height: Get.height * 0.8,
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [  
+          children: [
             Row(
               children: [
                 Expanded(

@@ -123,8 +123,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   final tblDmLinhVuc = <TableCTDmLinhVuc>[].obs;
   final tblDmLoaiDiaDiem = <TableCTDmLoaiDiaDiem>[].obs;
   // final tblDmNhomNganhVcpaSearch = <TableCTDmNhomNganhVcpa>[].obs;
-  final tblDmMoTaSanPhamSearch = <TableDmMotaSanpham>[].obs;
-  final tblDmMoTaSanPham = <TableDmMotaSanpham>[].obs;
+  // final tblDmMoTaSanPhamSearch = <TableDmMotaSanpham>[].obs;
+  // final tblDmMoTaSanPham = <TableDmMotaSanpham>[].obs;
   //final tblDmMoTaSanPhamFilterd = <TableDmMotaSanpham>[].obs;
   final tblLinhVucSp = <TableDmLinhvuc>[].obs;
   final tblLinhVucSpFilter = <TableDmLinhvuc>[].obs;
@@ -258,8 +258,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   //Chứa mã ngành VTHH lấy từ bảng tablePhieuMauTBSanPham
   //Gồm Mã ngành vận tải hàng hóa thuộc mã 49331-49332-49333-49334-49339-50121-50122-50221-50222
   final hasMaNganhVTHH = <String>[].obs;
-  final isSearchOnline=false.obs;
-    final isInitSearch=false.obs;
+  final isSearchOnline = false.obs;
+  final isInitSearch = false.obs;
+ final isSearchOnlineSwitch= ValueNotifier<bool>(false);
 
   @override
   void onInit() async {
@@ -325,7 +326,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     await setSelectedQuestionGroup();
     await getLinhVucSanPham();
-    await getMoTaSanPham();
+   // await getMoTaSanPham();
     await getDsMaSanPhamNganhCN();
 
     setLoading(false);
@@ -338,12 +339,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     tblDmPhieu.assignAll(mtAll);
   }
 
-  Future getMoTaSanPham() async {
-    var res = await dmMotaSanphamProvider.selectAll();
-    var mtAll = TableDmMotaSanpham.listFromJson(res);
+  // Future getMoTaSanPham() async {
+  //   var res = await dmMotaSanphamProvider.selectAll();
+  //   var mtAll = TableDmMotaSanpham.listFromJson(res);
 
-    tblDmMoTaSanPham.assignAll(mtAll);
-  }
+  //   tblDmMoTaSanPham.assignAll(mtAll);
+  // }
 
   Future getLinhVucSanPham() async {
     var res = await dmLinhvucSpProvider.selectAll();
@@ -683,6 +684,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           currentTenPhieu.value = p != null ? p.tenPhieu! : '';
         }
       }
+    }
+  }
+
+  Future getTenPhieuByMaPhieu(int maPhieu) async {
+    if (tblDmPhieu.isNotEmpty) {
+      var p = tblDmPhieu.where((x) => x.maPhieu == maPhieu).firstOrNull;
+      currentTenPhieu.value = p != null ? p.tenPhieu! : '';
     }
   }
 
@@ -6834,7 +6842,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           var validRes = onValidateInputGhiRo(itemA1);
 
           if (validRes != null && validRes != '') {
-            return validRes;
+            return await generateMessageV2('', validRes, maPhieu: vt.maPhieu);
           }
         }
       }
@@ -8104,12 +8112,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
   }
 
-  onCloseSearch() async {
-    update();
-    log('ON onCloseSearch id moTaSpSelected: $sanPhamIdSelected $moTaSpSelected $tblDmMoTaSanPhamSearch');
-    Get.back();
-    //
-  }
+  // onCloseSearch() async {
+  //   update();
+  //   log('ON onCloseSearch id moTaSpSelected: $sanPhamIdSelected $moTaSpSelected $tblDmMoTaSanPhamSearch');
+  //   Get.back();
+  //   //
+  // }
 
   onChangeInputVCPACap5(String table, String maCauHoi, String? fieldName,
       idValue, stt, value) async {
@@ -9672,7 +9680,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       QuestionCommonModel question,
       ChiTieuDongModel chiTieuDong,
       ChiTieuModel chiTieuCot,
-      TablePhieuNganhVTGhiRo ghiRoItem,String orderCaption) async {
+      TablePhieuNganhVTGhiRo ghiRoItem,
+      String orderCaption) async {
     Get.dialog(DialogBarrierWidget(
       onPressedNegative: () async {
         Get.back();
@@ -10625,46 +10634,28 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   Future<String> generateMessageV2(
       String? mucCauHoi, String? validResultMessage,
-      {int? loaiCauHoi, String? maCauHoi}) async {
+      {int? loaiCauHoi, String? maCauHoi, int? maPhieu}) async {
     String result = '';
-
-    result = '$mucCauHoi: Vui lòng nhập giá trị.';
+    String tenPhieu = currentTenPhieu.value;
+    try {
+      if (validateEmptyString(currentTenPhieu.value) && maPhieu != null) {
+        tenPhieu = await getTenPhieuByMaPhieu(maPhieu!);
+      }
+    } catch (e) {
+      print('An error occurred: $e');
+    }
+    result = '$tenPhieu $mucCauHoi: Vui lòng nhập giá trị.';
     if (loaiCauHoi == AppDefine.loaiCauHoi_1) {
-      result = '$mucCauHoi: Vui lòng chọn giá trị.';
+      result = '$tenPhieu $mucCauHoi: Vui lòng chọn giá trị.';
     }
     if (validResultMessage != null && validResultMessage != '') {
-      result = '$mucCauHoi: \r\n$validResultMessage';
+      result = '$tenPhieu $mucCauHoi: \r\n$validResultMessage';
     }
     return result;
   }
 
   /// ? loaiSoSanh='empty': Empty; ==: So sánh bằng: ==; So sánh lớn hơn: >,....
   ///  minValue; maxValue
-  ///
-  Future<String> generateMessage(
-      int loaiCauHoi, String tenNganCauHoi, String? mucCauHoi,
-      {String? loaiSoSanh, minValue, maxValue, giaTriSoSanh}) async {
-    String result = '';
-
-    if (loaiSoSanh == "empty") {
-      result = '$mucCauHoi: Vui lòng nhập giá trị.';
-    }
-    if (loaiSoSanh == "yesno") {
-      result = '$mucCauHoi: Vui lòng chọn giá trị.';
-    } else if (loaiSoSanh == "==") {
-      result = '$mucCauHoi: Vui lòng kiểm tra lại giá trị.';
-    } else if (loaiSoSanh == ">") {
-      result = '$mucCauHoi: Vui lòng kiểm tra lại giá trị.';
-    } else if (loaiSoSanh == "<") {
-      result = '$mucCauHoi: Vui lòng kiểm tra lại giá trị.';
-    }
-    if (loaiCauHoi == AppDefine.loaiCauHoi_1) {
-    } else if (loaiCauHoi == AppDefine.loaiCauHoi_2) {
-    } else if (loaiCauHoi == AppDefine.loaiCauHoi_3) {
-    } else if (loaiCauHoi == AppDefine.loaiCauHoi_4) {}
-    return result;
-  }
-
   ///
 
   ///END::Validation
