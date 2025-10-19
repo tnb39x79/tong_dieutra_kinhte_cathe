@@ -92,7 +92,7 @@ class TableData {
     return jsonDecode(questionNo07TB!);
   }
 
-   dynamic toCauHoiPhieu07MauMenu() {
+  dynamic toCauHoiPhieu07MauMenu() {
     return jsonDecode(questionNo07MauMenu!);
   }
 
@@ -353,6 +353,22 @@ class TableData {
     }
     return dsVsic;
   }
+
+  // static List<TableDmMotaSanphamVirtual> toLisMoTaSanPhamVcpasVirtual(
+  //     dynamic json) {
+  //   List<DmMotaSanphamModel> subject = DmMotaSanphamModel.listFromJson(json);
+  //   List<TableDmMotaSanphamVirtual> dsVsic = [];
+
+  //   for (var element in subject) {
+  //     dsVsic.add(TableDmMotaSanphamVirtual(
+  //         maSanPham: element.maSanPham,
+  //         tenSanPham: element.tenSanPham,
+  //         tenSanPhamKoDau: element.tenSanPhamKoDau,
+  //         moTaChiTiet: element.moTaChiTiet,
+  //         moTaChiTietKoDau: element.moTaChiTietKoDau));
+  //   }
+  //   return dsVsic;
+  // }
 
   ///END::Danh mục cho phiếu 07 mẫu
   ///

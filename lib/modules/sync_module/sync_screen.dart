@@ -474,28 +474,28 @@ class SyncScreen extends GetView<SyncController> {
         image: AssetImage(
           AppImages.uploadSuccess,
         ),
-        width: 72,
+        width: 48,
       );
     } else if (controller.responseCode.value == ApiConstants.duLieuDongBoRong) {
       return const Image(
         image: AssetImage(
           AppImages.uploadEmpty,
         ),
-        width: 72,
+        width: 48,
       );
     } else if (controller.responseCode.value == ApiConstants.requestTimeOut) {
       return const Image(
         image: AssetImage(
           AppImages.uploadTimeout,
         ),
-        width: 72,
+        width: 48,
       );
     } else {
       return const Image(
         image: AssetImage(
           AppImages.uploadError,
         ),
-        width: 72,
+        width: 48,
       );
     }
   }

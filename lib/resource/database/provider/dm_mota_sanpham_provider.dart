@@ -45,6 +45,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
     return ids;
   }
+ 
 
   Future<List<int>> insertNhomNganhVcpa(
       List<dynamic> value, String create) async {
@@ -344,7 +345,8 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return result.isNotEmpty;
   }
 
-Future<List<String>> kiemTraMaNganhCap1BCDEXoaByMaVCPA(String vcpaCap5Inputs) async {
+  Future<List<String>> kiemTraMaNganhCap1BCDEXoaByMaVCPA(
+      String vcpaCap5Inputs) async {
     List<String> result = [];
     var vcpa5Inputs = vcpaCap5Inputs.split(';');
     String sql =
@@ -605,7 +607,8 @@ Future<List<String>> kiemTraMaNganhCap1BCDEXoaByMaVCPA(String vcpaCap5Inputs) as
     }
     return result.isNotEmpty;
   }
- Future<List<String>> kiemTraMaNganhCap5XoaByMaSanPham5(
+
+  Future<List<String>> kiemTraMaNganhCap5XoaByMaSanPham5(
       String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
     List<String> result = [];
     //var vcpas = vcpaCap5s.map((e) => "'$e'").join(', ');
@@ -623,6 +626,7 @@ Future<List<String>> kiemTraMaNganhCap1BCDEXoaByMaVCPA(String vcpaCap5Inputs) as
     }
     return result;
   }
+
   Future<List<String>> getMaNganhCap5ByMaSanPham5(
       String vcpaQuiDinh, String maSanPhamPhieuMauTBSanPham) async {
     List<String> result = [];
@@ -733,4 +737,5 @@ Future<List<String>> kiemTraMaNganhCap1BCDEXoaByMaVCPA(String vcpaCap5Inputs) as
       return null;
     }
   }
+ 
 }

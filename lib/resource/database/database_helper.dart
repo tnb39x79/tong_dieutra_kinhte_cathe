@@ -43,7 +43,7 @@ class DatabaseHelper {
   final ctDmDiaDiemSXKDProvider = CTDmDiaDiemSXKDProvider();
   final ctDmLinhVucProvider = CTDmLinhVucProvider();
   final ctDmLoaiDiaDiemProvider = CTDmLoaiDiaDiemProvider();
-  final ctDmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
+  //final ctDmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
   final dmQuocTichProvider = DmQuocTichProvider();
   final ctDmTinhTrangDKKDProvider = CTDmTinhTrangDKKDProvider();
   final ctDmTrinhDoChuyenMonProvider = CTDmTrinhDoChuyenMonProvider();
@@ -131,7 +131,7 @@ class DatabaseHelper {
       userInfoProvider.onCreateTable(db),
       bkCoSoSXKDProvider.onCreateTable(db),
       bkCoSoSXKDNganhSanPhamProvider.onCreateTable(db),
-      dmMotaSanphamProvider.onCreateTable(db),
+      dmMotaSanphamProvider.onCreateTable(db), 
       dmLinhvucProvider.onCreateTable(db),
       diaBanCoSoSXKdProvider.onCreateTable(db),
       diaBanCoSoSXKDProvider.onCreateTable(db),
@@ -149,7 +149,7 @@ class DatabaseHelper {
       ctDmDiaDiemSXKDProvider.onCreateTable(db),
       ctDmLinhVucProvider.onCreateTable(db),
       ctDmLoaiDiaDiemProvider.onCreateTable(db),
-      ctDmNhomNganhVcpaProvider.onCreateTable(db),
+     // ctDmNhomNganhVcpaProvider.onCreateTable(db),
       dmQuocTichProvider.onCreateTable(db),
       ctDmTinhTrangDKKDProvider.onCreateTable(db),
       ctDmTrinhDoChuyenMonProvider.onCreateTable(db),
@@ -180,7 +180,7 @@ class DatabaseHelper {
     await dmPhieuProvider.deletedTable(db);
     await userInfoProvider.deletedTable(db);
     await bkCoSoSXKDNganhSanPhamProvider.deletedTable(db);
-    await dmMotaSanphamProvider.deletedTable(db);
+    await dmMotaSanphamProvider.deletedTable(db); 
     await dmLinhvucProvider.deletedTable(db);
     await bkCoSoSXKDProvider.deletedTable(db);
     await diaBanCoSoSXKdProvider.deletedTable(db);
@@ -202,7 +202,7 @@ class DatabaseHelper {
     await dmQuocTichProvider.deletedTable(db);
     await ctDmTinhTrangDKKDProvider.deletedTable(db);
     await ctDmTrinhDoChuyenMonProvider.deletedTable(db);
-    await ctDmNhomNganhVcpaProvider.deletedTable(db);
+ //   await ctDmNhomNganhVcpaProvider.deletedTable(db);
 
     // phieu ca the mau
     await phieuProvider.deletedTable(db);

@@ -143,14 +143,31 @@ mixin SyncMixin {
 
     if (phieu.isNotEmpty) {
       mapPhieu['PhieuDto'] = phieu;
-      mapPhieu['Phieu_MauTBDto'] = phieuMauTB;
-      mapPhieu['Phieu_MauTB_SanPhamDtos'] = phieuMauTBSanPhams;
-      mapPhieu['Phieu_NganhCNDtos'] = phieuNganhCNs;
-      mapPhieu['Phieu_NganhLTDto'] = phieuNganhLTs;
-      mapPhieu['Phieu_NganhTMDto'] = phieuNganhTMs;
-      mapPhieu['Phieu_NganhTM_SanPhamDtos'] = phieuNganhTMSanPhams;
-      mapPhieu['Phieu_NganhVTDto'] = phieuNganhVTs;
-      mapPhieu['Phieu_NganhVT_GhiRoDtos'] = phieuNganhVTGhiRos;
+      if (phieuMauTB.isNotEmpty) {
+        mapPhieu['Phieu_MauTBDto'] = phieuMauTB;
+      }
+
+      if (phieuMauTBSanPhams.isNotEmpty) {
+        mapPhieu['Phieu_MauTB_SanPhamDtos'] = phieuMauTBSanPhams;
+      }
+      if (phieuNganhCNs.isNotEmpty) {
+        mapPhieu['Phieu_NganhCNDtos'] = phieuNganhCNs;
+      }
+      if (phieuNganhLTs.isNotEmpty) {
+        mapPhieu['Phieu_NganhLTDto'] = phieuNganhLTs;
+      }
+      if (phieuNganhTMs.isNotEmpty) {
+        mapPhieu['Phieu_NganhTMDto'] = phieuNganhTMs;
+      }
+      if (phieuNganhTMSanPhams.isNotEmpty) {
+        mapPhieu['Phieu_NganhTM_SanPhamDtos'] = phieuNganhTMSanPhams;
+      }
+      if (phieuNganhVTs.isNotEmpty) {
+        mapPhieu['Phieu_NganhVTDto'] = phieuNganhVTs;
+      }
+      if (phieuNganhVTGhiRos.isNotEmpty) {
+        mapPhieu['Phieu_NganhVT_GhiRoDtos'] = phieuNganhVTGhiRos;
+      }
     }
 
     return mapPhieu;

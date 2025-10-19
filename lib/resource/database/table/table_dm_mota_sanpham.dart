@@ -11,6 +11,9 @@ const String columnDmMoTaSPTenVSIC = 'TenVSIC';
 const String columnDmMoTaSPMaLV = 'MaLV';
 const String columnDmMoTaSPTenLinhVuc = 'TenLinhVuc';
 
+
+const String tableDmMoTaSanPhamVirtual = 'CT_DM_MoTaSanPhamVirtual';
+
 class TableDmMotaSanpham {
   int? id;
   String? maSanPham;
@@ -71,6 +74,51 @@ class TableDmMotaSanpham {
     if (localities != null) {
       for (var item in localities) {
         list.add(TableDmMotaSanpham.fromJson(item));
+      }
+    }
+    return list;
+  }
+}
+
+class TableDmMotaSanphamVirtual { 
+  String? maSanPham;
+  String? tenSanPham;
+  String? tenSanPhamKoDau;
+  String? moTaChiTiet;
+  String? moTaChiTietKoDau; 
+
+  TableDmMotaSanphamVirtual(
+      { 
+      this.maSanPham,
+      this.tenSanPham,
+      this.tenSanPhamKoDau,
+      this.moTaChiTiet,
+      this.moTaChiTietKoDau,
+      });
+
+  TableDmMotaSanphamVirtual.fromJson(Map json) { 
+    maSanPham = json['MaSanPham'];
+    tenSanPham = json['TenSanPham'];
+    tenSanPhamKoDau = json['TenSanPhamKoDau'];
+    moTaChiTiet = json['MoTaChiTiet'];
+    moTaChiTietKoDau = json['MoTaChiTietKoDau']; 
+  }
+
+  Map<String, Object?> toJson() {
+    final data = <String, Object?>{};
+    data['MaSanPham'] = maSanPham;
+    data['TenSanPham'] = tenSanPham;
+    data['TenSanPhamKoDau'] = tenSanPhamKoDau;
+    data['MoTaChiTiet'] = moTaChiTiet;
+    data['MoTaChiTietKoDau'] = moTaChiTietKoDau; 
+    return data;
+  }
+
+  static List<TableDmMotaSanphamVirtual> listFromJson(dynamic localities) {
+    List<TableDmMotaSanphamVirtual> list = [];
+    if (localities != null) {
+      for (var item in localities) {
+        list.add(TableDmMotaSanphamVirtual.fromJson(item));
       }
     }
     return list;

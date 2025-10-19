@@ -85,7 +85,7 @@ class HomeController extends BaseController with SyncMixin {
   final ctDmDiaDiemSXKDProvider = CTDmDiaDiemSXKDProvider();
   final ctDmLinhVucProvider = CTDmLinhVucProvider();
   final ctDmLoaiDiaDiemProvider = CTDmLoaiDiaDiemProvider();
-  final ctDmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
+ // final ctDmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
   final dmQuocTichProvider = DmQuocTichProvider();
   final ctDmTinhTrangDKKDProvider = CTDmTinhTrangDKKDProvider();
   final ctDmTrinhDoChuyenMonProvider = CTDmTrinhDoChuyenMonProvider();
@@ -378,7 +378,7 @@ class HomeController extends BaseController with SyncMixin {
       if (data.body!.hasDm == '1') {
         await insertDanhMucChung(data.body!, dtSaveDB);
         await insertDanhMucPhieuMau(data.body!, dtSaveDB);
-        await insertDmNhomNganhVcpa();
+       // await insertDmNhomNganhVcpa();
         await insertDanhMucMoTaSanPham(data.body!, dtSaveDB);
       }
 
@@ -599,18 +599,18 @@ class HomeController extends BaseController with SyncMixin {
 //export 'ct_dm_nhomnganh_vcpa_provider.dart';
   }
 
-  Future insertDmNhomNganhVcpa() async {
-    var countRes = await ctDmNhomNganhVcpaProvider.countAll();
-    if (countRes <= 0) {
-      final String response =
-          await rootBundle.loadString('assets/datavc/nhomnganhvcpa.json');
+  // Future insertDmNhomNganhVcpa() async {
+  //   var countRes = await ctDmNhomNganhVcpaProvider.countAll();
+  //   if (countRes <= 0) {
+  //     final String response =
+  //         await rootBundle.loadString('assets/datavc/nhomnganhvcpa.json');
 
-      List<dynamic> dataC8 = await json.decode(response);
+  //     List<dynamic> dataC8 = await json.decode(response);
 
-      await ctDmNhomNganhVcpaProvider.insertNhomNganhVcpa(dataC8, '');
-      AppPref.savedNhomNganhVcpa = true;
-    }
-  }
+  //     await ctDmNhomNganhVcpaProvider.insertNhomNganhVcpa(dataC8, '');
+  //     AppPref.savedNhomNganhVcpa = true;
+  //   }
+  // }
 
   Future insertDanhMucMoTaSanPham(DataModel bodyData, String dtSaveDB) async {
     //  if (AppPref.isFistInstall == 0) {
@@ -620,8 +620,12 @@ class HomeController extends BaseController with SyncMixin {
     List<TableDmMotaSanpham> dmMoTaSanPham =
         TableData.toLisMoTaSanPhamVcpas(bodyData.dmMoTaSanPham);
 
+        // List<TableDmMotaSanphamVirtual> dmMoTaSanPhamVirtual =
+        // TableData.toLisMoTaSanPhamVcpasVirtual(bodyData.dmMoTaSanPham);
+
     await dmLinhvucProvider.insert(dmLinhVuc, dtSaveDB);
     await dmMotaSanphamProvider.insert(dmMoTaSanPham, dtSaveDB);
+   // await dmMotaSanphamProvider.insertVirtual(dmMoTaSanPhamVirtual, dtSaveDB);
     // }
   }
 
@@ -678,7 +682,7 @@ class HomeController extends BaseController with SyncMixin {
     await dmQuocTichProvider.init();
     await ctDmTinhTrangDKKDProvider.init();
     await ctDmTrinhDoChuyenMonProvider.init();
-    await ctDmNhomNganhVcpaProvider.init();
+   // await ctDmNhomNganhVcpaProvider.init();
     await dmMotaSanphamProvider.init();
     await dmLinhvucProvider.init();
 
