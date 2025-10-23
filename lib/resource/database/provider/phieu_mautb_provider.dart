@@ -92,10 +92,10 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
         $colPhieuMauTBA6_1_1_1  INTEGER,
         $colPhieuMauTBA6_1_1_2  REAL,
         $colPhieuMauTBA6_1_1_3  REAL,
-        $colPhieuMauTBA6_1_1_1_1  INTEGER,
+      
         $colPhieuMauTBA6_1_1_1_2  REAL,
         $colPhieuMauTBA6_1_1_1_3  REAL,
-        $colPhieuMauTBA6_1_1_2_1  INTEGER,
+       
         $colPhieuMauTBA6_1_1_2_2  REAL,
         $colPhieuMauTBA6_1_1_2_3  REAL,
         $colPhieuMauTBA6_1_2_1  INTEGER,
@@ -113,13 +113,13 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
         $colPhieuMauTBA6_1_6_1  INTEGER,
         $colPhieuMauTBA6_1_6_2  REAL,
         $colPhieuMauTBA6_1_6_3  REAL,
-        $colPhieuMauTBA6_1_6_1_1  INTEGER,
+      
         $colPhieuMauTBA6_1_6_1_2  REAL,
         $colPhieuMauTBA6_1_6_1_3  REAL,
         $colPhieuMauTBA6_1_7_1  INTEGER,
         $colPhieuMauTBA6_1_7_2  REAL,
         $colPhieuMauTBA6_1_7_3  REAL,
-        $colPhieuMauTBA6_1_7_1_1  INTEGER,
+       
         $colPhieuMauTBA6_1_7_1_2  REAL,
         $colPhieuMauTBA6_1_7_1_3  REAL,
         $colPhieuMauTBA6_1_8_1  INTEGER,
@@ -131,7 +131,7 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
         $colPhieuMauTBA6_1_10_1  INTEGER,
         $colPhieuMauTBA6_1_10_2  REAL,
         $colPhieuMauTBA6_1_10_3  REAL,
-        $colPhieuMauTBA6_1_10_1_1  INTEGER,
+       
         $colPhieuMauTBA6_1_10_1_2  REAL,
         $colPhieuMauTBA6_1_10_1_3  REAL,
         $colPhieuMauTBA6_1_11_1  INTEGER,

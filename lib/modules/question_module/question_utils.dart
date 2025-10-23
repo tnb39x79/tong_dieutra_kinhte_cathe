@@ -177,35 +177,38 @@ mixin QuestionUtils {
                       }
                     }
                   } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuCN) {
-                    fromQuestion = "Câu 1";
+                    fromQuestion = "1";
                   } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuVT &&
                       fromQuestionItem.maCauHoi == "A_I") {
-                    fromQuestion = "Câu 1";
+                    fromQuestion = "1";
                   } else if (fromQuestionItem.maPhieu ==
                           AppDefine.maPhieuVTMau &&
                       fromQuestionItem.maCauHoi == "A_I_M") {
-                    fromQuestion = "Câu 1.M";
+                    fromQuestion = "1.M";
                   } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuVT &&
                       fromQuestionItem.maCauHoi == "A_II") {
-                    fromQuestion = "Câu 7";
+                    fromQuestion = "7";
                   } else if (fromQuestionItem.maPhieu ==
                           AppDefine.maPhieuVTMau &&
                       fromQuestionItem.maCauHoi == "A_II") {
-                    fromQuestion = "Câu 6.M";
+                    fromQuestion = "6.M";
+                  } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuLT &&
+                      fromQuestionItem.maCauHoi == "A_I") {
+                    fromQuestion = "1";
                   } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuLT &&
                       fromQuestionItem.maCauHoi == "A_II") {
-                    fromQuestion = "Câu 1";
+                    fromQuestion = "1";
                   } else if (fromQuestionItem.maPhieu ==
                           AppDefine.maPhieuLTMau &&
                       fromQuestionItem.maCauHoi == "A_I_M") {
-                    fromQuestion = "Câu 1.M";
+                    fromQuestion = "1.M";
                   } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuTM &&
                       (fromQuestionItem.maCauHoi == "A_I" ||
                           fromQuestionItem.maCauHoi == "A_I_0")) {
-                    fromQuestion = "Câu 1";
+                    fromQuestion = "1";
                   } else if (fromQuestionItem.maPhieu == AppDefine.maPhieuMau &&
                       fromQuestionItem.maCauHoi == "A_I_M") {
-                    fromQuestion = "Câu 6.1.M";
+                    fromQuestion = "6.1.M";
                   }
                   // if (fromQuestionItem.loaiCauHoi == 0 &&
                   //     fromQuestionItem.cap == 1) {

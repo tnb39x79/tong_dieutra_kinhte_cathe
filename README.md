@@ -35,7 +35,7 @@
 ```
 ```
 // build apk prod
-flutter build apk --flavor prod --dart-define "BASE_API=https://v1_capi_giasanxuat.gso.gov.vn/"
+flutter build apk --flavor prod --dart-define "BASE_API=http://v1_capi_giasanxuat.gso.gov.vn/"
 ```
 ```
 // build app bundle

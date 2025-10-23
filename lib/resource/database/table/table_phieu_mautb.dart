@@ -48,10 +48,10 @@ const String colPhieuMauTBA5T = 'A5T';
 const String colPhieuMauTBA6_1_1_1 = 'A6_1_1_1';
 const String colPhieuMauTBA6_1_1_2 = 'A6_1_1_2';
 const String colPhieuMauTBA6_1_1_3 = 'A6_1_1_3';
-const String colPhieuMauTBA6_1_1_1_1 = 'A6_1_1_1_1';
+//const String colPhieuMauTBA6_1_1_1_1 = 'A6_1_1_1_1';
 const String colPhieuMauTBA6_1_1_1_2 = 'A6_1_1_1_2';
 const String colPhieuMauTBA6_1_1_1_3 = 'A6_1_1_1_3';
-const String colPhieuMauTBA6_1_1_2_1 = 'A6_1_1_2_1';
+//const String colPhieuMauTBA6_1_1_2_1 = 'A6_1_1_2_1';
 const String colPhieuMauTBA6_1_1_2_2 = 'A6_1_1_2_2';
 const String colPhieuMauTBA6_1_1_2_3 = 'A6_1_1_2_3';
 const String colPhieuMauTBA6_1_2_1 = 'A6_1_2_1';
@@ -69,13 +69,13 @@ const String colPhieuMauTBA6_1_5_3 = 'A6_1_5_3';
 const String colPhieuMauTBA6_1_6_1 = 'A6_1_6_1';
 const String colPhieuMauTBA6_1_6_2 = 'A6_1_6_2';
 const String colPhieuMauTBA6_1_6_3 = 'A6_1_6_3';
-const String colPhieuMauTBA6_1_6_1_1 = 'A6_1_6_1_1';
+//const String colPhieuMauTBA6_1_6_1_1 = 'A6_1_6_1_1';
 const String colPhieuMauTBA6_1_6_1_2 = 'A6_1_6_1_2';
 const String colPhieuMauTBA6_1_6_1_3 = 'A6_1_6_1_3';
 const String colPhieuMauTBA6_1_7_1 = 'A6_1_7_1';
 const String colPhieuMauTBA6_1_7_2 = 'A6_1_7_2';
 const String colPhieuMauTBA6_1_7_3 = 'A6_1_7_3';
-const String colPhieuMauTBA6_1_7_1_1 = 'A6_1_7_1_1';
+//const String colPhieuMauTBA6_1_7_1_1 = 'A6_1_7_1_1';
 const String colPhieuMauTBA6_1_7_1_2 = 'A6_1_7_1_2';
 const String colPhieuMauTBA6_1_7_1_3 = 'A6_1_7_1_3';
 const String colPhieuMauTBA6_1_8_1 = 'A6_1_8_1';
@@ -87,7 +87,7 @@ const String colPhieuMauTBA6_1_9_3 = 'A6_1_9_3';
 const String colPhieuMauTBA6_1_10_1 = 'A6_1_10_1';
 const String colPhieuMauTBA6_1_10_2 = 'A6_1_10_2';
 const String colPhieuMauTBA6_1_10_3 = 'A6_1_10_3';
-const String colPhieuMauTBA6_1_10_1_1 = 'A6_1_10_1_1';
+//const String colPhieuMauTBA6_1_10_1_1 = 'A6_1_10_1_1';
 const String colPhieuMauTBA6_1_10_1_2 = 'A6_1_10_1_2';
 const String colPhieuMauTBA6_1_10_1_3 = 'A6_1_10_1_3';
 const String colPhieuMauTBA6_1_11_1 = 'A6_1_11_1';
@@ -225,10 +225,10 @@ class TablePhieuMauTB {
   int? a6_1_1_1;
   double? a6_1_1_2;
   double? a6_1_1_3;
-  int? a6_1_1_1_1;
+  //int? a6_1_1_1_1;
   double? a6_1_1_1_2;
   double? a6_1_1_1_3;
-  int? a6_1_1_2_1;
+ // int? a6_1_1_2_1;
   double? a6_1_1_2_2;
   double? a6_1_1_2_3;
   int? a6_1_2_1;
@@ -246,13 +246,13 @@ class TablePhieuMauTB {
   int? a6_1_6_1;
   double? a6_1_6_2;
   double? a6_1_6_3;
-  int? a6_1_6_1_1;
+  //int? a6_1_6_1_1;
   double? a6_1_6_1_2;
   double? a6_1_6_1_3;
   int? a6_1_7_1;
   double? a6_1_7_2;
   double? a6_1_7_3;
-  int? a6_1_7_1_1;
+  //int? a6_1_7_1_1;
   double? a6_1_7_1_2;
   double? a6_1_7_1_3;
   int? a6_1_8_1;
@@ -264,7 +264,7 @@ class TablePhieuMauTB {
   int? a6_1_10_1;
   double? a6_1_10_2;
   double? a6_1_10_3;
-  int? a6_1_10_1_1;
+ // int? a6_1_10_1_1;
   double? a6_1_10_1_2;
   double? a6_1_10_1_3;
   int? a6_1_11_1;
@@ -341,10 +341,10 @@ class TablePhieuMauTB {
       this.a6_1_1_1,
       this.a6_1_1_2,
       this.a6_1_1_3,
-      this.a6_1_1_1_1,
+       
       this.a6_1_1_1_2,
       this.a6_1_1_1_3,
-      this.a6_1_1_2_1,
+      
       this.a6_1_1_2_2,
       this.a6_1_1_2_3,
       this.a6_1_2_1,
@@ -362,13 +362,13 @@ class TablePhieuMauTB {
       this.a6_1_6_1,
       this.a6_1_6_2,
       this.a6_1_6_3,
-      this.a6_1_6_1_1,
+       
       this.a6_1_6_1_2,
       this.a6_1_6_1_3,
       this.a6_1_7_1,
       this.a6_1_7_2,
       this.a6_1_7_3,
-      this.a6_1_7_1_1,
+     
       this.a6_1_7_1_2,
       this.a6_1_7_1_3,
       this.a6_1_8_1,
@@ -380,7 +380,7 @@ class TablePhieuMauTB {
       this.a6_1_10_1,
       this.a6_1_10_2,
       this.a6_1_10_3,
-      this.a6_1_10_1_1,
+      
       this.a6_1_10_1_2,
       this.a6_1_10_1_3,
       this.a6_1_11_1,
@@ -457,10 +457,10 @@ class TablePhieuMauTB {
     a6_1_1_1 = json['A6_1_1_1'];
     a6_1_1_2 = json['A6_1_1_2'];
     a6_1_1_3 = json['A6_1_1_3'];
-    a6_1_1_1_1 = json['A6_1_1_1_1'];
+ //   a6_1_1_1_1 = json['A6_1_1_1_1'];
     a6_1_1_1_2 = json['A6_1_1_1_2'];
     a6_1_1_1_3 = json['A6_1_1_1_3'];
-    a6_1_1_2_1 = json['A6_1_1_2_1'];
+  //  a6_1_1_2_1 = json['A6_1_1_2_1'];
     a6_1_1_2_2 = json['A6_1_1_2_2'];
     a6_1_1_2_3 = json['A6_1_1_2_3'];
     a6_1_2_1 = json['A6_1_2_1'];
@@ -478,13 +478,13 @@ class TablePhieuMauTB {
     a6_1_6_1 = json['A6_1_6_1'];
     a6_1_6_2 = json['A6_1_6_2'];
     a6_1_6_3 = json['A6_1_6_3'];
-    a6_1_6_1_1 = json['A6_1_6_1_1'];
+   
     a6_1_6_1_2 = json['A6_1_6_1_2'];
     a6_1_6_1_3 = json['A6_1_6_1_3'];
     a6_1_7_1 = json['A6_1_7_1'];
     a6_1_7_2 = json['A6_1_7_2'];
     a6_1_7_3 = json['A6_1_7_3'];
-    a6_1_7_1_1 = json['A6_1_7_1_1'];
+   // a6_1_7_1_1 = json['A6_1_7_1_1'];
     a6_1_7_1_2 = json['A6_1_7_1_2'];
     a6_1_7_1_3 = json['A6_1_7_1_3'];
     a6_1_8_1 = json['A6_1_8_1'];
@@ -496,7 +496,7 @@ class TablePhieuMauTB {
     a6_1_10_1 = json['A6_1_10_1'];
     a6_1_10_2 = json['A6_1_10_2'];
     a6_1_10_3 = json['A6_1_10_3'];
-    a6_1_10_1_1 = json['A6_1_10_1_1'];
+   // a6_1_10_1_1 = json['A6_1_10_1_1'];
     a6_1_10_1_2 = json['A6_1_10_1_2'];
     a6_1_10_1_3 = json['A6_1_10_1_3'];
     a6_1_11_1 = json['A6_1_11_1'];
@@ -576,10 +576,10 @@ class TablePhieuMauTB {
     json['A6_1_1_1'] = a6_1_1_1;
     json['A6_1_1_2'] = a6_1_1_2;
     json['A6_1_1_3'] = a6_1_1_3;
-    json['A6_1_1_1_1'] = a6_1_1_1_1;
+   // json['A6_1_1_1_1'] = a6_1_1_1_1;
     json['A6_1_1_1_2'] = a6_1_1_1_2;
     json['A6_1_1_1_3'] = a6_1_1_1_3;
-    json['A6_1_1_2_1'] = a6_1_1_2_1;
+   // json['A6_1_1_2_1'] = a6_1_1_2_1;
     json['A6_1_1_2_2'] = a6_1_1_2_2;
     json['A6_1_1_2_3'] = a6_1_1_2_3;
     json['A6_1_2_1'] = a6_1_2_1;
@@ -597,13 +597,13 @@ class TablePhieuMauTB {
     json['A6_1_6_1'] = a6_1_6_1;
     json['A6_1_6_2'] = a6_1_6_2;
     json['A6_1_6_3'] = a6_1_6_3;
-    json['A6_1_6_1_1'] = a6_1_6_1_1;
+     
     json['A6_1_6_1_2'] = a6_1_6_1_2;
     json['A6_1_6_1_3'] = a6_1_6_1_3;
     json['A6_1_7_1'] = a6_1_7_1;
     json['A6_1_7_2'] = a6_1_7_2;
     json['A6_1_7_3'] = a6_1_7_3;
-    json['A6_1_7_1_1'] = a6_1_7_1_1;
+  //  json['A6_1_7_1_1'] = a6_1_7_1_1;
     json['A6_1_7_1_2'] = a6_1_7_1_2;
     json['A6_1_7_1_3'] = a6_1_7_1_3;
     json['A6_1_8_1'] = a6_1_8_1;
@@ -615,7 +615,7 @@ class TablePhieuMauTB {
     json['A6_1_10_1'] = a6_1_10_1;
     json['A6_1_10_2'] = a6_1_10_2;
     json['A6_1_10_3'] = a6_1_10_3;
-    json['A6_1_10_1_1'] = a6_1_10_1_1;
+  //  json['A6_1_10_1_1'] = a6_1_10_1_1;
     json['A6_1_10_1_2'] = a6_1_10_1_2;
     json['A6_1_10_1_3'] = a6_1_10_1_3;
     json['A6_1_11_1'] = a6_1_11_1;

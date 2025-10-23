@@ -22,6 +22,7 @@ abstract class AppRoutes {
   static const activeStatus = '/status';
   static const generalInformation = '/general-information';
   static const sync = '/sync';
+   static const syncV2 = '/sync-v2';
   static const intervieweeInformation = '/interviewee-information';
 
   static const questionTB = '/question-tb';

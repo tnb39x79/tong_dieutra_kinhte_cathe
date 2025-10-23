@@ -650,7 +650,7 @@ class HomeController extends BaseController with SyncMixin {
   }
 
   onSyncDataScreen() async {
-    Get.toNamed(AppRoutes.sync);
+    Get.toNamed(AppRoutes.syncV2);
   }
 
   onProgressViewScreen() async {

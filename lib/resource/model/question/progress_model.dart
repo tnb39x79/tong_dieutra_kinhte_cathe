@@ -5,6 +5,7 @@ class ProgressModel {
   int? countPhieuInterviewed;
   int? countPhieuUnInterviewed;
   int? countPhieuSyncSuccess;
+  int? countPhieuUnSync;
 
   ProgressModel(
       {this.maDoiTuongDT,
@@ -12,7 +13,8 @@ class ProgressModel {
       this.moTaDoiTuongDT,
       this.countPhieuInterviewed,
       this.countPhieuUnInterviewed,
-      this.countPhieuSyncSuccess});
+      this.countPhieuSyncSuccess,
+      this.countPhieuUnSync});
 
   ProgressModel.fromJson(Map json) {
     maDoiTuongDT = json['MaDoiTuongDT'];
@@ -21,6 +23,7 @@ class ProgressModel {
     countPhieuInterviewed = json['CountPhieuInterviewed'];
     countPhieuUnInterviewed = json['CountPhieuUnInterviewed'];
     countPhieuSyncSuccess = json['CountPhieuSyncSuccess'];
+    countPhieuUnSync = json['CountPhieuUnSync'];
   }
 
   Map<String, Object?> toJson() {
@@ -31,6 +34,7 @@ class ProgressModel {
     data['CountPhieuInterviewed'] = countPhieuInterviewed;
     data['CountPhieuUnInterviewed'] = countPhieuUnInterviewed;
     data['CountPhieuSyncSuccess'] = countPhieuSyncSuccess;
+    data['CountPhieuUnSync'] = countPhieuUnSync;
     return data;
   }
 

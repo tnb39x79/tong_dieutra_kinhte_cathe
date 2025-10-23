@@ -18,6 +18,10 @@ class AppDefine {
   ///hoanThanhPhongVan = 9
   static const int hoanThanhPhongVan = 9;
 
+  static const int unSync = 0;
+
+  static const int synced = 1;
+
   // defind type question
   static const int checkBoxCircleWithString = 6;
   static const int inputTypeInterger = 2;

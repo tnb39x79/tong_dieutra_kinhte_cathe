@@ -104,6 +104,11 @@ class AppPages {
         binding: SyncBinding(),
         transition: Transition.rightToLeft),
     GetPage(
+        name: AppRoutes.syncV2,
+        page: () => const SyncScreenV2(),
+        binding: SyncBindingV2(),
+        transition: Transition.rightToLeft),
+    GetPage(
         name: AppRoutes.downloadModelAI,
         page: () => const DownloadModelAIScreen(),
         binding: DownloadModelAIBinding(),

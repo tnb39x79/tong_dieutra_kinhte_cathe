@@ -11,12 +11,14 @@ class WCardItem extends StatelessWidget {
     required this.countInterviewed,
     required this.countUnInterviewed,
     required this.countSyncSuccess,
+    required this.countUnSync,
   });
 
   final String doiTuongDT;
   final int countInterviewed;
   final int countUnInterviewed;
   final int countSyncSuccess;
+  final int countUnSync;
 
   @override
   Widget build(BuildContext context) {
@@ -61,23 +63,21 @@ class WCardItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         WidgetProgress(
-          title: doiTuongDT == '${AppDefine.maDoiTuongDT_07Mau}'
-              ? ('progress_interviewed'.tr).replaceAll("hộ", "cơ sở")
-              : 'progress_interviewed'.tr,
+          title: 'progress_interviewed'.tr,
           count: countInterviewed,
           onPressed: () {},
         ),
         WidgetProgress(
-          title: doiTuongDT == '${AppDefine.maDoiTuongDT_07Mau}'
-              ? ('progress_un_interviewed'.tr).replaceAll("hộ", "cơ sở")
-              : 'progress_un_interviewed'.tr,
+          title: 'progress_un_interviewed'.tr,
           count: countUnInterviewed,
           onPressed: () {},
         ),
         WidgetProgress(
-          title: doiTuongDT == '${AppDefine.maDoiTuongDT_07Mau}'
-              ? ('progress_sync_success'.tr).replaceAll("hộ", "cơ sở")
-              : 'progress_sync_success'.tr,
+          title: 'progress_sync_success'.tr,
+          count: countSyncSuccess,
+          onPressed: () {},
+        ), WidgetProgress(
+          title:  'progress_unsync'.tr,
           count: countSyncSuccess,
           onPressed: () {},
         ),

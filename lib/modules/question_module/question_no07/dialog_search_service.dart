@@ -206,11 +206,21 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   void showInitialChoiceDialog() {
     Get.dialog(
       AlertDialog(
+        actionsAlignment: MainAxisAlignment.center,
         title: const Text('Chưa có dữ liệu AI'),
         content: const Text(
             'Chưa có dữ liệu AI. Bạn muốn tải xuống AI hay sử dụng online?'),
         actions: [
           TextButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () {
               Get.back(); // Close dialog
               handleOnlineAPICall();
@@ -218,6 +228,15 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
             child: const Text('Dùng Online'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () {
               Get.back(); // Close dialog
               Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
@@ -287,11 +306,21 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
 
     Get.dialog(
       AlertDialog(
+        actionsAlignment: MainAxisAlignment.center,
         title: const Text('Chọn phương thức tìm kiếm'),
         content: const Text(
             'Bạn muốn sử dụng tìm kiếm Online hay Offline?\n\nOnline: Sử dụng API trực tuyến\nOffline: Sử dụng AI đã tải xuống'),
         actions: [
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () {
               Get.back();
               setState(() {
@@ -306,6 +335,15 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
             child: const Text('Dùng Online'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () async {
               Get.back();
               // Check if AI is downloaded
@@ -335,11 +373,21 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   void showDownloadDialog() {
     Get.dialog(
       AlertDialog(
+        actionsAlignment: MainAxisAlignment.center,
         title: const Text('Chưa có dữ liệu AI'),
         content:
             const Text('Chưa có dữ liệu AI Offline. Bạn muốn tải xuống ngay?'),
         actions: [
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () {
               Get.back();
               // Default to online mode
@@ -355,6 +403,15 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
             child: const Text('Dùng Online'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () {
               Get.back();
               Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
@@ -367,7 +424,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
                   setState(() {
                     //  isOnline = false;
                     phieuTBController.isSearchOnline.value = false;
-                    phieuTBController.isSearchOnlineSwitch.value =false;
+                    phieuTBController.isSearchOnlineSwitch.value = false;
                   });
                 }
                 setState(() {
@@ -386,11 +443,21 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
   void _showOfflineNotAvailableDialog() {
     Get.dialog(
       AlertDialog(
+        actionsAlignment: MainAxisAlignment.center,
         title: const Text('Chưa có dữ liệu AI'),
         content: const Text(
             'Chưa có dữ liệu AI Offline. Bạn muốn tải xuống ngay hay chuyển sang Online?'),
         actions: [
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () {
               Get.back();
               // Switch to online mode
@@ -403,6 +470,15 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
             child: const Text('Dùng Online'),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                ),
+                side: BorderSide(width: 1, color: primaryColor),
+                splashFactory: InkRipple.splashFactory,
+                overlayColor: primaryColor,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                foregroundColor: primaryColor),
             onPressed: () {
               Get.back();
               Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
@@ -841,7 +917,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
 
   void onSearchModeChange(value) {
     phieuTBController.isSearchOnline.value = value;
-    phieuTBController.isSearchOnlineSwitch.value=value;
+    phieuTBController.isSearchOnlineSwitch.value = value;
     if (phieuTBController.isSearchOnline.value == false) {
       if (!hasLocalAI) {
         showDownloadDialog();
@@ -1114,7 +1190,7 @@ class IndicatorView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(height: 16),
-        Divider(),
+        //  Divider(),
         SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),

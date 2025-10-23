@@ -52,6 +52,8 @@ class ProgressListController extends BaseController {
           await bkCoSoSXKDProvider.countOfUnInterviewedAll(maDoiTuongDT) ?? 0;
       progressModel.countPhieuSyncSuccess =
           await bkCoSoSXKDProvider.countSyncSuccessAll(maDoiTuongDT) ?? 0;
+           progressModel.countPhieuUnSync =
+          await bkCoSoSXKDProvider.countPhieuUnSyncAll(maDoiTuongDT) ?? 0;
       return progressModel;
   }
  

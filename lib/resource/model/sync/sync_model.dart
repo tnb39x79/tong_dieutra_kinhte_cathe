@@ -7,14 +7,16 @@ class SyncModel {
   SuccessCount? failedCount;
   SuccessCount? totalCount;
   List<SyncResult>? syncResults; 
-
+ 
+List<SyncResultDetailItem>? syncResultDetails;
   SyncModel(
       {this.responseCode,
       this.responseMessage,
       this.successCount,
       this.failedCount,
       this.totalCount,
-      this.syncResults});
+      this.syncResults,
+      this.syncResultDetails});
 
   SyncModel.fromJson(Map<String, dynamic> json) {
     responseCode = json['ResponseCode'];
@@ -32,6 +34,10 @@ class SyncModel {
     syncResults = json['SyncResults'] != null
         ? SyncResult.listFromJson(json['SyncResults'])
         : null; 
+syncResultDetails = json['SyncResultDetails'] != null
+        ? SyncResultDetailItem.listFromJson(json['SyncResultDetails'])
+        : null; 
+        
   }
 
   Map<String, dynamic> toJson() {

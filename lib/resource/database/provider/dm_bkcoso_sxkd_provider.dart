@@ -209,7 +209,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $colBkCoSoSXKDIsSyncSuccess=1
+      AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.synced}
       '''));
     return count;
   }
@@ -221,7 +221,22 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $colBkCoSoSXKDIsSyncSuccess=1
+      AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.synced}
+        AND $columnMaPhieu = '$maDoiTuongDT' 
+      '''));
+    return count;
+  }
+
+  Future<int?> countPhieuUnSyncAll(int maDoiTuongDT) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    int? count = Sqflite.firstIntValue(await db!.rawQuery('''
+      SELECT COUNT(*) FROM $tablebkCoSoSXKD
+      WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
+      AND $columnCreatedAt = '$createdAt'
+      AND $columnMaDTV = '${AppPref.uid}'
+      AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.unSync}
+      AND $colBkCoSoSXKDMaTrangThaiDT2 = ${AppDefine.hoanThanhPhongVan} 
+       AND NOT $columnUpdatedAt = '$createdAt'
         AND $columnMaPhieu = '$maDoiTuongDT' 
       '''));
     return count;
@@ -300,7 +315,23 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       AND $colBkCoSoSXKDMaTrangThaiDT2 = ${AppDefine.hoanThanhPhongVan}
       AND NOT $columnUpdatedAt = '$createdAt'
       AND $columnMaDTV='${AppPref.uid}'
-    
+      ORDER BY $colBkCoSoSXKDId
+    ''');
+  }
+
+  Future<List<Map>> getListInterviewedPaginatedSync(
+      int pageNumber, int pageSize) async {
+    final int offset = (pageNumber - 1) * pageSize;
+    String createdAt = AppPref.dateTimeSaveDB ?? "";
+    return await db!.query(tablebkCoSoSXKD, where: '''
+      $columnCreatedAt = '$createdAt'
+      AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
+      AND $colBkCoSoSXKDMaTrangThaiDT2 = ${AppDefine.hoanThanhPhongVan}
+      AND NOT $columnUpdatedAt = '$createdAt'
+      AND $columnMaDTV='${AppPref.uid}'
+      ORDER BY $colBkCoSoSXKDId
+      LIMIT $pageSize
+      OFFSET $offset 
     ''');
   }
   // // AND ($colBkCoSoSXKDIDCoSo in (SELECT $colPhieuIDCoSo FROM $tablePhieu WHERE $colPhieuThoiGianBD IS NOT NULL AND $colPhieuThoiGianKT IS NOT NULL ))
@@ -403,8 +434,8 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
 
     for (var item in idCoSos) {
-      var update = await db!.update(
-          tablebkCoSoSXKD, {"UpdatedAt": createdAt, "SyncSuccess": 1},
+      var update = await db!.update(tablebkCoSoSXKD,
+          {"UpdatedAt": createdAt, "SyncSuccess": AppDefine.synced},
           where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
           whereArgs: [item]);
       developer.log('RESULT UPDATE CSSXKD SUCCESS=$update');

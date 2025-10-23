@@ -10,6 +10,7 @@ class WCard extends StatelessWidget {
     required this.countInterviewed,
     required this.countUnInterviewed,
     required this.countSyncSuccess,
+    required this.countUnSync,
   });
 
   final String titleHeader;
@@ -17,6 +18,7 @@ class WCard extends StatelessWidget {
   final int countInterviewed;
   final int countUnInterviewed;
   final int countSyncSuccess;
+   final int countUnSync;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,8 @@ class WCard extends StatelessWidget {
             doiTuongDT: doiTuongDT,
             countInterviewed: countInterviewed,
             countUnInterviewed: countUnInterviewed,
-            countSyncSuccess: countSyncSuccess)
+            countSyncSuccess: countSyncSuccess,
+            countUnSync: countUnSync)
       ],
     );
   }

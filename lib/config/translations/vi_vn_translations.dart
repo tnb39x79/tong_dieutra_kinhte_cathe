@@ -129,6 +129,7 @@ final Map<String, String> viVN = {
   'progress_interviewed': 'Số cơ sở đã phỏng vấn',
   'progress_un_interviewed': 'Số cơ sở chưa phỏng vấn',
   'progress_sync_success': 'Số cơ sở đã đồng bộ thành công',
+  'progress_unsync': 'Số cơ sở chưa đồng bộ',
   "current_version": 'Phiên bản',
   'error_information': 'Thông tin không chính xác',
   "error_incorrect_phone": "Vui lòng nhập đúng số điện thoại người trả lời",

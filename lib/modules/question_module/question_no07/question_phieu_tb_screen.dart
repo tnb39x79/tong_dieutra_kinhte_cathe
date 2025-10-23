@@ -47,7 +47,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         onTap: () => controller.unFocus(context),
         child: Scaffold(
           key: controller.scaffoldKey,
-          endDrawerEnableOpenDragGesture: false, 
+          endDrawerEnableOpenDragGesture: false,
           appBar: CustomAppBar(
             title: '${controller.currentTenDoiTuongDT!}',
             questionCode: 4,
@@ -381,7 +381,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 buildNganhTM(question)
               ]);
         } else if (question.maCauHoi == maCauHoiTM56 && question.maPhieu == 4) {
-          return buildNganhTMII(question);
+          if (controller.isCap2_56TM == true) {
+            return buildNganhTMII(question);
+          } else {
+            return const SizedBox();
+          }
         } else if (question.bangChiTieu == "2") {
           return buildQuestionChiTieuDongCot(question);
         } else {
@@ -2193,7 +2197,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                                         question,
                                                         chiTieuDong,
                                                         chiTieuCot,
-                                                        ghiRoItem,orderCaption);
+                                                        ghiRoItem,
+                                                        orderCaption);
                                               },
                                               style: ElevatedButton.styleFrom(
                                                   splashFactory:
@@ -3807,7 +3812,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               // if (lastStt > 0 && lastStt == productCap5.sTT_SanPham!) ...[
 
               if (controller.countHasMoreProductNganhCN(
-                      tablePhieuNganhCN, productCap5.maNganhC5 ?? '') >0) ...[
+                      tablePhieuNganhCN, productCap5.maNganhC5 ?? '') >
+                  0) ...[
                 const SizedBox(
                   height: 15,
                 ),
@@ -4771,17 +4777,17 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           .firstOrNull;
       String selectedText = tblTDCM!.ten ?? '';
       if (selectedValue == 1) {
-        return wText('$selectedText.');
+        return wText('Chủ cơ sở mà trình độ $selectedText có đúng không.');
       }
-      if (selectedValue == 2) {
-        return wText('$selectedText.');
-      }
-      if (selectedValue == 3) {
-        return wText('$selectedText.');
-      }
-      if (selectedValue == 4) {
-        return wText('$selectedText.');
-      }
+      // if (selectedValue == 2) {
+      //   return wText('$selectedText.');
+      // }
+      // if (selectedValue == 3) {
+      //   return wText('$selectedText.');
+      // }
+      // if (selectedValue == 4) {
+      //   return wText('$selectedText.');
+      // }
       if (selectedValue == 6 && (a1_3_2Value == 2007 || a1_3_2Value == 2008)) {
         return wText(
             'Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ cao đẳng (=6).');

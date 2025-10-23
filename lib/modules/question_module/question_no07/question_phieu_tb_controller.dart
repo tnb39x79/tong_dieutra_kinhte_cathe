@@ -260,7 +260,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   final hasMaNganhVTHH = <String>[].obs;
   final isSearchOnline = false.obs;
   final isInitSearch = false.obs;
- final isSearchOnlineSwitch= ValueNotifier<bool>(false);
+  final isSearchOnlineSwitch = ValueNotifier<bool>(false);
 
   @override
   void onInit() async {
@@ -326,7 +326,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     await setSelectedQuestionGroup();
     await getLinhVucSanPham();
-   // await getMoTaSanPham();
+    // await getMoTaSanPham();
     await getDsMaSanPhamNganhCN();
 
     setLoading(false);
@@ -806,6 +806,73 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     var qGroups = await getQuestionGroupsV2(
         currentMaDoiTuongDT!, currentIdCoSo!, tblDmPhieu);
     for (var item in qGroups) {
+      if (item.questionGroupByManHinh != null &&
+          item.questionGroupByManHinh!.isNotEmpty) {
+        //item.enable = isBCDE.value == true;
+        for (var itQ in item.questionGroupByManHinh!) {
+          if (itQ.maPhieu == AppDefine.maPhieuCN) {
+            log('From Question CN: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
+            itQ.enable = isBCDE.value == true;
+          } else if (itQ.maPhieu == AppDefine.maPhieuVT) {
+            log('From Question VT: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
+            if (itQ.fromQuestion == '1' && itQ.toQuestion == '6') {
+              itQ.enable = isCap5VanTaiHanhKhach.value == true;
+            }
+            if (itQ.fromQuestion == '7' && itQ.toQuestion == '12') {
+              itQ.enable = isCap5VanTaiHangHoa.value == true;
+            }
+          } else if (itQ.maPhieu == AppDefine.maPhieuVTMau) {
+            log('From Question VTMAU: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
+            if (itQ.fromQuestion == '1.M' && itQ.toQuestion == '5.M') {
+              var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
+              if (warningNganhBangKeResult.isNotEmpty) {
+                itQ.enable = isCap5VanTaiHanhKhach.value == true;
+              } else {
+                itQ.enable = false;
+              }
+            }
+            if (itQ.fromQuestion == '6.M' && itQ.toQuestion == '10.M') {
+              var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
+              if (warningNganhBangKeResult.isNotEmpty) {
+                itQ.enable = isCap5VanTaiHangHoa.value == true;
+              } else {
+                itQ.enable = false;
+              }
+            }
+          } else if (itQ.maPhieu == AppDefine.maPhieuLT) {
+            log('From Question LT: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
+            if (itQ.fromQuestion == '1' && itQ.toQuestion == '6.1') {
+              itQ.enable = isCap2_55LT.value == true;
+            }
+          } else if (itQ.maPhieu == AppDefine.maPhieuLTMau) {
+            log('From Question LTMAU: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
+            if (itQ.fromQuestion == '1.M' && itQ.toQuestion == '10.M') {
+              var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
+              if (warningNganhBangKeResult.isNotEmpty) {
+                itQ.enable = isCap2_55LT.value == true;
+              } else {
+                itQ.enable = false;
+              }
+            }
+          } else if (itQ.maPhieu == AppDefine.maPhieuTM) {
+            log('From Question TM: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
+            if (itQ.fromQuestion == '1' && itQ.toQuestion == '3T2') {
+              itQ.enable = isCap2_56TM.value == true;
+            }
+          } else if (itQ.maPhieu == AppDefine.maPhieuMau) {
+            log('From Question MAU: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
+            if (itQ.fromQuestion == '6.1.M' && itQ.toQuestion == '10.2') {
+              var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
+              if (warningNganhBangKeResult.isNotEmpty) {
+                itQ.enable = currentMaDoiTuongDT ==
+                    AppDefine.maDoiTuongDT_07Mau.toString();
+              } else {
+                itQ.enable = false;
+              }
+            }
+          }
+        }
+      }
       //   if (item.fromQuestion == "6.1") {
       //     item.enable = (isCap1H_VT.value == true &&
       //             isCap5VanTaiHangHoa.value == true) ||
@@ -1177,16 +1244,31 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
         if (currentScreenNo.value == 5) {
           if (isBCDE.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
-              //   await getQuestionContent();
             }
           }
         }
         if (currentScreenNo.value == 6) {
           if (isCap5VanTaiHanhKhach.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1197,6 +1279,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 7) {
           if (isCap5VanTaiHangHoa.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1207,6 +1297,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 8) {
           if (isCap2_55LT.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1217,6 +1315,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 9) {
           if (isCap2_56TM.value == false && isCap2G_6810TM.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             //  await getQuestionContent();
             //   await setSelectedQuestionGroup();
 
@@ -1232,6 +1338,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           AppDefine.maDoiTuongDT_07Mau.toString()) {
         if (currentScreenNo.value == 5) {
           if (isBCDE.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1260,6 +1374,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               // await getQuestionContent();
             }
           } else if (isCap5VanTaiHanhKhach.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1270,6 +1392,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 8) {
           if (isCap5VanTaiHangHoa.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1288,6 +1418,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               // await getQuestionContent();
             }
           } else if (isCap5VanTaiHangHoa.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1307,6 +1445,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           //   }
           // } else
           if (isCap2_55LT.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1325,6 +1471,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               // await getQuestionContent();
             }
           } else if (isCap2_55LT.value == false) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1335,6 +1489,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 12) {
           if ((isCap2_56TM.value == false && isCap2G_6810TM.value == false)) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
@@ -1759,7 +1921,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     try {
       await updateAnswerToDB(table, fieldName ?? "", value);
-      if (maCauHoi == colPhieuMauTBA3_2) {
+      if (maCauHoi == colPhieuMauTBA3_2 && maPhieu == AppDefine.maPhieuTB) {
         await updateAnswerDongCotToDB(table, fieldName!, value,
             fieldNames: fieldNameA3T,
             fieldNameTotal: colPhieuMauTBA3T,
@@ -3136,6 +3298,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           await phieuMauTBProvider.updateValue(
               fieldNameTotal!, total, currentIdCoSo);
           await updateAnswerTblPhieuMau(fieldNameTotal, total, table);
+        } else if (maCauHoi == "A3_2") {
+          var total = await phieuMauTBProvider.totalDoubleByMaCauHoi(
+              currentIdCoSo!, fieldNames!);
+          await phieuMauTBProvider.updateValue(
+              fieldNameTotal!, total, currentIdCoSo);
+          await updateAnswerTblPhieuMau(fieldNameTotal, total, table);
         } else if (maCauHoi == colPhieuMauTBA4_1 ||
             maCauHoi == colPhieuMauTBA4_2) {
           var total = await phieuMauTBProvider.totalSubtractDoubleByMaCauHoi(
@@ -3198,8 +3366,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           fieldName != '' &&
           fieldName == colPhieuMauTBA1_2) {
         var a1_2Value = tblPhieuCT[colPhieuMauTBA1_2];
-        if (validateEmptyString(a1_2Value.toString())) {
-          return 'Vui lòng chọn giá trị.';
+        var a1_1Value = tblPhieuCT[colPhieuMauTBA1_1];
+        if (a1_1Value == 6) {
+          return null;
+        } else {
+          if (validateEmptyString(a1_2Value.toString())) {
+            return 'Vui lòng chọn giá trị.';
+          }
         }
         return null;
       }
@@ -3289,6 +3462,34 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         return resValid;
       }
       return null;
+    }
+
+    if (question.maCauHoi == colPhieuMauTBA7_1 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (fieldName != null &&
+          fieldName != '' &&
+          fieldName == colPhieuMauTBA7_1) {
+        var a7_1Value = tblPhieuCT[colPhieuMauTBA7_1];
+        if (validateEmptyString(a7_1Value.toString())) {
+          return 'Vui lòng chọn giá trị.';
+        }
+        return null;
+      }
+    }
+    if (question.maCauHoi == colPhieuMauTBA7_2 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      if (fieldName != null &&
+          fieldName != '' &&
+          fieldName == colPhieuMauTBA7_2) {
+        var a7_1Value = tblPhieuCT[colPhieuMauTBA7_1];
+        var a7_2Value = tblPhieuCT[colPhieuMauTBA7_2];
+        if (a7_1Value != null && a7_1Value == 1) {
+          if (validateEmptyString(a7_2Value.toString())) {
+            return 'Vui lòng chọn giá trị.';
+          }
+        }
+        return null;
+      }
     }
     if (question.maCauHoi == "A7_4") {
       var resValid = onValidateA7_4(
@@ -5395,6 +5596,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
       } else if (maCauHoi == colPhieuMauTBA7_3 &&
           maPhieu == AppDefine.maPhieuTB) {
+        var a7_2Value = tblPhieuCT[colPhieuMauTBA7_2] != null
+            ? tblPhieuCT[colPhieuMauTBA7_2].toString()
+            : '';
+        var isN=a7_2Value=="1";
+        if(!isN){
+          return null;
+        }
         if (validateEmptyString(inputValue)) {
           return 'Vui lòng nhập giá trị.';
         }
@@ -6534,7 +6742,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                     item.chiTieuCot, item.chiTieuDong, val.toString(),
                     typing: false, fieldName: item.tenTruong);
                 if (validRes != null && validRes != '') {
-                  result = await generateMessageV2(item.tenHienThi, validRes);
+                  result = await generateMessageV2(
+                      (item.tenHienThi == null || item.tenHienThi == '')
+                          ? item.mucCauHoi
+                          : item.tenHienThi,
+                      validRes);
                   break;
                 }
               } else {
@@ -6881,11 +7093,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       for (var item in qfM) {
         if ((item.bangDuLieu == tablePhieuMauTB &&
             item.maPhieu == AppDefine.maPhieuMau)) {
-          if (tblTB.containsKey(item.tenTruong) &&
-              item.tenTruong != 'A6_1_1_1_1' &&
-              item.tenTruong != 'A6_1_6_1_1' &&
-              item.tenTruong != 'A6_1_7_1_1' &&
-              item.tenTruong != 'A6_1_10_1_1') {
+          if (tblTB.containsKey(item.tenTruong)) {
             var val = tblTB[item.tenTruong];
             if (item.bangChiTieu == "2" ||
                 (item.bangChiTieu != null && item.bangChiTieu != '') ||
@@ -6920,11 +7128,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       for (var item in fMau) {
         if ((item.bangDuLieu == tablePhieuMauTB &&
             item.maPhieu == AppDefine.maPhieuMau)) {
-          if (tblTB.containsKey(item.tenTruong) &&
-              item.tenTruong != 'A6_1_1_1_1' &&
-              item.tenTruong != 'A6_1_6_1_1' &&
-              item.tenTruong != 'A6_1_7_1_1' &&
-              item.tenTruong != 'A6_1_10_1_1') {
+          if (tblTB.containsKey(item.tenTruong)) {
             var val = tblTB[item.tenTruong];
             var validRes = onValidate(
                 item.bangDuLieu!,
@@ -7830,6 +8034,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         await onChangeCompleted(ThoiGianKT, DateTime.now().toIso8601String());
       }
       await bkCoSoSXKDProvider.updateTrangThai(currentIdCoSo!);
+        await bkCoSoSXKDProvider.updateValue(colBkCoSoSXKDIsSyncSuccess,AppDefine.unSync,currentIdCoSo!);
       AppPref.setQuestionNoStartTime = '';
 
       //  if (resultRoute.isEdited) {

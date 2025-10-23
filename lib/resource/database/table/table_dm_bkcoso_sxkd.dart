@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd_nganh_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/question/product_model.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/sync/sync_result.dart';
 
 ///Bảng kê cơ sở sản xuất kinh doanh CT_DI_BKCoSoSXKD
 ///
@@ -38,6 +39,7 @@ const String colBkCoSoSXKDMaTrangThaiDT = 'MaTrangThaiDT';
 //const String columnBkCoSoSXKDMauBoSung = 'MauBoSung';
 ///0: chưa insert; 1: đã insert logic; vào bảng Xác nhận logic
 const String colBkCoSoSXKDTrangThaiLogic = 'TrangThaiLogic';
+
 ///Trạng thái dữ liệu đang edit: 2; hoàn thành: 9: Giống y trạng thái của MaTrangThaiDT nhưng chỉ dùng cho thao tác sửa/nhập
 ///9: Khi đã hoàn thành pv ở form hoàn thành pv
 const String colBkCoSoSXKDMaTrangThaiDT2 = 'MaTrangThaiDT2';
@@ -205,6 +207,177 @@ class TableBkCoSoSXKD {
     if (json != null) {
       for (var item in json) {
         list.add(TableBkCoSoSXKD.fromJson(item));
+      }
+    }
+    return list;
+  }
+}
+
+class TableBkCoSoSXKDSync {
+  int? id;
+  String? iDCoSo;
+  int? loaiPhieu;
+  String? maTinh;
+  String? tenTinh;
+  String? maTKCS;
+  String? tenTKCS;
+  String? maXa;
+  String? tenXa;
+  String? maThon;
+  String? tenThon;
+  String? iDDB;
+  String? maDiaBan;
+  String? tenDiaBan;
+  int? maCoSo;
+  String? tenCoSo;
+  String? diaChi;
+  String? tenChuCoSo;
+  int? maDiaDiem;
+  String? dienThoai;
+  String? email;
+  int? soLaoDong;
+  double? doanhThu;
+  int? maTinhTrangHD;
+  String? tenNguoiCungCap;
+  String? dienThoaiNguoiCungCap;
+  String? maDTV;
+  int? maTrangThaiDT;
+  int? maTrangThaiDT2;
+  int? trangThaiLogic;
+  int? isSyncSuccess;
+  String? createdAt;
+  String? updatedAt;
+
+  List<TableBkCoSoSXKDNganhSanPham>? tableNganhSanPhams;
+  TablePhieu? tablePhieu;
+  SyncResultSingleItem? syncResult;
+
+  TableBkCoSoSXKDSync(
+      {this.id,
+      this.iDCoSo,
+      this.loaiPhieu,
+      this.maTinh,
+      this.maTKCS,
+      this.maXa,
+      this.maThon,
+      this.tenThon,
+      this.iDDB,
+      this.maDiaBan,
+      this.tenDiaBan,
+      this.maCoSo,
+      this.tenCoSo,
+      this.diaChi,
+      this.tenChuCoSo,
+      this.maDiaDiem,
+      this.dienThoai,
+      this.email,
+      this.soLaoDong,
+      this.doanhThu,
+      this.maTinhTrangHD,
+      this.tenNguoiCungCap,
+      this.dienThoaiNguoiCungCap,
+      this.maDTV,
+      this.maTrangThaiDT,
+      this.maTrangThaiDT2,
+      this.tablePhieu,
+      this.tableNganhSanPhams,
+      this.trangThaiLogic,
+      this.isSyncSuccess,
+      this.createdAt,
+      this.updatedAt,
+      this.syncResult});
+
+  TableBkCoSoSXKDSync.fromJson(dynamic json) {
+    id = json['_id'];
+    iDCoSo = json['IDCoSo'];
+    loaiPhieu = json['LoaiPhieu'];
+    maTinh = json['MaTinh'];
+    tenTinh = json['TenTinh'];
+    maTKCS = json['MaTKCS'];
+    tenTKCS = json['TenTKCS'];
+    maXa = json['MaXa'];
+    tenXa = json['TenXa'];
+    maThon = json['MaThon'];
+    tenThon = json['TenThon'];
+    iDDB = json['IDDB'];
+    maDiaBan = json['MaDiaBan'];
+    tenDiaBan = json['TenDiaBan'];
+    maCoSo = json['MaCoSo'];
+    tenCoSo = json['TenCoSo'];
+    diaChi = json['DiaChi'];
+    tenChuCoSo = json['TenChuCoSo'];
+    maDiaDiem = json['MaDiaDiem'];
+    dienThoai = json['DienThoai'];
+    email = json['Email'];
+    soLaoDong = json['SoLaoDong'];
+    doanhThu = json['DoanhThu'];
+    maTinhTrangHD = json['MaTinhTrangHD'];
+    tenNguoiCungCap = json['TenNguoiCungCap'];
+    dienThoaiNguoiCungCap = json['DienThoaiNguoiCungCap'];
+    maDTV = json['MaDTV'];
+    maTrangThaiDT = json['MaTrangThaiDT'];
+    maTrangThaiDT2 = json['MaTrangThaiDT2'];
+    isSyncSuccess = json['SyncSuccess'];
+    createdAt = json['CreatedAt'];
+    updatedAt = json['UpdatedAt'];
+
+    //tenDiaDiem = json['TenDiaDiem'];
+    tablePhieu = json['PhieuCaTheResponseDto'] != null
+        ? TablePhieu.fromJson(json['PhieuCaTheResponseDto'])
+        : null;
+    tableNganhSanPhams = json['CT_DI_BKCoSoSXKD_NganhDtos'] != null
+        ? TableBkCoSoSXKDNganhSanPham.listFromJson(
+            json['CT_DI_BKCoSoSXKD_NganhDtos'])
+        : null;
+
+    syncResult = json['SyncResultSingleItem'] != null
+        ? SyncResultSingleItem.fromJson(json['SyncResultSingleItem'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = <String, dynamic>{};
+    json['IDCoSo'] = iDCoSo;
+    json['LoaiPhieu'] = loaiPhieu;
+    json['MaTinh'] = maTinh;
+    json['TenTinh'] = tenTinh;
+    json['MaTKCS'] = maTKCS;
+    json['TenTKCS'] = tenTKCS;
+    json['MaXa'] = maXa;
+    json['TenXa'] = tenXa;
+    json['MaThon'] = maThon;
+    json['TenThon'] = tenThon;
+    json['IDDB'] = iDDB;
+    json['MaDiaBan'] = maDiaBan;
+    json['TenDiaBan'] = tenDiaBan;
+    json['MaCoSo'] = maCoSo;
+    json['TenCoSo'] = tenCoSo;
+    json['DiaChi'] = diaChi;
+    json['TenChuCoSo'] = tenChuCoSo;
+    json['MaDiaDiem'] = maDiaDiem;
+    json['DienThoai'] = dienThoai;
+    json['Email'] = email;
+    json['SoLaoDong'] = soLaoDong;
+    json['DoanhThu'] = doanhThu;
+    json['MaTinhTrangHD'] = maTinhTrangHD;
+    json['TenNguoiCungCap'] = tenNguoiCungCap;
+    json['DienThoaiNguoiCungCap'] = dienThoaiNguoiCungCap;
+    json['MaDTV'] = maDTV;
+    json['MaTrangThaiDT'] = maTrangThaiDT;
+    json['MaTrangThaiDT2'] = maTrangThaiDT2;
+    json['TrangThaiLogic'] = trangThaiLogic;
+    json['SyncSuccess'] = isSyncSuccess;
+    json['CreatedAt'] = createdAt;
+    json['UpdatedAt'] = updatedAt;
+    json['SyncResultDetailItem'] = syncResult;
+    return json;
+  }
+
+  static List<TableBkCoSoSXKDSync> listFromJson(dynamic json) {
+    List<TableBkCoSoSXKDSync> list = [];
+    if (json != null) {
+      for (var item in json) {
+        list.add(TableBkCoSoSXKDSync.fromJson(item));
       }
     }
     return list;

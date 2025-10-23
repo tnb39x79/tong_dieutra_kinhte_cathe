@@ -37,7 +37,7 @@ class ApiConstants {
   static const String baseUrl = String.fromEnvironment('BASE_API',
       defaultValue: "http://v1_capi_giasanxuat.gso.gov.vn/");
 
-  static const String baseUrlNganhSp = "http://sic3_api1.gso.gov.vn:8000/";
+  static const String baseUrlNganhSp = "http://sic3_api1.gso.gov.vn:8001/";
 
   // define
   static const String basicUserName = 'CT';

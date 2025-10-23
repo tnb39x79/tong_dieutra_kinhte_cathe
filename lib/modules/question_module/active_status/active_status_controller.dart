@@ -206,8 +206,8 @@ class ActiveStatusController extends BaseController {
         } else {
           //TODO NHÓ KIỂM TRA LẠI MÃ TÌNH TRẠNG MÀ GỌI HÀM insert sản phẩm cho đúng.
           int maTTHD = currentIndex.value + 1;
-          bKCoSoSXKDProvider.updateTrangThaiDTTinhTrangHD(
-              currentIdCoSo!, maTTHD);
+          await bKCoSoSXKDProvider.updateValue(
+              colBkCoSoSXKDMaTinhTrangHD, maTTHD, currentIdCoSo!);
           await insertNewPhieu07MauTBCxx(maTTHD);
           Get.toNamed(
             AppRoutes.generalInformation,
@@ -304,6 +304,16 @@ class ActiveStatusController extends BaseController {
         currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
       var phieuMau = await phieuProvider.selectByIdCoSo(currentIdCoSo!);
       if (phieuMau.isNotEmpty) {
+        var phieuMauTB =
+            await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
+        if (phieuMauTB.isEmpty) {
+          await initRecordPhieuMauTB(tblBkCoSoSXKD.value);
+        }
+        var res =
+            await phieuMauTBSanPhamProvider.isExistProduct(currentIdCoSo!);
+        if (res == false) {
+          await initRecordPhieuMauTBNganhSanPham();
+        }
       } else {
         var maNganhs = await bkCoSoSXKDNganhSanPhamProvider
             .selectMaNganhByIdCoSo(tblBkCoSoSXKD.value.iDCoSo!);

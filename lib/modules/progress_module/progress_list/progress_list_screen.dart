@@ -42,24 +42,25 @@ class ProgressListScreen extends GetView<ProgressListController> {
               return Column(
                 children: [
                   WCard(
-                      titleHeader:
-                          controller.progressList[index].moTaDoiTuongDT!,
-                      doiTuongDT: controller.progressList[index].maDoiTuongDT
-                          .toString(),
-                      countInterviewed: controller
-                              .progressList[index].countPhieuInterviewed ??
-                          0,
-                      countUnInterviewed: controller
-                              .progressList[index].countPhieuUnInterviewed ??
-                          0,
-                      countSyncSuccess: controller
-                              .progressList[index].countPhieuSyncSuccess ??
-                          0)
+                    titleHeader: controller.progressList[index].moTaDoiTuongDT!,
+                    doiTuongDT:
+                        controller.progressList[index].maDoiTuongDT.toString(),
+                    countInterviewed:
+                        controller.progressList[index].countPhieuInterviewed ??
+                            0,
+                    countUnInterviewed: controller
+                            .progressList[index].countPhieuUnInterviewed ??
+                        0,
+                    countSyncSuccess:
+                        controller.progressList[index].countPhieuSyncSuccess ??
+                            0,
+                    countUnSync:
+                        controller.progressList[index].countPhieuUnSync ?? 0,
+                  )
                 ],
               );
             },
           ));
     });
   }
- 
 }

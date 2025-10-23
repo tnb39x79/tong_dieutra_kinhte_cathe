@@ -22,8 +22,17 @@ class VcpaVsicAISearchProvider extends GetConnect {
       {int? limitNum = 10}) async {
     Map<String, String>? headers = {'Authorization': 'Bearer '};
     httpClient.timeout = const Duration(seconds: 15);
+
+     String baseSuggestionUrl = AppPref.suggestionVcpaUrl;
+    if (baseSuggestionUrl.isNotEmpty) {
+      String lastChar = baseSuggestionUrl[baseSuggestionUrl.length - 1];
+      if (lastChar != '/') {
+        baseSuggestionUrl = '${AppPref.suggestionVcpaUrl}/';
+      }
+    }
     String urlSearch =
-        '${AppPref.suggestionVcpaUrl}$funcPath?data_type=$codeType&query=$query&top_k=$limitNum';
+        '${baseSuggestionUrl}$funcPath?data_type=$codeType&query=$query&top_k=$limitNum';
+        print(urlSearch);
     try {
       var response = get(
         urlSearch,

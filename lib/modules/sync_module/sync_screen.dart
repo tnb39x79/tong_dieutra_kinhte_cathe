@@ -477,9 +477,9 @@ class SyncScreen extends GetView<SyncController> {
         width: 48,
       );
     } else if (controller.responseCode.value == ApiConstants.duLieuDongBoRong) {
-      return const Image(
+      return const Image(color: Colors.grey,
         image: AssetImage(
-          AppImages.uploadEmpty,
+          AppImages.uploadEmpty
         ),
         width: 48,
       );

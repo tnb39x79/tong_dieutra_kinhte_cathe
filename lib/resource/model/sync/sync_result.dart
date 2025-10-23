@@ -73,6 +73,8 @@ class SyncResultItem {
 }
 
 class SyncResultDetailItem {
+
+  ///IdCoSo
   String? id;
   String? ten;
   String? maXa;
@@ -127,5 +129,63 @@ class SyncResultDetailItem {
     return (maDiaBan == null || maDiaBan == '')
         ? "Xã: $maXa - $ten"
         : "Xã: $maXa - Địa bàn: $maDiaBan - $ten";
+  }
+}
+
+
+
+
+class SyncResultSingleItem {
+  String? id;
+  String? ten;
+  String? maXa;
+  String? maDiaBan;
+  ///0:Chưa đồng bộ; 1: Đang đồng bộ; 2: Đồng bộ thành công; 3: Đồng bộ lỗi
+  int? resCode; 
+  String? resMessage;
+
+  SyncResultSingleItem(
+      {this.id,
+      this.ten,
+      this.maXa,
+      this.maDiaBan,
+      this.resCode, 
+      this.resMessage});
+
+  SyncResultSingleItem.fromJson(dynamic json) {
+    id = json['Id'];
+    ten = json['Ten'];
+    maXa = json['MaXa'];
+    maDiaBan = json['MaDiaBan'];
+    resCode = json['ResCode']; 
+    resMessage = json['ResMessage'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Id'] = id;
+    data['Ten'] = ten;
+    data['MaXa'] = maXa;
+    data['MaDiaBan'] = maDiaBan;
+    data['ResCode'] = resCode; 
+    data['ResMessage'] = resMessage;
+    return data;
+  }
+
+  static List<SyncResultSingleItem> listFromJson(dynamic json) {
+    List<SyncResultSingleItem> list = [];
+    if (json != null) {
+      for (var item in json) {
+        list.add(SyncResultSingleItem.fromJson(item));
+      }
+    }
+    return list;
+  }
+
+  @override
+  String toString() {
+    return (maDiaBan == null || maDiaBan == '')
+        ? "Xã: $maXa - $ten"
+        : "Xã: $maXa - $maDiaBan - $ten";
   }
 }
