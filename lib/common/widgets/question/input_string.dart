@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/recording_dialog.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/input/widget_field_input_text.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/model.dart';
 
 class InputString extends StatefulWidget {
@@ -13,17 +17,22 @@ class InputString extends StatefulWidget {
       this.maxLine = 1,
       this.warningText,
       this.textStyle,
+      this.maxLength,
+      this.sttMic,
       super.key});
 
   final QuestionCommonModel question;
-  final Function(String?)? onChange;
+  // final Function(String?)? onChange;
+  final Function(dynamic) onChange;
   final String? Function(String?)? validator;
   final String? value;
   final bool enable;
   final String? subName;
   final int maxLine;
+  final int? maxLength;
   final String? warningText;
   final TextStyle? textStyle;
+  final bool? sttMic;
 
   @override
   InputIntState createState() => InputIntState();
@@ -32,6 +41,9 @@ class InputString extends StatefulWidget {
 class InputIntState extends State<InputString> {
   // ignore: prefer_final_fields
   TextEditingController _controller = TextEditingController();
+
+  bool get useMicrophone => widget.sttMic ?? false;
+
   @override
   void initState() {
     if (widget.value != null) {
@@ -56,16 +68,18 @@ class InputIntState extends State<InputString> {
           level: widget.question.cap ?? 2,
         ),
         const SizedBox(height: 4),
-        WidgetFieldInput(
-            controller: _controller,
-            enable: widget.enable,
-            hint: 'Nhập vào đây',
-            validator: widget.validator,
-            onChanged: (String? value) =>
-                widget.onChange!(value != "" ? value : null),
-            maxLine: widget.maxLine,
-            txtStyle: widget.textStyle,
-            suffix: buildSuffix()),
+        WidgetFieldInputText(
+          controller: _controller,
+          enable: widget.enable,
+          hint: 'Nhập vào đây',
+          validator: widget.validator,
+          onChanged: (String? value) =>
+              widget.onChange!(value != "" ? value : null),
+          maxLine: widget.maxLine,
+          txtStyle: widget.textStyle,
+          suffix: buildSuffix(),
+          onMicrophoneTap: useMicrophone ? onMicrophoneTap : null,
+        ),
         wWarningText(),
         const SizedBox(height: 12),
       ],
@@ -114,5 +128,57 @@ class InputIntState extends State<InputString> {
       );
     }
     return const SizedBox();
+  }
+
+  _onChanged(String text, {bool updateText = false}) {
+    if (text == "") {
+      widget.onChange(null);
+      return;
+    }
+
+    ///added by tuannb 09/09/2024: Giới hạn độ trường ghi chú 500 ký tự
+    String result;
+    result = text;
+    bool needUpdate = updateText;
+    int maxL = widget.maxLength ?? 500;
+    // Truncate if necessary
+    if (result.length > maxL) {
+      result = result.substring(0, maxL);
+      needUpdate = true;
+    }
+
+    // Update controller if needed
+    if (needUpdate) {
+      _controller.value = _controller.value.copyWith(
+        text: result,
+        selection: TextSelection.fromPosition(
+          TextPosition(offset: result.length),
+        ),
+      );
+    }
+
+    ///end added
+    return widget.onChange(result);
+  }
+
+  Future<void> onMicrophoneTap() async {
+    try {
+      // Show the modern recording dialog
+      final recognizedText = await showRecordingDialog(
+        title: 'Ghi âm câu trả lời',
+        hint: 'Nhấn để bắt đầu ghi âm câu trả lời...',
+        onTextRecognized: (text) {
+          log('Text recognized in dialog: "$text"');
+        },
+      );
+
+      // If we got text back, use it to fill the form field
+      if (recognizedText != null && recognizedText.isNotEmpty) {
+        // Update the form field with the recognized text
+        _onChanged(recognizedText, updateText: true);
+      }
+    } catch (e, stackTrace) {
+      log('onMicrophoneTap error: $e $stackTrace');
+    }
   }
 }

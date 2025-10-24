@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/recording_dialog.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/input/widget_field_input_mix.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/input/widget_field_input_text.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/loadings/loading_overlay_helper.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_colors.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
@@ -50,8 +52,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   bool _isFirstLoading = true;
   bool _allowEdit = true;
   bool _isEdited = false;
-  Map<dynamic, dynamic> completeInfo= <dynamic, dynamic>{}.obs;
-  Map<dynamic, dynamic> completeInfoNew= <dynamic, dynamic>{}.obs;
+  Map<dynamic, dynamic> completeInfo = <dynamic, dynamic>{}.obs;
+  Map<dynamic, dynamic> completeInfoNew = <dynamic, dynamic>{}.obs;
 
   @override
   void initState() {
@@ -278,24 +280,24 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   Widget buildFormThongTinNguoiPV() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       TextQuestion("Người cung cấp thông tin"),
-      WidgetFieldInputMix(
+      WidgetFieldInputText(
         controller: hoTenController,
+        maxLength: 250,
         hint: 'Nhập Họ và tên người cung cấp thông tin',
-        minLines: 1,
         onChanged: (String? value) => onChangeText(value, columnNguoiTraLoi),
         validator: (String? value) =>
             onValidate(value, fieldName: columnNguoiTraLoi),
-        //  onMicrophoneTap: () => onMicrophoneTap(controller),
+        onMicrophoneTap: () => onMicrophoneTap(columnNguoiTraLoi),
+        enable: true,
       ),
       const SizedBox(height: 16),
-      WidgetFieldInputMix(
+      WidgetFieldInputText(
         controller: soDienThoaiController,
         hint: 'Nhập số điện thoại người cung cấp thông tin',
         keyboardType: TextInputType.number,
         maxLength: 11,
         onChanged: (String? value) => onChangeText(value, columnSoDienThoai),
         validator: Valid.validateMobile,
-        // onMicrophoneTap: () => onMicrophoneTap(controller),
       ),
     ]);
   }
@@ -304,15 +306,17 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     if (!_hasCoordinates()) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         TextQuestion("Nhập lý do định vị không chính xác"),
-        WidgetFieldInputMix(
+        WidgetFieldInputText(
           controller: _lyDoDinhViController,
           hint: 'Nhập lý do định vị không chính xác',
-          padding: const EdgeInsets.all(16),
-          minLines: 3,
+          maxLine: 3,
+          minLine: 3,
+          maxLength: 500,
+          enable: true,
           onChanged: (String? value) => onChangeText(value, giaiTrinhToaDo),
           validator: (String? value) =>
               onValidate(value, fieldName: giaiTrinhToaDo),
-          //  onMicrophoneTap: () => onMicrophoneTap(controller),
+          onMicrophoneTap: () => onMicrophoneTap(giaiTrinhToaDo),
         )
       ]);
     }
@@ -320,7 +324,29 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   }
 
   onChangeText(String? value, String fieldName) {
-    controller.onChangeCompleted(fieldName, value);
+    if (fieldName == columnNguoiTraLoi) {
+      String result;
+      result = value ?? '';
+
+      int maxL = 250;
+      // Truncate if necessary
+      if (result.length > maxL) {
+        result = result.substring(0, maxL);
+        controller.onChangeCompleted(fieldName, value);
+      }
+    } else if (fieldName == giaiTrinhToaDo) {
+      String result;
+      result = value ?? '';
+
+      int maxL = 500;
+      // Truncate if necessary
+      if (result.length > maxL) {
+        result = result.substring(0, maxL);
+        controller.onChangeCompleted(fieldName, value);
+      }
+    } else {
+      controller.onChangeCompleted(fieldName, value);
+    }
   }
 
   onValidate(String? text, {bool? isRequired, String? fieldName}) {
@@ -376,25 +402,21 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
       return;
     }
 
-      completeInfoNew = controller.completeInfo;
+    completeInfoNew = controller.completeInfo;
 
-    mapDataInfo(  columnNguoiTraLoi, hoTenController.text);
-    mapDataInfo(  columnSoDienThoai, soDienThoaiController.text);
+    mapDataInfo(columnNguoiTraLoi, hoTenController.text);
+    mapDataInfo(columnSoDienThoai, soDienThoaiController.text);
 
-    mapDataInfo(
-          columnKinhDo, _lngController.text);
-    mapDataInfo(
-         columnViDo, _latController.text);
+    mapDataInfo(columnKinhDo, _lngController.text);
+    mapDataInfo(columnViDo, _latController.text);
 
     /// kiểm tra nếu phiếu đã có kinh độ và vĩ độ thì cập nhật lý do định vị không chính xác = null
     if (completeInfo?[columnKinhDo] != null &&
         completeInfo?[columnViDo] != null) {
-      mapDataInfo(  giaiTrinhToaDo, null);
+      mapDataInfo(giaiTrinhToaDo, null);
     } else {
-      mapDataInfo(
-            columnKinhDo, _lngController.text);
-      mapDataInfo(
-            columnViDo, _latController.text);
+      mapDataInfo(columnKinhDo, _lngController.text);
+      mapDataInfo(columnViDo, _latController.text);
     }
 
     // if (_lyDoThoiGianController.text.isNotEmpty) {
@@ -402,20 +424,14 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     // }
 
     if (_lyDoDinhViController.text.isNotEmpty) {
-      mapDataInfo( giaiTrinhToaDo, _lyDoDinhViController.text);
+      mapDataInfo(giaiTrinhToaDo, _lyDoDinhViController.text);
     }
 
     /// cập nhật mới có toạ độ -> xoá lý do
     if (completeInfo?[columnKinhDo] != null &&
         completeInfo?[columnViDo] != null) {
-      mapDataInfo(  giaiTrinhToaDo, null);
+      mapDataInfo(giaiTrinhToaDo, null);
     }
-
-    // if (_isEdited) {
-    //   Get.back(result: newPhieu);
-    // } else {
-    //   Get.back();
-    // }
 
     Get.back(
       result: CompletedResult(
@@ -425,7 +441,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     );
   }
 
-  mapDataInfo( key, value) {
+  mapDataInfo(key, value) {
     Map<String, dynamic> map = Map<String, dynamic>.from(completeInfoNew);
     map.update(key, (val) => value, ifAbsent: () => value);
     completeInfoNew = map;
@@ -492,5 +508,26 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
             'Đơn vị đã có kinh độ, vĩ độ, bạn có muốn cập nhật tọa độ mới cho đơn vị không?',
       ),
     );
+  }
+
+  Future<void> onMicrophoneTap(String fieldName) async {
+    try {
+      // Show the modern recording dialog
+      final recognizedText = await showRecordingDialog(
+        title: 'Ghi âm câu trả lời',
+        hint: 'Nhấn để bắt đầu ghi âm câu trả lời...',
+        onTextRecognized: (text) {
+          log('Text recognized in dialog: "$text"');
+        },
+      );
+
+      // If we got text back, use it to fill the form field
+      if (recognizedText != null && recognizedText.isNotEmpty) {
+        // Update the form field with the recognized text
+        onChangeText(recognizedText, fieldName);
+      }
+    } catch (e, stackTrace) {
+      log('onMicrophoneTap error: $e $stackTrace');
+    }
   }
 }

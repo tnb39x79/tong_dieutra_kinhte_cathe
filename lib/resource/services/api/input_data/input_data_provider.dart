@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/status/http_status.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/reponse/model_file_response_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
 class InputDataProvider extends GetConnect {
@@ -36,7 +37,7 @@ class InputDataProvider extends GetConnect {
       var response = await get(
         urlGet,
         headers: headers,
-      ) ;
+      );
       return response;
     } on TimeoutException catch (e) {
       // catch timeout here..
@@ -174,5 +175,25 @@ class InputDataProvider extends GetConnect {
       return Response(
           statusCode: ApiConstants.errorException, statusText: e.toString());
     }
+  }
+
+  /// Get model file information including download URLs and filenames
+  /// API Endpoint: GET api/GetModelFile?uid=D990030018
+  /// Returns ModelFileResponseModel with VCPA and STT model URLs and filenames
+  Future<ResponseModel<ModelFileResponseModel>> getModelFile(String uid) async {
+    if (NetworkService.connectionType == Network.none) {
+      return ResponseModel.withDisconnect();
+    }
+    final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
+    String modelUrl = '$baseUrl${ApiConstants.getModelFile}?uid=${AppPref.uid}';
+
+    final res = await get(modelUrl);
+    if (res.statusCode == ApiConstants.success) {
+      return ResponseModel(
+        statusCode: ApiConstants.success,
+        body: ModelFileResponseModel.fromJson(res.body['ObjectData']),
+      );
+    }
+    return ResponseModel.withError(res.body);
   }
 }

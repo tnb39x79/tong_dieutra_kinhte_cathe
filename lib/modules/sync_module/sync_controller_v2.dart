@@ -37,14 +37,21 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
   final responseCode = ''.obs;
   final syncResults = <SyncResult>[].obs;
   final isSyncing = false.obs;
-    final isSyncCompleted = false.obs;
- 
+  final isSyncCompleted = false.obs;
+  final isNetworkStatus = false.obs;
   final networkService = Get.find<NetworkService>();
 
   @override
   void onInit() async {
     super.onInit();
     await getData();
+    ever(networkService.connectionTypeObservable, (Network connectionType) {
+      if (connectionType == Network.none) {
+        isNetworkStatus.value = false;
+      } else {
+        isNetworkStatus.value = true;
+      }
+    });
   }
 
   Future<List<TableBkCoSoSXKDSync>> getData() async {
@@ -136,7 +143,7 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
         }
         await Future.delayed(const Duration(seconds: 2));
         isSyncing.value = false;
-        isSyncCompleted.value=true;
+        isSyncCompleted.value = true;
       }
     }
   }
@@ -191,7 +198,6 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
     isSyncing.value = false;
     endSync(false);
   }
- 
 
   void backHome() {
     resetVarBeforeSingleSync();

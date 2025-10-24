@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/config/config.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_colors.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_images.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
@@ -28,7 +29,7 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
               centerTitle: true,
             ),
             backgroundColor: Colors.white,
-            body: buildBody(),
+            body: Obx(() => buildBody()),
           ),
         ));
   }
@@ -57,6 +58,7 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
                               )
                             ],
                           )),
+                      buildResultMessageCommon(),
                       Expanded(
                           child: buildSyncList(
                               controller.danhSachBkCoSoSXKDInterviewed.value)),
@@ -71,6 +73,36 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
       }
       return buildNetwork(viewportConstraints);
     });
+  }
+
+  buildResultMessageCommon() {
+    if (controller.isSyncCompleted.value) {
+      return Center(
+          child: Column(
+        children: [
+          const Image(
+            image: AssetImage(
+              AppImages.uploadSuccess,
+            ),
+            width: 48,
+          ),
+          Text(
+            'Đồng bộ hoàn thành',
+            style: styleSmallBold.copyWith(color: primaryColor),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Text(
+            controller.responseMessage.value,
+            style: styleSmall.copyWith(color: greyColor),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ));
+    }
+    return const SizedBox();
   }
 
   buildEmptyData(BoxConstraints viewportConstraints) {
@@ -271,7 +303,8 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
         var item = dataResult.elementAt(index);
         int idx = index + 1;
 
-        String tenCoSo = 'Xã: ${item.maXa!} - ${item.tenCoSo!}';
+        String tenCoSo =
+            'Xã: ${item.maXa!} - ${item.tenCoSo!} (${item.loaiPhieu == 0 ? AppDefine.tenDoiTuongDT_07TB : item.loaiPhieu == 5 ? AppDefine.tenDoiTuongDT_07Mau : ''})';
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -284,7 +317,7 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
   }
 
   Widget buildItem(int idx, TableBkCoSoSXKDSync item) {
-    String tenCoSo = '$idx. Xã: ${item.maXa!} - ${item.tenCoSo!}';
+    String tenCoSo = '$idx. Xã: ${item.maXa!} - ${item.tenCoSo!} (${item.loaiPhieu == 0 ? AppDefine.tenDoiTuongDT_07TB : item.loaiPhieu == 5 ? AppDefine.tenDoiTuongDT_07Mau : ''})';
     int? syncResultIsSuccess = 0;
     String syncResultMessage = '';
     if (item.syncResult != null) {
@@ -294,7 +327,7 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
     Widget ic = Icon(Icons.circle_outlined, color: Colors.grey.shade100);
     String textResult = 'Chưa đồng bộ';
     String errorMessage = '';
-    Color colorResult = blackText;
+    Color colorResult = warningColor;
     if (syncResultIsSuccess == 2) {
       ic = Icon(Icons.check_circle_outlined, color: successColor);
       textResult = 'Đồng bộ thành công';
@@ -349,26 +382,29 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
               )),
             ],
           ),
-          subtitle: Theme(
-              data: ThemeData(
-                dividerColor: Colors.transparent,
-              ),
-              child: ExpansionTile(
-                trailing: syncResultIsSuccess == 3 ? null : SizedBox.shrink(),
-                title: Text(
-                  textResult,
-                  style: TextStyle(color: colorResult),
-                ),
-                initiallyExpanded: false,
-                children: [
-                  if (syncResultIsSuccess == 3)
-                    Text(
-                      key: ValueKey(idx),
-                      errorMessage,
-                      style: TextStyle(color: errorColor),
-                    )
-                ],
-              ))
+          subtitle: syncResultIsSuccess == 3
+              ? Theme(
+                  data: ThemeData(
+                    dividerColor: Colors.transparent,
+                  ),
+                  child: ExpansionTile(
+                    trailing:
+                        syncResultIsSuccess == 3 ? null : SizedBox.shrink(),
+                    title: Text(
+                      textResult,
+                      style: TextStyle(color: colorResult),
+                    ),
+                    initiallyExpanded: false,
+                    children: [
+                      if (syncResultIsSuccess == 3)
+                        Text(
+                          key: ValueKey(idx),
+                          errorMessage,
+                          style: TextStyle(color: errorColor),
+                        )
+                    ],
+                  ))
+              : Text(textResult, style: TextStyle(color: colorResult))
           // Column(
           //     crossAxisAlignment:
           //         CrossAxisAlignment.start, // Align children to the start

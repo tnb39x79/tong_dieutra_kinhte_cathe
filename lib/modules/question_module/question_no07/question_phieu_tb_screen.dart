@@ -342,7 +342,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           String moTaSanPhamCau5_1 =
               controller.tblPhieuNganhCNDistinctCap5.isNotEmpty
                   ? controller.tblPhieuNganhCNDistinctCap5!
-                      .map((p) => p.moTaSanPham ?? '')
+                      .map((p) => '${p.maNganhC5}-${p.moTaSanPham}')
                       .toList()
                       .join('; ')
                   : '';
@@ -359,29 +359,32 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 buildNganhCN(question)
               ]);
         } else if (question.maCauHoi == maCauHoiTMGL6810 &&
-            controller.isCap2G_6810TM.value &&
             question.maPhieu == 4) {
-          String moTaSanPhamCau5_1 =
-              controller.tblPhieuNganhTMSanPhamView.isNotEmpty
-                  ? controller.tblPhieuNganhTMSanPhamView!
-                      .map((p) => p.moTaSanPham ?? '')
-                      .toList()
-                      .join('; ')
-                  : '';
+          if (controller.isCap2G_6810TM.value) {
+            String moTaSanPhamCau5_1 =
+                controller.tblPhieuNganhTMSanPhamView.isNotEmpty
+                    ? controller.tblPhieuNganhTMSanPhamView!
+                        .map((p) => '${p.maNganhC5}-${p.moTaSanPham}')
+                        .toList()
+                        .join('; ')
+                    : '';
 
-          return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichTextQuestion(
-                  question.tenCauHoi ?? '',
-                  level: question.cap!,
-                  notes: question.giaiThich ?? '',
-                  moTaSanPham: moTaSanPhamCau5_1,
-                ),
-                buildNganhTM(question)
-              ]);
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichTextQuestion(
+                    question.tenCauHoi ?? '',
+                    level: question.cap!,
+                    notes: question.giaiThich ?? '',
+                    moTaSanPham: moTaSanPhamCau5_1,
+                  ),
+                  buildNganhTM(question)
+                ]);
+          } else {
+            return const SizedBox();
+          }
         } else if (question.maCauHoi == maCauHoiTM56 && question.maPhieu == 4) {
-          if (controller.isCap2_56TM == true) {
+          if (controller.isCap2_56TM.value == true) {
             return buildNganhTMII(question);
           } else {
             return const SizedBox();
@@ -445,7 +448,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuVT) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamVTHanhKhach.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamVTHanhKhach
-              .map((p) => p.a5_1_1 ?? '')
+              .map((p) => '${p.a5_1_2}-${p.a5_1_1}')
               .toList()
               .join('; ')
           : '';
@@ -453,7 +456,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuVT) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamVTHangHoa.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamVTHangHoa
-              .map((p) => p.a5_1_1 ?? '')
+              .map((p) => '${p.a5_1_2}-${p.a5_1_1}')
               .toList()
               .join('; ')
           : '';
@@ -463,7 +466,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             question.maPhieu == AppDefine.maPhieuLTMau)) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamLT.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamLT
-              .map((p) => p.a5_1_1 ?? '')
+              .map((p) => '${p.a5_1_2}-${p.a5_1_1}')
               .toList()
               .join('; ')
           : '';
@@ -471,7 +474,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuTM) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTMGL6810.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamTMGL6810
-              .map((p) => p.a5_1_1 ?? '')
+              .map((p) => '${p.a5_1_2}-${p.a5_1_1}')
               .toList()
               .join('; ')
           : '';
@@ -479,7 +482,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         question.maPhieu == AppDefine.maPhieuTM) {
       moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTM56.isNotEmpty
           ? controller.tblPhieuMauTBSanPhamTM56
-              .map((p) => p.a5_1_1 ?? '')
+              .map((p) => '${p.a5_1_2}-${p.a5_1_1}')
               .toList()
               .join('; ')
           : '';
@@ -1451,28 +1454,31 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         var a1_5_1 = controller.getValueByFieldName(
             question.bangDuLieu!, question.maCauHoi!);
         if (a1_5Val == 1) {
-          return InputString(
-            key: ValueKey('${question.maPhieu}_${question.maCauHoi}'),
-            onChange: (value) => controller.onChangeInput(
-                question.maPhieu!,
-                question.bangDuLieu!,
-                question.maCauHoi,
-                question.maCauHoi,
-                value),
-            question: question,
-            subName: subName,
-            value: a1_5_1,
-            validator: (String? value) => controller.onValidate(
-                question.bangDuLieu!,
-                question.maCauHoi!,
-                question.maCauHoi,
-                value,
-                question.giaTriNN,
-                question.giaTriLN,
-                question.loaiCauHoi!,
-                true,
-                question.maPhieu!),
-          );
+          return Column(children: [
+            InputString(
+              key: ValueKey('${question.maPhieu}_${question.maCauHoi}'),
+              onChange: (value) => controller.onChangeInput(
+                  question.maPhieu!,
+                  question.bangDuLieu!,
+                  question.maCauHoi,
+                  question.maCauHoi,
+                  value),
+              question: question,
+              subName: subName,
+              value: a1_5_1,
+              validator: (String? value) => controller.onValidate(
+                  question.bangDuLieu!,
+                  question.maCauHoi!,
+                  question.maCauHoi,
+                  value,
+                  question.giaTriNN,
+                  question.giaTriLN,
+                  question.loaiCauHoi!,
+                  true,
+                  question.maPhieu!),
+            ),
+            buildWarningText(question, a1_5_1)
+          ]);
         }
         return const SizedBox();
       });
@@ -1497,6 +1503,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question.loaiCauHoi!,
           true,
           question.maPhieu!),
+      sttMic: true,
     );
   }
 
@@ -1813,6 +1820,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             4,
             true,
             question.maPhieu!),
+        sttMic: true,
       );
     } else if ((selectedValue == 1 &&
         question.bangChiTieu == tableDmCoKhong &&
@@ -3360,7 +3368,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               true),
           flteringTextInputFormatterRegExp: wFilterInput,
           decimalDigits: decimalDigits,
-          subName: product.a5_1_1 ?? '',
+          subName: '${product.a5_1_2}-${product.a5_1_1}',
           warningText: warningWithText(question, a5_2Val, product: product),
         );
 
@@ -4577,7 +4585,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
   buildNganhTMII(QuestionCommonModel question, {String? subName}) {
     var moTaSanPhamCaux = controller.tblPhieuMauTBSanPhamTM56.isNotEmpty
         ? controller.tblPhieuMauTBSanPhamTM56
-            .map((p) => p.a5_1_1 ?? '')
+            .map((p) => '${p.a5_1_2}-${p.a5_1_1}')
             .toList()
             .join('; ')
         : '';
@@ -4796,11 +4804,12 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         return wText(
             'Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ đại học  (=7).');
       }
-      if (selectedValue == 7 && (a1_3_2Value == 2003 || a1_3_2Value == 2004)) {
+      if (selectedValue == 8 && (a1_3_2Value == 2003 || a1_3_2Value == 2004)) {
         return wText(
-            'Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ tiến sỹ trở lên (=8).');
+            'Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ thạc sỹ trở lên (=8).');
       }
-      if (selectedValue == 7 && (a1_3_2Value == 2001 || a1_3_2Value == 2002)) {
+      if ((selectedValue == 9 || selectedValue == 10) &&
+          (a1_3_2Value == 2001 || a1_3_2Value == 2002)) {
         return wText(
             'Năm sinh = $a1_3_2Value mà tốt nghiệp trình độ tiến sỹ trở lên (=9|10).');
       }
@@ -4831,20 +4840,49 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             'Cơ sở Đã đăng ký kinh doanh nhưng chưa được cấp (C1.4=3) mà có mã số thuế (C1.5=1)');
       } else if (a1_4Value == 4 && selectedValue == 1) {
         return wText(
-            'Cơ sở Đã đăng ký kinh doanh nhưng chưa được cấp (C1.4=3) mà có mã số thuế (C1.5=1)');
+            'Cơ sở Không phải đăng ký kinh doanh (C1.4=4) mà có MST (C1.5=1)');
       } else if (a1_3_4Value == 1 &&
           a1_5_1Value != null &&
           a1_5_1Value != '' &&
           a1_5_1Value.toString().length == 12) {
         return wText(
-            'Chủ cơ sở là người có quốc tịch Việt Nam mà MST  khác 12  số (Quốc tịch Việt Nam MST cơ sở chính là CCCD 12 chữ số)?');
+            'Chủ cơ sở là người có quốc tịch Việt Nam mà MST khác 12 số (Quốc tịch Việt Nam MST cơ sở chính là CCCD 12 chữ số)?');
       } else if (a1_3_4Value == 2 &&
           a1_5_1Value != null &&
           a1_5_1Value != '' &&
           a1_5_1Value.toString().length == 10) {
         return wText('Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?');
       }
-    } else if (question.maCauHoi == colPhieuMauTBA3_1T &&
+    } else if (question.maCauHoi == colPhieuMauTBA1_5_1 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var a1_3_4Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_3_4);
+      var a1_4Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_4);
+      var a1_5_1Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA1_5_1);
+      if (a1_3_4Value == 1 &&
+          a1_5_1Value != null &&
+          a1_5_1Value != '' &&
+          a1_5_1Value.toString().length == 12) {
+        return wText(
+            'Chủ cơ sở là người có quốc tịch Việt Nam mà MST khác 12 số (Quốc tịch Việt Nam MST cơ sở chính là CCCD 12 chữ số)?');
+      } else if (a1_3_4Value == 2 &&
+          a1_5_1Value != null &&
+          a1_5_1Value != '' &&
+          a1_5_1Value.toString().length == 10) {
+        return wText('Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?');
+      }
+    }else if (question.maCauHoi == colPhieuMauTBA2_1 &&
+        question.maPhieu == AppDefine.maPhieuTB) {
+      var a2_1Value = controller.getValueByFieldName(
+          question.bangDuLieu!, colPhieuMauTBA2_1);
+          if(a2_1Value>30){
+            return wText('Số lao động >30 người có đúng không');
+          }
+        }
+    
+     else if (question.maCauHoi == colPhieuMauTBA3_1T &&
         question.maPhieu == AppDefine.maPhieuTB) {
       if (selectedValue != null &&
           controller.validateEqual0InputValue(
@@ -5554,14 +5592,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       var fieldCoKhong = '${chiTieuDong!.maCauHoi}_${chiTieuDong!.maSo}_1';
 
       var a1_1Val =
-          controller.getValueByFieldName(tablePhieuNganhVT, fieldCoKhong);
+          controller.getValueByFieldName(tablePhieuNganhLT, fieldCoKhong);
 
-      var c3Value = controller.getValueByFieldName(tablePhieuNganhVT, c3Field);
+      var c3Value = controller.getValueByFieldName(tablePhieuNganhLT, c3Field);
       var c3_1Value =
-          controller.getValueByFieldName(tablePhieuNganhVT, c3_1Field);
-      var c4Value = controller.getValueByFieldName(tablePhieuNganhVT, aC4Field);
+          controller.getValueByFieldName(tablePhieuNganhLT, c3_1Field);
+      var c4Value = controller.getValueByFieldName(tablePhieuNganhLT, aC4Field);
       var c4_1Value =
-          controller.getValueByFieldName(tablePhieuNganhVT, a4_1Field);
+          controller.getValueByFieldName(tablePhieuNganhLT, a4_1Field);
 
       int c3Val = c3Value != null ? AppUtils.convertStringToInt(c3Value) : 0;
       int c3_1Val =
@@ -5579,7 +5617,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             }
             //C3<C3.1;
             if (c3Val < c3_1Val) {
-              return 'Cảnh báo: Số phòng tăng mới trong năm 2025> Số phòng tại thời điểm 31/12/2025';
+              return 'Cảnh báo: Số phòng tăng mới trong năm 2025 > Số phòng tại thời điểm 31/12/2025';
             }
             //C3>0 và C6.1_Điện=2;
             if (c3Val > 0) {

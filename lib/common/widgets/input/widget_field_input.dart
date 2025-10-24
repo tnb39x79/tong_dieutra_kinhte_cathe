@@ -38,6 +38,7 @@ class WidgetFieldInput extends StatelessWidget {
   final int? maxLength;
   final int? maxLine;
 
+
   @override
   Widget build(BuildContext context) {
     var styleCustomize = (enable != null && enable != true)
@@ -132,32 +133,7 @@ class WidgetFieldInput extends StatelessWidget {
               keyboardType: keyboardType,
               onChanged: onChanged,
               inputFormatters: inputFormatters,
-
-              // onTap: () {
-              //   var textFieldNum = controller.value.text;
-              //   if(textFieldNum!=''){
-              //   var numSanitized = numSanitizedFormat.parse(textFieldNum);
-              //   controller.value = TextEditingValue(
-              //     /// Clear if TextFormField value is 0
-              //     text: numSanitized == 0 ? '' : '$numSanitized',
-              //     selection:
-              //         TextSelection.collapsed(offset: '$numSanitized'.length),
-              //   );
-              //   }
-              // },
-              // onFieldSubmitted: (valueInput) {
-              //   /// Set value to 0 if TextFormField value is empty
-              //   if (valueInput == '') {
-              //   final formattedPrice =
-              //       numFormat.format(double.parse(valueInput));
-              //   debugPrint('Formatted $formattedPrice');
-              //   controller.value = TextEditingValue(
-              //     text: formattedPrice,
-              //     selection:
-              //         TextSelection.collapsed(offset: formattedPrice.length),
-              //   );
-              //   }
-              // },
+ 
             ),
           ),
         ),

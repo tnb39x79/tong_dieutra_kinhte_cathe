@@ -1193,6 +1193,118 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   currentScreenNo.value = generalInformationController.screenNos()[0];
     // }
     if (validateResult != '') {
+      // if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+      //   if (currentScreenNo.value == 5) {
+      //     if (isBCDE.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else if (currentScreenNo.value == 6 || currentScreenNo.value == 7) {
+      //     if (isCap5VanTaiHanhKhach.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else if (currentScreenNo.value == 8 || currentScreenNo.value == 9) {
+      //     if (isCap5VanTaiHangHoa.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else if (currentScreenNo.value == 12) {
+      //     if (isCap2G_6810TM.value == true && isCap2_56TM.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else {
+      //     insertUpdateXacNhanLogicWithoutEnable(
+      //         currentScreenNo.value,
+      //         currentIdCoSo!,
+      //         int.parse(currentMaDoiTuongDT!),
+      //         0,
+      //         validateResult,
+      //         int.parse(currentMaTinhTrangDT!));
+      //     return showError(validateResult);
+      //   }
+      // } else if (currentMaDoiTuongDT ==
+      //     AppDefine.maDoiTuongDT_07TB.toString()) {
+      //   if (currentScreenNo.value == 5) {
+      //     if (isBCDE.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else if (currentScreenNo.value == 6) {
+      //     if (isCap5VanTaiHanhKhach.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else if (currentScreenNo.value == 7) {
+      //     if (isCap5VanTaiHangHoa.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else if (currentScreenNo.value == 9) {
+      //     if (isCap2G_6810TM.value == true || isCap2_56TM.value == true) {
+      //       insertUpdateXacNhanLogicWithoutEnable(
+      //           currentScreenNo.value,
+      //           currentIdCoSo!,
+      //           int.parse(currentMaDoiTuongDT!),
+      //           0,
+      //           validateResult,
+      //           int.parse(currentMaTinhTrangDT!));
+      //       return showError(validateResult);
+      //     }
+      //   } else {
+      //     insertUpdateXacNhanLogicWithoutEnable(
+      //         currentScreenNo.value,
+      //         currentIdCoSo!,
+      //         int.parse(currentMaDoiTuongDT!),
+      //         0,
+      //         validateResult,
+      //         int.parse(currentMaTinhTrangDT!));
+      //     return showError(validateResult);
+      //   }
+      // }
       insertUpdateXacNhanLogicWithoutEnable(
           currentScreenNo.value,
           currentIdCoSo!,
@@ -1323,15 +1435,16 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 1,
                 '',
                 int.parse(currentMaTinhTrangDT!));
-            //  await getQuestionContent();
-            //   await setSelectedQuestionGroup();
-
-            // var result = await validateCompleted();
-            // if (result != null && result != '') {
-            //   result = result.replaceAll('^', '\r\n');
-            //   return showError(result);
-            // }
-            // onKetThucPhongVan();
+            currentScreenNo(currentScreenNo.value - 1);
+            currentScreenIndex(currentScreenIndex.value - 1);
+            await getQuestionContent();
+            await setSelectedQuestionGroup();
+            var result = await validateCompleted();
+            if (result != null && result != '') {
+              result = result.replaceAll('^', '\r\n');
+              return showError(result);
+            }
+            onKetThucPhongVan();
           }
         }
       } else if (currentMaDoiTuongDT ==
@@ -5525,7 +5638,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             return 'Vui lòng nhập giá trị Mã số thuế.';
           }
           if (inputValue!.length != 10 && inputValue.length != 12) {
-            return 'Mã số thuế của cơ sở không thể khác 10 hoặc 12 chữa số được.';
+            if (inputValue.length >= 13) {
+              String pattern = r'^\d{10}-\d{3}$';
+              RegExp regExp = new RegExp(pattern);
+              if (!regExp.hasMatch(inputValue)) {
+                return 'Mã số thuế của cơ sở 13 chữ số phải đúng định dạng. Ví dụ 1234567891-112';
+              }
+            } else {
+              return 'Mã số thuế của cơ sở không thể khác 10 hoặc 12 hoặc 13 chữ số được.';
+            }
           }
           return null;
         } else {
@@ -5693,6 +5814,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         ? AppUtils.convertStringToInt(tblPhieuCT['A2_1_1'].toString())
         : 0;
 
+ 
+
     var a1_3_1Value = tblPhieuCT['A1_3_1'];
 
     if (fieldName == colPhieuMauTBA2_1) {
@@ -5708,6 +5831,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     } else if (fieldName == colPhieuMauTBA2_1_1) {
       if (a2_1Value < a2_1_1Value) {
         return 'Câu 2.1.1 Số lao động nữ lớn hơn tổng số lao động Câu 2.1';
+      }
+       if (  a1_3_1Value == 2 && a2_1_1Value == 0) {
+        return 'Cơ sở có chủ cơ sở là nữ mà Số lao động nữ bao gồm cả chủ cơ sở = 0';
       }
     }
     return null;
@@ -5800,8 +5926,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           : 0;
       var a1_2TValue = tblPhieuCT[colPhieuMauTBA1_2];
       if (chiTieuCot!.maChiTieu == '1') {
-        if (a3_2_x_1Value > 0 && a3_2_x_1Value < 30.0) {
-          return 'TSCĐ có giá trị tối thiểu 30 triệu đồng mà Giá trị TSCĐ = $a3_2_x_1Value triệu?;';
+        if (a3_2_x_1Value > 0 && a3_2_x_1Value < 10.0) {
+          return 'TSCĐ có giá trị tối thiểu 10 triệu đồng mà Giá trị TSCĐ = $a3_2_x_1Value triệu?;';
         }
       }
       // if (chiTieuCot!.maChiTieu == '2') {
@@ -5971,8 +6097,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     } else if (fieldName == colPhieuNganhVTA11 &&
         maPhieu == AppDefine.maPhieuVT) {
       //C1.2_Tổng số lượng xe=0
-      var a5Value = tblPhieuCT[colPhieuNganhVTA5] ?? 0;
-      if (a5Value != null && validateEqual0InputValue(a5Value)) {
+      var a11Value = tblPhieuCT[colPhieuNganhVTA11] ?? 0;
+      if (a11Value != null && validateEqual0InputValue(a11Value)) {
         return 'Cơ sở hoạt động trong ngành vận tải nhưng không có bất kỳ phương tiện vận tải nào (C1.2_Tổng số lượng xe = 0)?';
       }
     } else if (maCauHoi == colPhieuNganhVTA1_M &&
@@ -10160,7 +10286,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await updateAnswerTblPhieuMau(
         colPhieuNganhVTA5, tongSoLuong, tablePhieuNganhVT);
     //Tong tai trong
-    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA6, tongTaiTrong);
+    int tongTaiTrongA6 = tongTaiTrong * tongSoLuong;
+    await updateAnswerToDB(
+        tablePhieuNganhVT, colPhieuNganhVTA6, tongTaiTrongA6);
     await updateAnswerTblPhieuMau(
         colPhieuNganhVTA6, tongTaiTrong, tablePhieuNganhVT);
   }
@@ -10218,7 +10346,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await updateAnswerTblPhieuMau(
         colPhieuNganhVTA11, tongSoLuong, tablePhieuNganhVT);
     //Tong tai trong
-    await updateAnswerToDB(tablePhieuNganhVT, colPhieuNganhVTA12, tongTaiTrong);
+    double tongTaiTrongA12 = tongSoLuong * tongTaiTrong;
+    await updateAnswerToDB(
+        tablePhieuNganhVT, colPhieuNganhVTA12, tongTaiTrongA12);
     await updateAnswerTblPhieuMau(
         colPhieuNganhVTA12, tongTaiTrong, tablePhieuNganhVT);
   }

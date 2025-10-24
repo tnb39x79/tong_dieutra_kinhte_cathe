@@ -12,8 +12,6 @@ const String columnDmMoTaSPMaLV = 'MaLV';
 const String columnDmMoTaSPTenLinhVuc = 'TenLinhVuc';
 
 
-const String tableDmMoTaSanPhamVirtual = 'CT_DM_MoTaSanPhamVirtual';
-
 class TableDmMotaSanpham {
   int? id;
   String? maSanPham;

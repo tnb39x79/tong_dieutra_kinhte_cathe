@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:get/get_connect/http/src/status/http_status.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/question/data_model.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/reponse/model_file_response_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/store/modelai_version_model.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
@@ -126,5 +127,17 @@ class InputDataRepository {
       );
     }
     return ResponseModel.withError(data.body);
+  }
+
+
+  /// Get model file information including download URLs and filenames
+  /// API Endpoint: GET api/GetModelFile?uid=D990030018
+  /// Returns ModelFileResponseModel with VCPA and STT model URLs and filenames
+  Future<ResponseModel<ModelFileResponseModel>> getModelFile(String uid) async {
+    if (NetworkService.connectionType == Network.none) {
+      return ResponseModel.withDisconnect();
+    }
+   
+    return provider.getModelFile(uid);
   }
 }

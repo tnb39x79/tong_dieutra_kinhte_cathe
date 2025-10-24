@@ -1,8 +1,7 @@
 import 'package:get/get.dart';
-import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/download_model_ai_binding.dart';
-import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/download_model_ai_screen.dart';
-import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/enhanced_ai_download_binding.dart';
-import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/enhanced_ai_download_screen.dart';
+import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/enhanced_ai_download_binding_v2.dart';
+import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/enhanced_ai_download_screen_v2.dart';
+ 
 import 'package:gov_statistics_investigation_economic/modules/introduce_module/splash/splash.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/modules/progress_module/progress_list/progress_list_binding.dart';
@@ -108,15 +107,15 @@ class AppPages {
         page: () => const SyncScreenV2(),
         binding: SyncBindingV2(),
         transition: Transition.rightToLeft),
-    GetPage(
-        name: AppRoutes.downloadModelAI,
-        page: () => const DownloadModelAIScreen(),
-        binding: DownloadModelAIBinding(),
-        transition: Transition.rightToLeft),
+    // GetPage(
+    //     name: AppRoutes.downloadModelAI,
+    //     page: () => const DownloadModelAIScreen(),
+    //     binding: DownloadModelAIBinding(),
+    //     transition: Transition.rightToLeft),
     GetPage(
       name: AppRoutes.downloadModelAI_V2,
-      page: () => const EnhancedAiDownloadScreen(),
-      binding: EnhancedAiDownloadBinding(),
+      page: () => const EnhancedAiDownloadScreenV2(),
+      binding: EnhancedAiDownloadBindingV2(),
       transition: Transition.rightToLeft,
     ),
   ];

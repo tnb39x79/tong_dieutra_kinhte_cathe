@@ -73,6 +73,8 @@ class ApiConstants {
   ///
   static const String getModelVersion = 'api/GetModelVersion';
   static const String getModelSpeech = 'api/GetModelSpeech';
+    static const String getModelFile = 'api/GetModelFile';
+
 
   ///Xác nhận tự kê khai của cơ sở sxkd
   static const String postXacNhanTuKeKhai = 'api/XacNhanTuKeKhai';

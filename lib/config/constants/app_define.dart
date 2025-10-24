@@ -34,9 +34,11 @@ class AppDefine {
 
   ///5
   static const int maDoiTuongDT_07Mau = 5;
+  static const String tenDoiTuongDT_07Mau = 'Phiếu mẫu';
 
   ///0
   static const int maDoiTuongDT_07TB = 0;
+  static const String tenDoiTuongDT_07TB = 'Phiếu TB';
 
   ///0
   static const int maPhieuTB = 0;

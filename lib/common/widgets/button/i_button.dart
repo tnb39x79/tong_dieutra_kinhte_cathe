@@ -52,7 +52,7 @@ class IButton extends StatelessWidget {
   }
 
   Widget _buildInlineButton() {
-    Color oColor = primaryColor.withValues(alpha: 0.1);
+    Color oColor = primaryColor.withValues(alpha: 0.2);
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(

@@ -1,0 +1,325 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart';
+import 'package:logging/logging.dart';
+import 'package:path_provider/path_provider.dart'; 
+
+import '../models/tuple_2_model.dart';
+
+abstract class AssetPaths {
+  static const codeFrequencies = 'assets/data/code_frequencies.json';
+  static const modelConfig = 'assets/data/config.json';
+  static const industryCodesDataset = 'assets/data/industry_codes.csv';
+  static const labelEncoder = 'assets/data/label_encoder.json';
+  static const labelDecoder = 'assets/data/label_decoder.json';
+  static const labelEncoderV4 = 'assets/data/label_encoder_v4.json';
+  static const bpe = 'assets/data/bpe.codes';
+  static const industryOnnxModelStorage =
+      '/storage/emulated/0/Android/data/gov.statistics.investigation.economic.testoffline/files/models/model_v3.onnx'; //
+  static const vocabulary = 'assets/data/vocab.txt';
+}
+
+abstract class AssetUtils {
+  static final Logger _logger = Logger('AssetUtils');
+
+  /// Get the current Documents directory path (iOS-safe)
+  static Future<String> _getDocumentsDirectoryPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  /// Convert relative path to absolute path using current Documents directory
+  static Future<String> _getAbsolutePath(String relativePath) async {
+    // If already absolute, return as-is
+    if (relativePath.startsWith('/')) {
+      return relativePath;
+    }
+
+    final documentsPath = await _getDocumentsDirectoryPath();
+    return '$documentsPath/$relativePath';
+  }
+
+  /// Get absolute path from stored relative path (iOS-safe)
+  static Future<String?> _getStoredAbsolutePath(String prefKey) async {
+    String? relativePath;
+
+    switch (prefKey) {
+      case 'dataModelSuggestionsPath':
+        relativePath = AppPref.dataModelSuggestionsPath;
+        break;
+    }
+
+    if (relativePath == null || relativePath.isEmpty) {
+      return null;
+    }
+
+    return await _getAbsolutePath(relativePath);
+  }
+
+  /// Public method to get stored model path (used by IndustryCodeEvaluator)
+  static Future<String?> getStoredModelPath(String prefKey) async {
+    return await _getStoredAbsolutePath(prefKey);
+  }
+
+  static Future<String> _readFile(String fileName) async {
+    try {
+      return await rootBundle.loadString(fileName);
+    } catch (e) {
+      _logger.severe("Error reading asset file $fileName: ${e.toString()}");
+      throw Exception("Failed to read asset file $fileName: ${e.toString()}");
+    }
+  }
+
+  /// Read label encoder from a JSON file (legacy model)
+  /// Returns a tuple of (encoder, decoder) maps
+  static Future<Tuple2<Map<int, String>, Map<String, int>>>
+      loadLabelEncoderAndDecoder() async {
+    try {
+      final jsonEncoderText = await _readFile(AssetPaths.labelEncoder);
+      final jsonDecoderText = await _readFile(AssetPaths.labelDecoder);
+      final jsonEncoderData =
+          jsonDecode(jsonEncoderText) as Map<String, dynamic>;
+      final jsonDecoderData =
+          jsonDecode(jsonDecoderText) as Map<String, dynamic>;
+
+      final encoder = <int, String>{};
+      final decoder = <String, int>{};
+
+      // Parse encoder JSON data
+      jsonEncoderData.forEach((key, value) {
+        final index = int.parse(key);
+        final code = value.toString();
+        encoder[index] = code;
+      });
+
+      // Parse decoder JSON data
+      jsonDecoderData.forEach((key, value) {
+        final code = key;
+        final index = value;
+        decoder[code] = index is int ? index : int.parse(index.toString());
+      });
+
+      _logger.info(
+          "Loaded ${encoder.length} label encodings from ${AssetPaths.labelEncoder} and ${decoder.length} decodings from ${AssetPaths.labelDecoder}");
+      return Tuple2(encoder, decoder);
+    } catch (e) {
+      _logger.severe("Error reading label encoder/decoder: ${e.toString()}");
+      // Return empty maps if reading fails
+      return Tuple2(<int, String>{}, <String, int>{});
+    }
+  }
+
+  /// Read label encoder from a JSON file (v4 model)
+  /// Returns a tuple of (encoder, decoder) maps
+  static Future<Tuple2<Map<int, String>, Map<String, int>>>
+      loadLabelEncoderAndDecoderV4() async {
+    try {
+      final jsonEncoderText = await _readFile(AssetPaths.labelEncoderV4);
+      final jsonDecoderText = await _readFile(AssetPaths.labelDecoder);
+      final jsonEncoderData =
+          jsonDecode(jsonEncoderText) as Map<String, dynamic>;
+      final jsonDecoderData =
+          jsonDecode(jsonDecoderText) as Map<String, dynamic>;
+
+      final encoder = <int, String>{};
+      final decoder = <String, int>{};
+
+      // Parse encoder JSON data
+      jsonEncoderData.forEach((key, value) {
+        final index = int.parse(key);
+        final code = value.toString();
+        encoder[index] = code;
+      });
+
+      // Parse decoder JSON data
+      jsonDecoderData.forEach((key, value) {
+        final code = key;
+        final index = value;
+        decoder[code] = index is int ? index : int.parse(index.toString());
+      });
+
+      _logger.info(
+          "Loaded ${encoder.length} label encodings from ${AssetPaths.labelEncoderV4} and ${decoder.length} decodings from ${AssetPaths.labelDecoder}");
+      return Tuple2(encoder, decoder);
+    } catch (e) {
+      _logger.severe("Error reading v4 label encoder/decoder: ${e.toString()}");
+      // Return empty maps if reading fails
+      return Tuple2(<int, String>{}, <String, int>{});
+    }
+  }
+
+  /// Read code frequencies from a JSON file
+  /// Returns a map of code -> frequency
+  static Future<Map<String, double>> loadCodeFrequencies() async {
+    try {
+      final jsonText = await _readFile(AssetPaths.codeFrequencies);
+      final jsonData = jsonDecode(jsonText) as Map<String, dynamic>;
+
+      final frequencies = <String, double>{};
+
+      jsonData.forEach((code, value) {
+        final frequency =
+            value is double ? value : double.parse(value.toString());
+        frequencies[code] = frequency;
+      });
+
+      _logger.info(
+          "Loaded ${frequencies.length} code frequencies from ${AssetPaths.codeFrequencies}");
+      return frequencies;
+    } catch (e) {
+      _logger.severe(
+          "Error reading code frequencies from ${AssetPaths.codeFrequencies}: ${e.toString()}");
+      // Return empty map if reading fails
+      return <String, double>{};
+    }
+  }
+
+  /// Read industry code descriptions from a JSON file
+  /// Returns a map of code -> description
+  static Future<Map<String, String>> loadIndustryCodeDataset() async {
+    try {
+      final descriptions = <String, String>{};
+      final csvContent = await _readFile(AssetPaths.industryCodesDataset);
+      final lines = csvContent.split('\n');
+
+      // Skip header if present
+      final startIndex =
+          lines.isNotEmpty && lines[0].contains("MaNganh") ? 1 : 0;
+
+      for (int i = startIndex; i < lines.length; i++) {
+        final line = lines[i].trim();
+        if (line.isEmpty) continue;
+
+        // Split line by comma or semicolon
+        final parts = line.contains(";") ? line.split(";") : line.split(",");
+
+        if (parts.length >= 2) {
+          // Get MaNganh (industry code) and TenVSIC (description)
+          final maNganh = parts[0].trim().padLeft(5, '0'); // Pad with zeros
+          final tenVSIC =
+              parts[1].trim().replaceAll("\"", ""); // Remove any quotes
+          descriptions[maNganh] = tenVSIC;
+        }
+      }
+
+      _logger.info(
+          "Loaded ${descriptions.length} code descriptions from ${AssetPaths.industryCodesDataset}");
+      return descriptions;
+    } catch (e) {
+      _logger.severe(
+          "Error reading code descriptions from ${AssetPaths.industryCodesDataset}: ${e.toString()}");
+      // Return empty map if reading fails
+      return <String, String>{};
+    }
+  }
+
+  static Future<Map<String, dynamic>> loadModelConfig() async {
+    try {
+      final jsonText = await _readFile(AssetPaths.modelConfig);
+      return jsonDecode(jsonText) as Map<String, dynamic>;
+    } catch (e) {
+      _logger.severe(
+          "Error reading model config from ${AssetPaths.modelConfig}: ${e.toString()}");
+      throw Exception(
+          "Failed to read model config from ${AssetPaths.modelConfig}: ${e.toString()}");
+    }
+  }
+
+  static Future<String> loadVocabulary() async {
+    try {
+      return await _readFile(AssetPaths.vocabulary);
+    } catch (e) {
+      _logger.severe(
+          "Error reading vocab from ${AssetPaths.vocabulary}: ${e.toString()}");
+      throw Exception(
+          "Failed to read vocab from ${AssetPaths.vocabulary}: ${e.toString()}");
+    }
+  }
+
+  static Future<String> loadBpe() async {
+    try {
+      return await _readFile(AssetPaths.bpe);
+    } catch (e) {
+      _logger.severe(
+          "Error reading vocab from ${AssetPaths.bpe}: ${e.toString()}");
+      throw Exception(
+          "Failed to read vocab from ${AssetPaths.bpe}: ${e.toString()}");
+    }
+  }
+
+  static Future<Uint8List> loadIndustryOnnxModel() async {
+    // Try to load from local storage first (iOS-safe path resolution)
+    final suggestionsAbsolutePath =
+        await _getStoredAbsolutePath('dataModelSuggestionsPath');
+
+    debugPrint(
+        'Relative suggestions path: ${AppPref.dataModelSuggestionsPath}');
+    debugPrint('Resolved absolute suggestions path: $suggestionsAbsolutePath');
+
+    if (suggestionsAbsolutePath != null && suggestionsAbsolutePath.isNotEmpty) {
+      final file = File(suggestionsAbsolutePath);
+      if (await file.exists()) {
+        debugPrint(
+            'Loading suggestions model from local storage: ${file.path}');
+        final rawAssetFile = await file.readAsBytes();
+        final bytes = rawAssetFile.buffer.asUint8List();
+        return bytes;
+      } else {
+        debugPrint(
+            'Suggestions model not found in local storage: $suggestionsAbsolutePath');
+      }
+    }
+
+    // Fallback to the old method using AppPref paths
+    final file = await localFile;
+    if (file.existsSync()) {
+      debugPrint('Loading suggestions model from fallback path: ${file.path}');
+      final rawAssetFile = await file.readAsBytes();
+      final bytes = rawAssetFile.buffer.asUint8List();
+      return bytes;
+    } else {
+      Get.dialog(AlertDialog(
+        title: const Text('File not found'),
+        content: const Text(
+            'The suggestions model file does not exist. Please download the AI models first.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ));
+      throw Exception('Suggestions model file not found');
+    }
+  }
+
+  // static Future<Uint8List> loadIndustryOnnxModel() async {
+  //   final rawAssetFile = await rootBundle.load(AssetPaths.industryOnnxModel);
+  //   final bytes = rawAssetFile.buffer.asUint8List();
+  //   return bytes;
+  // }
+
+  static Future<String> get localPath async {
+    Directory directory = Directory("");
+    if (Platform.isAndroid) {
+      directory = (await getExternalStorageDirectory())!;
+    } else {
+      directory = (await getApplicationDocumentsDirectory());
+    }
+    return directory.path;
+  }
+
+  static Future<File> get localFile async {
+    final path =
+        '${AppPref.dataModelAIFilePath}/${AppPref.dataModelAIVersionFileName}'; //await localPath;
+    debugPrint('Load from path $path');
+    return File(path);
+    //  return File('$path/models/model_v4.onnx');
+  }
+}

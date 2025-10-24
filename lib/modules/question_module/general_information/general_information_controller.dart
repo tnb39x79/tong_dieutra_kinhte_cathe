@@ -281,7 +281,7 @@ class GeneralInformationController extends BaseController {
         "DienThoai": dienThoaiController.text,
       });
 
-    //  await insertNewRecordSanPham();
+      //  await insertNewRecordSanPham();
     }
     setLoading(false);
     if (screenNos.isEmpty) {
@@ -382,18 +382,88 @@ class GeneralInformationController extends BaseController {
     }
   }
 
-  onChangeTenCS(String? value) {
-    phieuProvider.updateValue(colPhieuTenCoSo, value, currentIdCoSo!);
+  onChangeTenCS(String? value, {bool updateText = false}) {
+    String result;
+    result = value ?? '';
+    bool needUpdate = updateText;
+    int maxL = 250;
+    // Truncate if necessary
+    if (result.length > maxL) {
+      result = result.substring(0, maxL);
+      needUpdate = true;
+    }
+
+    // Update controller if needed
+    if (needUpdate) {
+      tenCoSoController.value = tenCoSoController.value.copyWith(
+        text: result,
+        selection: TextSelection.fromPosition(
+          TextPosition(offset: result.length),
+        ),
+      );
+    }
+
+    ///end added
+    if (result.isNotEmpty) {
+      result = result.toUpperCase();
+    }
+    phieuProvider.updateValue(colPhieuTenCoSo, result, currentIdCoSo!);
+    bkCoSoSXKDProvider.updateValue(
+        colBkCoSoSXKDTenCoSo, result, currentIdCoSo!);
     getPhieu();
   }
 
-  onChangeDiaChi(String? value) {
-    phieuProvider.updateValue(colPhieuDiaChi, value, currentIdCoSo!);
+  onChangeDiaChi(String? value, {bool updateText = false}) {
+    String result;
+    result = value ?? '';
+    bool needUpdate = updateText;
+    int maxL = 250;
+    // Truncate if necessary
+    if (result.length > maxL) {
+      result = result.substring(0, maxL);
+      needUpdate = true;
+    }
+
+    // Update controller if needed
+    if (needUpdate) {
+      tenCoSoController.value = tenCoSoController.value.copyWith(
+        text: result,
+        selection: TextSelection.fromPosition(
+          TextPosition(offset: result.length),
+        ),
+      );
+    }
+    phieuProvider.updateValue(colPhieuDiaChi, result, currentIdCoSo!);
+    bkCoSoSXKDProvider.updateValue(colBkCoSoSXKDDiaChi, result, currentIdCoSo!);
     getPhieu();
   }
 
-  onChangeTenChuCS(String? value) {
-    phieuProvider.updateValue(colPhieuTenChuCoSo, value, currentIdCoSo!);
+  onChangeTenChuCS(String? value, {bool updateText = false}) {
+    String result;
+    result = value ?? '';
+    bool needUpdate = updateText;
+    int maxL = 250;
+    // Truncate if necessary
+    if (result.length > maxL) {
+      result = result.substring(0, maxL);
+      needUpdate = true;
+    }
+
+    // Update controller if needed
+    if (needUpdate) {
+      tenCoSoController.value = tenCoSoController.value.copyWith(
+        text: result,
+        selection: TextSelection.fromPosition(
+          TextPosition(offset: result.length),
+        ),
+      );
+    }
+    if (result.isNotEmpty) {
+      result = result.toUpperCase();
+    }
+    phieuProvider.updateValue(colPhieuTenChuCoSo, result, currentIdCoSo!);
+    bkCoSoSXKDProvider.updateValue(
+        colBkCoSoSXKDTenChuCoSo, result, currentIdCoSo!);
     getPhieu();
   }
 

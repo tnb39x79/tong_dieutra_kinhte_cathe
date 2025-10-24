@@ -272,7 +272,7 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
               Icons.home,
               color: primaryColor,
             ),
-            label: Text('Về trang chính',
+            label: Text('Trang chủ',
                 style: styleSmall.copyWith(color: primaryColor)),
             style: OutlinedButton.styleFrom(
               side: const BorderSide(width: 1.0, color: primaryLightColor),

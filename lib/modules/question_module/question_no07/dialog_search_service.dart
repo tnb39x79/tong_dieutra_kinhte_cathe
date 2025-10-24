@@ -380,14 +380,13 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
         actions: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
-                ),
-                side: BorderSide(width: 1, color: primaryColor),
-                splashFactory: InkRipple.splashFactory,
-                overlayColor: primaryColor,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: primaryColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppValues.borderLv5),
+              ),
+              splashFactory: InkRipple.splashFactory,
+              overlayColor: primaryColor,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             onPressed: () {
               Get.back();
               // Default to online mode
@@ -404,14 +403,13 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
-                ),
-                side: BorderSide(width: 1, color: primaryColor),
-                splashFactory: InkRipple.splashFactory,
-                overlayColor: primaryColor,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: primaryColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppValues.borderLv5),
+              ),
+              splashFactory: InkRipple.splashFactory,
+              overlayColor: primaryColor,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             onPressed: () {
               Get.back();
               Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
@@ -450,14 +448,14 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
         actions: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
-                ),
-                side: BorderSide(width: 1, color: primaryColor),
-                splashFactory: InkRipple.splashFactory,
-                overlayColor: primaryColor,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: primaryColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppValues.borderLv5),
+              ),
+              //   side: BorderSide(width: 1, color: primaryColor),
+              splashFactory: InkRipple.splashFactory,
+              overlayColor: primaryColor,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             onPressed: () {
               Get.back();
               // Switch to online mode
@@ -471,14 +469,14 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
-                ),
-                side: BorderSide(width: 1, color: primaryColor),
-                splashFactory: InkRipple.splashFactory,
-                overlayColor: primaryColor,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                foregroundColor: primaryColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppValues.borderLv5),
+              ),
+              // side: BorderSide(width: 1, color: primaryColor),
+              splashFactory: InkRipple.splashFactory,
+              overlayColor: primaryColor,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
             onPressed: () {
               Get.back();
               Get.toNamed(AppRoutes.downloadModelAI_V2)?.then((value) async {
@@ -1098,6 +1096,7 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
 
                 widget.onChangeListViewItem!(
                     item, widget.productItem, selectedIndex ?? -1);
+                Get.back(result: item);
               },
               child: ListTile(
                 title: Row(

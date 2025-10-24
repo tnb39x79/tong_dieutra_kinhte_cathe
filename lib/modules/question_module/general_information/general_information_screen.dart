@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/recording_dialog.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/input/widget_field_input_text.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_colors.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
@@ -37,7 +41,6 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
             AppDefine.maDoiTuongDT_07Mau.toString() ||
         controller.currentMaDoiTuongDT ==
             AppDefine.maDoiTuongDT_07TB.toString()) {
-
       controller.tenCoSoController.text =
           controller.tblPhieu.value.tenCoSo ?? '';
 
@@ -49,7 +52,7 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
 
       controller.dienThoaiController.text =
           controller.tblPhieu.value.sDTCoSo ?? '';
-          
+
       return SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(AppValues.padding),
@@ -89,21 +92,27 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
                       enable: true,
                       onChanged: controller.onChangeTenCS,
                       validator: controller.onValidateTenCS,
-                      warningText: controller.waringTenCs()),
+                      warningText: controller.waringTenCs(),
+                      sttMic: true,
+                      fieldName: 'tencoso'),
                   field(
                       label: 'ĐIA CHỈ CƠ SỞ (SỐ NHÀ, ĐƯỜNG PHỐ, NGÕ, XÓM)',
                       textController: controller.diaChiCoSoController,
                       enable: true,
                       onChanged: controller.onChangeDiaChi,
                       validator: controller.onValidateDiaChi,
-                      warningText: controller.waringDiaChi()),
+                      warningText: controller.waringDiaChi(),
+                      sttMic: true,
+                      fieldName: 'diachi'),
                   field(
                       label: 'TÊN CHỦ CƠ SỞ',
                       textController: controller.tenChuCoSoController,
                       enable: true,
                       onChanged: controller.onChangeTenChuCS,
                       validator: controller.onValidateTenChuCS,
-                      warningText: controller.waringTenChuCs()),
+                      warningText: controller.waringTenChuCs(),
+                      sttMic: true,
+                      fieldName: 'tenchucs'),
                   field(
                       label: 'SỐ ĐIỆN THOẠI LIÊN HỆ',
                       textController: controller.dienThoaiController,
@@ -113,7 +122,7 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
                       warningText: controller.waringSoDienThoai()),
                 ])),
             field(
-                label: 'MÃ NGÀNH SẢN PHẨM CỦA CƠ SỞ',
+                label: 'MÃ NGÀNH SẢN PHẨM CỦA CƠ SỞ BẢNG KÊ',
                 textController: controller.maNganhController,
                 txtTextStyle: styleMediumBold.copyWith(color: primaryColor)),
             field(
@@ -129,8 +138,6 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
     }
     return const SizedBox();
   }
-
- 
 
 // Widget buildNganhSanPham(TableBkCoSoSXKDNganhSanPham bkSanPhams) {
 //   return Column(
@@ -154,7 +161,9 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
       int? maxLine,
       TextStyle? lblTextStyle,
       TextStyle? txtTextStyle,
-      String? warningText}) {
+      String? warningText,
+      String? fieldName,
+      bool? sttMic = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -163,17 +172,18 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
           style: lblTextStyle ?? styleSmall.copyWith(color: defaultText),
         ),
         // const SizedBox(height: 4),
-        WidgetFieldInput(
-          controller: textController,
-          hint: '',
-          enable: enable,
-          keyboardType: keyboardType,
-          validator: (v) => validator?.call(v, label),
-          onChanged: onChanged,
-          maxLength: maxLength,
-          txtStyle: txtTextStyle,
-          maxLine: maxLine,
-        ),
+        WidgetFieldInputText(
+            controller: textController,
+            hint: '',
+            enable: enable,
+            keyboardType: keyboardType,
+            validator: (v) => validator?.call(v, label),
+            onChanged: onChanged,
+            maxLength: maxLength,
+            txtStyle: txtTextStyle,
+            maxLine: maxLine,
+            onMicrophoneTap:
+                sttMic == true ? () => onMicrophoneTap(fieldName ?? '') : null),
         wWarningText(warningText),
         const SizedBox(height: 24),
       ],
@@ -272,5 +282,32 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
         // const SizedBox(height: 4),
       ],
     );
+  }
+
+  Future<void> onMicrophoneTap(String fieldName) async {
+    try {
+      // Show the modern recording dialog
+      final recognizedText = await showRecordingDialog(
+        title: 'Ghi âm câu trả lời',
+        hint: 'Nhấn để bắt đầu ghi âm câu trả lời...',
+        onTextRecognized: (text) {
+          log('Text recognized in dialog: "$text"');
+        },
+      );
+
+      // If we got text back, use it to fill the form field
+      if (recognizedText != null && recognizedText.isNotEmpty) {
+        // Update the form field with the recognized text
+        if (fieldName == 'tencoso') {
+          controller.onChangeTenCS(recognizedText, updateText: true);
+        } else if (fieldName == 'diachi') {
+          controller.onChangeDiaChi(recognizedText, updateText: true);
+        } else if (fieldName == 'tenchucs') {
+          controller.onChangeTenChuCS(recognizedText, updateText: true);
+        }
+      }
+    } catch (e, stackTrace) {
+      log('onMicrophoneTap error: $e $stackTrace');
+    }
   }
 }

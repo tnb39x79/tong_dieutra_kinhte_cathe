@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/database_helper.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/base_db_provider.dart';
@@ -45,7 +48,6 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
     return ids;
   }
- 
 
   Future<List<int>> insertNhomNganhVcpa(
       List<dynamic> value, String create) async {
@@ -112,54 +114,190 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     return maps;
   }
 
+  // Future<List<Map>> searchVcpaCap5ByLinhVuc(
+  //     String keyword, String maLV, int capSo,
+  //     {String? maNganhCap5}) async {
+  // if (keyword != '') {
+  //   String sWh =
+  //       "($columnDmMoTaSPTenSanPham LIKE '%$keyword%' OR $columnDmMoTaSPTenSanPham = '$keyword' OR $columnDmMoTaSPTenSanPhamKoDau = '$keyword' OR $columnDmMoTaSPTenSanPhamKoDau LIKE '%$keyword%' OR  $columnDmMoTaSPMoTaChiTiet LIKE '%$keyword%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$keyword%'  OR $columnDmMoTaSPMaSanPham LIKE '%$keyword%')";
+  //   if (maLV != '' && maLV != '0') {
+  //     sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
+  //   }
+  //   if (maNganhCap5 != null && maNganhCap5 != '') {
+  //     sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
+  //   }
+  //   if (capSo > 0) {
+  //     sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
+  //   }
+  //   debugPrint(sWh);
+  //   final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
+  //   $sWh
+  //   ''');
+
+  //   return maps;
+  // }
+  // return [];
+  //}
   Future<List<Map>> searchVcpaCap5ByLinhVuc(
-      String keyword, String maLV, int capSo,
+      String searchText, String maLV, int capSo,
       {String? maNganhCap5}) async {
-    if (keyword != '') {
-      // List<String> kws = keyword.split(' ');
-      // List<String> whs = [];
-      // for (var item in kws) {
-      //   String s1 =
-      //       "$columnDmMoTaSPTenSanPham LIKE '%$item%' OR $columnDmMoTaSPMoTaChiTiet LIKE '%$item%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$item%' OR $columnDmMoTaSPMaSanPham LIKE '%$item%'";
-      //   whs.add(s1);
-      // }
-      // String s2 =
-      //     "$columnDmMoTaSPTenSanPham LIKE '%$keyword%' OR  $columnDmMoTaSPMoTaChiTiet LIKE '%$keyword%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$keyword%' OR $columnDmMoTaSPMaSanPham LIKE '%$keyword%'";
-      // if (whs.isNotEmpty) {
-      //   String wh =
-      //       "(${whs.join(' OR')}  OR $s2) AND $columnDmMoTaSPMaLV = '$maLV'";
-      //   if (maLV == '' || maLV == '0') {
-      //     wh = "(${whs.join(' OR ')} OR $s2 ) ";
-      //   }
-      //   if (capSo > 0) {
-      //     wh = wh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
-      //   }
-      //   debugPrint(wh);
-      //   final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
-      //   $wh
-      //   ''');
-      //   return maps;
-      // }
-
-      String sWh =
-          "($columnDmMoTaSPTenSanPham LIKE '%$keyword%' OR $columnDmMoTaSPTenSanPham = '$keyword' OR $columnDmMoTaSPTenSanPhamKoDau = '$keyword' OR $columnDmMoTaSPTenSanPhamKoDau LIKE '%$keyword%' OR  $columnDmMoTaSPMoTaChiTiet LIKE '%$keyword%' OR $columnDmMoTaSPMoTaChiTietKoDau LIKE '%$keyword%'  OR $columnDmMoTaSPMaSanPham LIKE '%$keyword%')";
-      if (maLV != '' && maLV != '0') {
-        sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV'";
-      }
-      if (maNganhCap5 != null && maNganhCap5 != '') {
-        sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
-      }
-      if (capSo > 0) {
-        sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
-      }
-      debugPrint(sWh);
-      final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
-      $sWh
-      ''');
-
-      return maps;
+    List<String> columns = [
+      columnDmMoTaSPMaSanPham,
+      columnDmMoTaSPTenSanPham, 
+      columnDmMoTaSPTenSanPhamKoDau, 
+      columnDmMoTaSPMoTaChiTiet, 
+      columnDmMoTaSPMoTaChiTietKoDau, 
+      columnDmMoTaSPTenVSIC,
+      columnDmMoTaSPTenLinhVuc
+    ];
+    if (searchText.isEmpty) {
+      return [];
     }
-    return [];
+    // Split search text into keywords and remove empty strings
+    List<String> keywords = searchText
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((keyword) => keyword.isNotEmpty)
+        .toList();
+
+    if (keywords.isEmpty) {
+      return [];
+    }
+
+    // Escape single quotes in keywords to prevent SQL injection
+    List<String> escapedKeywords =
+        keywords.map((keyword) => keyword.replaceAll("'", "''")).toList();
+
+    // Also keep the original full search text
+    String escapedFullText = searchText.trim().replaceAll("'", "''");
+
+    if (kDebugMode) {
+      print('Escaped Keywords: $escapedKeywords');
+      print('Escaped Full Text: $escapedFullText');
+    }
+
+    // Build CASE statements for match counting
+    List<String> caseClauses = [];
+
+    // Add case for original full text match (higher priority)
+    for (var column in columns) {
+      caseClauses
+          .add("CASE WHEN $column LIKE '%$escapedFullText%' THEN 2 ELSE 0 END");
+    }
+
+    // Add cases for individual keywords
+    for (var column in columns) {
+      for (var keyword in escapedKeywords) {
+        caseClauses
+            .add("CASE WHEN $column LIKE '%$keyword%' THEN 1 ELSE 0 END");
+      }
+    }
+
+    // Build WHERE clauses
+    List<String> whereClauses = [];
+
+    // Add original full text search
+    for (var column in columns) {
+      whereClauses.add("$column LIKE '%$escapedFullText%'");
+    }
+
+    // Add individual keyword searches
+    for (var column in columns) {
+      for (var keyword in escapedKeywords) {
+        whereClauses.add("$column LIKE '%$keyword%'");
+      }
+    }
+    String sWh = " (${whereClauses.join(' OR ')}) ";
+    if (maLV != '' && maLV != '0') {
+      sWh = " $sWh AND $columnDmMoTaSPMaLV = '$maLV' ";
+    }
+    if (maNganhCap5 != null && maNganhCap5 != '') {
+      sWh = sWh + " AND substr($columnDmMoTaSPMaSanPham,1,5)= '$maNganhCap5'";
+    }
+    if (capSo > 0) {
+      sWh = sWh + " AND length($columnDmMoTaSPMaSanPham)= $capSo";
+    }
+    debugPrint(sWh);
+
+    // Construct the full query
+    String sql = '''
+      SELECT *, 
+        (${caseClauses.join(' + ')}) AS match_count
+      FROM $tableDmMoTaSanPham 
+      WHERE $sWh
+      ORDER BY match_count DESC
+      ''';
+    log(sql);
+    final List<Map> maps = await db!.rawQuery(sql);
+    return maps;
+  }
+
+  String buildSearchQuery(String searchText, List<String> columns) {
+    // Split search text into keywords and remove empty strings
+    List<String> keywords = searchText
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((keyword) => keyword.isNotEmpty)
+        .toList();
+
+    if (keywords.isEmpty) {
+      return 'SELECT * FROM Product';
+    }
+
+    // Escape single quotes in keywords to prevent SQL injection
+    List<String> escapedKeywords =
+        keywords.map((keyword) => keyword.replaceAll("'", "''")).toList();
+
+    // Also keep the original full search text
+    String escapedFullText = searchText.trim().replaceAll("'", "''");
+
+    if (kDebugMode) {
+      print('Escaped Keywords: $escapedKeywords');
+      print('Escaped Full Text: $escapedFullText');
+    }
+
+    // Build CASE statements for match counting
+    List<String> caseClauses = [];
+
+    // Add case for original full text match (higher priority)
+    for (var column in columns) {
+      caseClauses
+          .add("CASE WHEN $column LIKE '%$escapedFullText%' THEN 2 ELSE 0 END");
+    }
+
+    // Add cases for individual keywords
+    for (var column in columns) {
+      for (var keyword in escapedKeywords) {
+        caseClauses
+            .add("CASE WHEN $column LIKE '%$keyword%' THEN 1 ELSE 0 END");
+      }
+    }
+
+    // Build WHERE clauses
+    List<String> whereClauses = [];
+
+    // Add original full text search
+    for (var column in columns) {
+      whereClauses.add("$column LIKE '%$escapedFullText%'");
+    }
+
+    // Add individual keyword searches
+    for (var column in columns) {
+      for (var keyword in escapedKeywords) {
+        whereClauses.add("$column LIKE '%$keyword%'");
+      }
+    }
+
+    // Construct the full query
+    String query = '''
+      SELECT *, 
+        (${caseClauses.join(' + ')}) AS match_count
+      FROM $tableDmMoTaSanPham 
+      WHERE ${whereClauses.join(' OR ')}
+      ORDER BY match_count DESC
+      ''';
+
+    return query;
   }
 
   Future<List<Map>> mapResultAIToDmSanPham(
@@ -737,5 +875,4 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
       return null;
     }
   }
- 
 }

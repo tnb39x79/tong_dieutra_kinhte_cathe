@@ -59,7 +59,9 @@ dependencies:
   #uuid: ^4.4.2
   built_collection: ^5.1.1
   collection: ^1.19.1
-  onnxruntime: ^1.4.1
+ # onnxruntime: ^1.4.1
+  onnxruntime:
+    path: packages/onnxruntime_flutter
   json_annotation: ^4.8.1
   stream_transform: ^2.1.1
   logging: ^1.3.0
@@ -70,6 +72,10 @@ dependencies:
   easy_debounce: ^2.0.3
   dropdown_button2: ^2.3.9
   path_provider: ^2.1.5
+  smb_connect: ^0.0.9
+  sherpa_onnx: ^1.12.11
+  record: ^6.1.1
+  auto_size_text: ^3.0.0
     
 dev_dependencies:
   flutter_test:

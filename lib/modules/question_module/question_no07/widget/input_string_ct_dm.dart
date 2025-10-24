@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/recording_dialog.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/input/widget_field_input_text.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/model.dart';
 
 class InputStringCTDm extends StatefulWidget {
@@ -13,10 +17,13 @@ class InputStringCTDm extends StatefulWidget {
       this.maxLine = 1,
       this.titleText,
       this.level,
+      this.maxLength,
+      this.sttMic,
       super.key});
 
   final QuestionCommonModel question;
-  final Function(String?)? onChange;
+  // final Function(String?)? onChange;
+  final Function(dynamic) onChange;
   final String? Function(String?)? validator;
   final String? value;
   final bool enable;
@@ -24,6 +31,9 @@ class InputStringCTDm extends StatefulWidget {
   final int maxLine;
   final String? titleText;
   final int? level;
+  final int? maxLength;
+  final bool? sttMic;
+
   @override
   InputIntCTDmState createState() => InputIntCTDmState();
 }
@@ -31,6 +41,8 @@ class InputStringCTDm extends StatefulWidget {
 class InputIntCTDmState extends State<InputStringCTDm> {
   // ignore: prefer_final_fields
   TextEditingController _controller = TextEditingController();
+  bool get useMicrophone => widget.sttMic ?? false;
+
   @override
   void initState() {
     if (widget.value != null) {
@@ -52,11 +64,10 @@ class InputIntCTDmState extends State<InputStringCTDm> {
       children: [
         RichTextQuestion(
           widget.titleText ?? widget.question.tenCauHoi ?? '',
-          level:
-              widget.level ?? (widget.question.cap ?? 3),
+          level: widget.level ?? (widget.question.cap ?? 3),
         ),
         const SizedBox(height: 4),
-        WidgetFieldInput(
+        WidgetFieldInputText(
           controller: _controller,
           enable: widget.enable,
           hint: 'Nhập vào đây',
@@ -76,6 +87,7 @@ class InputIntCTDmState extends State<InputStringCTDm> {
               ],
             ),
           ),
+          onMicrophoneTap: useMicrophone ? onMicrophoneTap : null,
         ),
         const SizedBox(height: 12),
       ],
@@ -95,5 +107,57 @@ class InputIntCTDmState extends State<InputStringCTDm> {
     // }
 
     return mainName;
+  }
+
+  _onChanged(String text, {bool updateText = false}) {
+    if (text == "") {
+      widget.onChange(null);
+      return;
+    }
+
+    ///added by tuannb 09/09/2024: Giới hạn độ trường ghi chú 500 ký tự
+    String result;
+    result = text;
+    bool needUpdate = updateText;
+    int maxL = widget.maxLength ?? 500;
+    // Truncate if necessary
+    if (result.length > maxL) {
+      result = result.substring(0, maxL);
+      needUpdate = true;
+    }
+
+    // Update controller if needed
+    if (needUpdate) {
+      _controller.value = _controller.value.copyWith(
+        text: result,
+        selection: TextSelection.fromPosition(
+          TextPosition(offset: result.length),
+        ),
+      );
+    }
+
+    ///end added
+    return widget.onChange(result);
+  }
+
+  Future<void> onMicrophoneTap() async {
+    try {
+      // Show the modern recording dialog
+      final recognizedText = await showRecordingDialog(
+        title: 'Ghi âm câu trả lời',
+        hint: 'Nhấn để bắt đầu ghi âm câu trả lời...',
+        onTextRecognized: (text) {
+          log('Text recognized in dialog: "$text"');
+        },
+      );
+
+      // If we got text back, use it to fill the form field
+      if (recognizedText != null && recognizedText.isNotEmpty) {
+        // Update the form field with the recognized text
+        _onChanged(recognizedText, updateText: true);
+      }
+    } catch (e, stackTrace) {
+      log('onMicrophoneTap error: $e $stackTrace');
+    }
   }
 }
