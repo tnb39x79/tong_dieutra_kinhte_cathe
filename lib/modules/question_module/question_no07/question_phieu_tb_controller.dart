@@ -5599,8 +5599,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         var a7_2Value = tblPhieuCT[colPhieuMauTBA7_2] != null
             ? tblPhieuCT[colPhieuMauTBA7_2].toString()
             : '';
-        var isN=a7_2Value=="1";
-        if(!isN){
+        var isN = a7_2Value == "1";
+        if (!isN) {
           return null;
         }
         if (validateEmptyString(inputValue)) {
@@ -6420,25 +6420,28 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         return 'Vui lòng nhập giá trị.';
       }
       if (maCauHoi == "A1_2" && maPhieu == AppDefine.maPhieuTM) {
-        if (product != null) {
-          if (product.a1_2 == null) {
+        if (isCap2G_6810TM.value) {
+          if (product != null) {
+            if (product.a1_2 == null) {
+              return 'Câu 1 vui lòng nhập giá trị.';
+            }
+          } else {
             return 'Câu 1 vui lòng nhập giá trị.';
           }
-        } else {
-          return 'Câu 1 vui lòng nhập giá trị.';
+          //Tổng số tiền vốn tại C1>C5.2_Dthu tại Phiếu 7TB
+          if (tongTienVonBoRaC1TM.value > tongDoanhThuSanPhamNganhTM.value) {
+            String c1TMValue = toCurrencyString(
+                tongTienVonBoRaC1TM.value.toString(),
+                thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+                mantissaLength: 2);
+            String tongDTA5_2Value = toCurrencyString(
+                tongDoanhThuSanPhamNganhTM.value.toString(),
+                thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+                mantissaLength: 2);
+            return 'Tổng số tiền vốn là [$c1TMValue] >Doanh thu (gồm vốn và lãi) tại C5.2=[$tongDTA5_2Value]';
+          }
         }
-        //Tổng số tiền vốn tại C1>C5.2_Dthu tại Phiếu 7TB
-        if (tongTienVonBoRaC1TM.value > tongDoanhThuSanPhamNganhTM.value) {
-          String c1TMValue = toCurrencyString(
-              tongTienVonBoRaC1TM.value.toString(),
-              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-              mantissaLength: 2);
-          String tongDTA5_2Value = toCurrencyString(
-              tongDoanhThuSanPhamNganhTM.value.toString(),
-              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-              mantissaLength: 2);
-          return 'Tổng số tiền vốn là [$c1TMValue] >Doanh thu (gồm vốn và lãi) tại C5.2=[$tongDTA5_2Value]';
-        }
+        return null;
       }
     } else if (table == tablePhieuNganhTM) {
       var tblPhieuCT = getTableByTableName(table, typing);
@@ -6447,9 +6450,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
       if (maCauHoi == colPhieuNganhTMA1T) {
       } else if (maCauHoi == colPhieuNganhTMA2) {
-        if (validateEmptyString(inputValue)) {
-          return 'Vui lòng nhập giá trị.';
+        if (isCap2_56TM.value) {
+          if (validateEmptyString(inputValue)) {
+            return 'Vui lòng nhập giá trị.';
+          }
         }
+        return null;
       } else if (maCauHoi == colPhieuNganhTMA3) {
         var a2Value = tblPhieuCT[colPhieuNganhTMA2];
         if (a2Value == 1) {
@@ -8034,7 +8040,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         await onChangeCompleted(ThoiGianKT, DateTime.now().toIso8601String());
       }
       await bkCoSoSXKDProvider.updateTrangThai(currentIdCoSo!);
-        await bkCoSoSXKDProvider.updateValue(colBkCoSoSXKDIsSyncSuccess,AppDefine.unSync,currentIdCoSo!);
+      await bkCoSoSXKDProvider.updateValue(
+          colBkCoSoSXKDIsSyncSuccess, AppDefine.unSync, currentIdCoSo!);
       AppPref.setQuestionNoStartTime = '';
 
       //  if (resultRoute.isEdited) {
