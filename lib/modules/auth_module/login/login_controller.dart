@@ -95,13 +95,12 @@ class LoginController extends BaseController {
       String uniqueStringSameImei = AppPref.uniqueStringTheSameImei != ''
           ? AppPref.uniqueStringTheSameImei
           : await FlutterUdid.udid;
-          
+
       final response = await authRepository
           .getToken(
-            userName: userName,
-            password: password,
-            uniqueStringSameImei:uniqueStringSameImei
-          )
+              userName: userName,
+              password: password,
+              uniqueStringSameImei: uniqueStringSameImei)
           .timeout(const Duration(seconds: AppValues.timeOut));
 
       if (response.isSuccess) {
@@ -144,7 +143,7 @@ class LoginController extends BaseController {
         }
         String imei = response.body!.iMei!;
         //AppPref.extraToken = response.body!.accessToken;
-
+        AppPref.pageSizeSync = response.body!.pageSizeSync ?? 5;
         final response0 = await authRepository
             .getExtraToken(
                 userName: userName.trim(),

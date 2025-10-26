@@ -18,6 +18,7 @@ class TokenModel {
   String? domainAPI;
   String? portAPI;
   String? iMei;
+  int? pageSizeSync;
 
   String? ftpPublicUrl;
   String? ftpInternalUrl;
@@ -46,7 +47,8 @@ class TokenModel {
       this.suggestionVcpaUrl,
       this.domainAPI,
       this.portAPI,
-      this.iMei});
+      this.iMei,
+      this.pageSizeSync});
 
   TokenModel.fromJson(Map<String, dynamic> json) {
     accessToken = json['access_token'];
@@ -68,6 +70,7 @@ class TokenModel {
     domainAPI = json['DomainAPI'];
     portAPI = json['PortAPI'];
     iMei = json['IMEI'];
+    pageSizeSync = json['PageSizeSync'];
 
     ftpPublicUrl = json['FtpPublicUrl'];
     ftpInternalUrl = json['FtpInternalUrl'];
@@ -99,6 +102,7 @@ class TokenModel {
     data['DomainAPI'] = domainAPI;
     data['PortAPI'] = portAPI;
     data['IMEI'] = iMei;
+    data['PageSizeSync'] = pageSizeSync;
     return data;
   }
 }

@@ -21,7 +21,7 @@ class AppValues {
   static const paddingBox = 15.0;
   static const marginBottomBox = 10.0;
 
-  static const buttonHeight = 48.0;
+  static const buttonHeight = 48.0; static const buttonLowHeight = 40.0;
   static const showValueMessage = false; //show value for dev test
   // individual:123456
 }

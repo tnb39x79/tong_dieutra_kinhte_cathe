@@ -6,24 +6,24 @@ enum IButtonType { inline, outline, text }
 const BUTTON_HEIGHT = 40.0;
 
 class IButton extends StatelessWidget {
-  const IButton({
-    super.key,
-    required this.label,
-    this.onPressed,
-    this.type = IButtonType.inline,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 12,
-    ),
-    this.backgroundColor,
-    this.disabledColor,
-    this.textStyle,
-    this.borderColor,
-    this.leftIcon,
-    this.rightIcon,
-    this.child,
-    this.height = BUTTON_HEIGHT,
-  });
+  const IButton(
+      {super.key,
+      required this.label,
+      this.onPressed,
+      this.type = IButtonType.inline,
+      this.padding = const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 12,
+      ),
+      this.backgroundColor,
+      this.disabledColor,
+      this.textStyle,
+      this.borderColor,
+      this.leftIcon,
+      this.rightIcon,
+      this.child,
+      this.height = BUTTON_HEIGHT,
+      this.borderRadius});
   final Widget? child;
   final String label;
   final VoidCallback? onPressed;
@@ -36,6 +36,7 @@ class IButton extends StatelessWidget {
   final Widget? leftIcon;
   final Widget? rightIcon;
   final double height;
+  final double? borderRadius;
 
   bool get _isDisabled => onPressed == null;
 
@@ -63,7 +64,8 @@ class IButton extends StatelessWidget {
             ? (disabledColor ?? backgroundDisableColor)
             : (backgroundColor ?? primaryColor),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppValues.borderLv1),
+          borderRadius:
+              BorderRadius.circular(borderRadius ?? AppValues.borderLv1),
         ),
         elevation: 0,
         minimumSize: Size.fromHeight(height),
@@ -105,11 +107,12 @@ class IButton extends StatelessWidget {
         padding: padding,
         side: BorderSide(color: effectiveBorderColor),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppValues.borderLv1),
+          borderRadius:
+              BorderRadius.circular(borderRadius ?? AppValues.borderLv1),
         ),
         minimumSize: Size.fromHeight(height),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        splashFactory: InkRipple.splashFactory, 
+        splashFactory: InkRipple.splashFactory,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -143,7 +146,8 @@ class IButton extends StatelessWidget {
       style: TextButton.styleFrom(
         padding: padding,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppValues.borderLv1),
+          borderRadius:
+              BorderRadius.circular(borderRadius ?? AppValues.borderLv1),
         ),
         minimumSize: Size.fromHeight(height),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,

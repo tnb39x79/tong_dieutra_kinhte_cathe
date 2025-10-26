@@ -74,7 +74,10 @@ class AppPref {
 
   ///Chứa chuỗi giống imei
   static const String uniqueStringTheSameImeiKey = 'uniqueStringTheSameImeiKey';
-  
+
+  //Số cơ sở trong 1 lần sync
+  static const String pageSizeSyncKey = 'pageSizeSyncKey';
+
   static final GetStorage _box = GetStorage(storageName);
 
   static initListener() async {
@@ -251,8 +254,11 @@ class AppPref {
   static String get dataModelSTTTokensPath =>
       _box.read(dataModelSTTTokensPathKey) ?? '';
 
-       static set uniqueStringTheSameImei(String value) =>
+  static set uniqueStringTheSameImei(String value) =>
       _box.write(uniqueStringTheSameImeiKey, value);
   static String get uniqueStringTheSameImei =>
       _box.read(uniqueStringTheSameImeiKey) ?? '';
+
+  static set pageSizeSync(int value) => _box.write(pageSizeSyncKey, value);
+  static int get pageSizeSync => _box.read(pageSizeSyncKey) ?? 5;
 }

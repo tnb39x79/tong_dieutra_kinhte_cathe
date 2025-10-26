@@ -605,7 +605,7 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
           {"UpdatedAt": createdAt, columnPhieuMauSanPhamIsSync: 1},
           where: '$columnIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
           whereArgs: [item]);
-      log('RESULT UPDATE HO SUCCESS=$update');
+      log('RESULT UPDATE SP SUCCESS=$update');
     }
   }
 

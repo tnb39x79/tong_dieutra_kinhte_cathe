@@ -88,15 +88,13 @@ mixin SyncMixinV2 {
   //   return ResponseSyncModel();
   // }
 
- 
-
   Future getListInterviewed() async {
-    List<Map>? interviewedCoSoSXKD =
+    List<Map>? item =
         await bkCoSoSXKDMixProvider.selectAllListInterviewedSync();
     danhSachBkCoSoSXKDInterviewed.clear();
 
-    if (interviewedCoSoSXKD.isNotEmpty) {
-      for (var element in interviewedCoSoSXKD) {
+    if (item.isNotEmpty) {
+      for (var element in item) {
         developer.log('CSSXKDSync Part: $element');
         danhSachBkCoSoSXKDInterviewed
             .add(TableBkCoSoSXKDSync.fromJson(element));
@@ -105,12 +103,12 @@ mixin SyncMixinV2 {
   }
 
   Future getListInterviewedFullBody() async {
-    List<Map>? interviewedCoSoSXKD =
+    List<Map>? item =
         await bkCoSoSXKDMixProvider.selectAllListInterviewedSync();
     danhSachBkCoSoSXKDInterviewedFull.clear();
 
-    if (interviewedCoSoSXKD.isNotEmpty) {
-      for (var element in interviewedCoSoSXKD) {
+    if (item.isNotEmpty) {
+      for (var element in item) {
         developer.log('CSSXKD Full: $element');
         danhSachBkCoSoSXKDInterviewedFull
             .add(TableBkCoSoSXKD.fromJson(element));
@@ -119,18 +117,31 @@ mixin SyncMixinV2 {
   }
 
   Future getListInterviewedPaginatedSync(int pageNumber, int pageSize) async {
-    List<Map>? interviewedCoSoSXKD = await bkCoSoSXKDMixProvider
-        .getListInterviewedPaginatedSync(pageNumber, pageSize);
+    int offset =0;// (pageNumber - 1) * pageSize;
+    var items = danhSachBkCoSoSXKDInterviewed
+        .where((x) => x.isSyncSuccess != 1)
+        .skip(offset)
+        .take(pageSize)
+        .toList();
     danhSachBkCoSoSXKDInterviewedPagingated.clear();
 
-    if (interviewedCoSoSXKD.isNotEmpty) {
-      for (var element in interviewedCoSoSXKD) {
-        developer.log('CSSXKD paginated: $element');
-        danhSachBkCoSoSXKDInterviewedPagingated
-            .add(TableBkCoSoSXKDSync.fromJson(element));
-      }
+    if (items.isNotEmpty) {
+      danhSachBkCoSoSXKDInterviewedPagingated.assignAll(items);
     }
   }
+  // Future getListInterviewedPaginatedSync(int pageNumber, int pageSize) async {
+  //   List<Map>? item = await bkCoSoSXKDMixProvider
+  //       .getListInterviewedPaginatedSync(pageNumber, pageSize);
+  //   danhSachBkCoSoSXKDInterviewedPagingated.clear();
+
+  //   if (item.isNotEmpty) {
+  //     for (var element in item) {
+  //       developer.log('CSSXKD paginated: $element');
+  //       danhSachBkCoSoSXKDInterviewedPagingated
+  //           .add(TableBkCoSoSXKDSync.fromJson(element));
+  //     }
+  //   }
+  // }
 
   // Future<Map> getSingleCoSoSX(String idCoSo) async {
   //   Map msgBody = {};

@@ -221,7 +221,7 @@ class PhieuNganhTMSanPhamProvider
   }
 
   //C5.2_Dthu tại Phiếu 7TB của các sản phẩm TM cho phiếu TM
-  Future tongDoanhThuSanPhamTM(idCoSo) async {
+  Future<double> tongDoanhThuSanPhamTM(idCoSo) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 
     ///Tính tổng

@@ -1,4 +1,4 @@
-import 'dart:developer' as developer;
+import 'dart:developer' as developer; 
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
@@ -321,18 +321,20 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
 
   Future<List<Map>> getListInterviewedPaginatedSync(
       int pageNumber, int pageSize) async {
-    final int offset = (pageNumber - 1) * pageSize;
+     int offset = (pageNumber - 1) * pageSize;
     String createdAt = AppPref.dateTimeSaveDB ?? "";
-    return await db!.query(tablebkCoSoSXKD, where: '''
-      $columnCreatedAt = '$createdAt'
-      AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan}
-      AND $colBkCoSoSXKDMaTrangThaiDT2 = ${AppDefine.hoanThanhPhongVan}
-      AND NOT $columnUpdatedAt = '$createdAt'
-      AND $columnMaDTV='${AppPref.uid}'
-      ORDER BY $colBkCoSoSXKDId
-      LIMIT $pageSize
-      OFFSET $offset 
-    ''');
+    String sWhere = " $columnCreatedAt = '$createdAt' ";
+    sWhere +=
+        "  AND $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} ";
+    sWhere +=
+        "   AND $colBkCoSoSXKDMaTrangThaiDT2 = ${AppDefine.hoanThanhPhongVan} ";
+    sWhere += "   AND NOT $columnUpdatedAt = '$createdAt' ";
+    sWhere += "   AND $columnMaDTV='${AppPref.uid}' ";
+    sWhere += "   ORDER BY $colBkCoSoSXKDId ";
+    sWhere += "  LIMIT $pageSize ";
+    sWhere += "   OFFSET $offset ";
+    developer.log('getListInterviewedPaginatedSync $sWhere');
+    return await db!.query(tablebkCoSoSXKD, where: sWhere);
   }
   // // AND ($colBkCoSoSXKDIDCoSo in (SELECT $colPhieuIDCoSo FROM $tablePhieu WHERE $colPhieuThoiGianBD IS NOT NULL AND $colPhieuThoiGianKT IS NOT NULL ))
 
@@ -424,7 +426,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       key: value,
       "UpdatedAt": DateTime.now().toIso8601String()
     };
-    developer.log('ID HO: $idCoSo');
+    developer.log('ID CS: $idCoSo');
     await db!.update(tablebkCoSoSXKD, values,
         where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
         whereArgs: [idCoSo]);
@@ -438,7 +440,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
           {"UpdatedAt": createdAt, "SyncSuccess": AppDefine.synced},
           where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
           whereArgs: [item]);
-      developer.log('RESULT UPDATE CSSXKD SUCCESS=$update');
+      developer.log('RESULT UPDATE CSSXKD $item SUCCESS=$update');
     }
   }
 
@@ -446,7 +448,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     String createdAt = AppPref.dateTimeSaveDB ?? "";
 
     Map<String, Object?> values = {fieldName: value};
-    developer.log('ID HO: $idCoSo');
+    developer.log('ID CS: $idCoSo');
     await db!.update(tablebkCoSoSXKD, values,
         where: '$colBkCoSoSXKDIDCoSo= ? AND $columnCreatedAt= "$createdAt"',
         whereArgs: [idCoSo]);

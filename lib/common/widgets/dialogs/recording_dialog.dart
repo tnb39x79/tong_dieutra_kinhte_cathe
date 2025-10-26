@@ -170,13 +170,13 @@ class RecordingDialog extends StatelessWidget {
           height: 70,
           decoration: BoxDecoration(
             color: controller.isInitializing
-                ? greyColor.withOpacity(0.1)
-                : primaryColor.withOpacity(0.1),
+                ? greyColor.withValues(alpha:  0.1)
+                : primaryColor.withValues(alpha: 0.1),
             shape: BoxShape.circle,
             border: Border.all(
                 color: controller.isInitializing
                     ? greyBorder
-                    : primaryColor.withOpacity(0.3),
+                    : primaryColor.withValues(alpha:  0.3),
                 width: 1),
           ),
           child: Icon(
@@ -193,7 +193,7 @@ class RecordingDialog extends StatelessWidget {
     return Obx(() => Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: primaryColor.withOpacity(0.1),
+            color: primaryColor.withValues(alpha:0.1),
             borderRadius: BorderRadius.circular(AppValues.borderLv1),
           ),
           child: Text(
@@ -229,6 +229,7 @@ class RecordingDialog extends StatelessWidget {
         children: [
           Expanded(
             child: IButton(
+              borderRadius: AppValues.borderLv5,
               label: controller.isCanceling ? "Đang hủy..." : "Hủy",
               type: IButtonType.outline,
               onPressed: controller.isCanceling
@@ -250,13 +251,15 @@ class RecordingDialog extends StatelessWidget {
                       size: 18,
                       color: greyColor,
                     ),
-              height: AppValues.buttonHeight,
+              height: AppValues.buttonLowHeight,
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             flex: 2,
             child: IButton(
+              
+              borderRadius: AppValues.borderLv5,
               label: controller.getRecordButtonLabel(),
               type: IButtonType.inline,
               onPressed: () => _handleRecording(controller),
@@ -272,7 +275,7 @@ class RecordingDialog extends StatelessWidget {
                 size: 20,
                 color: Colors.white,
               ),
-              height: AppValues.buttonHeight,
+              height: AppValues.buttonLowHeight,
             ),
           ),
         ],
@@ -341,9 +344,9 @@ class RecordingDialog extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
+                color: primaryColor.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                border: Border.all(color: primaryColor.withOpacity(0.3)),
+                border: Border.all(color: primaryColor.withValues(alpha:0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -382,9 +385,9 @@ class RecordingDialog extends StatelessWidget {
               duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: errorColor.withOpacity(0.1),
+                color: errorColor.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(AppValues.borderLv1),
-                border: Border.all(color: errorColor.withOpacity(0.3)),
+                border: Border.all(color: errorColor.withValues(alpha:0.3)),
               ),
               child: Text(
                 controller.errorText,

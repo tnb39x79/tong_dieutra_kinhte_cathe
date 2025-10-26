@@ -3173,7 +3173,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                               blurRadius: 4,
                             ),
                           ],
-                          border: Border.all(color: greyDarkBorder, width: 1),
+                          border:
+                              Border.all(color: primary1LighterColor, width: 1),
                           borderRadius:
                               const BorderRadius.all(Radius.circular(5.0)),
                         ),
@@ -3191,10 +3192,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          Color.fromARGB(255, 240, 212, 154),
-                                          Color.fromARGB(255, 234, 232, 226),
-                                          Color.fromARGB(255, 234, 232, 226),
-                                          Color.fromARGB(255, 240, 212, 154),
+                                          primary1LighterColor,
+                                          primary1LighterColor,
+                                          primary1LighterColor,
+                                          primary1LighterColor
                                         ],
                                       ),
                                       borderRadius: BorderRadius.only(
@@ -3795,7 +3796,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                     decoration: const BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: Color.fromARGB(255, 234, 232, 226),
+                            color: headerBoxColor,
                             spreadRadius: 1, // How much the shadow spreads
                             blurRadius: 1, // How blurred the shadow is
                             offset:
@@ -4398,7 +4399,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                             blurRadius: 8,
                           ),
                         ],
-                        border: Border.all(color: greyDarkBorder, width: 1),
+                        border:
+                            Border.all(color: primary1LighterColor, width: 1),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(5.0)),
                       ),
@@ -4413,10 +4415,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Color.fromARGB(255, 240, 212, 154),
-                                      Color.fromARGB(255, 234, 232, 226),
-                                      Color.fromARGB(255, 234, 232, 226),
-                                      Color.fromARGB(255, 240, 212, 154),
+                                      // Color.fromARGB(255, 240, 212, 154),
+                                      // Color.fromARGB(255, 234, 232, 226),
+                                      // Color.fromARGB(255, 234, 232, 226),
+                                      // Color.fromARGB(255, 240, 212, 154),
+                                      primary1LighterColor,
+                                      primary1LighterColor,
+                                      primary1LighterColor, primary1LighterColor
                                     ],
                                   ),
                                   borderRadius: BorderRadius.only(
@@ -4780,6 +4785,8 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
       var a1_3_2Value = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA1_3_2);
+      a1_3_2Value =
+          a1_3_2Value ?? AppUtils.convertStringToInt(a1_3_2Value.toString());
       var tblTDCM = controller.tblDmTrinhDoChuyenMon
           .where((x) => x.ma == selectedValue)
           .firstOrNull;
@@ -4873,16 +4880,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           a1_5_1Value.toString().length == 10) {
         return wText('Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?');
       }
-    }else if (question.maCauHoi == colPhieuMauTBA2_1 &&
+    } else if (question.maCauHoi == colPhieuMauTBA2_1 &&
         question.maPhieu == AppDefine.maPhieuTB) {
       var a2_1Value = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA2_1);
-          if(a2_1Value>30){
-            return wText('Số lao động >30 người có đúng không');
-          }
-        }
-    
-     else if (question.maCauHoi == colPhieuMauTBA3_1T &&
+      if (a2_1Value != null && a2_1Value > 30) {
+        return wText('Số lao động >30 người có đúng không');
+      }
+    } else if (question.maCauHoi == colPhieuMauTBA3_1T &&
         question.maPhieu == AppDefine.maPhieuTB) {
       if (selectedValue != null &&
           controller.validateEqual0InputValue(

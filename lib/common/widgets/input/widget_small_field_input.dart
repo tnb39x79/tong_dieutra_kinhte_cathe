@@ -54,7 +54,7 @@ class WidgetSmallFieldInput extends StatelessWidget {
             child: TextFormField(
               maxLength: maxLength,
               controller: controller,
-              style: styleXxSmall,
+              style: styleXxSmall.copyWith(color: blackText),
               obscureText: isHideContent ?? false,
               enabled: enable ?? true,
               validator: validator,

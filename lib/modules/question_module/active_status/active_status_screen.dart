@@ -53,7 +53,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
       child: Column(
         children: [
           Obx(() => wTitle()),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Expanded(child: Obx(() => _question())),
           _button()
         ],
@@ -129,7 +129,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
               style: styleMediumBold.copyWith(color: primaryColor))
         ])),
         Divider(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Text(
           'Chọn tình trạng hoạt động của sơ cở:',
           style: styleLargeBold.copyWith(color: blackText),

@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/utils/utils.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/dialog_widget.dart';
 import 'package:gov_statistics_investigation_economic/config/constants/app_colors.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/modules/sync_module/sync_module.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
@@ -74,17 +75,19 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
     syncResults.value = [];
 
     msgBundleBody = {};
-    int pageNumber = 1;
-    int pageSize = 5;
+
+    int pageSize = AppPref.pageSizeSync ?? 5;
+
     if (danhSachBkCoSoSXKDInterviewed.isNotEmpty) {
       int totalRecord = danhSachBkCoSoSXKDInterviewed.length;
 
       var totalPages_pre = (totalRecord / pageSize);
       var totalPages = totalPages_pre.ceil();
 
-      for (var i = 1; i <= totalPages; i++) {
-        pageNumber = i;
-        await getListInterviewedPaginatedSync(pageNumber, pageSize);
+      for (int i = 1; i <= totalPages; i++) {
+        await getListInterviewedPaginatedSync(i, pageSize);
+        await Future.delayed(const Duration(seconds: 1));
+
         if (danhSachBkCoSoSXKDInterviewedPagingated.isNotEmpty) {
           Map mBody = await getBundleCoSoSX();
           await setSyncingBkCoSo(1, 'Đang đồng bộ...');
@@ -95,10 +98,10 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
               isRetryWithSignIn: false, isSendFullDataError: false);
           await Future.delayed(const Duration(seconds: 2));
           if (resSync.responseCode == ApiConstants.responseSuccess) {
-            responseMessage.value += resSync.responseMessage ?? '';
+            // responseMessage.value += resSync.responseMessage ?? '';
+
             if (resSync.syncResults != null &&
                 resSync.syncResults!.isNotEmpty) {
-              syncResults.clear();
               syncResults.assignAll(resSync.syncResults!);
             } else {}
             if (resSync.syncResultDetailItems != null &&
@@ -112,39 +115,33 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
                     resCode = 3;
                   }
                 }
-                updateListBkCoSoSync(
-                    itemRes.id!, resCode, itemRes.errorMessage ?? '');
+                await updateListBkCoSoSync(
+                    itemRes.id!, resCode, itemRes.errorMessage ?? '',
+                    isSynced: AppDefine.synced);
               }
             } else {
               for (var item in danhSachBkCoSoSXKDInterviewed) {
                 String message = resSync.responseMessage ?? "Đồng bộ lỗi.";
                 item.isSyncSuccess = 3;
-                updateListBkCoSoSync(item.iDCoSo!, 3, message);
+                await updateListBkCoSoSync(item.iDCoSo!, 3, message,
+                    isSynced: AppDefine.unSync);
               }
-              // danhSachBkCoSoSXKDInterviewed.refresh();
             }
           } else {
-            responseMessage.value += resSync.responseMessage ?? "Đồng bộ lỗi.";
+            //  responseMessage.value += resSync.responseMessage ?? "Đồng bộ lỗi.";
             String message = resSync.responseMessage ?? "Đồng bộ lỗi.";
             for (var item in danhSachBkCoSoSXKDInterviewed) {
-              item.isSyncSuccess = 3;
-              // SyncResultSingleItem syncResult = SyncResultSingleItem(
-              //     id: item.iDCoSo,
-              //     ten: item.tenCoSo,
-              //     maXa: item.maXa,
-              //     maDiaBan: item.maDiaBan,
-              //     resCode: 3,
-              //     resMessage: message);
-              // item.syncResult = syncResult;s
-              updateListBkCoSoSync(item.iDCoSo!, 3, message);
+              await updateListBkCoSoSync(item.iDCoSo!, 3, message,
+                  isSynced: AppDefine.unSync);
             }
-            //  danhSachBkCoSoSXKDInterviewed.refresh();
           }
         }
-        await Future.delayed(const Duration(seconds: 2));
-        isSyncing.value = false;
-        isSyncCompleted.value = true;
+        // await Future.delayed(const Duration(seconds: 2));
       }
+      await Future.delayed(const Duration(seconds: 1));
+      isSyncing.value = false;
+      isSyncCompleted.value = true;
+      messageResultFinal();
     }
   }
 
@@ -153,22 +150,15 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
       List<TableBkCoSoSXKDSync> tblSync = danhSachBkCoSoSXKDInterviewed;
       if (danhSachBkCoSoSXKDInterviewedPagingated.isNotEmpty) {
         for (var item in danhSachBkCoSoSXKDInterviewedPagingated) {
-          // SyncResultSingleItem syncResult = SyncResultSingleItem(
-          //     id: item.iDCoSo,
-          //     ten: item.tenCoSo,
-          //     maXa: item.maXa,
-          //     maDiaBan: item.maDiaBan,
-          //     resCode: resCode,
-          //     resMessage: resMessage);
-          // itemBk.syncResult = syncResult;
-          updateListBkCoSoSync(item.iDCoSo!, resCode, resMessage);
+          await updateListBkCoSoSync(item.iDCoSo!, resCode, resMessage);
         }
       }
     }
     danhSachBkCoSoSXKDInterviewed.refresh();
   }
 
-  updateListBkCoSoSync(String idCoSo, int resCode, String resMessage) {
+  updateListBkCoSoSync(String idCoSo, int resCode, String resMessage,
+      {int? isSynced}) async {
     final index = danhSachBkCoSoSXKDInterviewed
         .indexWhere((element) => element.iDCoSo == idCoSo);
     var syncResult = SyncResultSingleItem(
@@ -179,9 +169,75 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
         resCode: resCode,
         resMessage: resMessage);
     if (index != -1) {
+      if (isSynced != null) {
+        update(danhSachBkCoSoSXKDInterviewed..[index].isSyncSuccess = isSynced);
+      }
       update(danhSachBkCoSoSXKDInterviewed..[index].syncResult = syncResult);
     }
     danhSachBkCoSoSXKDInterviewed.refresh();
+  }
+
+  messageResultFinal() {
+    //Tổng số phiếu cần đồng bộ;
+    int total = danhSachBkCoSoSXKDInterviewed.length;
+    int totalTB = danhSachBkCoSoSXKDInterviewed
+        .where((x) => x.loaiPhieu == AppDefine.maDoiTuongDT_07TB)
+        .length;
+    int totalMau = danhSachBkCoSoSXKDInterviewed
+        .where((x) => x.loaiPhieu == AppDefine.maDoiTuongDT_07Mau)
+        .length;
+//Tổng số lượng phiếu   đồng bộ thành công.
+    int successTotal = danhSachBkCoSoSXKDInterviewed
+        .where((x) =>
+            x.syncResult != null &&
+            x.syncResult!.resCode != null &&
+            x.syncResult!.resCode == 2)
+        .length;
+    //Tổng số lượng phiếu   đồng bộ lỗi.
+    int errorTotal = danhSachBkCoSoSXKDInterviewed
+        .where((x) =>
+            x.syncResult != null &&
+            x.syncResult!.resCode != null &&
+            x.syncResult!.resCode == 3)
+        .length;
+    //Tổng số phiếu đã đồng bộ:
+    int syncedTotal = successTotal + errorTotal;
+
+    //Tổng số lượng phiếu TB đồng bộ thành công.
+    int successTotalTB = danhSachBkCoSoSXKDInterviewed
+        .where((x) =>
+            x.syncResult != null &&
+            x.syncResult!.resCode != null &&
+            x.syncResult!.resCode == 2 &&
+            x.loaiPhieu == AppDefine.maDoiTuongDT_07TB)
+        .length;
+    //Tổng số lượng phiếu TB đồng bộ lỗi.
+    int errorTotalTB = danhSachBkCoSoSXKDInterviewed
+        .where((x) =>
+            x.syncResult != null &&
+            x.syncResult!.resCode != null &&
+            x.syncResult!.resCode == 3 &&
+            x.loaiPhieu == AppDefine.maDoiTuongDT_07TB)
+        .length;
+    //Tổng số lượng phiếu Mẫu đồng bộ thành công.
+    int successTotalMau = danhSachBkCoSoSXKDInterviewed
+        .where((x) =>
+            x.syncResult != null &&
+            x.syncResult!.resCode != null &&
+            x.syncResult!.resCode == 2 &&
+            x.loaiPhieu == AppDefine.maDoiTuongDT_07Mau)
+        .length;
+    //Tổng số lượng phiếu Mẫu đồng bộ lỗi.
+    int errorTotalMau = danhSachBkCoSoSXKDInterviewed
+        .where((x) =>
+            x.syncResult != null &&
+            x.syncResult!.resCode != null &&
+            x.syncResult!.resCode == 3 &&
+            x.loaiPhieu == AppDefine.maDoiTuongDT_07Mau)
+        .length;
+
+    responseMessage.value =
+        'Tổng phiếu đã đồng bộ: $syncedTotal/${danhSachBkCoSoSXKDInterviewed.length}: Phiếu TB $successTotalTB/$totalTB; phiếu mẫu $successTotalMau/$totalMau';
   }
 
   resetVarBeforeSync() {

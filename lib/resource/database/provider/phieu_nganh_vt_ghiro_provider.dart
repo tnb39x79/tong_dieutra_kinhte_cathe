@@ -364,10 +364,20 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
   }
 
   Future<int> deleteByCoSoIdMaCauHoi(String coSoId, String maCauHois) {
-    var maCauHoi=maCauHois.split(';');
+    var maCauHoi = maCauHois.split(';');
     var res = db!.delete(tablePhieuNganhVTGhiRo,
         where:
-            '''  $columnIDCoSo = '$coSoId' AND $colPhieuNganhVTGhiRoMaCauHoi in (${maCauHoi.map((e) => "'$e'").join(', ')}''');
+            '''  $columnIDCoSo = '$coSoId' AND $colPhieuNganhVTGhiRoMaCauHoi in (${maCauHoi.map((e) => "'$e'").join(', ')})''');
+    return res;
+  }
+
+///Xoá trừ STT=1 ra;
+  Future<int> deleteByCoSoIdMaCauHoiSTT(
+      String coSoId, String maCauHois) {
+    var maCauHoi = maCauHois.split(';');
+    var res = db!.delete(tablePhieuNganhVTGhiRo,
+        where:
+            '''  $columnIDCoSo = '$coSoId' AND $colPhieuNganhVTGhiRoSTT <> 1 AND $colPhieuNganhVTGhiRoMaCauHoi in (${maCauHoi.map((e) => "'$e'").join(', ')})''');
     return res;
   }
 

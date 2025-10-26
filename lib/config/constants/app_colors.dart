@@ -43,4 +43,5 @@ const Color blackText = Color(0xFF3D4756);
 const Color defaultText = Color(0xFF1E232A);
 const Color textFieldColor = Color(0xFFF1F5FA);
 const Color splashColorButton = Color.fromARGB(255, 215, 153, 27);
+const Color headerBoxColor=    Color(0xFFEAE8E2);
 

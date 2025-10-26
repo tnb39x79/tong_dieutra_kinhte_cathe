@@ -187,7 +187,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
@@ -221,7 +221,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
         buildFormThongTinNguoiPV(),
         if (!_isFirstLoading) buildLyDo(),
         _buildLatLngSection(),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
       ],
     );
   }

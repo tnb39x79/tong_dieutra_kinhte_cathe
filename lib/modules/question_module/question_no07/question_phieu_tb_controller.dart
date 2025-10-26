@@ -2051,6 +2051,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         if (maCauHoi == "A4_1") {
           var total5TValue = await total5T();
           updateAnswerToDB(tablePhieuMauTB, colPhieuMauTBA5T, total5TValue);
+          var tongA1TNganhTM = await tinhA1TNganhTM();
+          updateAnswerToDB(
+              tablePhieuNganhTM, colPhieuNganhTMA1T, tongA1TNganhTM);
+          await tinhTongTriGiaVonCau3TNganhTM();
         }
         if (maCauHoi == colPhieuMauTBA4_1) {
           ///Hiển thị popup
@@ -5814,8 +5818,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         ? AppUtils.convertStringToInt(tblPhieuCT['A2_1_1'].toString())
         : 0;
 
- 
-
     var a1_3_1Value = tblPhieuCT['A1_3_1'];
 
     if (fieldName == colPhieuMauTBA2_1) {
@@ -5832,7 +5834,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (a2_1Value < a2_1_1Value) {
         return 'Câu 2.1.1 Số lao động nữ lớn hơn tổng số lao động Câu 2.1';
       }
-       if (  a1_3_1Value == 2 && a2_1_1Value == 0) {
+      if (a1_3_1Value == 2 && a2_1_1Value == 0) {
         return 'Cơ sở có chủ cơ sở là nữ mà Số lao động nữ bao gồm cả chủ cơ sở = 0';
       }
     }
@@ -8645,6 +8647,21 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return total;
   }
 
+  Future<double> tinhA1TNganhTM() async {
+    double result = 0.0;
+    if (isCap2G_6810TM.value) {
+      var a4_1Value = answerTblPhieuMau['A4_1'];
+      var a4_1Val = 0.0;
+      if (a4_1Value != null) {
+        a4_1Val = AppUtils.convertStringToDouble(a4_1Value);
+      }
+      var res = await phieuNganhTMSanphamProvider
+          .tongDoanhThuSanPhamTM(currentIdCoSo!);
+      result = a4_1Val * res;
+    }
+    return result;
+  }
+
   ///Xoá sản phầm phần V
   ///- Kiểm tra ngành có liên quan tới mà ngành đang xoá.
   /// => Thông báo cụ thể mã ngành - tên ngành liên quan.
@@ -10098,6 +10115,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 colPhieuNganhVTGhiRoC4, null, ghiRoItem!.id!);
             updateAnswerPhieuVTGhiRoToDB(
                 colPhieuNganhVTGhiRoCGhiRo, null, ghiRoItem!.id!);
+
+            deleteAnswerPhieuVTGhiRoToDB(ghiRoItem.maCauHoi!);
           }
           tinhTongA5A6NganhVT(question);
         }
@@ -10118,6 +10137,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 colPhieuNganhVTGhiRoC4, null, ghiRoItem!.id!);
             updateAnswerPhieuVTGhiRoToDB(
                 colPhieuNganhVTGhiRoCGhiRo, null, ghiRoItem!.id!);
+            deleteAnswerPhieuVTGhiRoToDB(ghiRoItem.maCauHoi!);
           }
           tinhTongA11A12NganhVT(question);
         }
@@ -10290,7 +10310,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await updateAnswerToDB(
         tablePhieuNganhVT, colPhieuNganhVTA6, tongTaiTrongA6);
     await updateAnswerTblPhieuMau(
-        colPhieuNganhVTA6, tongTaiTrong, tablePhieuNganhVT);
+        colPhieuNganhVTA6, tongTaiTrongA6, tablePhieuNganhVT);
   }
 
   Future<double> tinhTongTaiTrongA7NganhVT(
@@ -10350,7 +10370,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await updateAnswerToDB(
         tablePhieuNganhVT, colPhieuNganhVTA12, tongTaiTrongA12);
     await updateAnswerTblPhieuMau(
-        colPhieuNganhVTA12, tongTaiTrong, tablePhieuNganhVT);
+        colPhieuNganhVTA12, tongTaiTrongA12, tablePhieuNganhVT);
   }
 
   Future<double> tinhTongTaiTrongA7GhiRoNganhVT(
@@ -10392,6 +10412,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   updateAnswerPhieuVTGhiRoToDB(String fieldName, value, id) async {
     await phieuNganhVTGhiRoProvider.updateValueById(fieldName, value, id);
+    await getTablePhieuNganhVTGhiRo();
+  }
+
+  deleteAnswerPhieuVTGhiRoToDB(String maCauHoi) async {
+    await phieuNganhVTGhiRoProvider.deleteByCoSoIdMaCauHoiSTT(
+        currentIdCoSo!, maCauHoi);
     await getTablePhieuNganhVTGhiRo();
   }
 
@@ -10719,8 +10745,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     if ((has5G8610TM)) {
       await insertUpdateNganhTMSanpham();
+    } else {
+      //Xoa TM
+      await phieuNganhTMSanphamProvider.deleteByCoSoId(currentIdCoSo!);
     }
-
     if ((hasC2_56TM || (has5G8610TM))) {
       var res = await phieuNganhTMProvider.isExistQuestion(currentIdCoSo!);
       if (res == false) {
@@ -10731,6 +10759,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
         await phieuNganhTMProvider.insert(tblTMs, AppPref.dateTimeSaveDB!);
       }
+    }
+    if (hasC2_56TM == false) {
+      await phieuNganhTMProvider.deleteByCoSoId(currentIdCoSo!);
     }
     await getTablePhieuNganhTM();
     await getTablePhieuMauTBSanPham();
@@ -10768,6 +10799,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           }
         }
       }
+    } else {
+      //Xoa TM
+      await phieuNganhTMSanphamProvider.deleteByCoSoId(currentIdCoSo!);
     }
     //Tính lại tổng A1T TM
     await tinhTongTriGiaVonCau1TNganhTM();
@@ -10793,21 +10827,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   ///"3T. TRỊ GIÁ VỐN HÀNG CHUYỂN BÁN  (CÂU 3 *CÂU 4.1 - PHIẾU TB)"
   Future<double> tinhTongTriGiaVonCau3TNganhTM() async {
     double result = 0.0;
-    int a4_1TBValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
-    var a3TMValue = getValueByFieldName(tablePhieuNganhTM, colPhieuNganhTMA3);
-    double a3TMVal = 0.0;
-    if (a3TMValue != null) {
-      a3TMVal = AppUtils.convertStringToDouble(a3TMValue);
+    if (isCap2_56TM.value) {
+      int a4_1TBValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+      var a3TMValue = getValueByFieldName(tablePhieuNganhTM, colPhieuNganhTMA3);
+      double a3TMVal = 0.0;
+      if (a3TMValue != null) {
+        a3TMVal = AppUtils.convertStringToDouble(a3TMValue);
+      }
+      if (a4_1TBValue != null &&
+          a4_1TBValue >= 0 &&
+          a3TMValue != null &&
+          a3TMValue >= 0) {
+        result = a4_1TBValue * a3TMVal;
+      }
+      await phieuNganhTMProvider.updateValueByIdCoSo(
+          colPhieuNganhTMA3T, result, currentIdCoSo!);
+      await getTablePhieuNganhTM();
     }
-    if (a4_1TBValue != null &&
-        a4_1TBValue >= 0 &&
-        a3TMValue != null &&
-        a3TMValue >= 0) {
-      result = a4_1TBValue * a3TMVal;
-    }
-    await phieuNganhTMProvider.updateValueByIdCoSo(
-        colPhieuNganhTMA3T, result, currentIdCoSo!);
-    await getTablePhieuNganhTM();
     return result;
   }
 
