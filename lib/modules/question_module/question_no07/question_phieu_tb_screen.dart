@@ -1111,11 +1111,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       decimalDigits = 2;
 
       return Obx(() {
-        var a1_2Value = controller.getValueByFieldName(
-            question.bangDuLieu!, colPhieuMauTBA1_2);
-        if (a1_2Value != 1) {
-          return const SizedBox();
-        }
+        // var a1_2Value = controller.getValueByFieldName(
+        //     question.bangDuLieu!, colPhieuMauTBA1_2);
+        // if (a1_2Value != 1) {
+        //   return const SizedBox();
+        // }
         var a4_3Value = controller.getValueByFieldName(
             question.bangDuLieu!, colPhieuMauTBA4_3);
         return InputInt(

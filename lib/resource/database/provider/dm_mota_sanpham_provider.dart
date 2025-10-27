@@ -338,7 +338,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
       $sWh
       ''');
-
+ 
     return maps;
   }
 

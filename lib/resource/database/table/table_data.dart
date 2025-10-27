@@ -348,6 +348,8 @@ class TableData {
           moTaChiTiet: element.moTaChiTiet,
           moTaChiTietKoDau: element.moTaChiTietKoDau,
           donViTinh: element.donViTinh,
+          maVSIC: element.maVSIC,
+          tenVSIC: element.tenVSIC,
           maLV: element.maLV,
           tenLinhVuc: element.tenLinhVuc));
     }

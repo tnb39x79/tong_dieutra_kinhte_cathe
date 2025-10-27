@@ -1,11 +1,14 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/enhanced_ai_download_controller.dart'; 
 
 import '/config/constants/app_colors.dart';
 import '/config/constants/app_styles.dart';
 import '/config/constants/app_values.dart';
 
+
 /// AI Model Section Widget
-/// 
+///
 /// A reusable widget for displaying AI model download sections with:
 /// - Modern card-based design following app patterns
 /// - Download progress indicators
@@ -25,6 +28,10 @@ class AiModelSectionWidget extends StatelessWidget {
     this.onRedownload,
     this.onCancel,
     this.downloadStatus,
+    this.onDownloadLink2,
+    this.onRedownloadLink2,
+    this.hasLink2 = false,
+    required this.modelType,
   });
 
   final String title;
@@ -38,6 +45,26 @@ class AiModelSectionWidget extends StatelessWidget {
   final VoidCallback? onRedownload;
   final VoidCallback? onCancel;
   final String? downloadStatus;
+  final VoidCallback? onDownloadLink2;
+  final VoidCallback? onRedownloadLink2;
+  final bool hasLink2;
+  final ModelType modelType;
+
+  String get _link1DownloadTitle {
+    return 'Tải xuống link 1';
+  }
+
+  String get _link2DownloadTitle {
+    return 'Tải xuống link 2';
+  }
+
+  String get _link1ReDownloadTitle {
+    return 'Tải lại link 1';
+  }
+
+  String get _link2ReDownloadTitle {
+    return 'Tải lại link 2';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +105,7 @@ class AiModelSectionWidget extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(AppValues.padding / 2),
           decoration: BoxDecoration(
-            color: primaryColor.withOpacity(0.1),
+            color: primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppValues.borderLv1),
           ),
           child: Icon(
@@ -127,7 +154,7 @@ class AiModelSectionWidget extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: warningColor.withOpacity(0.1),
+          color: warningColor.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: const SizedBox(
@@ -143,7 +170,7 @@ class AiModelSectionWidget extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: greyColor.withOpacity(0.1),
+          color: greyColor.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: const Icon(
@@ -183,7 +210,7 @@ class AiModelSectionWidget extends StatelessWidget {
             Expanded(
               child: LinearProgressIndicator(
                 value: downloadProgress / 100,
-                backgroundColor: greyColor.withOpacity(0.2),
+                backgroundColor: greyColor.withValues(alpha: 0.2),
                 valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
                 minHeight: 6,
               ),
@@ -213,7 +240,8 @@ class AiModelSectionWidget extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Colors.red),
                   foregroundColor: Colors.red,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -226,45 +254,79 @@ class AiModelSectionWidget extends StatelessWidget {
   }
 
   Widget _buildDownloadedSection() {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: successColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppValues.borderLv1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.check_circle,
-                  color: successColor,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Đã tải xuống',
-                  style: styleSmallBold.copyWith(color: successColor),
-                ),
-              ],
-            ),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: successColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppValues.borderLv1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.check_circle,
+                color: successColor,
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Đã tải xuống',
+                style: styleSmallBold.copyWith(color: successColor),
+              ),
+            ],
           ),
         ),
-        if (onRedownload != null) ...[
-          const SizedBox(width: AppValues.padding),
-          OutlinedButton.icon(
-            onPressed: onRedownload,
-            icon: const Icon(Icons.refresh, size: 16),
-            label: const Text('Tải lại'),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: primaryColor),
-              foregroundColor: primaryColor,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
+        if (onRedownload != null || onRedownloadLink2 != null) ...[
+          const SizedBox(height: AppValues.padding),
+          Row(
+            children: [
+              if (onRedownload != null) ...[
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onRedownload,
+                    icon: const Icon(Icons.refresh, size: 16),
+                    label: AutoSizeText(_link1ReDownloadTitle, maxLines: 1),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: primaryColor),
+                      foregroundColor: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(AppValues.borderLv1),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 4),
+                    ),
+                  ),
+                ),
+              ],
+              if (onRedownload != null &&
+                  onRedownloadLink2 != null &&
+                  hasLink2) ...[
+                const SizedBox(width: AppValues.padding / 2),
+              ],
+              if (onRedownloadLink2 != null && hasLink2) ...[
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onRedownloadLink2,
+                    icon: const Icon(Icons.refresh, size: 16),
+                    label: AutoSizeText(_link2ReDownloadTitle, maxLines: 1),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: warningColor),
+                      foregroundColor: warningColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(AppValues.borderLv1),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 4),
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
         ],
       ],
@@ -272,21 +334,63 @@ class AiModelSectionWidget extends StatelessWidget {
   }
 
   Widget _buildDownloadButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: onDownload,
-        icon: const Icon(Icons.download),
-        label: const Text('Tải xuống'),
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: primaryColor),
-          foregroundColor: primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppValues.borderLv1),
+    if (hasLink2 && onDownloadLink2 != null) {
+      // Show two download buttons when Link 2 is available
+      return Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: onDownload,
+              icon: const Icon(Icons.download, size: 16),
+              label: AutoSizeText(_link1DownloadTitle, maxLines: 1),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: primaryColor),
+                foregroundColor: primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              ),
+            ),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          const SizedBox(width: AppValues.padding / 2),
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: onDownloadLink2,
+              icon: const Icon(Icons.download, size: 16),
+              label: AutoSizeText(_link2DownloadTitle, maxLines: 1),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: warningColor),
+                foregroundColor: warningColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Show single download button when only Link 1 is available
+      return SizedBox(
+        width: double.infinity,
+        child: OutlinedButton.icon(
+          onPressed: onDownload,
+          icon: const Icon(Icons.download),
+          label: const Text('Tải xuống'),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: primaryColor),
+            foregroundColor: primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppValues.borderLv1),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'package:gov_statistics_investigation_economic/resource/model/product/product_ai_model.dart';
+
 const String tableDmMoTaSanPham = 'CT_DM_MoTaSanPham';
 const String columnDmMoTaSPId = '_id';
 const String columnDmMoTaSPMaSanPham = 'MaSanPham';
@@ -11,7 +13,6 @@ const String columnDmMoTaSPTenVSIC = 'TenVSIC';
 const String columnDmMoTaSPMaLV = 'MaLV';
 const String columnDmMoTaSPTenLinhVuc = 'TenLinhVuc';
 
-
 class TableDmMotaSanpham {
   int? id;
   String? maSanPham;
@@ -24,6 +25,7 @@ class TableDmMotaSanpham {
   String? tenVSIC;
   String? maLV;
   String? tenLinhVuc;
+  double? score;
 
   TableDmMotaSanpham(
       {this.id,
@@ -36,7 +38,8 @@ class TableDmMotaSanpham {
       this.maVSIC,
       this.tenVSIC,
       this.maLV,
-      this.tenLinhVuc});
+      this.tenLinhVuc,
+      this.score});
 
   TableDmMotaSanpham.fromJson(Map json) {
     id = json['_id'];
@@ -50,6 +53,7 @@ class TableDmMotaSanpham {
     tenVSIC = json['TenVSIC'];
     maLV = json['MaLV'];
     tenLinhVuc = json['TenLinhVuc'];
+    score = json['Score'];
   }
 
   Map<String, Object?> toJson() {
@@ -63,7 +67,7 @@ class TableDmMotaSanpham {
     data['MaVSIC'] = maVSIC;
     data['TenVSIC'] = tenVSIC;
     data['MaLV'] = maLV;
-    data['TenLinhVuc'] = tenLinhVuc;
+    data['TenLinhVuc'] = tenLinhVuc; 
     return data;
   }
 
@@ -76,49 +80,26 @@ class TableDmMotaSanpham {
     }
     return list;
   }
-}
 
-class TableDmMotaSanphamVirtual { 
-  String? maSanPham;
-  String? tenSanPham;
-  String? tenSanPhamKoDau;
-  String? moTaChiTiet;
-  String? moTaChiTietKoDau; 
-
-  TableDmMotaSanphamVirtual(
-      { 
-      this.maSanPham,
-      this.tenSanPham,
-      this.tenSanPhamKoDau,
-      this.moTaChiTiet,
-      this.moTaChiTietKoDau,
-      });
-
-  TableDmMotaSanphamVirtual.fromJson(Map json) { 
+  TableDmMotaSanpham.fromJsonScore(Map json, List<ProductAiModel> p) {
+    id = json['_id'];
     maSanPham = json['MaSanPham'];
     tenSanPham = json['TenSanPham'];
     tenSanPhamKoDau = json['TenSanPhamKoDau'];
     moTaChiTiet = json['MoTaChiTiet'];
-    moTaChiTietKoDau = json['MoTaChiTietKoDau']; 
-  }
-
-  Map<String, Object?> toJson() {
-    final data = <String, Object?>{};
-    data['MaSanPham'] = maSanPham;
-    data['TenSanPham'] = tenSanPham;
-    data['TenSanPhamKoDau'] = tenSanPhamKoDau;
-    data['MoTaChiTiet'] = moTaChiTiet;
-    data['MoTaChiTietKoDau'] = moTaChiTietKoDau; 
-    return data;
-  }
-
-  static List<TableDmMotaSanphamVirtual> listFromJson(dynamic localities) {
-    List<TableDmMotaSanphamVirtual> list = [];
-    if (localities != null) {
-      for (var item in localities) {
-        list.add(TableDmMotaSanphamVirtual.fromJson(item));
+    moTaChiTietKoDau = json['MoTaChiTietKoDau'];
+    donViTinh = json['DonViTinh'];
+    maVSIC = json['MaVSIC'];
+    tenVSIC = json['TenVSIC'];
+    maLV = json['MaLV'];
+    tenLinhVuc = json['TenLinhVuc'];
+    var sco = 0.0;
+    if (p.isNotEmpty && maSanPham != null) {
+      var sc = p.where((x) => x.code == maSanPham!).firstOrNull;
+      if (sc != null) {
+        sco = sc.score ?? 0.0;
       }
     }
-    return list;
+    score = sco;
   }
 }

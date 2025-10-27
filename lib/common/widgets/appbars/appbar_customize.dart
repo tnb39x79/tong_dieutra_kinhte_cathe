@@ -26,14 +26,14 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function()? backAction;
 
   @override
-  _CustomAppBarState createState() => _CustomAppBarState();
+  CustomAppBarState createState() => CustomAppBarState();
 
   @override
   Size get preferredSize => const Size.fromHeight(
       kToolbarHeight + 10); // kToolbarHeight is a common default AppBar height
 }
 
-class _CustomAppBarState extends State<CustomAppBar> {
+class CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     var currentTitle = (widget.subTitle == null || widget.subTitle == "")
@@ -48,7 +48,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     if (widget.wTitle != null) {}
     return AppBar(
       automaticallyImplyLeading: false,
-      centerTitle: true,
+      centerTitle: false,
       actions: [widget.actions ?? actionDefault()],
       // title: Text(getTitleAppBar(), style: styleMediumBold),
       title: widget.wTitle ?? currentTitle,
@@ -71,4 +71,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
     // return IconButton(onPressed: () {}, icon: const Icon(Icons.location_on));
     return const SizedBox();
   }
+
+  
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -691,10 +692,16 @@ class _VcpaSearchServiceState extends State<VcpaSearchService> {
               .mapResultAIToDmSanPham(
                   res, linhVucItem != null ? linhVucItem!.maLV ?? '' : '',
                   capSo: widget.capSo, maNganhCap5: widget.maNganhCap5 ?? '');
-          var result = vcpaCap5s.map((e) => TableDmMotaSanpham.fromJson(e));
-
+          var result =
+              vcpaCap5s.map((e) => TableDmMotaSanpham.fromJsonScore(e, res));
+         
+          var resultOrd = result.toList();
+          if (result.isNotEmpty) {
+            resultOrd.sort((a, b) => b.score!.compareTo(a.score!));
+          }
           log('SEARCH RESULT: ${result.length}');
-          return result.toList();
+
+          return resultOrd;
         }
       }
     } else if (response.statusCode == ApiConstants.errorDisconnect) {

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:get/get_connect/http/src/status/http_status.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/product/product_ai_model.dart';
@@ -22,6 +21,13 @@ class VcpaVsicAIRepository {
           limitNum: limitNum);
       if (data.statusCode == ApiConstants.success) {
         final bodyString = await data.body;
+
+        if (bodyString.runtimeType.toString() == "_Map<String, dynamic>") {
+          final dataDecoded = bodyString['codes'] as List;
+          var result =
+              dataDecoded.map((e) => ProductAiModel.fromJson(e)).toList();
+          return ResponseModel(statusCode: data.statusCode, body: result);
+        }
         final bodyDecoder = jsonDecode(bodyString);
 
         if (bodyDecoder is List) {

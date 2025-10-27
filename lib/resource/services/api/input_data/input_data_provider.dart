@@ -150,9 +150,9 @@ class InputDataProvider extends GetConnect {
       'Authorization': 'Bearer ${AppPref.accessToken}'
     };
     httpClient.timeout = const Duration(seconds: 15);
-    final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
+  //  final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
     String modelUrl =
-        '$baseUrl${ApiConstants.getModelSpeech}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}';
+        '${ApiConstants.baseUrl}${ApiConstants.getModelSpeech}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}';
     try {
       var response = await get(
         modelUrl,
@@ -184,8 +184,8 @@ class InputDataProvider extends GetConnect {
     if (NetworkService.connectionType == Network.none) {
       return ResponseModel.withDisconnect();
     }
-    final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
-    String modelUrl = '$baseUrl${ApiConstants.getModelFile}?uid=${AppPref.uid}';
+    //final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
+    String modelUrl = '${ApiConstants.baseUrl}${ApiConstants.getModelFile}?uid=${AppPref.uid}';
 
     final res = await get(modelUrl);
     if (res.statusCode == ApiConstants.success) {

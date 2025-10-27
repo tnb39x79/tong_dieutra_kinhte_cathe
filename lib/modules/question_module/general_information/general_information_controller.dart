@@ -265,7 +265,7 @@ class GeneralInformationController extends BaseController {
       return showError(validRes3);
     }
 
-    var phoneValidate = Valid.validateMobile(dienThoaiController.text);
+    var phoneValidate =onValidateSoDT (dienThoaiController.text,'');
     if (phoneValidate != null && phoneValidate != '') {
       return showError(phoneValidate);
     }
@@ -500,6 +500,14 @@ class GeneralInformationController extends BaseController {
   }
 
   String? onValidateSoDT(String? value, String fieldName) {
+    if (dienThoaiController.text.isEmpty || dienThoaiController.text == "") {
+      return 'Vui lòng nhập số điện thoại';
+    }
+    if (dienThoaiController.text.length == 1) {
+      if (dienThoaiController.text == '0') {
+        return null;
+      }
+    }
     var phoneValidate = Valid.validateMobile(dienThoaiController.text);
     if (phoneValidate != null && phoneValidate != '') {
       return phoneValidate;

@@ -6,6 +6,8 @@ class DmMotaSanphamModel {
   String? moTaChiTiet;
   String? moTaChiTietKoDau;
   String? donViTinh;
+  String? maVSIC;
+  String? tenVSIC;
   String? maLV;
   String? tenLinhVuc;
 
@@ -16,6 +18,8 @@ class DmMotaSanphamModel {
       this.moTaChiTiet,
       this.moTaChiTietKoDau,
       this.donViTinh,
+      this.maVSIC,
+      this.tenVSIC,
       this.maLV,
       this.tenLinhVuc});
 
@@ -26,6 +30,8 @@ class DmMotaSanphamModel {
     moTaChiTiet = json['MoTaChiTiet'];
     moTaChiTietKoDau = json['MoTaChiTietKoDau'];
     donViTinh = json['DonViTinh'];
+    maVSIC = json['MaVSIC'];
+    tenVSIC = json['TenVSIC'];
     maLV = json['MaLV'];
     tenLinhVuc = json['TenLinhVuc'];
   }
@@ -38,8 +44,11 @@ class DmMotaSanphamModel {
     map['MoTaChiTiet'] = moTaChiTiet;
     map['MoTaChiTietKoDau'] = moTaChiTietKoDau;
     map['DonViTinh'] = donViTinh;
+    map['MaVSIC'] = maVSIC;
+    map['TenVSIC'] = tenVSIC;
     map['MaLV'] = maLV;
     map['TenLinhVuc'] = tenLinhVuc;
+
     return map;
   }
 

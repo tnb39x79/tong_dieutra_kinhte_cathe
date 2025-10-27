@@ -1,17 +1,20 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/vcpa_offline_ai/services/industry_code_evaluator_v2.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/api/download_task/download_task_service.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/api/input_data/input_data_repository.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/network_service/network_service.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart'; 
 
-import '/common/common.dart';
-import '/modules/modules.dart';
+import '/common/common.dart'; 
+import '/modules/modules.dart'; 
+import '/resource/services/network_service/network_service.dart';
 
 /// Model types enum for AI downloads
 enum ModelType { suggestions, speechToText }
@@ -25,6 +28,7 @@ enum FileType { suggestionOnnx, sttZip, genericOnnx, genericZip, unknown }
 /// - AI Mã Ngành (suggestions) - for industry code suggestions
 /// - AI Nhận Dạng Giọng Nói (speech to text) - for Vietnamese STT functionality
 class EnhancedAiDownloadController extends BaseController {
+   
   final InputDataRepository dataRepository;
 
   EnhancedAiDownloadController(this.dataRepository);
@@ -68,13 +72,17 @@ class EnhancedAiDownloadController extends BaseController {
     ModelType.speechToText: null,
   };
 
+  // Store dynamic filenames from API response
+  String _vcpaFileName = 'suggestions.onnx'; // Default fallback
+  String _sttFileName = 'stt_model.zip'; // Default fallback
+
   // Model information
   final Map<ModelType, Map<String, dynamic>> _modelInfo = {
     ModelType.suggestions: {
       'title': 'AI Mã Ngành',
       'description': 'Mô hình AI hỗ trợ gợi ý mã ngành nghề kinh doanh',
       'icon': Icons.lightbulb_outline,
-      'size': '~130MB',
+      'size': '~132MB',
       'files': ['suggestions.onnx'],
     },
     ModelType.speechToText: {
@@ -95,6 +103,16 @@ class EnhancedAiDownloadController extends BaseController {
     ModelType.suggestions: '',
     ModelType.speechToText: '',
   };
+
+  // Store server file URLs and credentials for Link 2 (reactive)
+  final Map<ModelType, RxString> _serverFileUrls = {
+    ModelType.suggestions: ''.obs,
+    ModelType.speechToText: ''.obs,
+  };
+
+  // Store server file credentials (reactive)
+  final RxString _serverFileNameLogin = ''.obs;
+  final RxString _serverFilePassLogin = ''.obs;
 
   @override
   void onInit() async {
@@ -243,8 +261,9 @@ class EnhancedAiDownloadController extends BaseController {
     }
   }
 
-  /// Download a specific model type with optional URL
-  Future<void> downloadModel(ModelType type, {String? downloadUrl}) async {
+  /// Download a specific model type with optional URL and link type
+  Future<void> downloadModel(ModelType type,
+      {String? downloadUrl, int linkType = 1}) async {
     debugPrint('=== Download Model Debug Info ===');
     debugPrint('Model Type: $type');
     debugPrint('Provided URL: $downloadUrl');
@@ -265,9 +284,16 @@ class EnhancedAiDownloadController extends BaseController {
       return;
     }
 
-    // Use provided URL or fall back to stored URL
-    final finalDownloadUrl = downloadUrl ?? _modelDownloadUrls[type];
-    debugPrint('Final URL to use: $finalDownloadUrl');
+    // Use provided URL or fall back to stored URL based on link type
+    String? finalDownloadUrl;
+    if (downloadUrl != null) {
+      finalDownloadUrl = downloadUrl;
+    } else if (linkType == 2) {
+      finalDownloadUrl = _serverFileUrls[type]?.value;
+    } else {
+      finalDownloadUrl = _modelDownloadUrls[type];
+    }
+    debugPrint('Final URL to use: $finalDownloadUrl (Link Type: $linkType)');
 
     if (finalDownloadUrl == null || finalDownloadUrl.isEmpty) {
       debugPrint('ERROR: Download URL is empty or null');
@@ -281,7 +307,7 @@ class EnhancedAiDownloadController extends BaseController {
       _downloadProgress[type]?.value = 0.0;
       _downloadStatus[type]?.value = 'Đang chuẩn bị tải xuống...';
 
-      await _downloadModelFromUrl(type, finalDownloadUrl);
+      await _downloadModelFromUrl(type, finalDownloadUrl, linkType: linkType);
 
       // Mark as downloaded and set final status
       _isDownloaded[type]?.value = true;
@@ -291,6 +317,11 @@ class EnhancedAiDownloadController extends BaseController {
       await Future.delayed(
           const Duration(milliseconds: 500)); // Small delay for UI processing
       await _checkExistingModels();
+
+      // Reload IndustryCodeEvaluator if suggestion model was downloaded
+      if (type == ModelType.suggestions) {
+        await _reloadSuggestionModel();
+      }
     } catch (e) {
       _downloadStatus[type]?.value = 'Lỗi: ${e.toString()}';
       debugPrint('Error downloading model $type: $e');
@@ -302,13 +333,15 @@ class EnhancedAiDownloadController extends BaseController {
   }
 
   /// Re-download a specific model type
-  Future<void> redownloadModel(ModelType type, {String? downloadUrl}) async {
-    await downloadModel(type, downloadUrl: downloadUrl);
+  Future<void> redownloadModel(ModelType type,
+      {String? downloadUrl, int linkType = 1}) async {
+    await downloadModel(type, downloadUrl: downloadUrl, linkType: linkType);
   }
 
   /// Cancel download for a specific model type
   Future<void> cancelDownload(ModelType type) async {
     final activeTask = _activeDownloadTasks[type];
+
     if (activeTask == null) {
       debugPrint('No active download task found for model type: $type');
       // Still clean up cache file if it exists
@@ -318,15 +351,15 @@ class EnhancedAiDownloadController extends BaseController {
 
     try {
       debugPrint('Cancelling download for model type: $type');
+
+      // Cancel HTTP download if active
       await activeTask.cancel();
+      _activeDownloadTasks[type] = null;
 
       // Update UI state
       _isDownloading[type]?.value = false;
       _downloadProgress[type]?.value = 0.0;
       _downloadStatus[type]?.value = 'Đã hủy tải xuống';
-
-      // Clear the active task reference
-      _activeDownloadTasks[type] = null;
 
       // Clean up cache file
       await _cleanupCacheFile(type);
@@ -358,7 +391,8 @@ class EnhancedAiDownloadController extends BaseController {
   }
 
   /// Download model from URL with cache-based strategy
-  Future<void> _downloadModelFromUrl(ModelType type, String downloadUrl) async {
+  Future<void> _downloadModelFromUrl(ModelType type, String downloadUrl,
+      {int linkType = 1}) async {
     try {
       // Use predefined filenames based on model type
       final fileName = _getPredefinedFileName(type);
@@ -372,8 +406,9 @@ class EnhancedAiDownloadController extends BaseController {
       final cacheDir = await _createCacheDirectory();
 
       // Download file to cache first
-      final cacheFile =
-          await _downloadFileToCache(downloadUrl, fileName, cacheDir, type);
+      final cacheFile = await _downloadFileToCache(
+          downloadUrl, fileName, cacheDir, type,
+          linkType: linkType);
 
       // Create final models directory
       final modelsDir = await _createModelsDirectory();
@@ -391,18 +426,20 @@ class EnhancedAiDownloadController extends BaseController {
   }
 
   /// Get predefined filename based on model type
+  /// Uses dynamic filenames from API response
   String _getPredefinedFileName(ModelType type) {
     switch (type) {
       case ModelType.suggestions:
-        return 'suggestions.onnx';
+        return _vcpaFileName;
       case ModelType.speechToText:
-        return 'stt_model.zip'; // STT models are typically ZIP files
+        return _sttFileName;
     }
   }
 
   /// Download file to cache directory with progress tracking
   Future<File> _downloadFileToCache(
-      String url, String fileName, String cacheDir, ModelType type) async {
+      String url, String fileName, String cacheDir, ModelType type,
+      {int linkType = 1}) async {
     final cacheFilePath = '$cacheDir/$fileName';
     final cacheFile = File(cacheFilePath);
 
@@ -416,10 +453,32 @@ class EnhancedAiDownloadController extends BaseController {
 
     _downloadStatus[type]?.value = 'Đang tải xuống $fileName...';
 
+    // Download using HTTP/HTTPS protocol
+    return await _downloadFileFromHttp(url, cacheFile, type,
+        linkType: linkType);
+  }
+
+  /// Download file from HTTP/HTTPS URL
+  Future<File> _downloadFileFromHttp(String url, File cacheFile, ModelType type,
+      {int linkType = 1}) async {
+    // Prepare headers for authentication if using Link 2 (server file)
+    Map<String, String> headers = {};
+    if (linkType == 2 &&
+        _serverFileNameLogin.value.isNotEmpty &&
+        _serverFilePassLogin.value.isNotEmpty) {
+      // Add HTTP Basic Authentication for server file downloads
+      final credentials =
+          '${_serverFileNameLogin.value}:${_serverFilePassLogin.value}';
+      final encodedCredentials = base64Encode(utf8.encode(credentials));
+      headers['Authorization'] = 'Basic $encodedCredentials';
+      debugPrint('Added Basic Auth header for server file download');
+    }
+
     // Use DownloadTaskService for download with progress tracking
     final downloadTask = await DownloadTaskService.download(
       Uri.parse(url),
       file: cacheFile,
+      headers: headers,
       deleteOnError: true,
     );
 
@@ -441,8 +500,11 @@ class EnhancedAiDownloadController extends BaseController {
             final totalBytesMb = totalBytes ~/ 1024 ~/ 1024;
             _downloadStatus[type]?.value =
                 "Đang tải xuống...\n${NumberFormat('###,###').format(bytesReceivedMb)}/${NumberFormat('###,###').format(totalBytesMb)} MB";
-          } else {
+          } else if (bytesReceived > 0) {
             // Total bytes not known yet, show indeterminate progress
+            _downloadStatus[type]?.value =
+                'Đang tải xuống... (${NumberFormat('###,###').format(bytesReceived ~/ 1024 ~/ 1024)} MB)';
+          } else {
             _downloadStatus[type]?.value = 'Đang tải xuống...';
           }
           break;
@@ -540,10 +602,43 @@ class EnhancedAiDownloadController extends BaseController {
     return FileType.unknown;
   }
 
+  /// Reload IndustryCodeEvaluator service after downloading suggestion model
+  Future<void> _reloadSuggestionModel() async {
+    try {
+      debugPrint('Reloading IndustryCodeEvaluator after model download...');
+      _downloadStatus[ModelType.suggestions]?.value =
+          'Đang tải lại mô hình AI...';
+
+      // Get the service if it exists
+      if (Get.isRegistered<IndustryCodeEvaluatorV2>()) {
+        final evaluator = Get.find<IndustryCodeEvaluatorV2>();
+
+        // Reset the service to allow re-initialization
+        evaluator.reset();
+
+        // Re-initialize with new model
+        await evaluator.initialize();
+
+        debugPrint('IndustryCodeEvaluator reloaded successfully');
+        _downloadStatus[ModelType.suggestions]?.value = 'Tải xuống hoàn tất';
+      } else {
+        debugPrint(
+            'IndustryCodeEvaluator service not registered, skipping reload');
+        _downloadStatus[ModelType.suggestions]?.value = 'Tải xuống hoàn tất';
+      }
+    } catch (e) {
+      debugPrint('Error reloading IndustryCodeEvaluator: $e');
+      _downloadStatus[ModelType.suggestions]?.value =
+          'Tải xuống hoàn tất (lỗi khi tải lại mô hình)';
+    }
+  }
+
   /// Process cached suggestion ONNX file
+  /// Uses dynamic filename from API response
   Future<void> _processCachedSuggestionFile(
       File cacheFile, String baseDir, ModelType type) async {
-    final targetPath = '$baseDir/suggestions/model_v3.onnx';
+    // Use the dynamic filename from API response
+    final targetPath = '$baseDir/suggestions/$_vcpaFileName';
     await _moveFromCacheToDestination(cacheFile, targetPath);
 
     // Store relative path for iOS compatibility
@@ -605,6 +700,7 @@ class EnhancedAiDownloadController extends BaseController {
   }
 
   /// Process cached generic ONNX file
+  /// Uses dynamic filename from API response
   Future<void> _processCachedGenericOnnxFile(
       File cacheFile, ModelType modelType, String baseDir) async {
     String targetDir;
@@ -613,7 +709,7 @@ class EnhancedAiDownloadController extends BaseController {
     switch (modelType) {
       case ModelType.suggestions:
         targetDir = '$baseDir/suggestions';
-        targetFileName = 'model_v3.onnx';
+        targetFileName = _vcpaFileName; // Use dynamic filename from API
         break;
       default:
         throw Exception(
@@ -944,6 +1040,21 @@ class EnhancedAiDownloadController extends BaseController {
     return _modelDownloadUrls[type];
   }
 
+  /// Get server file URL for a specific model type (Link 2)
+  String? getServerFileUrl(ModelType type) {
+    return _serverFileUrls[type]?.value;
+  }
+
+  /// Get reactive server file URL for a specific model type (Link 2)
+  RxString getServerFileUrlRx(ModelType type) {
+    return _serverFileUrls[type]!;
+  }
+
+  /// Get server file credentials
+  String get serverFileNameLogin => _serverFileNameLogin.value;
+
+  String get serverFilePassLogin => _serverFilePassLogin.value;
+
   /// Get all model types
   List<ModelType> getAllModelTypes() {
     return ModelType.values;
@@ -1062,36 +1173,62 @@ class EnhancedAiDownloadController extends BaseController {
   Future<void> _getModelDownloadConfig() async {
     debugPrint('=== Getting Model Download Config ===');
     try {
-      final suggestionsResponse = await dataRepository.getModelVersion();
-      // final speechToTextResponse = await dataRepository.getModelSpeech();
-      final suggestions = suggestionsResponse.objectData;
-      // final speechToText = speechToTextResponse.body;
-      debugPrint('modelVersion: $suggestions');
-      // debugPrint('speechToText: $speechToText');
-      final suggestionsUrl = suggestions?.modelFileUrl;
-      // final speechToTextUrl = speechToText?.modelFileUrl;
+      // Call new unified API endpoint
+      final modelFileResponse =
+          await dataRepository.getModelFile(AppPref.uid ?? '');
+      final modelFile = modelFileResponse.body;
 
-      // if (suggestionsUrl == null || speechToTextUrl == null) {
-      //   debugPrint(
-      //       'ERROR: Suggestions or STT URL is null in _getModelDownloadConfig');
-      //   debugPrint('Suggestions URL: $suggestionsUrl');
-      //   debugPrint('STT URL: $speechToTextUrl');
-      //   return;
-      // }
-      if (suggestionsUrl == null) {
-        debugPrint(
-            'ERROR: Suggestions or STT URL is null in _getModelDownloadConfig');
-        debugPrint('Suggestions URL: $suggestionsUrl');
-        //  debugPrint('STT URL: $speechToTextUrl');
+      if (modelFile == null) {
+        debugPrint('ERROR: Model file response is null');
         return;
       }
-      _modelDownloadUrls[ModelType.suggestions] = suggestionsUrl;
-      //  _modelDownloadUrls[ModelType.speechToText] = speechToTextUrl;
+
+      debugPrint('Model file response: $modelFile');
+
+      // Extract URLs and filenames from response
+      final vcpaLink01 = modelFile.fileUrlVCPALink01 ?? '';
+      final vcpaLink02 = modelFile.fileUrlVCPALink02 ?? '';
+      final sttLink01 = modelFile.fileUrlSTTLink01 ?? '';
+      final sttLink02 = modelFile.fileUrlSTTLink02 ?? '';
+
+      // Store dynamic filenames from API
+      if (modelFile.vcpaFileName != null &&
+          modelFile.vcpaFileName!.isNotEmpty) {
+        _vcpaFileName = modelFile.vcpaFileName!;
+        debugPrint('VCPA filename from API: $_vcpaFileName');
+      }
+      if (modelFile.sttFileName != null && modelFile.sttFileName!.isNotEmpty) {
+        _sttFileName = modelFile.sttFileName!;
+        debugPrint('STT filename from API: $_sttFileName');
+      }
+
+      // Validate URLs
+      if (vcpaLink01.isEmpty || sttLink01.isEmpty) {
+        debugPrint('ERROR: Required URLs are empty in _getModelDownloadConfig');
+        debugPrint('VCPA Link 01: $vcpaLink01');
+        debugPrint('STT Link 01: $sttLink01');
+        return;
+      }
+
+      // Set Link 1 URLs (primary download links)
+      _modelDownloadUrls[ModelType.suggestions] = vcpaLink01;
+      _modelDownloadUrls[ModelType.speechToText] = sttLink01;
+
+      // Set Link 2 URLs (backup download links)
+      _serverFileUrls[ModelType.suggestions]?.value = vcpaLink02;
+      _serverFileUrls[ModelType.speechToText]?.value = sttLink02;
 
       debugPrint('SUCCESS: URLs set successfully');
       debugPrint(
-          'Suggestions URL: ${_modelDownloadUrls[ModelType.suggestions]}');
-      debugPrint('STT URL: ${_modelDownloadUrls[ModelType.speechToText]}');
+          'Link 1 - VCPA URL: ${_modelDownloadUrls[ModelType.suggestions]}');
+      debugPrint(
+          'Link 1 - STT URL: ${_modelDownloadUrls[ModelType.speechToText]}');
+      debugPrint(
+          'Link 2 - VCPA URL: ${_serverFileUrls[ModelType.suggestions]?.value}');
+      debugPrint(
+          'Link 2 - STT URL: ${_serverFileUrls[ModelType.speechToText]?.value}');
+      debugPrint('VCPA Filename: $_vcpaFileName');
+      debugPrint('STT Filename: $_sttFileName');
     } catch (e) {
       debugPrint('ERROR in _getModelDownloadConfig: $e');
     }
@@ -1112,33 +1249,33 @@ class EnhancedAiDownloadController extends BaseController {
       }
 
       // Migrate STT paths
-      // final encoderPath = AppPref.dataModelSTTEncoderPath;
-      // if (encoderPath.isNotEmpty && encoderPath.startsWith('/')) {
-      //   final relativePath = _getRelativePath(encoderPath);
-      //   AppPref.dataModelSTTEncoderPath = relativePath;
-      //   debugPrint('Migrated encoder path: $encoderPath -> $relativePath');
-      // }
+      final encoderPath = AppPref.dataModelSTTEncoderPath;
+      if (encoderPath.isNotEmpty && encoderPath.startsWith('/')) {
+        final relativePath = _getRelativePath(encoderPath);
+        AppPref.dataModelSTTEncoderPath = relativePath;
+        debugPrint('Migrated encoder path: $encoderPath -> $relativePath');
+      }
 
-      // final decoderPath = AppPref.dataModelSTTDecoderPath;
-      // if (decoderPath.isNotEmpty && decoderPath.startsWith('/')) {
-      //   final relativePath = _getRelativePath(decoderPath);
-      //   AppPref.dataModelSTTDecoderPath = relativePath;
-      //   debugPrint('Migrated decoder path: $decoderPath -> $relativePath');
-      // }
+      final decoderPath = AppPref.dataModelSTTDecoderPath;
+      if (decoderPath.isNotEmpty && decoderPath.startsWith('/')) {
+        final relativePath = _getRelativePath(decoderPath);
+        AppPref.dataModelSTTDecoderPath = relativePath;
+        debugPrint('Migrated decoder path: $decoderPath -> $relativePath');
+      }
 
-      // final joinerPath = AppPref.dataModelSTTJoinerPath;
-      // if (joinerPath.isNotEmpty && joinerPath.startsWith('/')) {
-      //   final relativePath = _getRelativePath(joinerPath);
-      //   AppPref.dataModelSTTJoinerPath = relativePath;
-      //   debugPrint('Migrated joiner path: $joinerPath -> $relativePath');
-      // }
+      final joinerPath = AppPref.dataModelSTTJoinerPath;
+      if (joinerPath.isNotEmpty && joinerPath.startsWith('/')) {
+        final relativePath = _getRelativePath(joinerPath);
+        AppPref.dataModelSTTJoinerPath = relativePath;
+        debugPrint('Migrated joiner path: $joinerPath -> $relativePath');
+      }
 
-      // final tokensPath = AppPref.dataModelSTTTokensPath;
-      // if (tokensPath.isNotEmpty && tokensPath.startsWith('/')) {
-      //   final relativePath = _getRelativePath(tokensPath);
-      //   AppPref.dataModelSTTTokensPath = relativePath;
-      //   debugPrint('Migrated tokens path: $tokensPath -> $relativePath');
-      // }
+      final tokensPath = AppPref.dataModelSTTTokensPath;
+      if (tokensPath.isNotEmpty && tokensPath.startsWith('/')) {
+        final relativePath = _getRelativePath(tokensPath);
+        AppPref.dataModelSTTTokensPath = relativePath;
+        debugPrint('Migrated tokens path: $tokensPath -> $relativePath');
+      }
 
       debugPrint('=== Migration Complete ===');
     } catch (e) {
@@ -1154,27 +1291,27 @@ class EnhancedAiDownloadController extends BaseController {
     await _checkExistingModels();
     loadingSubject.add(false);
   }
-
+  
   @override
   void onDetached() {
     // TODO: implement onDetached
   }
-
+  
   @override
   void onHidden() {
     // TODO: implement onHidden
   }
-
+  
   @override
   void onInactive() {
     // TODO: implement onInactive
   }
-
+  
   @override
   void onPaused() {
     // TODO: implement onPaused
   }
-
+  
   @override
   void onResumed() {
     // TODO: implement onResumed

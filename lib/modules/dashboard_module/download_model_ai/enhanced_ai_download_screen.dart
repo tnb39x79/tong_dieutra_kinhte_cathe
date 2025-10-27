@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/appbars/appbar_header.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/dialog_widget.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/loadings/loading_full_screen.dart';
+import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/enhanced_ai_download_controller.dart';
+import 'package:gov_statistics_investigation_economic/modules/dashboard_module/download_model_ai/widgets/ai_model_section_widget.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/network_service/network_service.dart';
 
 import '/config/constants/app_colors.dart';
 import '/config/constants/app_styles.dart';
-import '/config/constants/app_values.dart';
-import 'enhanced_ai_download_controller.dart';
-import 'widgets/ai_model_section_widget.dart';
+import '/config/constants/app_values.dart';  
 
 /// Enhanced AI Download Screen
 ///
@@ -44,9 +46,15 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
   Widget _buildBody() {
     return Column(
       children: [
-        _buildHeader(),
         Expanded(
-          child: _buildModelsList(),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildHeader(),
+                _buildModelsList(),
+              ],
+            ),
+          ),
         ),
         _buildFooter(),
       ],
@@ -61,8 +69,8 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            primaryColor.withOpacity(0.1),
-            primaryLightColor.withOpacity(0.05),
+            primaryColor.withValues(alpha: 0.1),
+            primaryLightColor.withValues(alpha: 0.05),
           ],
         ),
       ),
@@ -113,18 +121,15 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
       // Access reactive variables directly
       final isDownloading1 =
           controller.isDownloadingRx(ModelType.suggestions).value;
-      // final isDownloading2 =
-      //     controller.isDownloadingRx(ModelType.speechToText).value;
-      // final isAnyDownloading =
-      //     isDownloading1 || isDownloading2;
-      final isAnyDownloading = isDownloading1; //|| isDownloading2;
+      final isDownloading2 =
+          controller.isDownloadingRx(ModelType.speechToText).value;
+      final isAnyDownloading = isDownloading1 || isDownloading2;
 
       final progress1 =
           controller.downloadProgressRx(ModelType.suggestions).value;
-      // final progress2 =
-      //     controller.downloadProgressRx(ModelType.speechToText).value;
-      // final overallProgress = (progress1 + progress2) / 2;
-      final overallProgress = (progress1);
+      final progress2 =
+          controller.downloadProgressRx(ModelType.speechToText).value;
+      final overallProgress = (progress1 + progress2) / 2;
 
       if (!isAnyDownloading && overallProgress == 0) {
         return const SizedBox.shrink();
@@ -156,7 +161,7 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
             const SizedBox(height: 8),
             LinearProgressIndicator(
               value: overallProgress / 100,
-              backgroundColor: greyColor.withOpacity(0.2),
+              backgroundColor: greyColor.withValues(alpha: 0.2),
               valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
               minHeight: 4,
             ),
@@ -168,10 +173,12 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
 
   Widget _buildModelsList() {
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: AppValues.padding),
-      itemCount: controller.getAllModelTypes().length - 1,
+      itemCount: controller.getAllModelTypes().length,
       itemBuilder: (context, index) {
-        final modelType = controller.getAllModelTypes()[0];
+        final modelType = controller.getAllModelTypes()[index];
         return _buildModelSection(modelType);
       },
     );
@@ -185,6 +192,10 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
       final isDownloaded = controller.isDownloadedRx(modelType).value;
       final downloadStatus = controller.downloadStatusRx(modelType).value;
 
+      // Check if Link 2 is available for this model type (reactive)
+      final hasLink2 =
+          controller.getServerFileUrlRx(modelType).value.isNotEmpty;
+
       return AiModelSectionWidget(
         title: controller.getModelTitle(modelType),
         description: controller.getModelDescription(modelType),
@@ -194,11 +205,17 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
         isDownloading: isDownloading,
         isDownloaded: isDownloaded,
         downloadStatus: downloadStatus,
-        onDownload: () => _handleDownload(modelType),
-        onRedownload: () => _handleRedownload(modelType),
+        onDownload: () => _handleDownload(modelType, linkType: 1),
+        onRedownload: () => _handleRedownload(modelType, linkType: 1),
         onCancel: isDownloading && controller.canCancelDownload(modelType)
             ? () => _handleCancel(modelType)
             : null,
+        hasLink2: hasLink2,
+        onDownloadLink2:
+            hasLink2 ? () => _handleDownload(modelType, linkType: 2) : null,
+        onRedownloadLink2:
+            hasLink2 ? () => _handleRedownload(modelType, linkType: 2) : null,
+        modelType: modelType,
       );
     });
   }
@@ -218,7 +235,6 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
           _buildNetworkStatus(),
           const SizedBox(height: 8),
           _buildActionButtons(),
-          const SizedBox(height: 16),
         ],
       ),
     );
@@ -238,8 +254,8 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
         ),
         decoration: BoxDecoration(
           color: isConnected
-              ? successColor.withOpacity(0.1)
-              : errorColor.withOpacity(0.1),
+              ? successColor.withValues(alpha: 0.1)
+              : errorColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppValues.borderLv1),
         ),
         child: Row(
@@ -272,14 +288,15 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
               Icons.home,
               color: primaryColor,
             ),
-            label: Text('Trang chủ',
+            label: Text('Về trang chính',
                 style: styleSmall.copyWith(color: primaryColor)),
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(width: 1.0, color: primaryLightColor),
+              side: const BorderSide(color: greyColor),
+              foregroundColor: greyColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppValues.borderLv5),
+                borderRadius: BorderRadius.circular(AppValues.borderLv1),
               ),
-             // padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
         ),
@@ -303,11 +320,10 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
-                side: const BorderSide(width: 1.0, color: primaryLightColor),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
-                )
-                //padding: const EdgeInsets.symmetric(vertical: 12),
+                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
               ),
             );
           }),
@@ -316,27 +332,28 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
     );
   }
 
-  void _handleDownload(ModelType modelType) {
-    controller.downloadModel(modelType);
+  void _handleDownload(ModelType modelType, {int linkType = 1}) {
+    controller.downloadModel(modelType, linkType: linkType);
   }
 
-  void _handleRedownload(ModelType modelType) {
-    _showRedownloadConfirmation(modelType);
+  void _handleRedownload(ModelType modelType, {int linkType = 1}) {
+    _showRedownloadConfirmation(modelType, linkType: linkType);
   }
 
   void _handleCancel(ModelType modelType) {
     _showCancelConfirmation(modelType);
   }
 
-  void _showRedownloadConfirmation(ModelType modelType) {
+  void _showRedownloadConfirmation(ModelType modelType, {int linkType = 1}) {
+    final linkText = linkType == 2 ? 'Link 2 (Server File)' : 'Link 1';
     Get.dialog(
       DialogWidget(
         title: 'Xác nhận tải lại',
         content:
-            'Bạn có muốn tải lại mô hình ${controller.getModelTitle(modelType)}? Dữ liệu hiện tại sẽ bị ghi đè.',
+            'Bạn có muốn tải lại mô hình ${controller.getModelTitle(modelType)} từ $linkText? Dữ liệu hiện tại sẽ bị ghi đè.',
         onPressedPositive: () {
           Get.back();
-          controller.redownloadModel(modelType);
+          controller.redownloadModel(modelType, linkType: linkType);
         },
         onPressedNegative: () => Get.back(),
         confirmText: 'Tải lại',
@@ -364,7 +381,7 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
     for (final modelType in controller.getAllModelTypes()) {
       if (!controller.isDownloaded(modelType) &&
           !controller.isDownloading(modelType)) {
-        controller.downloadModel(modelType);
+        controller.downloadModel(modelType, linkType: 1); // Default to Link 1
       }
     }
   }

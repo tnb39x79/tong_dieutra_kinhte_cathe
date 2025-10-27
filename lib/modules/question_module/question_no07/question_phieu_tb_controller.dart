@@ -1017,6 +1017,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (warningNganhBangKeResult == 'cancel') {
         return;
       }
+      // else{
+      //    await updateNganhPhieuMauKoBangKe();
+      // }
     }
     if (currentScreenNo.value == 2) {
       var res = await kiemTraCau4T();
@@ -1176,6 +1179,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (warningNganhBangKeResult == 'cancel') {
         return;
       }
+      // else if (warningNganhBangKeResult == 'accept') {
+      //   await updateNganhPhieuMauKoBangKe();
+      // }
     }
     if (currentScreenNo.value == 2) {
       var res = await kiemTraCau4T();
@@ -2608,6 +2614,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                   Get.back(result: 'cancel');
                 },
                 onPressedPositive: () async {
+                  await updateNganhPhieuMauKoBangKe();
                   Get.back(result: 'accept');
                 },
                 title: 'Cảnh báo',
@@ -2635,6 +2642,19 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 .tblBkCoSoSXKDNganhSanPham.value.maNganh)
         .toList();
     return maVcpaCap5;
+  }
+
+  ///Update null khi ngành ở câu 5.1 không có ngành ở bảng kê
+  ///Nếu accept cảnh báo warningMaNganhVoiBangKe thì
+  ///1. Update null các trường liên quan tới phiếu mẫu.
+  ///Vận tải mẫu:
+  ///Lưu trú mẫu:
+  ///Phiếu mẫu 7.5M:
+  Future updateNganhPhieuMauKoBangKe() async {
+    phieuMauTBProvider.updateNullValues(currentIdCoSo!, fieldNamePhieuMau);
+    phieuNganhVTProvider.updateNullValues(currentIdCoSo!, fieldNamesVTHKHHMau);
+    phieuNganhLTProvider.updateNullValues(
+        currentIdCoSo!, fieldNamesPhhieu7LTMau);
   }
 
   ///Kiểm tra các ngành theo mã sản phẩm
@@ -3060,10 +3080,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
       }
       if (maCauHoi == colPhieuMauTBA1_2) {
-        if (value != 1) {
-          updateAnswerToDB(table, colPhieuMauTBA4_3, null);
-          updateAnswerTblPhieuMau(colPhieuMauTBA4_3, null, table);
-        }
+        // if (value != 1) {
+        //   updateAnswerToDB(table, colPhieuMauTBA4_3, null);
+        //   updateAnswerTblPhieuMau(colPhieuMauTBA4_3, null, table);
+        // }
       }
       if (maCauHoi == colPhieuMauTBA1_3_5 &&
           question.maPhieu == AppDefine.maPhieuTB) {
@@ -3157,6 +3177,46 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } catch (e) {
       printError(info: e.toString());
+    }
+  }
+
+  onValidateA1_3_5TBNext(QuestionCommonModel question, String table,
+      String? maCauHoi, String? fieldName, value, dmItem) {
+    if (maCauHoi == colPhieuMauTBA1_3_5) {
+      if (a1_3_5TBMaTDCM.contains(value)) {
+        //Nam sinh
+        var a1_3_2Value = answerTblPhieuMau[colPhieuMauTBA1_3_2];
+        if (a1_3_2Value != null) {
+          if (value == 6) {
+            if (a1_3_2Value > 2008) {
+              updateAnswerToDB(table, colPhieuMauTBA1_3_5, null);
+              updateAnswerTblPhieuMau(colPhieuMauTBA1_3_5, null, table);
+              return 'Dưới 17 tuổi mà đã tốt nghiệp cao đẳng.';
+            }
+          }
+          if (value == 7) {
+            if (a1_3_2Value > 2006) {
+              updateAnswerToDB(table, colPhieuMauTBA1_3_5, null);
+              updateAnswerTblPhieuMau(colPhieuMauTBA1_3_5, null, table);
+              return 'Tuổi dưới 19 mà tốt nghiệp đại học.';
+            }
+          }
+          if (value == 8) {
+            if (a1_3_2Value > 2005) {
+              updateAnswerToDB(table, colPhieuMauTBA1_3_5, null);
+              updateAnswerTblPhieuMau(colPhieuMauTBA1_3_5, null, table);
+              return 'Dưới 20 tuổi mà đã tốt nghiệp thạc sỹ.';
+            }
+          }
+          if (value == 9 || value == 10) {
+            if (a1_3_2Value > 2002) {
+              updateAnswerToDB(table, colPhieuMauTBA1_3_5, null);
+              updateAnswerTblPhieuMau(colPhieuMauTBA1_3_5, null, table);
+              return 'Dưới 23 tuổi mà tốt nghiệp trình độ tiến sỹ hoặc sau tiến sỹ';
+            }
+          }
+        }
+      }
     }
   }
 
@@ -3529,9 +3589,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (fieldName != null &&
           fieldName != '' &&
           fieldName == colPhieuMauTBA1_3_5) {
-        var a1_2Value = tblPhieuCT[colPhieuMauTBA1_3_5];
-        if (validateEmptyString(a1_2Value.toString())) {
+        var a1_3_5Value = tblPhieuCT[colPhieuMauTBA1_3_5];
+        if (validateEmptyString(a1_3_5Value.toString())) {
           return 'Vui lòng chọn Trình độ chuyên môn';
+        }
+        var validRes = onValidateA1_3_5TBNext(question, question.bangDuLieu!,
+            question.maCauHoi!, fieldName, a1_3_5Value, null);
+        if (validRes != null && validRes != '') {
+          return validRes;
         }
         return null;
       }
@@ -6039,39 +6104,39 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a1_2Value = tblPhieuCT[colPhieuMauTBA1_2] != null
           ? tblPhieuCT[colPhieuMauTBA1_2].toString()
           : '';
-      if (!validateEmptyString(a1_2Value) && a1_2Value == '1') {
-        if (validateEmptyString(inputValue)) {
-          return 'Vui lòng nhập giá trị.';
-        }
-        inputValue = inputValue!.replaceAll(' ', '');
-        num intputVal =
-            inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
-        if (intputVal < minVal) {
-          return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
-        } else if (intputVal > maxVal) {
-          return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
-        }
-
-        var a3_2Value = tblPhieuCT[colPhieuMauTBA3_2] != null
-            ? AppUtils.convertStringToDouble(
-                tblPhieuCT[colPhieuMauTBA3_2].toString())
-            : null;
-        var a4_3Value = tblPhieuCT[colPhieuMauTBA4_3] != null
-            ? AppUtils.convertStringToDouble(
-                tblPhieuCT[colPhieuMauTBA4_3].toString())
-            : null;
-        if (!validateEmptyString(a4_3Value.toString()) &&
-            !validateEmptyString(a3_2Value.toString()) &&
-            a4_3Value > a3_2Value) {
-          var a4_3ValueText = toCurrencyString(a4_3Value.toString(),
-              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-              mantissaLength: 2);
-          var a3_2ValueText = toCurrencyString(a3_2Value.toString(),
-              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-              mantissaLength: 2);
-          return 'Số tiền thuê địa điểm SXKD tại C4.3 ($a4_3ValueText) > Số tiền vốn bỏ ra để SXKD ($a3_2ValueText)? (Số tiền thuê địa điểm phải được tính vào số tiền vốn)';
-        }
+      // if (!validateEmptyString(a1_2Value) && a1_2Value == '1') {
+      if (validateEmptyString(inputValue)) {
+        return 'Vui lòng nhập giá trị.';
       }
+      inputValue = inputValue!.replaceAll(' ', '');
+      num intputVal =
+          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+      if (intputVal < minVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      } else if (intputVal > maxVal) {
+        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+      }
+
+      var a3_2Value = tblPhieuCT[colPhieuMauTBA3_2] != null
+          ? AppUtils.convertStringToDouble(
+              tblPhieuCT[colPhieuMauTBA3_2].toString())
+          : null;
+      var a4_3Value = tblPhieuCT[colPhieuMauTBA4_3] != null
+          ? AppUtils.convertStringToDouble(
+              tblPhieuCT[colPhieuMauTBA4_3].toString())
+          : null;
+      if (!validateEmptyString(a4_3Value.toString()) &&
+          !validateEmptyString(a3_2Value.toString()) &&
+          a4_3Value > a3_2Value) {
+        var a4_3ValueText = toCurrencyString(a4_3Value.toString(),
+            thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+            mantissaLength: 2);
+        var a3_2ValueText = toCurrencyString(a3_2Value.toString(),
+            thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+            mantissaLength: 2);
+        return 'Số tiền thuê địa điểm SXKD tại C4.3 ($a4_3ValueText) > Số tiền vốn bỏ ra để SXKD ($a3_2ValueText)? (Số tiền thuê địa điểm phải được tính vào số tiền vốn)';
+      }
+      // }
     }
     return null;
   }

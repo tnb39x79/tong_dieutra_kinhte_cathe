@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/status/http_status.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
@@ -21,9 +21,9 @@ class VcpaVsicAISearchProvider extends GetConnect {
   Future<Response> searchVcpaVsicByAI(String codeType, String query,
       {int? limitNum = 10}) async {
     Map<String, String>? headers = {'Authorization': 'Bearer '};
-    httpClient.timeout = const Duration(seconds: 15);
+    httpClient.timeout = const Duration(seconds: 30);
 
-     String baseSuggestionUrl = AppPref.suggestionVcpaUrl;
+    String baseSuggestionUrl = AppPref.suggestionVcpaUrl;
     if (baseSuggestionUrl.isNotEmpty) {
       String lastChar = baseSuggestionUrl[baseSuggestionUrl.length - 1];
       if (lastChar != '/') {
@@ -32,13 +32,13 @@ class VcpaVsicAISearchProvider extends GetConnect {
     }
     String urlSearch =
         '${baseSuggestionUrl}$funcPath?data_type=$codeType&query=$query&top_k=$limitNum';
-        print(urlSearch);
+    print(urlSearch);
     try {
-      var response = get(
+      var response = await get(
         urlSearch,
-      //  headers: headers,
+        //  headers: headers,
       ).timeout(
-        const Duration(seconds: 15),
+        const Duration(seconds: 30),
         onTimeout: () {
           // Time has run out, do what you wanted to do.
           return const Response(
@@ -46,6 +46,7 @@ class VcpaVsicAISearchProvider extends GetConnect {
               statusText: "Request timeout");
         },
       );
+
       return response;
     } on TimeoutException catch (e) {
       // catch timeout here..
@@ -56,6 +57,4 @@ class VcpaVsicAISearchProvider extends GetConnect {
           statusCode: ApiConstants.errorException, statusText: e.toString());
     }
   }
-
-  
 }
