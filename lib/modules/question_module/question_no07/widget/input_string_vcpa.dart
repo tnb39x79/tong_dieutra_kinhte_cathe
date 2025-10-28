@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_styles.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_values.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/widget_field_input_vcpa.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/model.dart';
 
 class InputStringVcpa extends StatefulWidget {
-  const InputStringVcpa({
-    required this.question,
-    required this.onChange,
-    this.validator,
-    this.value,
-    this.enable = true,
-    this.subName,
-    this.maxLine = 1,
-    super.key,
-    this.readOnly = true,
-    this.onTap,
-    this.focusNode,
-    this.suffix,
-    this.warningText,
-  });
+  const InputStringVcpa(
+      {required this.question,
+      required this.onChange,
+      this.validator,
+      this.value,
+      this.enable = true,
+      this.subName,
+      this.maxLine = 1,
+      super.key,
+      this.readOnly = true,
+      this.onTap,
+      this.focusNode,
+      this.suffix,
+      this.warningText,
+      this.tenSanPham});
 
   final QuestionCommonModel question;
   final Function(String?)? onChange;
@@ -32,6 +36,7 @@ class InputStringVcpa extends StatefulWidget {
   final FocusNode? focusNode;
   final Widget? suffix;
   final String? warningText;
+  final String? tenSanPham;
 
   @override
   InputIntVcpaState createState() => InputIntVcpaState();
@@ -40,6 +45,7 @@ class InputStringVcpa extends StatefulWidget {
 class InputIntVcpaState extends State<InputStringVcpa> {
   // ignore: prefer_final_fields
   TextEditingController _controller = TextEditingController();
+
   @override
   void initState() {
     if (widget.value != null) {
@@ -75,6 +81,8 @@ class InputIntVcpaState extends State<InputStringVcpa> {
           suffix: wSuffix(),
           onTap: widget.onTap,
         ),
+        if (widget.tenSanPham != null && widget.tenSanPham != '')
+          wToolTipText(),
         wWarningText(),
         const SizedBox(height: 12),
       ],
@@ -123,6 +131,25 @@ class InputIntVcpaState extends State<InputStringVcpa> {
         widget.warningText!,
         style: const TextStyle(color: Colors.orange),
       );
+    }
+    return const SizedBox();
+  }
+
+  Widget wToolTipText() {
+    if (widget.tenSanPham != null && widget.tenSanPham != '') {
+      return Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(8, 4, 8, 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(AppValues.borderLv1),
+                bottomRight: Radius.circular(AppValues.borderLv1)),
+            color: const Color.fromARGB(255, 250, 248, 240),
+          ),
+          child: Text(
+            widget.tenSanPham ?? '',
+            style: styleSmall,
+          ));
     }
     return const SizedBox();
   }

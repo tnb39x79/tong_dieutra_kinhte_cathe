@@ -441,7 +441,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
   Future<Map> getByVcpaCap5s(List<String> vcpaCap5s) async {
     var vcpas = List.filled(vcpaCap5s.length, '?').join(',');
     final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
-      $columnDmMoTaSPMaSanPham in ($vcpas}) 
+      $columnDmMoTaSPMaSanPham in ($vcpas) 
       ''');
 
     if (maps.isNotEmpty) {
@@ -846,7 +846,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     String result = '';
 
     String sql =
-        "SELECT MaLV FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham  ='$maSanPham";
+        "SELECT MaLV FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham  ='$maSanPham'";
     print('sql $sql');
     List<Map> maps = await db!.rawQuery(sql);
     for (var item in maps) {
@@ -858,6 +858,36 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     }
     print('getMaSanPhamBetween result $result');
     return result;
+  }
+
+   Future<String> getTenSanPhamByMaSanPham(String maSanPham) async {
+    String result = '';
+
+    String sql =
+        "SELECT (MaLV || ': ' || TenSanPham) as TenSp FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham  ='$maSanPham'";
+    
+    List<Map> maps = await db!.rawQuery(sql);
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result = value;
+        }
+      });
+    }
+    print('getTenSanPhamByMaSanPham result $result');
+    return result;
+  }
+
+   Future<List<Map>> getCurrentSanPham(List<String> maSanPhams) async {
+ 
+    final List<Map> maps = await db!.query(tableDmMoTaSanPham, where: '''
+      $columnDmMoTaSPMaSanPham in  (${maSanPhams.map((e) => "'$e'").join(', ')}) 
+      ''');
+
+    if (maps.isNotEmpty) {
+      return maps ;
+    }
+    return [];
   }
 
   Future<int> countAll() async {

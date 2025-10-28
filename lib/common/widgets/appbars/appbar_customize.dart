@@ -37,11 +37,18 @@ class CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     var currentTitle = (widget.subTitle == null || widget.subTitle == "")
-        ? Text(widget.title!, style: styleMediumBold)
+        ? Text(
+            widget.title!,
+            style: styleMediumBold,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          )
         : ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 0.0),
             title: Text(widget.title!, style: styleMediumBoldAppBarHeader),
             subtitle: Text(widget.subTitle!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white)),
             titleAlignment: ListTileTitleAlignment.center,
           );
@@ -52,6 +59,7 @@ class CustomAppBarState extends State<CustomAppBar> {
       actions: [widget.actions ?? actionDefault()],
       // title: Text(getTitleAppBar(), style: styleMediumBold),
       title: widget.wTitle ?? currentTitle,
+
       leading: IconButton(
           onPressed: () {
             if (widget.backAction != null) {
@@ -71,6 +79,4 @@ class CustomAppBarState extends State<CustomAppBar> {
     // return IconButton(onPressed: () {}, icon: const Icon(Icons.location_on));
     return const SizedBox();
   }
-
-  
 }

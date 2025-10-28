@@ -126,6 +126,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   // final tblDmMoTaSanPhamSearch = <TableDmMotaSanpham>[].obs;
   // final tblDmMoTaSanPham = <TableDmMotaSanpham>[].obs;
   //final tblDmMoTaSanPhamFilterd = <TableDmMotaSanpham>[].obs;
+  ///Chứa các sản phẩm có trong CT_Phieu_MauTB_SanPham
+  final tblDmMoTaSanPhamCurrent = <TableDmMotaSanpham>[].obs;
+  final tblDmMoTaSanPham = <TableDmMotaSanpham>[].obs;
   final tblLinhVucSp = <TableDmLinhvuc>[].obs;
   final tblLinhVucSpFilter = <TableDmLinhvuc>[].obs;
   final tblDmQuocTich = <TableCTDmQuocTich>[].obs;
@@ -181,6 +184,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   final completeInfo = {}.obs;
   String subTitleBar = '';
   String silderTitleBar = '';
+
+  ///B,C,D,E
+  String maLVBCDE = 'B;C;D;E';
 
   ///56
   String vcpaCap2TM = "56";
@@ -301,6 +307,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await getQuestionContent();
     //
     await updateNganhAll();
+    await getCurrentSanPham();
     //
     await danhDauSanPhamCN();
     await danhDauSanPhamVT();
@@ -326,7 +333,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     await setSelectedQuestionGroup();
     await getLinhVucSanPham();
-    // await getMoTaSanPham();
+    await getMoTaSanPham();
     await getDsMaSanPhamNganhCN();
 
     setLoading(false);
@@ -339,12 +346,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     tblDmPhieu.assignAll(mtAll);
   }
 
-  // Future getMoTaSanPham() async {
-  //   var res = await dmMotaSanphamProvider.selectAll();
-  //   var mtAll = TableDmMotaSanpham.listFromJson(res);
-
-  //   tblDmMoTaSanPham.assignAll(mtAll);
-  // }
+  Future getMoTaSanPham() async {
+    var res = await dmMotaSanphamProvider.selectAll();
+    var mtAll = TableDmMotaSanpham.listFromJson(res);
+    tblDmMoTaSanPham.assignAll(mtAll);
+  }
 
   Future getLinhVucSanPham() async {
     var res = await dmLinhvucSpProvider.selectAll();
@@ -493,18 +499,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     tblPhieuNganhCNDistinctCap5.assignAll(rsCap5);
     tblPhieuNganhCNDistinctCap5.refresh();
-
-    // var rsFirst = rs.firstOrNull;
-    // if (rsFirst != null) {
-    //   if (rsFirst.isDefault == 1) {
-    //     sttProductNganhCN.value = rsFirst.sTT_SanPham!;
-    //   } else {
-    //     var ress = rs.where((x) => x.isDefault == 1).firstOrNull;
-    //     if (ress != null) {
-    //       sttProductNganhCN.value = ress.sTT_SanPham!;
-    //     }
-    //   }
-    // }
   }
 
   Future getTablePhieuNganhVT() async {
@@ -651,21 +645,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           return questions;
         }
       }
-      //kiểm tra VCPA cấp 1 không phải là H thì remove câu hỏi phần 6
-      // if (currentScreenNo.value == 6 || currentScreenNo.value == 7) {
-      //   await danhDauSanPhamVT();
-      //   await danhDauSanPhamVT();
-      //   var questionByVcpa = await getQuestionContentFilterByVcpa(
-      //       questionsTemp2,
-      //       currentScreenNo.value,
-      //       isCap1H_VT.value,
-      //       isCap5VanTaiHanhKhach.value,
-      //       isCap5VanTaiHangHoa.value,
-      //       isCap2_55LT.value);
-      //   questions.addAll(questionByVcpa);
-      // } else {
-      //   questions.addAll(questionsTemp2);
-      // }
+
       questions.addAll(questionsTemp2);
       await getTenPhieu();
       return questions;
@@ -873,15 +853,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           }
         }
       }
-      //   if (item.fromQuestion == "6.1") {
-      //     item.enable = (isCap1H_VT.value == true &&
-      //             isCap5VanTaiHangHoa.value == true) ||
-      //         (isCap1H_VT.value == true && isCap5VanTaiHanhKhach.value == true);
-      //   } else if (item.fromQuestion == "7.1") {
-      //     // if (isCap2_55LT.value == true) {
-      //     item.enable = isCap2_55LT.value;
-      //     // }
-      //   }
     }
     questionGroupList.assignAll(qGroups);
   }
@@ -891,6 +862,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   Future onMenuPress(int idPhieus, int idManHinh) async {
+    if (currentScreenNo.value == 3) {
+      var warningNganhBangKeResult =
+          await warningMaNganhVoiBangKe(true, isCancel: true);
+      if (warningNganhBangKeResult == 'cancel') {
+        return;
+      } else {
+        var ktRes = await kiemTraCacNganh();
+        if (ktRes.isNotEmpty) {
+          return;
+        }
+      }
+    }
     if (idManHinh == 4 ||
         idManHinh == 5 ||
         idManHinh == 13 ||
@@ -1016,10 +999,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           await warningMaNganhVoiBangKe(true, isCancel: true);
       if (warningNganhBangKeResult == 'cancel') {
         return;
+      } else {
+        //   await updateNganhPhieuMauKoBangKe();
+        var ktRes = await kiemTraCacNganh();
+        if (ktRes.isNotEmpty) {
+          return;
+        }
       }
-      // else{
-      //    await updateNganhPhieuMauKoBangKe();
-      // }
     }
     if (currentScreenNo.value == 2) {
       var res = await kiemTraCau4T();
@@ -1199,118 +1185,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //   currentScreenNo.value = generalInformationController.screenNos()[0];
     // }
     if (validateResult != '') {
-      // if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
-      //   if (currentScreenNo.value == 5) {
-      //     if (isBCDE.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else if (currentScreenNo.value == 6 || currentScreenNo.value == 7) {
-      //     if (isCap5VanTaiHanhKhach.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else if (currentScreenNo.value == 8 || currentScreenNo.value == 9) {
-      //     if (isCap5VanTaiHangHoa.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else if (currentScreenNo.value == 12) {
-      //     if (isCap2G_6810TM.value == true && isCap2_56TM.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else {
-      //     insertUpdateXacNhanLogicWithoutEnable(
-      //         currentScreenNo.value,
-      //         currentIdCoSo!,
-      //         int.parse(currentMaDoiTuongDT!),
-      //         0,
-      //         validateResult,
-      //         int.parse(currentMaTinhTrangDT!));
-      //     return showError(validateResult);
-      //   }
-      // } else if (currentMaDoiTuongDT ==
-      //     AppDefine.maDoiTuongDT_07TB.toString()) {
-      //   if (currentScreenNo.value == 5) {
-      //     if (isBCDE.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else if (currentScreenNo.value == 6) {
-      //     if (isCap5VanTaiHanhKhach.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else if (currentScreenNo.value == 7) {
-      //     if (isCap5VanTaiHangHoa.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else if (currentScreenNo.value == 9) {
-      //     if (isCap2G_6810TM.value == true || isCap2_56TM.value == true) {
-      //       insertUpdateXacNhanLogicWithoutEnable(
-      //           currentScreenNo.value,
-      //           currentIdCoSo!,
-      //           int.parse(currentMaDoiTuongDT!),
-      //           0,
-      //           validateResult,
-      //           int.parse(currentMaTinhTrangDT!));
-      //       return showError(validateResult);
-      //     }
-      //   } else {
-      //     insertUpdateXacNhanLogicWithoutEnable(
-      //         currentScreenNo.value,
-      //         currentIdCoSo!,
-      //         int.parse(currentMaDoiTuongDT!),
-      //         0,
-      //         validateResult,
-      //         int.parse(currentMaTinhTrangDT!));
-      //     return showError(validateResult);
-      //   }
-      // }
       insertUpdateXacNhanLogicWithoutEnable(
           currentScreenNo.value,
           currentIdCoSo!,
@@ -1485,14 +1359,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 7) {
           var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
-          if (warningNganhBangKeResult.isEmpty) {
+          if (warningNganhBangKeResult.isEmpty || !isNganhBangKeLaVanTai()) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
               // await getQuestionContent();
             }
-          } else if (isCap5VanTaiHanhKhach.value == false) {
+          } else if (isCap5VanTaiHanhKhach.value == false ||
+              !isNganhBangKeLaVanTai()) {
             await insertUpdateXacNhanLogic(
                 currentScreenNo.value,
                 currentIdCoSo!,
@@ -1529,14 +1412,23 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 9) {
           var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
-          if (warningNganhBangKeResult.isEmpty) {
+          if (warningNganhBangKeResult.isEmpty || !isNganhBangKeLaVanTai()) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
               // await getQuestionContent();
             }
-          } else if (isCap5VanTaiHangHoa.value == false) {
+          } else if (isCap5VanTaiHangHoa.value == false ||
+              !isNganhBangKeLaVanTai()) {
             await insertUpdateXacNhanLogic(
                 currentScreenNo.value,
                 currentIdCoSo!,
@@ -1582,14 +1474,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
         if (currentScreenNo.value == 11) {
           var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
-          if (warningNganhBangKeResult.isEmpty) {
+          if (warningNganhBangKeResult.isEmpty || !isNganhBangKeLaLuuTru()) {
+            await insertUpdateXacNhanLogic(
+                currentScreenNo.value,
+                currentIdCoSo!,
+                int.parse(currentMaDoiTuongDT!),
+                1,
+                1,
+                '',
+                int.parse(currentMaTinhTrangDT!));
             if (currentScreenIndex.value <
                 generalInformationController.screenNos().length - 1) {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
               // await getQuestionContent();
             }
-          } else if (isCap2_55LT.value == false) {
+          } else if (isCap2_55LT.value == false || !isNganhBangKeLaLuuTru()) {
             await insertUpdateXacNhanLogic(
                 currentScreenNo.value,
                 currentIdCoSo!,
@@ -1782,98 +1682,85 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       ///Cảnh báo và xoá dữ liệu CN
       await excueteDeleteCNItem();
 
-      ///Cập nhật lại bảng xacnhanlogic cho phần VI về null
-      await insertUpdateXacNhanLogic(
-          5,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
+      ///Cập nhật lại bảng xacnhanlogic cho CN
+
+      await updateXacNhanLogic([5], currentIdCoSo!,
+          int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
     } else if (hoatDong == "nganhVT") {
       ///Cảnh báo và xoá dữ liệu VT
       await excueteDeleteVTItemHangHoa();
       await excueteDeleteVTItemHanhKhach();
 
       ///Cập nhật lại bảng xacnhanlogic cho phần VI về null
-      await insertUpdateXacNhanLogic(
-          6,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
-      await insertUpdateXacNhanLogic(
-          7,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
-    } else if (hoatDong == "nganhVThh") {
-      await excueteDeleteVTItemHangHoa();
-      await insertUpdateXacNhanLogic(
-          7,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        await updateXacNhanLogic([6, 7], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+        await updateXacNhanLogic([6, 7, 8, 9], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
     } else if (hoatDong == "nganhVThk") {
       await excueteDeleteVTItemHanhKhach();
-      await insertUpdateXacNhanLogic(
-          6,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        await updateXacNhanLogic([6], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+        await updateXacNhanLogic([6, 7], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+    } else if (hoatDong == "nganhVThh") {
+      await excueteDeleteVTItemHangHoa();
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        await updateXacNhanLogic([7], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+        await updateXacNhanLogic([8, 9], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
     } else if (hoatDong == "nganhLT") {
       await excueteDeleteLTItem();
-      await insertUpdateXacNhanLogic(
-          8,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        await updateXacNhanLogic([8], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+        await updateXacNhanLogic([10, 11], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
     } else if (hoatDong == "nganhTM") {
       await excueteDeleteTM6810Item();
       await excueteDeleteTM56Item();
-      await insertUpdateXacNhanLogic(
-          9,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        await updateXacNhanLogic([9], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+        await updateXacNhanLogic([12], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
     } else if (hoatDong == "nganhTM6810") {
       await excueteDeleteTM6810Item();
-      await insertUpdateXacNhanLogic(
-          9,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        await updateXacNhanLogic([9], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+        await updateXacNhanLogic([12], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
     } else if (hoatDong == "nganhTM56") {
       await excueteDeleteTM56Item();
-      await insertUpdateXacNhanLogic(
-          9,
-          currentIdCoSo!,
-          int.parse(currentMaDoiTuongDT!),
-          1,
-          0,
-          '',
-          int.parse(currentMaTinhTrangDT!));
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+        await updateXacNhanLogic([9], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
+      if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+        await updateXacNhanLogic([12], currentIdCoSo!,
+            int.parse(currentMaDoiTuongDT!), int.parse(currentMaTinhTrangDT!));
+      }
     }
 
     ///Tính lại A5_7 và A7_10 A7_11 A7_13
@@ -1887,12 +1774,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         await tinhCapNhatA8_M_A9_M_A10_M(a7_9Value);
       }
     }
-    // var countRes =
-    //     await phieuMauSanPhamProvider.countNotIsDefaultByIdCoso(currentIdCoSo!);
-    // if (countRes == 0) {
-    //   await phieuMauSanPhamProvider.updateValue(
-    //       columnPhieuMauSanPhamA5_0, 2, currentIdCoSo);
-    // }
+
     await getTablePhieuMauTBSanPham();
     await danhDauSanPhamCN();
     await danhDauSanPhamVT();
@@ -1962,13 +1844,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   Future excueteDeleteLTItem() async {
-    // if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-    //   await phieuNganhLTProvider.updateNullValues(
-    //       currentIdCoSo!, fieldNamesPhan7LTTB);
-    // } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
-    //   await phieuNganhLTProvider.updateNullValues(
-    //       currentIdCoSo!, fieldNamesPhan7LTMau);
-    // }
     await phieuNganhLTProvider.deleteByCoSoId(currentIdCoSo!);
   }
 
@@ -1983,11 +1858,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   Future excueteDeleteTM56Item() async {
-    // if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-    //   await phieuNganhTMProvider.deleteByCoSoId(currentIdCoSo!);
-    // } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
-    //   await phieuNganhTMProvider.deleteByCoSoId(currentIdCoSo!);
-    // }
     await phieuNganhTMProvider.updateNullValues(currentIdCoSo!,
         [colPhieuNganhTMA2, colPhieuNganhTMA3, colPhieuNganhTMA3T]);
   }
@@ -2275,75 +2145,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     map.update(stt, (val) => value, ifAbsent: () => value);
     answerDanhDauSanPham.value = map;
     answerDanhDauSanPham.refresh();
-  }
-//BEGIN::A3_2
-
-//END::A3_2
-
-//Begin::A6_1
-  onChangeInputA6_1(
-      String table, String tenCauHoi, String? fieldName, idValue, value) async {
-    log('ON onChangeInputA6_1: $fieldName $value');
-    try {
-      // if (table == tablePhieuMauA61) {
-      //   await updateToDbA6_1(table, fieldName ?? "", idValue, value);
-      //   if (fieldName == columnPhieuMauA61A6_1_1 ||
-      //       fieldName == columnPhieuMauA61A6_1_2) {
-      //     var fieldNameTotalA6_1_3 = "A6_1_3";
-      //     var fieldNamesA6_1_3 = ['A6_1_1', 'A6_1_2'];
-      //     await updateToDbA6_1(table, fieldName!, idValue, value,
-      //         fieldNames: fieldNamesA6_1_3,
-      //         fieldNameTotal: fieldNameTotalA6_1_3);
-      //   }
-      // } else if (table == tablePhieuMauA68) {
-      //   await updateToDbA6_8(table, fieldName ?? "", idValue, value);
-      //   if (fieldName == columnPhieuMauA68A6_8_1 ||
-      //       fieldName == columnPhieuMauA68A6_8_2) {
-      //     var fieldNameTotalA6_8_3 = "A6_8_3";
-      //     var fieldNamesA6_8_3 = ['A6_8_1', 'A6_8_2'];
-      //     await updateToDbA6_8(table, fieldName!, idValue, value,
-      //         fieldNames: fieldNamesA6_8_3,
-      //         fieldNameTotal: fieldNameTotalA6_8_3);
-      //   }
-      // }
-    } catch (e) {
-      printError(info: e.toString());
-    }
-  }
-
-// updateToDbA6_1(String table, String fieldName, idValue, value,{List<String>? fieldNames,
-//       String? fieldNameTotal,
-//       String? maCauHoi}) async {
-//     var res = await phieuMauA61Provider.isExistQuestion(currentIdCoSo!);
-//     if (res) {
-//       await phieuMauA61Provider.updateValueByIdCoso(
-//           fieldName, value, currentIdCoSo, idValue!);
-//     } else {
-//       await insertNewRecordPhieuMauA6_1();
-//     }
-//     await getTablePhieuMauA61();
-//   }
-  updateToDbA6_1(String table, String fieldName, idValue, value,
-      {List<String>? fieldNames,
-      String? fieldNameTotal,
-      String? maCauHoi}) async {
-    // var res = await phieuMauA61Provider.isExistQuestion(currentIdCoSo!);
-    // if (res) {
-    //   await phieuMauA61Provider.updateValueByIdCoso(
-    //       fieldName, value, currentIdCoSo, idValue!);
-    //   if (fieldNameTotal != null &&
-    //       fieldNameTotal != '' &&
-    //       fieldNames != null &&
-    //       fieldNames.isNotEmpty) {
-    //     var total = await phieuMauA61Provider.totalIntByMaCauHoi(
-    //         currentIdCoSo!, idValue, fieldNames, "*");
-    //     await phieuMauA61Provider.updateValueByIdCoso(
-    //         fieldNameTotal, total, currentIdCoSo, idValue!);
-    //   }
-    // } else {
-    //   await insertNewRecordPhieuMauA6_1();
-    // }
-    // await getTablePhieuMauA61();
   }
 
   ///validate A5
@@ -2642,6 +2443,42 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 .tblBkCoSoSXKDNganhSanPham.value.maNganh)
         .toList();
     return maVcpaCap5;
+  }
+
+  /// String vcpaCap5VanTaiHanhKhach =  "49210;49220;49290;49312;49313;49319;49321;49329;50111;50112;50211;50212";
+  ///"49331;49332;49333;49334;49339;50121;50122;50221;50222";
+  /// String vcpaCap5VanTaiHangHoa =  "49331;49332;49333;49334;49339;50121;50122;50221;50222";
+  bool isNganhBangKeLaVanTai() {
+    var vcpaHanhKhachs = vcpaCap5VanTaiHanhKhach.split(';');
+    var vcpaHangHoa = vcpaCap5VanTaiHangHoa.split(';');
+    var nganhBk =
+        generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh;
+    var isVanTai =
+        vcpaHanhKhachs.contains(nganhBk) || vcpaHangHoa.contains(nganhBk);
+    return isVanTai;
+  }
+
+  bool isNganhBangKeLaLuuTru() {
+    var nganhBk =
+        generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh;
+    if (nganhBk != null && nganhBk != '') {
+      return nganhBk.substring(0, 2) == vcpaCap2LT;
+    }
+    return false;
+  }
+
+  TableDmMotaSanpham? getNganhBangKeLaCongNghiep() {
+    var nganhBk =
+        generalInformationController.tblBkCoSoSXKDNganhSanPham.value.maNganh;
+    var isCN = false;
+    var res = tblDmMoTaSanPham.where((x) => x.maSanPham == nganhBk).firstOrNull;
+    if (res != null) {
+      List<String> vcpaBCDEs = maLVBCDE.split(';');
+      if (vcpaBCDEs.contains(res.maLV)) {
+        return res;
+      }
+    }
+    return null;
   }
 
   ///Update null khi ngành ở câu 5.1 không có ngành ở bảng kê
@@ -2944,38 +2781,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     //     if (a5_5Value > a5_2Val) {
     //       return 'Doanh thu câu 5.5 ($a5_5Value) phải <= doanh thu ở câu 5.2 ($a5_2Val). Vui lòng kiểm tra lại.';
     //     }
-    //   }
-    //   return null;
-    // }
-  }
-
-  onValidateInputA5_6_1(
-      String table,
-      String maCauHoi,
-      String? fieldName,
-      idValue,
-      String? inputValue,
-      minLen,
-      maxLen,
-      minValue,
-      maxValue,
-      int loaiCauHoi,
-      int sttSanPham,
-      bool typing) {
-    // if (fieldName == columnPhieuMauSanPhamA5_6_1) {
-    //   // if (inputValue == null || inputValue == '' || inputValue == 'null') {
-    //   //   return 'Vui lòng nhập giá trị.';
-    //   // }
-    //   double a5_6_1Value = AppUtils.convertStringToDouble(inputValue);
-    //   var a5_6Value = getValueSanPham(
-    //       tablePhieuMauSanPham, columnPhieuMauSanPhamA5_6, idValue);
-    //   if (a5_6Value == 1) {
-    //     if (inputValue == null || inputValue == '' || inputValue == 'null') {
-    //       return 'Vui lòng nhập giá trị.';
-    //     }
-    //   }
-    //   if (a5_6Value == 2) {
-    //     return null;
     //   }
     //   return null;
     // }
@@ -4853,7 +4658,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             : 0;
 
         ///c1 1. Điện "1. Khối lượng tiêu dùng bình quân 1 tháng  năm 2025?"
-        double c1 = tblPhieu[colPhieuMauTBA6_1_2_2] != null
+        double c1 = tblPhieu[colPhieuMauTBA6_1_1_2] != null
             ? AppUtils.convertStringToDouble(tblPhieu[colPhieuMauTBA6_1_1_2])
             : 0;
 
@@ -5347,117 +5152,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return null;
   }
 
-  onValidateA8_1(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? fieldName, String? inputValue,
-      {bool typing = false}) {
-    // if (typing == false) {
-    //   for (var i = 1; i <= 4; i++) {
-    //     var fName = 'A8_1_1_${i.toString()}_1';
-    //     if (fieldName == fName) {
-    //       if (validateEmptyString(inputValue.toString())) {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //     }
-    //   }
-    //   for (var i = 1; i <= 11; i++) {
-    //     var fName = 'A8_1_${i.toString()}_1';
-    //     if (fieldName == fName) {
-    //       if (validateEmptyString(inputValue.toString())) {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //     }
-    //   }
-
-    //   var tblPhieu = tblPhieuMau.value.toJson();
-    //   for (var i = 1; i <= 4; i++) {
-    //     var fName1 = 'A8_1_1_${i.toString()}_1';
-    //     var fName2 = 'A8_1_1_${i.toString()}_2';
-    //     var fName3 = 'A8_1_1_${i.toString()}_3';
-    //     var a8_1_x_1Value = tblPhieu[fName1];
-    //     var a8_1_x_2Value = tblPhieu[fName2];
-    //     var a8_1_x_3Value = tblPhieu[fName3];
-    //     if (fieldName == fName2 || fieldName == fName3) {
-    //       if (a8_1_x_1Value.toString() == '1') {
-    //         if (inputValue == null ||
-    //             inputValue == "null" ||
-    //             inputValue == "") {
-    //           return 'Vui lòng nhập giá trị.';
-    //         }
-    //       }
-    //     }
-    //   }
-    //   for (var i = 1; i <= 11; i++) {
-    //     var fName1 = 'A8_1_${i.toString()}_1';
-    //     var fName2 = 'A8_1_${i.toString()}_2';
-    //     var fName3 = 'A8_1_${i.toString()}_3';
-    //     var a8_1_x_1Value = tblPhieu[fName1];
-    //     var a8_1_x_2Value = tblPhieu[fName2];
-    //     var a8_1_x_3Value = tblPhieu[fName3];
-    //     if (fieldName == fName2 || fieldName == fName3) {
-    //       // if (fieldName == "A8_1_3_1_2") {
-    //       //   if (isCap1H_VT.value == true &&
-    //       //       (isCap5VanTaiHanhKhach.value == true ||
-    //       //           isCap5VanTaiHangHoa.value)) {
-    //       //     return 'Vui lòng nhập giá trị.';
-    //       //   }
-    //       // } else if (fieldName == "A8_1_5_1_2") {
-    //       //   if (isCap1H_VT.value == true &&
-    //       //       (isCap5VanTaiHanhKhach.value == true ||
-    //       //           isCap5VanTaiHangHoa.value)) {
-    //       //     return 'Vui lòng nhập giá trị.';
-    //       //   }
-    //       // }
-    //       if (a8_1_x_1Value.toString() == '1') {
-    //         if (inputValue == null ||
-    //             inputValue == "null" ||
-    //             inputValue == "") {
-    //           // if (fieldName == "A8_1_3_1_2") {
-    //           //   if (isCap1H_VT.value == true &&
-    //           //       (isCap5VanTaiHanhKhach.value == true ||
-    //           //           isCap5VanTaiHangHoa.value)) {
-    //           //     return 'Vui lòng nhập giá trị.';
-    //           //   }
-    //           // } else if (fieldName == "A8_1_5_1_2") {
-    //           //   if (isCap1H_VT.value == true &&
-    //           //       (isCap5VanTaiHanhKhach.value == true ||
-    //           //           isCap5VanTaiHangHoa.value)) {
-    //           //     return 'Vui lòng nhập giá trị.';
-    //           //   }
-    //           // } else {
-    //           return 'Vui lòng nhập giá trị.';
-    //           //   }
-    //         }
-    //       }
-    //     }
-    //   }
-    //   if (fieldName == "A8_1_3_1_2") {
-    //     var a8_1_3_1Value = tblPhieu['A8_1_3_1'];
-    //     // if (a8_1_3_1Value.toString() == '1') {
-    //     if (validateEmptyString(inputValue.toString())) {
-    //       if (isCap1H_VT.value == true &&
-    //           (isCap5VanTaiHanhKhach.value == true ||
-    //               isCap5VanTaiHangHoa.value)) {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //     }
-    //     //}
-    //   }
-    //   if (fieldName == "A8_1_5_1_2") {
-    //     var a8_1_3_1Value = tblPhieu['A8_1_5_1'];
-    //     //if (a8_1_3_1Value.toString() == '1') {
-    //     if (validateEmptyString(inputValue.toString())) {
-    //       if (isCap1H_VT.value == true &&
-    //           (isCap5VanTaiHanhKhach.value == true ||
-    //               isCap5VanTaiHangHoa.value)) {
-    //         return 'Vui lòng nhập giá trị.';
-    //       }
-    //     }
-    //     // }
-    //   }
-    return null;
-    // }
-  }
-
   ///END::::Chi tieu dong cot
   /*********/
 
@@ -5607,34 +5301,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     } else {
       return null;
     }
-  }
-
-  getValueByFieldNameStt(String table, String fieldName, int idValue) {
-    // if (table == tablePhieuMauA61) {
-    //   for (var item in tblPhieuMauA61) {
-    //     if (item.id == idValue) {
-    //       var tbl = item.toJson();
-    //       return tbl[fieldName];
-    //     }
-    //   }
-    // } else if (table == tablePhieuMauA68) {
-    //   for (var item in tblPhieuMauA68) {
-    //     if (item.id == idValue) {
-    //       var tbl = item.toJson();
-    //       return tbl[fieldName];
-    //     }
-    //   }
-    // } else if (table == tablePhieuMauSanPham) {
-    //   for (var item in tblPhieuMauSanPham) {
-    //     if (item.id == idValue) {
-    //       var tbl = item.toJson();
-    //       return tbl[fieldName];
-    //     }
-    //   }
-    // } else {
-    //   return '';
-    // }
-    return '';
   }
 
   getValueDanhDauSP(String fieldName, {int? stt}) {
@@ -5906,56 +5572,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return null;
   }
 
-  String? onValidateA2_2(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
-      ChiTieuDongModel? chiTieuDong, String? inputValue,
-      {bool typing = true, String? fieldName}) {
-    // if (question.maCauHoi == "A2_2") {
-    //   if (validateEmptyString(inputValue.toString())) {
-    //     return 'Vui lòng nhập giá trị.';
-    //   }
-    //   var tblPhieuCT;
-    //   if (typing == false) {
-    //     tblPhieuCT = tblPhieuMau.value.toJson();
-    //   } else {
-    //     tblPhieuCT = answerTblPhieuMau;
-    //   }
-    //   String fieldNameTs = 'A2_2_${chiTieuDong!.maSo}_1';
-    //   String fieldNameNu = 'A2_2_${chiTieuDong!.maSo}_2';
-
-    //   int a2_2_1_1Value = tblPhieuCT[fieldNameTs] != null
-    //       ? AppUtils.convertStringToInt(tblPhieuCT[fieldNameTs].toString())
-    //       : 0;
-    //   int a2_2_1_2Value = tblPhieuCT[fieldNameNu] != null
-    //       ? AppUtils.convertStringToInt(tblPhieuCT[fieldNameNu].toString())
-    //       : 0;
-
-    //   ///Lấy a1_5_6 trình độ chuyên môn của chủ sở hữu => Kiểm tra giá trị đã nhập nằm trong chỉ tiêu trình độ chuyên môn của câu a2_2 hay không.
-    //   var a1_5_6Val = tblPhieuCT[columnPhieuMauA1_5_6];
-    //   if (chiTieuCot!.maChiTieu == '1') {
-    //     if (a2_2_1_1Value < a2_2_1_2Value) {
-    //       return 'Tổng số > Trong đó: nữ';
-    //     }
-    //     var validA2_1nA2_2 = validateA2_1nA2_2("A2_2", typing);
-    //     if (validA2_1nA2_2 != null && validA2_1nA2_2 != '') {
-    //       return validA2_1nA2_2;
-    //     }
-    //   } else if (chiTieuCot!.maChiTieu == '2') {
-    //     if (a2_2_1_1Value < a2_2_1_2Value) {
-    //       return 'Trong đó: nữ < Tổng số';
-    //     }
-    //   }
-
-    //   if (a1_5_6Val.toString() == chiTieuDong.maSo) {
-    //     if (a2_2_1_1Value == 0) {
-    //       return 'Câu 1.5.6 chọn mã $a1_5_6Val, giá trị của câu C2.2 mã ${chiTieuDong.maSo} = $a2_2_1_1Value. Vui lòng kiểm tra lại.';
-    //     }
-    //   }
-
-    //   return null;
-    // }
-    return null;
-  }
-
   String? onValidateA3_1(QuestionCommonModel question, ChiTieuModel? chiTieuCot,
       ChiTieuDongModel? chiTieuDong, String? inputValue,
       {bool typing = true, String? fieldName}) {
@@ -6104,39 +5720,39 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       var a1_2Value = tblPhieuCT[colPhieuMauTBA1_2] != null
           ? tblPhieuCT[colPhieuMauTBA1_2].toString()
           : '';
-      // if (!validateEmptyString(a1_2Value) && a1_2Value == '1') {
-      if (validateEmptyString(inputValue)) {
-        return 'Vui lòng nhập giá trị.';
-      }
-      inputValue = inputValue!.replaceAll(' ', '');
-      num intputVal =
-          inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
-      if (intputVal < minVal) {
-        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
-      } else if (intputVal > maxVal) {
-        return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
-      }
+      if (!validateEmptyString(a1_2Value) && a1_2Value == '1') {
+        if (validateEmptyString(inputValue)) {
+          return 'Vui lòng nhập giá trị.';
+        }
+        inputValue = inputValue!.replaceAll(' ', '');
+        num intputVal =
+            inputValue != null ? AppUtils.convertStringToDouble(inputValue) : 0;
+        if (intputVal < minVal) {
+          return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+        } else if (intputVal > maxVal) {
+          return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
+        }
 
-      var a3_2Value = tblPhieuCT[colPhieuMauTBA3_2] != null
-          ? AppUtils.convertStringToDouble(
-              tblPhieuCT[colPhieuMauTBA3_2].toString())
-          : null;
-      var a4_3Value = tblPhieuCT[colPhieuMauTBA4_3] != null
-          ? AppUtils.convertStringToDouble(
-              tblPhieuCT[colPhieuMauTBA4_3].toString())
-          : null;
-      if (!validateEmptyString(a4_3Value.toString()) &&
-          !validateEmptyString(a3_2Value.toString()) &&
-          a4_3Value > a3_2Value) {
-        var a4_3ValueText = toCurrencyString(a4_3Value.toString(),
-            thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-            mantissaLength: 2);
-        var a3_2ValueText = toCurrencyString(a3_2Value.toString(),
-            thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
-            mantissaLength: 2);
-        return 'Số tiền thuê địa điểm SXKD tại C4.3 ($a4_3ValueText) > Số tiền vốn bỏ ra để SXKD ($a3_2ValueText)? (Số tiền thuê địa điểm phải được tính vào số tiền vốn)';
+        var a3_2Value = tblPhieuCT[colPhieuMauTBA3_2] != null
+            ? AppUtils.convertStringToDouble(
+                tblPhieuCT[colPhieuMauTBA3_2].toString())
+            : null;
+        var a4_3Value = tblPhieuCT[colPhieuMauTBA4_3] != null
+            ? AppUtils.convertStringToDouble(
+                tblPhieuCT[colPhieuMauTBA4_3].toString())
+            : null;
+        if (!validateEmptyString(a4_3Value.toString()) &&
+            !validateEmptyString(a3_2Value.toString()) &&
+            a4_3Value > a3_2Value) {
+          var a4_3ValueText = toCurrencyString(a4_3Value.toString(),
+              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+              mantissaLength: 2);
+          var a3_2ValueText = toCurrencyString(a3_2Value.toString(),
+              thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+              mantissaLength: 2);
+          return 'Số tiền thuê địa điểm SXKD tại C4.3 ($a4_3ValueText) > Số tiền vốn bỏ ra để SXKD ($a3_2ValueText)? (Số tiền thuê địa điểm phải được tính vào số tiền vốn)';
+        }
       }
-      // }
     }
     return null;
   }
@@ -8035,191 +7651,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return result;
   }
 
-  ///VALIDATE KHI NHẤN NÚT Tiếp tục V2
-  //Future<String> validateAllFormV2() async {
-  //   String result = '';
-
-  // var fieldNames = await getListFieldToValidate();
-  // var tblP08 = tblPhieuMau.value.toJson();
-
-  // for (var item in fieldNames) {
-  //   if (currentScreenNo.value == item.manHinh) {
-  //     if (item.tenTruong != null && item.tenTruong != '') {
-  //       if (item.bangDuLieu == tablePhieuMau) {
-  //         if (tblP08.isNotEmpty) {
-  //           if (tblP08.containsKey(item.tenTruong)) {
-  //             var val = tblP08[item.tenTruong];
-  //             if (item.bangChiTieu == "2" ||
-  //                 (item.bangChiTieu != null &&
-  //                     item.bangChiTieu != '' &&
-  //                     (item.bangChiTieu!.contains('CT_DM') ||
-  //                         item.bangChiTieu!.contains('KT_DM')))) {
-  //               var validRes = onValidateInputChiTieuDongCot(item.question!,
-  //                   item.chiTieuCot, item.chiTieuDong, val.toString(),
-  //                   fieldName: item.tenTruong, typing: false);
-  //               if (validRes != null && validRes != '') {
-  //                 result = await generateMessageV2(item.mucCauHoi, validRes);
-  //                 break;
-  //               }
-  //             } else if (item.tenTruong == columnPhieuMauA1_5_4) {
-  //               var validRes = onValidateInputDanToc(
-  //                   item.bangDuLieu!,
-  //                   item.maCauHoi!,
-  //                   item.maCauHoi,
-  //                   val.toString(),
-  //                   item.loaiCauHoi!);
-  //               if (validRes != null && validRes != '') {
-  //                 result = await generateMessageV2(item.mucCauHoi, validRes);
-  //                 break;
-  //               }
-  //             } else {
-  //               var validRes = onValidate(
-  //                   item.bangDuLieu!,
-  //                   item.maCauHoi!,
-  //                   item.tenTruong,
-  //                   val.toString(),
-  //                   item.giaTriNN,
-  //                   item.giaTriLN,
-  //                   item.loaiCauHoi!,
-  //                   false);
-  //               if (validRes != null && validRes != '') {
-  //                 result = await generateMessageV2(item.mucCauHoi, validRes);
-  //                 break;
-  //               }
-  //             }
-  //           }
-  //         } else {
-  //           /// todo thì làm chi đây  ???
-  //           /// Không có trường hợp này: Vì đã insert 1 record trước khi vào bảng hỏi
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // var fieldNamesTableA5 = fieldNames
-  //     .where((c) =>
-  //         c.bangDuLieu == tablePhieuMauSanPham &&
-  //         c.maCauHoi != 'A5_1' &&
-  //         c.tenTruong != 'STT_Sanpham' &&
-  //         c.tenTruong != 'STT')
-  //     .toList();
-  // if (fieldNamesTableA5.isNotEmpty) {
-  //   if (tblPhieuMauSanPham.isNotEmpty) {
-  //     var isReturn = false;
-  //     for (var itemC8 in tblPhieuMauSanPham) {
-  //       var tblA5 = itemC8.toJson();
-  //       for (var fieldA5 in fieldNamesTableA5) {
-  //         if (tblA5.containsKey(fieldA5.tenTruong)) {
-  //           var val = tblA5[fieldA5.tenTruong];
-  //           int sttSanPham =
-  //               int.parse(tblA5[columnPhieuMauSanPhamSTTSanPham].toString());
-  //           var validRes = onValidateInputA5(
-  //               fieldA5.bangDuLieu!,
-  //               fieldA5.maCauHoi!,
-  //               fieldA5.tenTruong,
-  //               tblA5[columnId],
-  //               val.toString(),
-  //               0,
-  //               0,
-  //               fieldA5.giaTriNN,
-  //               fieldA5.giaTriLN,
-  //               fieldA5.loaiCauHoi!,
-  //               sttSanPham,
-  //               false);
-  //           if (validRes != null && validRes != '') {
-  //             result = await generateMessageV2(
-  //                 '${fieldA5.mucCauHoi}: STT=${tblA5[columnPhieuMauSanPhamSTTSanPham]}',
-  //                 validRes);
-  //             isReturn = true;
-  //             break;
-  //           }
-  //         }
-  //         if (isReturn) return result;
-  //       }
-  //     }
-  //     var validRes = onValidateInputA5T(tablePhieuMauSanPham, "", false);
-  //     if (validRes != null && validRes != '') {
-  //       return validRes;
-  //     }
-  //   }
-  // }
-  // var fieldNamesTableA61 =
-  //     fieldNames.where((c) => c.bangDuLieu == tablePhieuMauA61).toList();
-  // if (fieldNamesTableA61.isNotEmpty) {
-  //   if (tblPhieuMauA61.isEmpty) {
-  //     result = await generateMessageV2('Câu 6.1', 'Vui lòng nhập giá trị.');
-  //     return result;
-  //   }
-  //   if (tblPhieuMauA61.isNotEmpty) {
-  //     var isReturn = false;
-  //     for (var itemC8 in tblPhieuMauA61.value) {
-  //       var tblC8 = itemC8.toJson();
-  //       for (var fieldC8 in fieldNamesTableA61) {
-  //         if (tblC8.containsKey(fieldC8.tenTruong)) {
-  //           var val = tblC8[fieldC8.tenTruong];
-  //           var validRes = onValidateInputA6_1(
-  //               fieldC8.bangDuLieu!,
-  //               fieldC8.maCauHoi!,
-  //               fieldC8.tenTruong,
-  //               tblC8[columnId],
-  //               val.toString(),
-  //               0,
-  //               0,
-  //               fieldC8.giaTriNN,
-  //               fieldC8.giaTriLN,
-  //               fieldC8.loaiCauHoi!);
-  //           if (validRes != null && validRes != '') {
-  //             result = await generateMessageV2(
-  //                 '${fieldC8.mucCauHoi}: STT=${tblC8[columnSTT]}', validRes);
-  //             isReturn = true;
-  //             break;
-  //           }
-  //         }
-  //         if (isReturn) return result;
-  //       }
-  //     }
-  //   }
-  // }
-  // var fieldNamesTableA68 =
-  //     fieldNames.where((c) => c.bangDuLieu == tablePhieuMauA68).toList();
-  // if (fieldNamesTableA68.isNotEmpty) {
-  //   if (tblPhieuMauA68.isEmpty) {
-  //     result = await generateMessageV2('Câu 6.8', 'Vui lòng nhập giá trị.');
-  //     return result;
-  //   }
-  //   if (tblPhieuMauA68.isNotEmpty) {
-  //     var isReturn = false;
-  //     for (var itemC8 in tblPhieuMauA68.value) {
-  //       var tblC8 = itemC8.toJson();
-  //       for (var fieldC8 in fieldNamesTableA68) {
-  //         if (tblC8.containsKey(fieldC8.tenTruong)) {
-  //           var val = tblC8[fieldC8.tenTruong];
-  //           var validRes = onValidateInputA6_8(
-  //               fieldC8.bangDuLieu!,
-  //               fieldC8.maCauHoi!,
-  //               fieldC8.tenTruong,
-  //               tblC8[columnId],
-  //               val.toString(),
-  //               0,
-  //               0,
-  //               fieldC8.giaTriNN,
-  //               fieldC8.giaTriLN,
-  //               fieldC8.loaiCauHoi!);
-  //           if (validRes != null && validRes != '') {
-  //             result = await generateMessageV2(
-  //                 '${fieldC8.mucCauHoi}: STT=${tblC8[columnSTT]}', validRes);
-  //             isReturn = true;
-  //             break;
-  //           }
-  //         }
-  //         if (isReturn) return result;
-  //       }
-  //     }
-  //   }
-  // }
-  //  return result;
-  //}
-
   Future onKetThucPhongVan({int? lyDoKetThucPV}) async {
     final resultRoute = await Get.to(
       () => CompleteInterviewScreen(),
@@ -8472,6 +7903,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           //   await updateToDbSanPham(tablePhieuMauSanPham,  columnPhieuMauSanPhamDonViTinh, idVal, donViTinh);
 
           await getTablePhieuMauTBSanPham();
+
 
           snackBar('Thông báo', 'Đã cập nhật');
           log('ON onChangeListViewItem ĐÃ cập nhật mã VCPA cấp 5 vào bảng $tablePhieuMauTBSanPham');
@@ -9842,7 +9274,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await updateDataNganhCN();
     /**
            * NGÀNH VT
-             * todo  KIỂM TRA MÃ SẢN PHẨM (ĐANG CHỌN VÀ HIỆN CÓ TRONG CT_PhieuMauTB_SanPham) THUỘC CÁC MÃ VẬN HÀNH KHÁCH VÀ/HOẶC VẬN TẢI HÀNH KHÁCH
+             * todo  KIỂM TRA MÃ SẢN PHẨM (ĐANG CHỌN VÀ HIỆN CÓ TRONG CT_PhieuMauTB_SanPham) THUỘC CÁC MÃ VẬN HÀNH KHÁCH VÀ/HOẶC VẬN TẢI HÀNG HOÁ
              * MÃ VẬN TẢI HÀNH KHÁCH GỒM CÁC MÃ vcpaCap5VanTaiHanhKhach = "49210;49220;49290;49312;49313;49319;49321;49329;50111;50112;50211;50212"
              * MÃ VẬN TẢI HÀNG HOÁ GỒM CÁC MÃ vcpaCap5VanTaiHangHoa = "49331;49332;49333;49334;49339;50121;50122;50221;50222";
              * => CT_Phieu_NganhCN phiếu 7.2 VT
@@ -9871,6 +9303,29 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
              */
     ///Kiểm tra: [MÃ SẢN PHẨM CẤP 1 LÀ G VÀ NGÀNH L6810  (TRỪ CÁC MÃ 4513-4520-45413-4542-461)]
     await updateDataNganhTM();
+    await getCurrentSanPham();
+  }
+
+  Future getCurrentSanPham() async {
+    tblDmMoTaSanPhamCurrent.clear();
+    List<String> result = [];
+    var sps =
+        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    if (sps.isNotEmpty) {
+      result.addAll(sps);
+    }
+    var spsCN =
+        await phieuNganhCNProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    if (spsCN.isNotEmpty) {
+      result.addAll(spsCN);
+    }
+    if (result.isNotEmpty) {
+      var res = await dmMotaSanphamProvider.getCurrentSanPham(result);
+      if (res.isNotEmpty) {
+        var data = TableDmMotaSanpham.listFromJson(res);
+        tblDmMoTaSanPhamCurrent.assignAll(data);
+      }
+    }
   }
 
   Future<bool> updateDataNganhCN() async {
@@ -11457,6 +10912,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     } else if (question.bangDuLieu == tablePhieuNganhTM) {
     } else if (question.bangDuLieu == tablePhieuNganhTMSanPham) {}
     return result;
+  }
+
+  getTenSanPhamByMaSanPham(String maSp) {
+    if (tblDmMoTaSanPhamCurrent.isNotEmpty) {
+      var sp =
+          tblDmMoTaSanPhamCurrent.where((x) => x.maSanPham == maSp).firstOrNull;
+      if (sp != null) {
+        return '${sp.maLV}: ${sp.tenSanPham}';
+      }
+    }
+    return '';
   }
 
   ///

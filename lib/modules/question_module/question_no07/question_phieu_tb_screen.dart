@@ -26,6 +26,7 @@ import 'package:gov_statistics_investigation_economic/modules/question_module/qu
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/select_int_ct_dm.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/select_mutil_int_dm.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/select_string_ct_dm.dart';
+import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/widget/tenganh_tooltip.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_ct_dm_diadiem_sxkd.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm.dart';
@@ -79,7 +80,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
   Widget appBarTitle() {
     var t =
-        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT} ';
+        '${controller.currentTenPhieu.value != null && controller.currentTenPhieu.value != '' ? controller.currentTenPhieu.value : controller.currentTenDoiTuongDT}';
     t = '$t (${controller.currentScreenNo})';
     return (controller.subTitleBar == null || controller.subTitleBar == "")
         ? Text(t, style: styleMediumBold)
@@ -89,8 +90,12 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               t,
               style: styleMediumBoldAppBarHeader,
               textAlign: TextAlign.left,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             subtitle: Text(controller.subTitleBar,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white)),
             titleAlignment: ListTileTitleAlignment.center,
           );
@@ -1111,11 +1116,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       decimalDigits = 2;
 
       return Obx(() {
-        // var a1_2Value = controller.getValueByFieldName(
-        //     question.bangDuLieu!, colPhieuMauTBA1_2);
-        // if (a1_2Value != 1) {
-        //   return const SizedBox();
-        // }
+        var a1_2Value = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA1_2);
+        if (a1_2Value != 1) {
+          return const SizedBox();
+        }
         var a4_3Value = controller.getValueByFieldName(
             question.bangDuLieu!, colPhieuMauTBA4_3);
         return InputInt(
@@ -3444,45 +3449,48 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       if (product != null) {
         a5_1_2 = product.a5_1_2;
       }
-      return InkWell(
-        onTap: () {
-          controller.onOpenDialogSearch(question, question.maCauHoi!, product,
-              product.id!, product.sTTSanPham!, product.a5_1_1 ?? '', a5_1_2);
-        },
-        child: IgnorePointer(
-            child: InputStringVcpa(
-          key: ValueKey(
-              '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTTSanPham}_2$a5_1_2'),
-          onChange: (value) => controller.onChangeInputPhanV(
-              question.maPhieu!,
-              question.bangDuLieu!,
-              question.maCauHoi,
-              question.maCauHoi,
-              product.id!,
-              value),
-          question: question,
-          value: a5_1_2,
-          validator: (String? value) => controller.onValidateInputA5(
-              question.maPhieu!,
-              question.bangDuLieu!,
-              question.maCauHoi!,
-              question.maCauHoi,
-              product.id!,
-              value ?? value!.replaceAll(' ', ''),
-              0,
-              0,
-              question.giaTriNN,
-              question.giaTriLN,
-              question.loaiCauHoi!,
-              product.sTTSanPham!,
-              true),
-          readOnly: false,
-          suffix: const Icon(
-            Icons.arrow_drop_down,
-            color: primaryColor,
-          ),
-        )),
-      );
+      return Column(children: [
+        InkWell(
+          onTap: () {
+            controller.onOpenDialogSearch(question, question.maCauHoi!, product,
+                product.id!, product.sTTSanPham!, product.a5_1_1 ?? '', a5_1_2);
+          },
+          child: IgnorePointer(
+              child: InputStringVcpa(
+            key: ValueKey(
+                '${question.maPhieu}_${question.maCauHoi}_${product.id}_${product.sTTSanPham}_2$a5_1_2'),
+            onChange: (value) => controller.onChangeInputPhanV(
+                question.maPhieu!,
+                question.bangDuLieu!,
+                question.maCauHoi,
+                question.maCauHoi,
+                product.id!,
+                value),
+            question: question,
+            value: a5_1_2,
+            validator: (String? value) => controller.onValidateInputA5(
+                question.maPhieu!,
+                question.bangDuLieu!,
+                question.maCauHoi!,
+                question.maCauHoi,
+                product.id!,
+                value ?? value!.replaceAll(' ', ''),
+                0,
+                0,
+                question.giaTriNN,
+                question.giaTriLN,
+                question.loaiCauHoi!,
+                product.sTTSanPham!,
+                true),
+            readOnly: false,
+            suffix: const Icon(
+              Icons.arrow_drop_down,
+              color: primaryColor,
+            ),
+            tenSanPham: controller.getTenSanPhamByMaSanPham(a5_1_2),
+          )),
+        ),
+      ]);
     }
   }
 
@@ -4198,6 +4206,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             Icons.arrow_drop_down,
             color: primaryColor,
           ),
+          tenSanPham: controller.getTenSanPhamByMaSanPham(a1_2),
           warningText: warningWithText(question, a1_2, product: product),
         )),
       );
@@ -4831,21 +4840,22 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       var a1_5_1Value = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA1_5_1);
       if (selectedValue != null && selectedValue == 1) {
-        return const SizedBox();
+        //    return const SizedBox();
       }
       if (a1_5_1Value == null || a1_5_1Value == '') {
         //Cơ sở có đăng ký kinh doanh mà không có mã số thuế?
         return wText('Cơ sở có đăng ký kinh doanh mà không có mã số thuế?.');
-      } else if (a1_4Value == 1 && selectedValue == 2) {
+      }
+      if (a1_4Value != null && a1_4Value == 1 && selectedValue == 2) {
         return wText(
             'Cơ sở Có giấy chứng nhận đăng ký kinh doanh (C1.4=1) mà Không có MST (C1.5=2)?');
-      } else if (a1_4Value == 2 && selectedValue == 1) {
+      } else if (a1_4Value != null && a1_4Value == 2 && selectedValue == 1) {
         return wText(
             'Cơ sở Chưa có giấy chứng nhận đăng ký kinh doanh (C1.4=2) mà Có MST (C1.5=1)');
-      } else if (a1_4Value == 3 && selectedValue == 1) {
+      } else if (a1_4Value != null && a1_4Value == 3 && selectedValue == 1) {
         return wText(
             'Cơ sở Đã đăng ký kinh doanh nhưng chưa được cấp (C1.4=3) mà có mã số thuế (C1.5=1)');
-      } else if (a1_4Value == 4 && selectedValue == 1) {
+      } else if (a1_4Value != null && a1_4Value == 4 && selectedValue == 1) {
         return wText(
             'Cơ sở Không phải đăng ký kinh doanh (C1.4=4) mà có MST (C1.5=1)');
       } else if (a1_3_4Value == 1 &&
@@ -4860,6 +4870,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           a1_5_1Value.toString().length == 10) {
         return wText('Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?');
       }
+      return const SizedBox();
     } else if (question.maCauHoi == colPhieuMauTBA1_5_1 &&
         question.maPhieu == AppDefine.maPhieuTB) {
       var a1_3_4Value = controller.getValueByFieldName(
@@ -5471,10 +5482,34 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       value) {
     if (question.maCauHoi == 'A3_1' &&
         question.maPhieu == AppDefine.maPhieuTB) {
-      var a1_2TValue = controller.getValueByFieldName(
-          question.bangDuLieu!, colPhieuMauTBA1_2);
-      if (value != null && value > 0 && a1_2TValue != null && a1_2TValue == 1) {
-        return 'Cảnh báo: Cơ sở có địa điểm là đi thuê/mượn (C1.2 = 1) mà có tài sản cố định là nhà xưởng, cửa hàng C3.1.1 > 0)?';
+      if (chiTieuDong.maSo == "1" && chiTieuCot.maChiTieu == "1") {
+        var a1_2TValue = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA1_2);
+        if (value != null &&
+            value > 0 &&
+            a1_2TValue != null &&
+            a1_2TValue == 1) {
+          return 'Cảnh báo: Cơ sở có địa điểm là đi thuê/mượn (C1.2 = 1) mà có tài sản cố định là nhà xưởng, cửa hàng C3.1.1 > 0)?';
+        }
+      }
+      if (chiTieuDong.maSo == "2" && chiTieuCot.maChiTieu == "1") {
+        //Kiểm tra ngành bảng kê là ngành vận tải.
+        var vtai = controller.isNganhBangKeLaVanTai();
+        if (value != null &&
+            controller.validateEqual0InputValue(value) &&
+            vtai) {
+          return 'Cảnh báo: Cơ sở SXKD thuộc ngành vận tải mà Phương tiện vận tải = 0?';
+        }
+      }
+      if (chiTieuDong.maSo == "3" && chiTieuCot.maChiTieu == "1") {
+        //Kiểm tra ngành bảng kê là ngành vận tải.
+        var nganhCN = controller.getNganhBangKeLaCongNghiep();
+        if (value != null &&
+            controller.validateEqual0InputValue(value) &&
+            nganhCN != null &&
+            nganhCN!.maSanPham != null) {
+          return 'Cảnh báo: Cơ sở SXKD thuộc ngành công nghiệp [${nganhCN.tenSanPham}] mà Phương tiện vận tải = 0?';
+        }
       }
     }
     if (question.maCauHoi == 'A7_4' &&

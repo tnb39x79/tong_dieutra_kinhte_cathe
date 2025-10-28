@@ -434,6 +434,24 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     return res;
   }
 
+    Future<List<String>> getMaSanPhamsByIdCoso(String idCoso) async {
+    
+    List<String> result = [];
+    List<Map> maps = await db!.rawQuery('''
+          SELECT $colPhieuNganhCNA1_2 FROM $tablePhieuNganhCN 
+          WHERE $columnIDCoSo = '$idCoso'  
+        ''');
+
+    for (var item in maps) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result.add(value);
+        }
+      });
+    }
+    return result;
+  }
+
   @override
   Future deletedTable(Database database) async {
     return await database.rawQuery('DROP TABLE IF EXISTS $tablePhieuNganhCN');

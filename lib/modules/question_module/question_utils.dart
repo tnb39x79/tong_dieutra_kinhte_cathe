@@ -165,7 +165,7 @@ mixin QuestionUtils {
                 if (fromQuestionItem != null) {
                   fromQuestion =
                       fromQuestionItem.maSo ?? fromQuestionItem.maCauHoi ?? '';
-                      
+
                   if (fromQuestionItem.maPhieu == AppDefine.maPhieuTB) {
                     if (fromQuestionItem.loaiCauHoi == 0 &&
                         fromQuestionItem.cap == 1) {
@@ -320,6 +320,24 @@ mixin QuestionUtils {
         noiDungLogic: noiDungLogic,
         maTrangThaiDT: maTrangThaiDT);
     return xacNhanLogicProvider.insertUpdate(value);
+  }
+
+  ///Dùng cho trường hợp các ngành không có trong phiếu
+  Future updateXacNhanLogic(List<int> manHinhs, String idCoSoIdHo,
+      int maDoiTuongDT, int maTrangThaiDT) async {
+    for (var item in manHinhs) {
+      final xacNhanLogicProvider = XacNhanLogicProvider();
+      TableXacnhanLogic value = TableXacnhanLogic(
+          maDTV: AppPref.uid,
+          manHinh: item,
+          idDoiTuong: idCoSoIdHo,
+          maDoiTuongDT: maDoiTuongDT,
+          isLogic: 1,
+          isEnableMenuItem: 0,
+          noiDungLogic: '',
+          maTrangThaiDT: maTrangThaiDT);
+      xacNhanLogicProvider.insertUpdate(value);
+    }
   }
 
   Future insertUpdateXacNhanLogicWithoutEnable(
