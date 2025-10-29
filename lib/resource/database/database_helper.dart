@@ -219,6 +219,34 @@ class DatabaseHelper {
     createTable(db);
   }
 
+Future deleteOnlyDanhMuc(Database db) async {
+    log('BEGIN::deleteOnlyDanhMuc table', name: 'DatabaseHelper');
+
+    
+    await doiTuongDieuTraProvider.deletedTable(db);
+    await dmPhieuProvider.deletedTable(db);  
+    await dmMotaSanphamProvider.deletedTable(db); 
+    await dmLinhvucProvider.deletedTable(db);  
+    await xacNhanLogicProvider.deletedTable(db);
+
+    await dmTinhTrangHDProvider.deletedTable(db);
+    await dmTrangThaiDTProvider.deletedTable(db);
+    await dmCoKhongProvider.deletedTable(db);
+    await dmDanTocProvider.deletedTable(db);
+    await dmGioiTinhProvider.deletedTable(db);
+
+    // DM hieu ca the mau
+    await ctDmHoatDongLogisticProvider.deletedTable(db);
+    await ctDmLinhVucProvider.deletedTable(db);
+    await ctDmDiaDiemSXKDProvider.deletedTable(db);
+    await ctDmLoaiDiaDiemProvider.deletedTable(db);
+    await dmQuocTichProvider.deletedTable(db);
+    await ctDmTinhTrangDKKDProvider.deletedTable(db);
+    await ctDmTrinhDoChuyenMonProvider.deletedTable(db); 
+ 
+    log('END::deleteOnlyDanhMuc table compelete');
+    createTable(db);
+  }
   ///DÙNG CHO LẤY DỮ LIỆU PHỎNG VẤN KHI NHẤN NÚT LẤY DỮ LIỆU PHỎNG VẤN : Chỉ tạo các talbe dữ liệu
   Future createOnlyDataTable(Database db) async {
     log('BEGIN::createDataTable', name: 'DatabaseHelper');

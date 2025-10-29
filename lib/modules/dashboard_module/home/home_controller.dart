@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
-import 'package:gov_statistics_investigation_economic/modules/sync_module/mixin_sync.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart'; 
+import 'package:gov_statistics_investigation_economic/modules/sync_module/mixin_sync_v2.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/ct_dm_phieu_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_mota_sanpham_provider.dart';
@@ -37,7 +37,7 @@ import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 import 'package:url_launcher/url_launcher.dart' as linking;
 import 'package:package_info_plus/package_info_plus.dart';
 
-class HomeController extends BaseController with SyncMixin {
+class HomeController extends BaseController with SyncMixinV2 {
   HomeController(
       {required this.inputDataRepository,
       required this.syncRepository,
@@ -262,11 +262,11 @@ class HomeController extends BaseController with SyncMixin {
     if (isHad != null) {
       AppPref.dateTimeSaveDB = isHad['CreatedAt'];
 
-      var resultSunc = await syncDataMixin(
+      var resultSunc = await syncDataMixinHome(
           syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: false);
       developer.log(
-          'sync data: ${resultSunc.responseCode}::${resultSunc.responseMessage}');
+          'sync before get data: ${resultSunc.responseCode}::${resultSunc.responseMessage}');
 
       ///Kiểm tra kết quả đồng bộ
       ///Nếu thành công thì không thông báo
@@ -764,9 +764,9 @@ class HomeController extends BaseController with SyncMixin {
   Future syncData() async {
     // resetVarBeforeSync();
     // endSync(false);
-    await getData();
+    await getDataHome();
     var resSync =
-        await uploadDataMixin(syncRepository, sendErrorRepository, progress);
+        await uploadDataMixinHome(syncRepository, sendErrorRepository, progress);
     // responseCode.value = resSync.responseCode ?? '';
     if (resSync.responseCode == ApiConstants.responseSuccess) {
       //   responseMessage.value = resSync.responseMessage ?? "Đồng bộ thành công.";

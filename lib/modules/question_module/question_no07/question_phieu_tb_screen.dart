@@ -4908,7 +4908,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       if (selectedValue != null &&
           controller.validateEqual0InputValue(
               selectedValue.toString().replaceAll(' ', ''))) {
-        return wText('Cơ sở không có TSCĐ có đúng không?');
+        var a1_2TValue =
+            controller.getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA1_2);
+        if (a1_2TValue != null && a1_2TValue == 2) {
+          return wText(
+              'Cơ sở kinh doanh thuộc sở hữu chủ cơ sở (C1.2=2) mà Tài sản cố định cơ sở =0 (C3.1.1. Nhà xưởng, cửa hàng=0)');
+        } else {
+          return wText('Cơ sở không có TSCĐ có đúng không?');
+        }
       }
     } else if (question.maCauHoi == colPhieuMauTBA3_2 &&
         question.maPhieu == AppDefine.maPhieuTB) {
@@ -5547,7 +5554,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           return 'Cảnh báo: Cơ sở có phát sinh chi phí về mua, thuê phần cứng (C7.4_1 ($a7_4_1_2Value) > 0) mà C3.4.1_TSCĐ về Thiết bị dụng cụ quản lý=0';
         }
       }
-      if ( chiTieuDong.maSo == "2") {
+      if (chiTieuDong.maSo == "2") {
         if (((a7_4_1_2Value != null && a7_4_1_2Value > 0) ||
                 (a7_4_2_2Value != null && a7_4_2_2Value > 0)) &&
             (a3_1_4_1Value != null && a3_1_4_1Value == 0)) {

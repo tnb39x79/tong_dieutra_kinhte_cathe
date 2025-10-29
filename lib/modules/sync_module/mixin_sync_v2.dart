@@ -27,7 +27,6 @@ import 'package:archive/archive_io.dart';
 
 mixin SyncMixinV2 {
   Map fullBody = {};
-  //Map messageBody = {};
   Map msgBundleBody = {};
 
   final MainMenuController mainMenuController = Get.find();
@@ -49,44 +48,6 @@ mixin SyncMixinV2 {
   final danhSachBkCoSoSXKDInterviewed = <TableBkCoSoSXKDSync>[].obs;
   final danhSachBkCoSoSXKDInterviewedPagingated = <TableBkCoSoSXKDSync>[].obs;
   final danhSachBkCoSoSXKDInterviewedFull = <TableBkCoSoSXKD>[].obs;
-
-  // Future<ResponseSyncModel> syncSingleDataMixin(SyncRepository syncRepository,
-  //     SendErrorRepository sendErrorRepository, progress,
-  //     {bool isRetryWithSignIn = false,
-  //     bool isSendFullDataError = false}) async {
-  //   msgBundleBody = {};
-  //   int pageNumber = 1;
-  //   int pageSize = 5;
-  //   if (danhSachBkCoSoSXKDInterviewed.isNotEmpty) {
-  //     int totalRecord = danhSachBkCoSoSXKDInterviewed.length;
-
-  //     var totalPages_pre = (totalRecord / pageSize);
-  //     var totalPages = totalPages_pre.ceil();
-
-  //     for (var i = 1; i <= totalPages; i++) {
-  //       pageSize = i;
-  //       await getListInterviewedPaginatedSync(pageNumber, pageSize);
-  //       if (danhSachBkCoSoSXKDInterviewedPagingated.isNotEmpty) {
-  //         Map mBody = await getBundleCoSoSX();
-  //         await Future.delayed(Duration(seconds: 1));
-  //         return await syncSingleMixin(
-  //             syncRepository, sendErrorRepository, progress,
-  //             isRetryWithSignIn: false,
-  //             isSendFullDataError: isSendFullDataError);
-  //       }
-  //     }
-
-  //     // for (var item in danhSachBkCoSoSXKDInterviewed) {
-  //     //   messageBody = {};
-  //     //   messageBody = await getSingleCoSoSX(item.iDCoSo!);
-  //     //   await Future.delayed(Duration(seconds: 1));
-  //     //   return await syncSingleMixin(
-  //     //       syncRepository, sendErrorRepository, progress,
-  //     //       isRetryWithSignIn: false, isSendFullDataError: isSendFullDataError);
-  //     // }
-  //   }
-  //   return ResponseSyncModel();
-  // }
 
   Future getListInterviewed() async {
     List<Map>? item =
@@ -134,54 +95,6 @@ mixin SyncMixinV2 {
       danhSachBkCoSoSXKDInterviewedPagingated.assignAll(items);
     }
   }
-  // Future getListInterviewedPaginatedSync(int pageNumber, int pageSize) async {
-  //   List<Map>? item = await bkCoSoSXKDMixProvider
-  //       .getListInterviewedPaginatedSync(pageNumber, pageSize);
-  //   danhSachBkCoSoSXKDInterviewedPagingated.clear();
-
-  //   if (item.isNotEmpty) {
-  //     for (var element in item) {
-  //       developer.log('CSSXKD paginated: $element');
-  //       danhSachBkCoSoSXKDInterviewedPagingated
-  //           .add(TableBkCoSoSXKDSync.fromJson(element));
-  //     }
-  //   }
-  // }
-
-  // Future<Map> getSingleCoSoSX(String idCoSo) async {
-  //   Map msgBody = {};
-  //   List cosoSX = [];
-
-  //   var item =
-  //       danhSachBkCoSoSXKDInterviewed.where((x) => x.iDCoSo == idCoSo).first;
-  //   var map = {
-  //     "LoaiPhieu": item.loaiPhieu,
-  //     "IDCoso": item.iDCoSo,
-  //     "MaTinh": item.maTinh,
-  //     "MaTKCS": item.maTKCS,
-  //     "MaXa": item.maXa,
-  //     "MaThon": item.maThon,
-  //     "TenThon": item.tenThon,
-  //     "MaDiaBan": item.maDiaBan,
-  //     "TenDiaBan": item.tenDiaBan,
-  //     "TenCoso": item.tenCoSo,
-  //     "DiaChi": item.diaChi,
-  //     "TenChuCoSo": item.tenChuCoSo,
-  //     "DienThoai": item.dienThoai,
-  //     "Email": item.email,
-  //     "MaTinhTrangHD": item.maTinhTrangHD,
-  //   };
-
-  //   Map phieuMauTBs = await getPhieuMauTBs(item.iDCoSo!);
-  //   if (phieuMauTBs.isNotEmpty) {
-  //     map['PhieuMauTB'] = phieuMauTBs;
-  //   }
-
-  //   cosoSX.add(map);
-
-  //   msgBody['CoSoSXKDData'] = cosoSX;
-  //   return msgBody;
-  // }
 
   Future getBundleCoSoSX() async {
     List cosoSX = [];
@@ -251,6 +164,150 @@ mixin SyncMixinV2 {
 
     fullBody['CoSoSXKDData'] = cosoSX;
   }
+
+  /// ****BEGIN::HOME SYNC****
+  Future<ResponseSyncModel> syncDataMixinHome(SyncRepository syncRepository,
+      SendErrorRepository sendErrorRepository, progress,
+      {bool isRetryWithSignIn = false}) async {
+    await getDataHome();
+
+    return await uploadDataMixinHome(
+        syncRepository, sendErrorRepository, progress,
+        isRetryWithSignIn: false);
+  }
+
+  getDataHome() async {
+    await getListInterviewedHome();
+    await getBodyHome();
+  }
+
+  Future getBodyHome() async {
+    await Future.wait([
+      getFullCoSoSXBody(),
+    ]);
+    developer.log('GET BODY: ${jsonEncode(fullBody)}');
+  }
+
+  Future getListInterviewedHome() async {
+    List<Map>? interviewedCoSoSXKD =
+        await bkCoSoSXKDMixProvider.selectAllListInterviewedSync();
+    danhSachBkCoSoSXKDInterviewedFull.clear();
+    // developer.log('interviewedCoSoSXKD: $interviewedCoSoSXKD');
+    if (interviewedCoSoSXKD.isNotEmpty) {
+      for (var element in interviewedCoSoSXKD) {
+        developer.log('CSSXKD Full Home: $element');
+        danhSachBkCoSoSXKDInterviewedFull
+            .add(TableBkCoSoSXKD.fromJson(element));
+      }
+    }
+  }
+
+  Future<ResponseSyncModel> uploadDataMixinHome(SyncRepository syncRepository,
+      SendErrorRepository sendErrorRepository, progress,
+      {bool isRetryWithSignIn = false}) async {
+    developer.log('BODY: ${json.encode(fullBody)}');
+    // developer.log('BODY: $body');
+    print('$fullBody');
+    var resCode = '';
+    var errorMessage = '';
+    var mustSendErrorToServer = false;
+
+    //  await Future.delayed(const Duration(milliseconds: 1000000));
+    ResponseModel request = await syncRepository.syncDataV2(fullBody,
+        uploadProgress: (value) => progress.value = value);
+
+    ///TRẢ LẠI SAU
+    developer.log('SYNC fullBody SUCCESS: ${request.body}');
+    if (request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
+      var resp = await syncRepository.getToken(
+          userName: AppPref.userName ?? '',
+          password: AppPref.password ?? '',
+          iMei: mainMenuController.userModel.value.iMei);
+      AppPref.extraToken = resp.body?.accessToken;
+      uploadDataMixinHome(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: true);
+    }
+
+    if (request.statusCode == 200) {
+      SyncModel syncData = SyncModel.fromJson(jsonDecode(request.body));
+
+      if (syncData.responseCode == ApiConstants.responseSuccess) {
+        var coSoSuccess =
+            jsonDecode(request.body)["Data"]["CoSoSXKDData"] as List;
+
+        var iDCoSos = coSoSuccess
+            .where((element) => element["ErrorMessage"] == null)
+            .map((e) => e['IDCoso'])
+            .toList();
+
+        bkCoSoSXKDMixProvider.updateSuccess(iDCoSos);
+
+        phieuMauTBSanPhamMixProvider.updateSuccess(iDCoSos);
+        ResponseSyncModel responseSyncModel = ResponseSyncModel(
+            isSuccess: true,
+            responseCode: syncData.responseCode,
+            responseMessage: syncData.responseMessage,
+            syncResults: syncData.syncResults);
+
+        return responseSyncModel;
+      } else {
+        if (syncData.responseCode == ApiConstants.invalidModelSate) {
+          uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+              isRetryWithSignIn: false);
+          errorMessage = "Dữ liệu đầu vào không đúng định dạng.";
+          developer
+              .log('syncData.responseMessage: ${syncData.responseMessage}');
+        } else if (syncData.responseCode == ApiConstants.khoaCAPI) {
+          errorMessage = "Khóa CAPI đang bật.";
+        } else if (syncData.responseCode == ApiConstants.duLieuDongBoRong) {
+          errorMessage = "${syncData.responseMessage}";
+        } else {
+          errorMessage = "Lỗi đồng bộ:${syncData.responseMessage}";
+          uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+              isRetryWithSignIn: false);
+        }
+
+        ResponseSyncModel responseSyncModel = ResponseSyncModel(
+            isSuccess: false,
+            responseCode: syncData.responseCode,
+            responseMessage: errorMessage);
+        return responseSyncModel;
+      }
+    } else if (request.statusCode == 401) {
+      errorMessage = 'Tài khoản đã hết hạn, vui lòng đăng nhập và đồng bộ lại.';
+    } else if (request.statusCode == ApiConstants.errorDisconnect) {
+      errorMessage = 'Kết nối mạng đã bị ngắt. Vui lòng kiểm tra lại.';
+    } else if (request.statusCode == ApiConstants.errorException) {
+      mustSendErrorToServer = true;
+      errorMessage = 'Có lỗi: ${request.message}';
+    } else if (request.statusCode == HttpStatus.requestTimeout) {
+      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
+      resCode = request.statusCode.toString();
+      errorMessage = 'Request timeout.';
+    } else if (request.statusCode == HttpStatus.internalServerError) {
+      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
+      errorMessage = 'Có lỗi: ${request.message}';
+    } else {
+      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
+      errorMessage =
+          'Đã có lỗi xảy ra, vui lòng kiểm tra kết nối internet và thử lại!';
+    }
+    if (mustSendErrorToServer) {
+      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
+      uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
+    }
+    ResponseSyncModel responseSyncModel = ResponseSyncModel(
+        isSuccess: false,
+        responseCode: request.statusCode.toString(),
+        responseMessage: errorMessage);
+    return responseSyncModel;
+  }
+  /******END::HOME SYNC*****/
 
   Future<Map> getPhieuMauTBs(String iDCoSo) async {
     Map mapPhieu = {};
@@ -366,7 +423,7 @@ mixin SyncMixinV2 {
       } else {
         if (syncData.responseCode == ApiConstants.invalidModelSate) {
           uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
-          isRetryWithSignIn: false);
+              isRetryWithSignIn: false);
           errorMessage = "Dữ liệu đầu vào không đúng định dạng.";
           developer
               .log('syncData.responseMessage: ${syncData.responseMessage}');
@@ -376,7 +433,7 @@ mixin SyncMixinV2 {
           errorMessage = "${syncData.responseMessage}";
         } else {
           uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
-          isRetryWithSignIn: false);
+              isRetryWithSignIn: false);
           errorMessage = "Lỗi đồng bộ:${syncData.responseMessage}";
           if (isSendFullDataError) {
             uploadFullDataJson(syncRepository, sendErrorRepository, progress,
