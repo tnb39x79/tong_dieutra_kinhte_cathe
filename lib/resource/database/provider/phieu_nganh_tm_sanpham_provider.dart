@@ -316,7 +316,7 @@ class PhieuNganhTMSanPhamProvider
     return result;
   }
 
-  Future<double> tongTriGiaVonCau1T(String idCoSo) async {
+  Future<double> tongTriGiaVonBoRaCau1TM(String idCoSo) async {
     double result = 0.0;
 
     String createdAt = AppPref.dateTimeSaveDB!;

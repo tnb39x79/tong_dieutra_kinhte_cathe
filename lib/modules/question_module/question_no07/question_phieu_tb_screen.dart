@@ -174,7 +174,12 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (question.maPhieu == AppDefine.maPhieuTM) ...[
-          if (controller.isCap2_56TM.value == true)
+          if (controller.isCap2G_6810TM.value == true &&
+              question.maCauHoi == "A_I") ...[
+            RichTextQuestion(question.tenCauHoi ?? '',
+                level: question.cap!, notes: question.giaiThich ?? ''),
+          ] else if (controller.isCap2_56TM.value == true &&
+              question.maCauHoi == "A_II")
             RichTextQuestion(question.tenCauHoi ?? '',
                 level: question.cap!, notes: question.giaiThich ?? ''),
         ] else
@@ -3487,7 +3492,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
               Icons.arrow_drop_down,
               color: primaryColor,
             ),
-            tenSanPham: controller.getTenSanPhamByMaSanPham(a5_1_2),
+            tenSanPham: controller.getTenSanPhamByMaSanPham(a5_1_2 ?? ''),
           )),
         ),
       ]);
@@ -5519,11 +5524,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
           question.bangDuLieu!, colPhieuMauTBA7_4_3_1);
       var a7_1Value = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA7_1);
-      if (a7_4_3_1Value != null &&
-          a7_4_3_1Value == 1 &&
-          a7_1Value != null &&
-          a7_1Value == 2) {
-        return 'Cảnh báo: Cơ sở có phát sinh chi phí về thuê đường truyền internet, cước điện thoại (C7.4_3 = 1) mà Không sử dụng internet cho mục đích SXKD (C7.1=2)';
+      if (chiTieuDong.maSo == "3") {
+        if (a7_4_3_1Value != null &&
+            a7_4_3_1Value == 1 &&
+            a7_1Value != null &&
+            a7_1Value == 2) {
+          return 'Cảnh báo: Cơ sở có phát sinh chi phí về thuê đường truyền internet, cước điện thoại (C7.4_3 = 1) mà Không sử dụng internet cho mục đích SXKD (C7.1=2)';
+        }
       }
       //(C7.4_1 >0 hoặc C7.4_2>0) và C3.4.1_ TSCĐ về Thiết bị dụng cụ quản lý=0
       var a7_4_1_2Value = controller.getValueByFieldName(
@@ -5533,10 +5540,19 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
 
       var a3_1_4_1Value = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA3_1_4_1);
-      if (((a7_4_1_2Value != null && a7_4_1_2Value > 0) ||
-              (a7_4_2_2Value != null && a7_4_2_2Value > 0)) &&
-          (a3_1_4_1Value != null && a3_1_4_1Value == 0)) {
-        return 'Cảnh báo: Cơ sở có phát sinh chi phí về mua, thuê phần cứng hoặc thuê mua phần mềm (C7.4_1 ($a7_4_1_2Value) > 0  hoặc C7.4_2 ($a7_4_2_2Value) >  0) mà C3.4.1_TSCĐ về Thiết bị dụng cụ quản lý=0';
+      if (chiTieuDong.maSo == "1") {
+        if (((a7_4_1_2Value != null && a7_4_1_2Value > 0) ||
+                (a7_4_2_2Value != null && a7_4_2_2Value > 0)) &&
+            (a3_1_4_1Value != null && a3_1_4_1Value == 0)) {
+          return 'Cảnh báo: Cơ sở có phát sinh chi phí về mua, thuê phần cứng (C7.4_1 ($a7_4_1_2Value) > 0) mà C3.4.1_TSCĐ về Thiết bị dụng cụ quản lý=0';
+        }
+      }
+      if ( chiTieuDong.maSo == "2") {
+        if (((a7_4_1_2Value != null && a7_4_1_2Value > 0) ||
+                (a7_4_2_2Value != null && a7_4_2_2Value > 0)) &&
+            (a3_1_4_1Value != null && a3_1_4_1Value == 0)) {
+          return 'Cảnh báo: Cơ sở có phát sinh chi phí về mua, thuê mua phần mềm (C7.4_1 (C7.4_2 ($a7_4_2_2Value) >  0) mà C3.4.1_TSCĐ về Thiết bị dụng cụ quản lý=0';
+        }
       }
     } else if (question.maCauHoi == "A1" &&
         question.maPhieu == AppDefine.maPhieuVT) {

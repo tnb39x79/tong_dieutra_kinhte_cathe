@@ -102,7 +102,12 @@ mixin SyncMixinV2 {
     }
   }
 
-  Future getListInterviewedFullBody() async {
+  Future getFullDataSync() async {
+    await getListInterviewedFullSync();
+    await getFullCoSoSXBody();
+  }
+
+  Future getListInterviewedFullSync() async {
     List<Map>? item =
         await bkCoSoSXKDMixProvider.selectAllListInterviewedSync();
     danhSachBkCoSoSXKDInterviewedFull.clear();
@@ -117,7 +122,7 @@ mixin SyncMixinV2 {
   }
 
   Future getListInterviewedPaginatedSync(int pageNumber, int pageSize) async {
-    int offset =0;// (pageNumber - 1) * pageSize;
+    int offset = 0; // (pageNumber - 1) * pageSize;
     var items = danhSachBkCoSoSXKDInterviewed
         .where((x) => x.isSyncSuccess != 1)
         .skip(offset)
@@ -214,10 +219,10 @@ mixin SyncMixinV2 {
     return msgBundleBody;
   }
 
-  Future getCoSoSX() async {
+  Future getFullCoSoSXBody() async {
     List cosoSX = [];
 
-    await Future.wait(danhSachBkCoSoSXKDInterviewed.map((item) async {
+    await Future.wait(danhSachBkCoSoSXKDInterviewedFull.map((item) async {
       var map = {
         "LoaiPhieu": item.loaiPhieu,
         "IDCoso": item.iDCoSo,
@@ -360,6 +365,8 @@ mixin SyncMixinV2 {
         return responseSyncModel;
       } else {
         if (syncData.responseCode == ApiConstants.invalidModelSate) {
+          uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
           errorMessage = "Dữ liệu đầu vào không đúng định dạng.";
           developer
               .log('syncData.responseMessage: ${syncData.responseMessage}');
@@ -368,9 +375,12 @@ mixin SyncMixinV2 {
         } else if (syncData.responseCode == ApiConstants.duLieuDongBoRong) {
           errorMessage = "${syncData.responseMessage}";
         } else {
+          uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
           errorMessage = "Lỗi đồng bộ:${syncData.responseMessage}";
           if (isSendFullDataError) {
-            //  uploadFullDataJson(syncRepository, sendErrorRepository, progress, isRetryWithSignIn: false);
+            uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+                isRetryWithSignIn: false);
           }
         }
 
@@ -386,6 +396,8 @@ mixin SyncMixinV2 {
       errorMessage = 'Kết nối mạng đã bị ngắt. Vui lòng kiểm tra lại.';
     } else if (request.statusCode == ApiConstants.errorException) {
       mustSendErrorToServer = true;
+      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+          isRetryWithSignIn: false);
       errorMessage = 'Có lỗi: ${request.message}';
     } else if (request.statusCode == HttpStatus.requestTimeout) {
       uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
@@ -419,15 +431,15 @@ mixin SyncMixinV2 {
   Future<ResponseSyncModel> uploadDataJsonMixin(SyncRepository syncRepository,
       SendErrorRepository sendErrorRepository, progress,
       {bool isRetryWithSignIn = false}) async {
-    developer.log('BODY: ${json.encode(fullBody)}');
-    developer.log('BODY: $fullBody');
+    developer.log('FULL BODY: ${json.encode(fullBody)}');
+    developer.log('FULL BODY: $fullBody');
     print('$fullBody');
     var errorMessage = '';
     var responseCode = '';
     var isSuccess = false;
     ResponseModel _request = await sendErrorRepository.sendErrorData(fullBody,
         uploadProgress: (value) => progress.value = value);
-    developer.log('SEND SUCCESS: ${_request.body}');
+    developer.log('SEND ERROR JSON SUCCESS: ${_request.body}');
 
     if (_request.statusCode == ApiConstants.errorToken && !isRetryWithSignIn) {
       var resp = await syncRepository.getToken(

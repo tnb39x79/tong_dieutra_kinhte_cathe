@@ -45,7 +45,9 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
   @override
   void onInit() async {
     super.onInit();
+    await getFullDataSync();
     await getData();
+
     ever(networkService.connectionTypeObservable, (Network connectionType) {
       if (connectionType == Network.none) {
         isNetworkStatus.value = false;

@@ -9,7 +9,8 @@ class AppValues {
       'gov.statistics.investigation.economic'; // get from ios/Runner/Info.plist
   static const versionApp = '1.1.7';
   static const versionDanhMuc = '1.0.0';
-  static const urlStore = "https://apps.apple.com/us/app/t%E1%BB%95ng-%C4%91i%E1%BB%81u-tra-kinh-t%E1%BA%BF-ct-tg/id6740900419";
+  static const urlStore =
+      "https://apps.apple.com/us/app/t%E1%BB%95ng-%C4%91i%E1%BB%81u-tra-kinh-t%E1%BA%BF-ct-tg/id6740900419";
   // border
   static const borderLv1 = 6.0;
   static const borderLv2 = 12.0;
@@ -21,7 +22,8 @@ class AppValues {
   static const paddingBox = 15.0;
   static const marginBottomBox = 10.0;
 
-  static const buttonHeight = 48.0; static const buttonLowHeight = 40.0;
+  static const buttonHeight = 48.0;
+  static const buttonLowHeight = 40.0;
   static const showValueMessage = false; //show value for dev test
   // individual:123456
 }
