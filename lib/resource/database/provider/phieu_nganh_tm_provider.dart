@@ -5,6 +5,7 @@ import 'package:gov_statistics_investigation_economic/resource/database/database
 import 'package:gov_statistics_investigation_economic/resource/database/provider/base_db_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_tm.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu_nganh_tm_sanpham.dart';
 
 import 'package:sqflite/sqflite.dart';
 
@@ -46,6 +47,19 @@ class PhieuNganhTMProvider extends BaseDBProvider<TablePhieuNganhTM> {
     return ids;
   }
 
+  Future updateGetDuLieuPV(
+      List<TablePhieuNganhTM> value, String createdAt) async {
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.maDTV = AppPref.uid;
+      await db!.update(tablePhieuNganhTM, element.toJsonGetDLPV(), where: '''
+      $columnCreatedAt = '$createdAt' AND $colPhieuNganhTMSanPhamIDCoSo = '${element.iDCoSo}' 
+      AND $columnMaDTV= '${AppPref.uid}'
+    ''');
+    }
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -66,9 +80,11 @@ class PhieuNganhTMProvider extends BaseDBProvider<TablePhieuNganhTM> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuNganhTM, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override
@@ -109,11 +125,12 @@ class PhieuNganhTMProvider extends BaseDBProvider<TablePhieuNganhTM> {
 
     log('UPDATE PHIEU 04_C32: ${i.toString()}');
   }
-Future<int> updateNullValues(String idCoso, List<String> fieldNames) async {
+
+  Future<int> updateNullValues(String idCoso, List<String> fieldNames) async {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
-    var updatedAt=DateTime.now().toIso8601String();
+    var updatedAt = DateTime.now().toIso8601String();
     List<String> fields = [];
     for (var item in fieldNames) {
       fields.add(" $item = null ");
@@ -124,6 +141,7 @@ Future<int> updateNullValues(String idCoso, List<String> fieldNames) async {
 
     return result;
   }
+
   Future<List<Map>> selectListByIdCoSo(String idCoso) async {
     String createdAt = AppPref.dateTimeSaveDB!;
 

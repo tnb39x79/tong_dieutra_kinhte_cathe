@@ -184,7 +184,8 @@ class ActiveStatusController extends BaseController {
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
           currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
         if (tblBkCoSoSXKD.value.maTinhTrangHD != null &&
-            tblBkCoSoSXKD.value.maTinhTrangHD != 1 &&
+            (tblBkCoSoSXKD.value.maTinhTrangHD != 1 &&
+                tblBkCoSoSXKD.value.maTinhTrangHD != 2) &&
             tblBkCoSoSXKD.value.isSyncSuccess != null &&
             tblBkCoSoSXKD.value.isSyncSuccess == 1) {
           String msgContent =
@@ -215,37 +216,7 @@ class ActiveStatusController extends BaseController {
           );
         }
       }
-    } else if (currentIndex.value == 2) {
-      //Hộ không SXKD lĩnh vực được điều tra: Sử dụng khi cơ sở được chọn mẫu trong lĩnh vực mà hiện ko còn kinh doanh lĩnh vực được chọn mẫu
-      //=> PV điều tra phiếu TB
-      int tinhTrangHD = currentIndex.value + 1;
-      var item = tinhTrangHDs[currentIndex.value];
-
-      String msgContent = 'Hộ không SXKD lĩnh vực được điều tra';
-      if (item != null) {
-        msgContent = '${item.tenTinhTrang}';
-      }
-
-      Get.dialog(DialogWidget(
-        onPressedPositive: () {
-          if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
-              currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-            ///Kiểm tra tồn tại IDCoSo ở các bảng thì phải xoá record đó.
-            deleteRecordPhieuMau();
-            // ho
-            bKCoSoSXKDProvider.updateTrangThaiDTTinhTrangHD(
-                currentIdCoSo!, tinhTrangHD);
-          }
-          Get.back();
-          Get.back();
-        },
-        onPressedNegative: () {
-          Get.back();
-        },
-        title: msgContent,
-        content: 'Bạn có muốn kết thúc phỏng vấn?',
-      ));
-    } else {
+    }  else {
       ///Nếu maTinhTrangDH=6 (currentIndex.value=5) => hiện dialog xác nhận thông tin tự kê khai;
       // if (currentIndex.value == 5) {
       //   return showDialogNhapSDT(currentIndex.value);

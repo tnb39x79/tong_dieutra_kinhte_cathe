@@ -96,6 +96,25 @@ class TablePhieuNganhCN {
     return json;
   }
 
+    Map<String, Object?> toJsonGetDLPV() {
+    var json = <String, Object?>{}; 
+
+    json['IDCoSo'] = iDCoSo;
+    json['STT_SanPham'] = sTT_SanPham;
+    json['MaNganhC5'] = maNganhC5;
+    json['A1_1'] = a1_1;
+    json['A1_2'] = a1_2;
+    json['A2_1'] = a2_1;
+    json['A2_2'] = a2_2;
+    // json['LoaiDvt'] = loaiDvt;
+    
+    json['IsDefault'] = isDefault;
+    json['IsSync'] = isSync;
+    json['MaDTV'] = maDTV;
+    json['CreatedAt'] = createdAt; 
+    return json;
+  }
+
   static List<TablePhieuNganhCN>? fromListJson(dynamic json) {
     List<TablePhieuNganhCN> list = [];
     if (json != null) {

@@ -1,4 +1,4 @@
-import 'dart:developer' as developer; 
+import 'dart:developer' as developer;
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
@@ -115,6 +115,25 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
   Future update(TableBkCoSoSXKD value, String id) {
     // TODO: implement update
     throw UnimplementedError();
+  }
+
+  Future getDuLieuPVUpdateByIdCoSo(
+      TableBkCoSoSXKD value, String idCoSo, String createAt) async {
+      
+    await db!.update(tablebkCoSoSXKD, value.toJsonGetDLPV(), where: '''
+      $columnCreatedAt = '$createAt' AND $colBkCoSoSXKDIDCoSo = '$idCoSo' 
+      AND $columnMaDTV= '${AppPref.uid}'
+    ''');
+  }
+
+  Future<List<Map>> selectAllByIdCoSoMaThaiDT2(int maTrangThaiDT2) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    List<Map> map = await db!.rawQuery('''
+          SELECT * FROM $tablebkCoSoSXKD  
+          WHERE  $columnCreatedAt = '$createdAt'
+          AND $colBkCoSoSXKDMaTrangThaiDT2 = $maTrangThaiDT2
+        ''');
+    return map;
   }
 
   Future<Map> selectByIdCoSo(String idCoSo) async {
@@ -321,7 +340,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
 
   Future<List<Map>> getListInterviewedPaginatedSync(
       int pageNumber, int pageSize) async {
-     int offset = (pageNumber - 1) * pageSize;
+    int offset = (pageNumber - 1) * pageSize;
     String createdAt = AppPref.dateTimeSaveDB ?? "";
     String sWhere = " $columnCreatedAt = '$createdAt' ";
     sWhere +=

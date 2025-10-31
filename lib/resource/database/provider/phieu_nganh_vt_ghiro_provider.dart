@@ -46,6 +46,25 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
     return ids;
   }
 
+  Future<List<int>> insertGetDLPV(
+      List<TablePhieuNganhVTGhiRo> value, String createdAt) async {
+    try {
+      for (var element in value) {
+        await db!.delete(tablePhieuNganhVTGhiRo,
+            where: '''$colPhieuNganhVTGhiRoIDCoSo='${element.iDCoSo}' ''');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.maDTV = AppPref.uid;
+      ids.add(await db!.insert(tablePhieuNganhVTGhiRo, element.toJson()));
+    }
+    return ids;
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -69,9 +88,11 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuNganhVTGhiRo, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override
@@ -143,10 +164,7 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
           WHERE $columnIDCoSo = '$idCoso' 
           AND $colPhieuNganhVTGhiRoMaCauHoi is not null
           AND $colPhieuNganhVTGhiRoSTT is not null
-          AND $colPhieuNganhVTGhiRoC1 is not null
-          AND $colPhieuNganhVTGhiRoC2 is not null 
-          AND $colPhieuNganhVTGhiRoC3 is not null 
-          AND $colPhieuNganhVTGhiRoC4 is not null 
+          AND $colPhieuNganhVTGhiRoC1 is not null 
           AND $columnCreatedAt = '$createdAt' ORDER BY STT
         ''');
     return maps;
@@ -371,9 +389,8 @@ class PhieuNganhVTGhiRoProvider extends BaseDBProvider<TablePhieuNganhVTGhiRo> {
     return res;
   }
 
-///Xoá trừ STT=1 ra;
-  Future<int> deleteByCoSoIdMaCauHoiSTT(
-      String coSoId, String maCauHois) {
+  ///Xoá trừ STT=1 ra;
+  Future<int> deleteByCoSoIdMaCauHoiSTT(String coSoId, String maCauHois) {
     var maCauHoi = maCauHois.split(';');
     var res = db!.delete(tablePhieuNganhVTGhiRo,
         where:

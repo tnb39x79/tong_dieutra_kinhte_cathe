@@ -41,6 +41,18 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
     return ids;
   }
 
+  Future updateGetDuLieuPV(List<TablePhieu> value, String createdAt) async {
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+
+      await db!.update(tablePhieu, element.toJsonGetDLPV(), where: '''
+      $columnCreatedAt = '$createdAt' AND $colPhieuIDCoSo = '${element.iDCoSo}' 
+      AND $columnMaDTV= '${AppPref.uid}'
+    ''');
+    }
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -81,9 +93,11 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieu, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override

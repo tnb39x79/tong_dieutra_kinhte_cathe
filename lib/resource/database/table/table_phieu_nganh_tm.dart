@@ -68,6 +68,20 @@ class TablePhieuNganhTM {
     return json;
   }
 
+   Map<String, Object?> toJsonGetDLPV() {
+    var json = <String, Object?>{}; 
+
+    json['IDCoSo'] = iDCoSo;
+    json['A1T'] = a1T;
+    json['A2'] = a2;
+    json['A3'] = a3;
+    json['A3T'] = a3T;
+
+    json['MaDTV'] = maDTV;
+    json['CreatedAt'] = createdAt; 
+    return json;
+  }
+
   static List<TablePhieuNganhTM>? fromListJson(dynamic json) {
     List<TablePhieuNganhTM> list = [];
     if (json != null) {

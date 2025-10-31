@@ -50,7 +50,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
 
   Future<List<int>> insertCN(
       List<TablePhieuNganhCN> value, String createdAt) async {
-        var updatedAt = DateTime.now().toIso8601String();
+    var updatedAt = DateTime.now().toIso8601String();
     if (value.isNotEmpty) {
       var stt = null;
       if (value != null && value.isNotEmpty && value.length > 1) {
@@ -73,6 +73,26 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
       return ids;
     }
     return [];
+  }
+
+  Future<List<int>> insertGetDLPV(
+      List<TablePhieuNganhCN> value, String createdAt) async {
+    try {
+      for (var element in value) {
+        await db!.delete(tablePhieuNganhCN,
+            where: '''$colPhieuNganhCNIDCoSo='${element.iDCoSo}' ''');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+     // element.isDefault = element.sTTSanPham == 1 ? 1 : null;
+      element.maDTV = AppPref.uid;
+      ids.add(await db!.insert(tablePhieuNganhCN, element.toJsonGetDLPV()));
+    }
+    return ids;
   }
 
   @override
@@ -99,9 +119,11 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuNganhCN, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override
@@ -434,8 +456,7 @@ class PhieuNganhCNProvider extends BaseDBProvider<TablePhieuNganhCN> {
     return res;
   }
 
-    Future<List<String>> getMaSanPhamsByIdCoso(String idCoso) async {
-    
+  Future<List<String>> getMaSanPhamsByIdCoso(String idCoso) async {
     List<String> result = [];
     List<Map> maps = await db!.rawQuery('''
           SELECT $colPhieuNganhCNA1_2 FROM $tablePhieuNganhCN 

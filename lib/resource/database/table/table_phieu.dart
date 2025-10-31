@@ -207,6 +207,38 @@ class TablePhieu {
     return json;
   }
 
+ Map<String, Object?> toJsonGetDLPV() {
+    var json = <String, Object?>{};
+    json['IDCoSo'] = iDCoSo;
+    json['LoaiPhieu'] = loaiPhieu;
+    json['MaTinh'] = maTinh;
+    json['MaTKCS'] = maTKCS;
+    json['MaXa'] = maXa;
+    json['MaThon'] = maThon;
+    json['IDDB'] = iDDB;
+    json['MaDiaBan'] = maDiaBan;
+    json['TrangThaiCoSo'] = trangThaiCoSo;
+    json['MaCoSo'] = maCoSo;
+    json['TenCoSo'] = tenCoSo;
+    json['DiaChi'] = diaChi;
+    json['TenChuCoSo'] = tenChuCoSo;
+    json['SDTCoSo'] = sDTCoSo;
+    json['MaNganhMau'] = maNganhMau;
+    json['MaDTV'] = maDTV;
+    json['KinhDo'] = kinhDo;
+    json['ViDo'] = viDo;
+    json['NguoiTraLoi'] = nguoiTraLoi;
+    json['SoDienThoai'] = soDienThoai;
+    json['ThoiGianBD'] = thoiGianBD;
+    json['ThoiGianKT'] = thoiGianKT;
+    json['GhiChu'] = ghiChu;
+    json['GiaiTrinhToaDo'] = giaiTrinhToaDo;
+    json['GiaiTrinhThoiGianPV'] = giaiTrinhThoiGianPV;
+    json['NgayCapNhat'] = ngayCapNhat; 
+    json['CreatedAt'] = createdAt; 
+    return json;
+  }
+
   static List<TablePhieu>? fromListJson(dynamic json) {
     List<TablePhieu> list = [];
     if (json != null) {

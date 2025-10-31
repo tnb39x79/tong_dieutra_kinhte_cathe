@@ -46,6 +46,26 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
     return ids;
   }
 
+  Future<List<int>> insertGetDLPV(
+      List<TablePhieuMauTBSanPham> value, String createdAt) async {
+    try {
+      for (var element in value) {
+        await db!.delete(tablePhieuMauTBSanPham,
+            where: '''$colPhieuMauTBSanPhamIDCoSo='${element.iDCoSo}' ''');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.isDefault = element.sTTSanPham == 1 ? 1 : null;
+      element.maDTV = AppPref.uid;
+      ids.add(await db!.insert(tablePhieuMauTBSanPham, element.toJson()));
+    }
+    return ids;
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -68,9 +88,11 @@ class PhieuMauTBSanPhamProvider extends BaseDBProvider<TablePhieuMauTBSanPham> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuMauTBSanPham, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override

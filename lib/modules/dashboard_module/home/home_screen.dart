@@ -37,7 +37,7 @@ class HomeScreen extends GetView<HomeController> {
         ),
         TapDebouncer(
             cooldown: const Duration(milliseconds: 1000),
-            onTap: () async => await controller.onGetDuLieuPhieu(),
+            onTap: () async => await controller.taiDuLieuPV(),
             builder: (BuildContext context, TapDebouncerFunc? onTap) {
               return WidgetItemMainMenu(
                 name: 'get_data'.tr,

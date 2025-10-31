@@ -5417,9 +5417,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         if (namSinh < 1900 || namSinh > 2025) {
           return "Năm sinh phải >= 1900 và <= 2025";
         }
-      }
-
-      if (maCauHoi == colPhieuMauTBA1_5_1 && maPhieu == AppDefine.maPhieuTB) {
+      } else if (maCauHoi == colPhieuMauTBA1_5_1 &&
+          maPhieu == AppDefine.maPhieuTB) {
         var a1_5Value = tblPhieuCT[colPhieuMauTBA1_5];
         if (a1_5Value.toString() == '1') {
           if (validateEmptyString(inputValue)) {
@@ -5445,9 +5444,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         } else {
           return null;
         }
-      }
-
-      if ((maCauHoi == "A2_1" || maCauHoi == "A2_1_1") &&
+      } else if ((maCauHoi == "A2_1" || maCauHoi == "A2_1_1") &&
           maPhieu == AppDefine.maPhieuTB) {
         var resValid = onValidateA2_1(table, maCauHoi, fieldName, inputValue,
             minValue, maxValue, loaiCauHoi, typing);
@@ -5455,8 +5452,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           return resValid;
         }
         return null;
-      }
-      if ((maCauHoi == "A3_2" || maCauHoi == "A3_2_1") &&
+      } else if ((maCauHoi == "A3_2" || maCauHoi == "A3_2_1") &&
           maPhieu == AppDefine.maPhieuTB) {
         var resValid = onValidateA3_2(table, maCauHoi, fieldName, inputValue,
             minValue, maxValue, loaiCauHoi, typing);
@@ -5464,8 +5460,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           return resValid;
         }
         return null;
-      }
-      if (maCauHoi == "A4_1" && maPhieu == AppDefine.maPhieuTB) {
+      } else if (maCauHoi == "A4_1" && maPhieu == AppDefine.maPhieuTB) {
         if (validateEmptyString(inputValue)) {
           return 'Vui lòng nhập giá trị.';
         }
@@ -5477,8 +5472,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         if (a4_1 == 0) {
           return 'Kiểm tra lại số tháng hoạt động của cơ sở';
         }
-      }
-      if ((maCauHoi == "A4_2") && maPhieu == AppDefine.maPhieuTB) {
+      } else if ((maCauHoi == "A4_2") && maPhieu == AppDefine.maPhieuTB) {
         var resValid = onValidateA4_2(table, maCauHoi, fieldName, inputValue,
             minValue, maxValue, loaiCauHoi, typing);
         if (resValid != null && resValid != '') {
@@ -5751,13 +5745,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (tblPhieuCT == null) {
         return 'khonglay_duoc_dulieu_kiemtra'.tr;
       }
-
-      double a4_2_1Value = tblPhieuCT[colPhieuMauTBA3_2_1] != null
-          ? AppUtils.convertStringToDouble(tblPhieuCT[colPhieuMauTBA3_2_1])
+      double a3_2Value = tblPhieuCT[colPhieuMauTBA3_2] != null
+          ? AppUtils.convertStringToDouble(tblPhieuCT[colPhieuMauTBA3_2])
+          : 0;
+      double a4_2Value = tblPhieuCT[colPhieuMauTBA4_2] != null
+          ? AppUtils.convertStringToDouble(tblPhieuCT[colPhieuMauTBA4_2])
           : 0;
 
-      if (a4_2_1Value == 0) {
+      if (a4_2Value == 0) {
         return 'Kiểm tra: Doanh thu của cơ sở phải lớn hơn 0';
+      }
+      if (a4_2Value == 0 && a3_2Value > 0) {
+        return 'Doanh thu bình quân/tháng (bao gồm vốn và lãi)=0 mà C3.2_số tiền vốn > 0';
       }
 
       return null;
@@ -8217,85 +8216,89 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       return;
     }
 
+    ///Kiểm tra maNganhCap5 là ngành nào => Mới thực hiện gọi kiểm tra mã ngành đó có tồn tại dữ liệu hay không?
+
     //Ngành CN
-    var (nganh, messageContent, dsMa) =
+    var (nganhCN, messageContentCN, isCN) =
         await kiemTraXoaNganhCN(id, maNganhCap5!);
 
-    if (nganh == 'CN' && messageContent != '') {
+    if (nganhCN == 'CN' && messageContentCN != '') {
       Get.dialog(DialogBarrierWidget(
         onPressedNegative: () async {
           Get.back();
         },
         onPressedPositive: () async {
-          await executeConfirmDeleteProduct(id, nganh, maNganhCap5);
+          await executeConfirmDeleteProduct(id, nganhCN, maNganhCap5);
           Get.back();
         },
         color: errorColor,
         title: 'dialog_title_warning_delete'.tr,
-        content: messageContent,
+        content: messageContentCN,
         content2: 'Bạn có chắc muốn xoá sản phẩm này?',
         btnAcceptColor: errorColor,
       ));
     }
     //Ngành VT
-    (nganh, messageContent, dsMa) = await kiemTraXoaNganhVT(id, maNganhCap5!);
-    if ((nganh == 'VT' || nganh == 'VTHK' || nganh == 'VTHH') &&
-        messageContent != '') {
+    var (nganhVT, messageContentVT, dsMaTV) =
+        await kiemTraXoaNganhVT(id, maNganhCap5!);
+    if ((nganhVT == 'VT' || nganhVT == 'VTHK' || nganhVT == 'VTHH') &&
+        messageContentVT != '') {
       Get.dialog(DialogBarrierWidget(
         onPressedNegative: () async {
           Get.back();
         },
         onPressedPositive: () async {
-          await executeConfirmDeleteProduct(id, nganh, maNganhCap5);
+          await executeConfirmDeleteProduct(id, nganhVT, maNganhCap5);
           Get.back();
         },
         color: errorColor,
         title: 'dialog_title_warning_delete'.tr,
-        content: messageContent,
+        content: messageContentVT,
         content2: 'Bạn có chắc muốn xoá sản phẩm này?',
         btnAcceptColor: errorColor,
       ));
     }
     //Ngành LT
-    (nganh, messageContent) = await kiemTraXoaNganhLT(id, maNganhCap5!);
-    if (nganh == 'LT' && messageContent != '') {
+    var (nganhLT, messageContentLT) = await kiemTraXoaNganhLT(id, maNganhCap5!);
+    if (nganhLT == 'LT' && messageContentLT != '') {
       Get.dialog(DialogBarrierWidget(
         onPressedNegative: () async {
           Get.back();
         },
         onPressedPositive: () async {
-          await executeConfirmDeleteProduct(id, nganh, maNganhCap5);
+          await executeConfirmDeleteProduct(id, nganhLT, maNganhCap5);
           Get.back();
         },
         color: errorColor,
         title: 'dialog_title_warning_delete'.tr,
-        content: messageContent,
+        content: messageContentLT,
         content2: 'Bạn có chắc muốn xoá sản phẩm này?',
         btnAcceptColor: errorColor,
       ));
     }
     //Ngành TM
-    (nganh, messageContent, dsMa) = await kiemTraXoaNganhTM(id, maNganhCap5!);
-    if ((nganh == 'TM' || nganh == 'TMG8610' || nganh == 'TM56') &&
-        messageContent != '') {
+    var (nganhTM, messageContentTM, dsMaTM) =
+        await kiemTraXoaNganhTM(id, maNganhCap5!);
+    if ((nganhTM == 'TM' || nganhTM == 'TMG8610' || nganhTM == 'TM56') &&
+        messageContentTM != '') {
       Get.dialog(DialogBarrierWidget(
         onPressedNegative: () async {
           Get.back();
         },
         onPressedPositive: () async {
-          await executeConfirmDeleteProduct(id, nganh, maNganhCap5);
+          await executeConfirmDeleteProduct(id, nganhTM, maNganhCap5);
           Get.back();
         },
         color: errorColor,
         title: 'dialog_title_warning_delete'.tr,
-        content: messageContent,
+        content: messageContentTM,
         content2: 'Bạn có chắc muốn xoá sản phẩm này?',
         btnAcceptColor: errorColor,
       ));
     }
   }
 
-  Future<(String, String, List<String>)> kiemTraXoaNganhCN(
+  Future<(String, String, bool)> kiemTraXoaNganhCN(
       int id, String maNganhCap5) async {
     ///
     String nganh = '';
@@ -8303,8 +8306,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
     ///Ngành CN
     var isCap1BCDE =
-        await hasAllXoaSanPhamBCDE(); // await hasA5_3BCDE(maNganhCap5);
-    if (isCap1BCDE.isNotEmpty && isCap1BCDE.length >= 1) {
+        await hasA5_3BCDE(maNganhCap5); // await hasA5_3BCDE(maNganhCap5);
+    if (isCap1BCDE) {
       var map = await phieuNganhCNProvider.getByMaNganhC5(
           currentIdCoSo!, maNganhCap5);
       if (map.isNotEmpty) {
@@ -8323,8 +8326,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     String messageContent = '';
 
     ///Ngành VT
-    var hasVTHK = await hasCap5XoaNganhVT(vcpaCap5VanTaiHanhKhach);
-    var hasVTHH = await hasCap5XoaNganhVT(vcpaCap5VanTaiHangHoa);
+    var hasVTHK = await hasCap5XoaNganhVT(vcpaCap5VanTaiHanhKhach, maNganhCap5);
+    var hasVTHH = await hasCap5XoaNganhVT(vcpaCap5VanTaiHangHoa, maNganhCap5);
     if (hasVTHK.isNotEmpty && hasVTHH.isNotEmpty) {
       var hasDataTVHK = await hasMucVTHanhKhach();
       var hasDataTVHH = await hasMucVTHangHoa();
@@ -8368,7 +8371,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     String messageContent = '';
 
     ///Ngành LT
-    var hasLT55 = await hasCap2XoaNganhLT('55');
+    var hasLT55 = await hasCap2XoaNganhLT('55', maNganhCap5);
 
     if (hasLT55.isNotEmpty && hasLT55.length == 1) {
       var map = await phieuNganhLTProvider.selectByIdCoSo(currentIdCoSo!);
@@ -8388,10 +8391,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     String messageContent = '';
 
     ///Ngành LT
-    var hasG8610 =
-        await hasXoaNganh5G_L6810TM(); // await hasA5_5G_L6810(maNganhCap5);
+    var hasG8610 = await hasXoaNganh5G_L6810TM(
+        maNganhCap5); // await hasA5_5G_L6810(maNganhCap5);
     var has56TM = await hasCap2XoaNganhTM(
-        vcpaCap2TM); // await hasCap2_56TM('56', maNganhCap5);
+        vcpaCap2TM, maNganhCap5); // await hasCap2_56TM('56', maNganhCap5);
 
     if (hasG8610.isNotEmpty &&
         hasG8610.length == 1 &&
@@ -8423,6 +8426,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     return (nganh, messageContent, hasG8610);
   }
+
+  
 
   executeConfirmDeleteProduct(id, String nganh, String maNganhCap5,
       {List<String>? maSanPhamPhieuMauTBSanPhams}) async {
@@ -8822,49 +8827,52 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return false;
   }
 
-  Future<List<String>> hasCap5XoaNganhVT(String maQuiDinh) async {
-    var resMaSPs =
-        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
-    if (resMaSPs.isNotEmpty) {
-      return await dmMotaSanphamProvider.kiemTraMaNganhCap5XoaByMaSanPham5(
-          maQuiDinh, resMaSPs.join(';'));
-    }
-    return [];
+  Future<List<String>> hasCap5XoaNganhVT(
+      String maQuiDinh, String maNganhC5) async {
+    // var resMaSPs =
+    //     await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    //  if (resMaSPs.isNotEmpty) {
+    return await dmMotaSanphamProvider.kiemTraMaNganhCap5XoaByMaSanPham5(
+        maQuiDinh, maNganhC5);
+    //  }
+    // return [];
   }
 
-  Future<List<String>> hasCap2XoaNganhLT(String maQuiDinh) async {
-    var resMaSPs =
-        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
-    if (resMaSPs.isNotEmpty) {
-      return await dmMotaSanphamProvider.kiemTraMaNganhCap2XoaByMaSanPham5(
-          maQuiDinh, resMaSPs.join(';'));
-    }
-    return [];
+  Future<List<String>> hasCap2XoaNganhLT(
+      String maQuiDinh, String maNganhC5) async {
+    // var resMaSPs =
+    //     await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    // if (resMaSPs.isNotEmpty) {
+    return await dmMotaSanphamProvider.kiemTraMaNganhCap2XoaByMaSanPham5(
+        maQuiDinh, maNganhC5);
+    // }
+    // return [];
   }
 
-  Future<List<String>> hasXoaNganh5G_L6810TM() async {
+  Future<List<String>> hasXoaNganh5G_L6810TM(String maNganhC5) async {
     var arrG_C5 = maVcpaLoaiTruG_C5.split(';');
     var arrG_C4 = maVcpaLoaiTruG_C4.split(';');
     var arrG_C3 = maVcpaLoaiTruG_C3.split(';');
 
-    var resMaSPs =
-        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
-    if (resMaSPs.isNotEmpty) {
-      return await dmMotaSanphamProvider.getSanPhamBy_5G_L6810(
-          resMaSPs.join(';'), arrG_C3, arrG_C4, arrG_C5, maVcpaL6810);
-    }
+    // var resMaSPs =
+    //     await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    // if (resMaSPs.isNotEmpty) {
+    return await dmMotaSanphamProvider.getSanPhamBy_5G_L6810(
+        maNganhC5, arrG_C3, arrG_C4, arrG_C5, maVcpaL6810);
+    // }
 
-    return [];
+    // return [];
   }
 
-  Future<List<String>> hasCap2XoaNganhTM(String maQuiDinh) async {
-    var resMaSPs =
-        await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
-    if (resMaSPs.isNotEmpty) {
-      return await dmMotaSanphamProvider.kiemTraMaNganhCap2XoaByMaSanPham5(
-          maQuiDinh, resMaSPs.join(';'));
-    }
-    return [];
+  Future<List<String>> hasCap2XoaNganhTM(
+      String maQuiDinh, String maNganhC5) async {
+    // var resMaSPs =
+    //     await phieuMauTBSanPhamProvider.getMaSanPhamsByIdCoso(currentIdCoSo!);
+    // if (resMaSPs.isNotEmpty) {
+    return await dmMotaSanphamProvider.kiemTraMaNganhCap2XoaByMaSanPham5(
+        maQuiDinh, maNganhC5);
+    //}
+    // return [];
   }
   //getSanPhamBy_5G_L6810
   // Future<List<TablePhieuMauTBSanPham>> getMaSanPhamNganhCN() async {

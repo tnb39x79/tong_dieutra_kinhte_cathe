@@ -45,6 +45,19 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     return ids;
   }
 
+  Future updateGetDuLieuPV(
+      List<TablePhieuNganhLT> value, String createdAt) async {
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.maDTV = AppPref.uid;
+      await db!.update(tablePhieuNganhLT, element.toJsonGetDLPV(), where: '''
+      $columnCreatedAt = '$createdAt' AND $colPhieuNganhLTIDCoSo = '${element.iDCoSo}' 
+      AND $columnMaDTV= '${AppPref.uid}'
+    ''');
+    }
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -108,9 +121,11 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuNganhLT, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override
@@ -140,7 +155,8 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
 
     log('UPDATE PHIEU MAU A61: $i');
   }
- Future updateValueByIdCoSo(String fieldName, value, idCoSo) async {
+
+  Future updateValueByIdCoSo(String fieldName, value, idCoSo) async {
     String createAt = AppPref.dateTimeSaveDB!;
     Map<String, Object?> values = {
       fieldName: value,
@@ -153,6 +169,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
 
     log('UPDATE PHIEU 04: $i');
   }
+
   Future updateValueById(String fieldName, value, columId) async {
     Map<String, Object?> values = {
       fieldName: value,
@@ -180,7 +197,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
-    var updatedAt=DateTime.now().toIso8601String();
+    var updatedAt = DateTime.now().toIso8601String();
     List<String> fields = [];
     for (var item in fieldNames) {
       fields.add(" $item = null ");
@@ -246,7 +263,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     ''');
     return map.isNotEmpty;
   }
- 
+
   Future<int> totalIntByMaCauHoi(
       String idCoso, List<String> fieldNames, String tongVsTich) async {
     int result = 0;
@@ -292,8 +309,7 @@ class PhieuNganhLTProvider extends BaseDBProvider<TablePhieuNganhLT> {
     }
     return result;
   }
- 
-  
+
   Future<int> deleteById(int id) {
     var res = db!.delete(tablePhieuNganhLT, where: '''  $columnId = '$id'  ''');
     return res;

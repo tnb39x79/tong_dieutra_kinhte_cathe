@@ -45,7 +45,11 @@ class BKCoSoSXKDNganhSanPhamProvider
     }
     return ids;
   }
-
+ Future getDuLieuPVUpdateByIdCoSo(
+      TableBkCoSoSXKDNganhSanPham value, String idCoSo, String createAt) async {  
+    await db!.update(tableBkCoSoSXKDNganhSanPham, value.toJson(), where: ''' $columnIDCoSo = '$idCoSo'  
+    ''');
+  }
   @override
   Future onCreateTable(Database database) async {
     return database.execute('''

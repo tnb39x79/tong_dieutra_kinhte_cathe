@@ -43,6 +43,19 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     return ids;
   }
 
+  Future updateGetDuLieuPV(
+      List<TablePhieuMauTB> value, String createdAt) async {
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.maDTV = AppPref.uid;
+      await db!.update(tablePhieuMauTB, element.toJsonGetDLPV(), where: '''
+      $columnCreatedAt = '$createdAt' AND $colPhieuIDCoSo = '${element.iDCoSo}' 
+      AND $columnMaDTV= '${AppPref.uid}'
+    ''');
+    }
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -167,9 +180,11 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuMauTB, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override
@@ -285,10 +300,10 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
         ''');
     for (var item in map) {
       item.forEach((key, value) {
-        if (value != null && value==1) {
+        if (value != null && value == 1) {
           if (fieldNames.contains(key)) {
-             var maso=key.toString().split('_');
-             result.add(maso[2]);
+            var maso = key.toString().split('_');
+            result.add(maso[2]);
           }
         }
       });
@@ -403,7 +418,8 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     }
     return result;
   }
- Future<double> tongDoanhThuTatCaSanPham(String idCoSo) async {
+
+  Future<double> tongDoanhThuTatCaSanPham(String idCoSo) async {
     double result = 0.0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -447,7 +463,7 @@ class PhieuMauTBProvider extends BaseDBProvider<TablePhieuMauTB> {
     int result = 0;
 
     String createdAt = AppPref.dateTimeSaveDB!;
-    var updateAt=DateTime.now().toIso8601String();
+    var updateAt = DateTime.now().toIso8601String();
     List<String> fields = [];
     for (var item in fieldNames) {
       fields.add(" $item = null ");

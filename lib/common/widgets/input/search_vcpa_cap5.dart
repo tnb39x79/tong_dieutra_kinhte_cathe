@@ -133,7 +133,7 @@ class _SearchVCPACap5State extends State<SearchVCPACap5> {
                     const EdgeInsets.only(top: 4, left: 16, right: 16),
                 hintStyle: styleSmall.copyWith(color: greyColor),
                 hintText: 'Nhập vào đây',
-                errorMaxLines: 3,
+                errorMaxLines: 6,
                 fillColor: backgroundWhiteColor,
                 filled: true,
                 focusedBorder: OutlineInputBorder(

@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/dialogs/recording_dialog.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/input/widget_field_input_text.dart';
@@ -19,6 +21,8 @@ class InputString extends StatefulWidget {
       this.textStyle,
       this.maxLength,
       this.sttMic,
+      this.keyboardType,
+      this.inputFormatters,
       super.key});
 
   final QuestionCommonModel question;
@@ -33,6 +37,8 @@ class InputString extends StatefulWidget {
   final String? warningText;
   final TextStyle? textStyle;
   final bool? sttMic;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   InputIntState createState() => InputIntState();
@@ -77,6 +83,8 @@ class InputIntState extends State<InputString> {
               widget.onChange!(value != "" ? value : null),
           maxLine: widget.maxLine,
           txtStyle: widget.textStyle,
+          keyboardType: widget.keyboardType,
+          inputFormatters: widget.inputFormatters,
           suffix: buildSuffix(),
           onMicrophoneTap: useMicrophone ? onMicrophoneTap : null,
         ),

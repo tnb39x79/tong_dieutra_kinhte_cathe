@@ -397,6 +397,66 @@ class TablePhieuNganhLT {
     return json;
   }
 
+
+  Map<String, Object?> toJsonGetDLPV() {
+    var json = <String, Object?>{}; 
+
+    json['IDCoSo'] = iDCoSo;
+    json['A1_1_1'] = a1_1_1;
+    json['A1_1_2'] = a1_1_2;
+    json['A1_1_3'] = a1_1_3;
+    json['A1_1_4'] = a1_1_4;
+    json['A1_1_5'] = a1_1_5;
+    json['A1_1_6'] = a1_1_6;
+    json['A1_2_1'] = a1_2_1;
+    json['A1_2_2'] = a1_2_2;
+    json['A1_2_3'] = a1_2_3;
+    json['A1_2_4'] = a1_2_4;
+    json['A1_2_5'] = a1_2_5;
+    json['A1_2_6'] = a1_2_6;
+    json['A1_3_1'] = a1_3_1;
+    json['A1_3_2'] = a1_3_2;
+    json['A1_3_3'] = a1_3_3;
+    json['A1_3_4'] = a1_3_4;
+    json['A1_3_5'] = a1_3_5;
+    json['A1_3_6'] = a1_3_6;
+    json['A1_4_1'] = a1_4_1;
+    json['A1_4_2'] = a1_4_2;
+    json['A1_4_3'] = a1_4_3;
+    json['A1_4_4'] = a1_4_4;
+    json['A1_4_5'] = a1_4_5;
+    json['A1_4_6'] = a1_4_6;
+    json['A1_5_1'] = a1_5_1;
+    json['A1_5_2'] = a1_5_2;
+    json['A1_5_3'] = a1_5_3;
+    json['A1_5_4'] = a1_5_4;
+    json['A1_5_5'] = a1_5_5;
+    json['A1_5_6'] = a1_5_6;
+    json['A1_5_GhiRo'] = a1_5_GhiRo;
+    json['A5'] = a5;
+    json['A5_1'] = a5_1;
+    json['A6'] = a6;
+    json['A6_1'] = a6_1;
+    json['A1_M'] = a1_M;
+    json['A1_1_M'] = a1_1_M;
+    json['A2_M'] = a2_M;
+    json['A2_1_M'] = a2_1_M;
+    json['A3_M'] = a3_M;
+    json['A4_M'] = a4_M;
+    json['A5_M'] = a5_M;
+    json['A6_M'] = a6_M;
+    json['A7_M'] = a7_M;
+    json['A7_1_M'] = a7_1_M;
+    json['A8_M'] = a8_M;
+    json['A9_M'] = a9_M;
+    json['A10_M'] = a10_M;
+
+    json['MaDTV'] = maDTV;
+    json['CreatedAt'] = createdAt; 
+    return json;
+  }
+
+
   static List<TablePhieuNganhLT>? fromListJson(dynamic json) {
     List<TablePhieuNganhLT> list = [];
     if (json != null) {

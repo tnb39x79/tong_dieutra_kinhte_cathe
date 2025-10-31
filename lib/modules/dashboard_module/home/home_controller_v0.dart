@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart'; 
 import 'package:gov_statistics_investigation_economic/modules/sync_module/mixin_sync_v2.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/ct_dm_phieu_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/dm_bkcoso_sxkd_nganh_sanpham_provider.dart';
@@ -37,8 +37,8 @@ import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 import 'package:url_launcher/url_launcher.dart' as linking;
 import 'package:package_info_plus/package_info_plus.dart';
 
-class HomeController extends BaseController with SyncMixinV2 {
-  HomeController(
+class HomeControllerV0 extends BaseController with SyncMixinV2 {
+  HomeControllerV0(
       {required this.inputDataRepository,
       required this.syncRepository,
       required this.sendErrorRepository});
@@ -85,7 +85,7 @@ class HomeController extends BaseController with SyncMixinV2 {
   final ctDmDiaDiemSXKDProvider = CTDmDiaDiemSXKDProvider();
   final ctDmLinhVucProvider = CTDmLinhVucProvider();
   final ctDmLoaiDiaDiemProvider = CTDmLoaiDiaDiemProvider();
-  // final ctDmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
+ // final ctDmNhomNganhVcpaProvider = CTDmNhomNganhVcpaProvider();
   final dmQuocTichProvider = DmQuocTichProvider();
   final ctDmTinhTrangDKKDProvider = CTDmTinhTrangDKKDProvider();
   final ctDmTrinhDoChuyenMonProvider = CTDmTrinhDoChuyenMonProvider();
@@ -130,7 +130,6 @@ class HomeController extends BaseController with SyncMixinV2 {
       //   },
       // ));
     }
-    await Future.delayed(const Duration(seconds: 2));
     if (AppPref.uid!.isNotEmpty) {
       Map? isHad = await hasGetDataPv();
       if (isHad == null) {
@@ -268,6 +267,25 @@ class HomeController extends BaseController with SyncMixinV2 {
           isRetryWithSignIn: false);
       developer.log(
           'sync before get data: ${resultSunc.responseCode}::${resultSunc.responseMessage}');
+
+      ///Kiểm tra kết quả đồng bộ
+      ///Nếu thành công thì không thông báo
+      ///Nếu không thành công thì sẽ hiện dialog thông báo:" Có muốn lấy lại dữ liệu phỏng vấn không?"
+      // if (resultSunc.responseCode != ApiConstants.responseSuccess && resultSunc.responseCode != ApiConstants.duLieuDongBoRong) {
+      //   Get.dialog(DialogWidget(
+      //     onPressedPositive: () async {
+      //       Get.back();
+      //       await getOnlyDataTable();
+      //     },
+      //     onPressedNegative: () {
+      //       Get.back();
+      //       mainMenuController.setLoading(false);
+      //       showDialogCancelGetDuLieuPhongVan();
+      //     },
+      //     title: 'dialog_title_warning'.tr,
+      //     content: 'Đồng bộ bị lỗi. Bạn có muốn lấy lại dữ liệu phỏng vấn ?',
+      //   ));
+      // }
     }
     var db = await DatabaseHelper.instance.database;
     await DatabaseHelper.instance.deleteOnlyDataTable(db);
@@ -289,11 +307,46 @@ class HomeController extends BaseController with SyncMixinV2 {
     ));
   }
 
+  // Future getOnlyDataTable() async {
+  //   mainMenuController.setLoading(true);
+  //   var db = await DatabaseHelper.instance.database;
+  //   await DatabaseHelper.instance.deleteOnlyDataTable(db);
+  //   await updateData();
+  //   await Future.delayed(const Duration(seconds: 2));
+  //   mainMenuController.setLoading(false);
+  // }
+
   refreshLoginData() async {
     // await loginController.login(AppPref.userName!, AppPref.password!);
     var newLoginData = jsonDecode(AppPref.loginData);
     mainMenuController.loginData.value = TokenModel.fromJson(newLoginData);
+
+    // await reGetToken();
   }
+
+  // Future reGetToken() async {
+  //   try {
+  //     final data = await syncRepository.getToken(
+  //         userName: AppPref.userName, password: AppPref.password);
+  //     if (data.isSuccess) {
+  //       AppPref.extraToken = data.body!.accessToken;
+  //     } else {
+  //       if (data.statusCode == 500 || data.statusCode == 404) {
+  //         snackBar('error'.tr, 'can_not_connect_serve'.tr,
+  //             style: ToastSnackType.error);
+  //       } else if (data.errorDescription ==
+  //           'Provided username and password is incorrect') {
+  //         snackBar('error'.tr, 'username_password_incorrect'.tr,
+  //             style: ToastSnackType.error);
+  //       } else {
+  //         snackBar('error'.tr, data.errorDescription ?? 'some_error'.tr,
+  //             style: ToastSnackType.error);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     developer.log(e.toString());
+  //   }
+  // }
 
   Future getDataFromServer() async {
     final data = await inputDataRepository.getData();
@@ -325,7 +378,7 @@ class HomeController extends BaseController with SyncMixinV2 {
       if (data.body!.hasDm == '1') {
         await insertDanhMucChung(data.body!, dtSaveDB);
         await insertDanhMucPhieuMau(data.body!, dtSaveDB);
-        // await insertDmNhomNganhVcpa();
+       // await insertDmNhomNganhVcpa();
         await insertDanhMucMoTaSanPham(data.body!, dtSaveDB);
       }
 
@@ -335,10 +388,8 @@ class HomeController extends BaseController with SyncMixinV2 {
       return 1;
     } else {
       //  snackBar('some_error'.tr, data.body!.responseDesc ?? data.message ?? '',   style: ToastSnackType.error);
-      String? msg = data.body != null
-          ? data.body!.responseDesc
-          : data.message ?? 'Có lỗi lấy dữ liệu phỏng vấn';
-
+      String? msg = data.body!=null ? data.body!.responseDesc : data.message ?? 'Có lỗi lấy dữ liệu phỏng vấn';
+      
       Get.dialog(AlertDialog(
         scrollable: true,
         title: const Text('Thông báo'),
@@ -346,7 +397,7 @@ class HomeController extends BaseController with SyncMixinV2 {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              msg ?? 'Có lỗi lấy dữ liệu phỏng vấn',
+              msg??'Có lỗi lấy dữ liệu phỏng vấn',
               style: TextStyle(color: Color(0xFFB00020)),
             )
           ],
@@ -429,15 +480,11 @@ class HomeController extends BaseController with SyncMixinV2 {
           danhSachPhieuMauTB.add(element.tablePhieu!.tablePhieuMauTB!);
         }
         if (element.tablePhieu!.tablePhieuMauTBSanPham != null) {
-          if (element.tablePhieu!.tablePhieuMauTBSanPham!.isNotEmpty) {
-            danhSachPhieuMauTBSanPham
-                .addAll(element.tablePhieu!.tablePhieuMauTBSanPham!);
-          }
+          danhSachPhieuMauTBSanPham
+              .addAll(element.tablePhieu!.tablePhieuMauTBSanPham!);
         }
         if (element.tablePhieu!.tablePhieuNganhCN != null) {
-          if (element.tablePhieu!.tablePhieuNganhCN!.isNotEmpty) {
-            danhSachPhieuNganhCN.addAll(element.tablePhieu!.tablePhieuNganhCN!);
-          }
+          danhSachPhieuNganhCN.addAll(element.tablePhieu!.tablePhieuNganhCN!);
         }
         if (element.tablePhieu!.tablePhieuNganhLT != null) {
           danhSachPhieuNganhLT.add(element.tablePhieu!.tablePhieuNganhLT!);
@@ -446,21 +493,16 @@ class HomeController extends BaseController with SyncMixinV2 {
           danhSachPhieuNganhTM.add(element.tablePhieu!.tablePhieuNganhTM!);
         }
         if (element.tablePhieu!.tablePhieuNganhTMSanPham != null) {
-          if (element.tablePhieu!.tablePhieuNganhTMSanPham!.isNotEmpty) {
-            danhSachPhieuNganhTMSanPham
-                .addAll(element.tablePhieu!.tablePhieuNganhTMSanPham!);
-          }
+          danhSachPhieuNganhTMSanPham
+              .addAll(element.tablePhieu!.tablePhieuNganhTMSanPham!);
         }
         if (element.tablePhieu!.tablePhieuNganhVT != null) {
           danhSachPhieuNganhVT.add(element.tablePhieu!.tablePhieuNganhVT!);
 
           if (element.tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos !=
               null) {
-            if (element.tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos!
-                .isNotEmpty) {
-              danhSachPhieuNganhVTGhiRos.addAll(element
-                  .tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos!);
-            }
+            danhSachPhieuNganhVTGhiRos.addAll(element
+                .tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos!);
           }
         }
       }
@@ -553,331 +595,43 @@ class HomeController extends BaseController with SyncMixinV2 {
     await ctDmTrinhDoChuyenMonProvider.insert(dmTrinhDoChuyenMon, dtSaveDB);
     await dmQuocTichProvider.insert(dmQuocTich, dtSaveDB);
     //  }
+
+//export 'ct_dm_nhomnganh_vcpa_provider.dart';
   }
+
+  // Future insertDmNhomNganhVcpa() async {
+  //   var countRes = await ctDmNhomNganhVcpaProvider.countAll();
+  //   if (countRes <= 0) {
+  //     final String response =
+  //         await rootBundle.loadString('assets/datavc/nhomnganhvcpa.json');
+
+  //     List<dynamic> dataC8 = await json.decode(response);
+
+  //     await ctDmNhomNganhVcpaProvider.insertNhomNganhVcpa(dataC8, '');
+  //     AppPref.savedNhomNganhVcpa = true;
+  //   }
+  // }
 
   Future insertDanhMucMoTaSanPham(DataModel bodyData, String dtSaveDB) async {
+    //  if (AppPref.isFistInstall == 0) {
     List<TableDmLinhvuc> dmLinhVuc =
         TableData.toListDmLinhVuc(bodyData.dmLinhVuc);
+
     List<TableDmMotaSanpham> dmMoTaSanPham =
         TableData.toLisMoTaSanPhamVcpas(bodyData.dmMoTaSanPham);
+
+        // List<TableDmMotaSanphamVirtual> dmMoTaSanPhamVirtual =
+        // TableData.toLisMoTaSanPhamVcpasVirtual(bodyData.dmMoTaSanPham);
+
     await dmLinhvucProvider.insert(dmLinhVuc, dtSaveDB);
     await dmMotaSanphamProvider.insert(dmMoTaSanPham, dtSaveDB);
+   // await dmMotaSanphamProvider.insertVirtual(dmMoTaSanPhamVirtual, dtSaveDB);
+    // }
   }
 
-  /// END::TẢI DỮ LIỆU PHỎNG VẤN - FIRST INSTALL = 0
+  /// END::TẢI DỮ LIỆU PHỎNG VẤN
 
-  /// ***BEGIN::LẤY DỮ LIỆU PV KHI NHẤN NÚT TẢI DỮ LIỆU PV*****
-  ///
-  Future taiDuLieuPV() async {
-    AppPref.setQuestionNoStartTime = '';
-    mainMenuController.setLoading(true);
-
-    await refreshLoginData();
-
-    Map? isHad = await hasGetDataPv();
-    if (isHad != null) {
-      AppPref.dateTimeSaveDB = isHad['CreatedAt'];
-
-      var resultSunc = await syncDataMixinHome(
-          syncRepository, sendErrorRepository, progress,
-          isRetryWithSignIn: false);
-      developer.log(
-          'sync before get data from action: ${resultSunc.responseCode}::${resultSunc.responseMessage}');
-    }
-
-    await updateOnlyData();
-    await Future.delayed(const Duration(seconds: 2));
-    mainMenuController.setLoading(false);
-  }
-
-  Future updateOnlyData() async {
-    await LocationProVider.requestPermission();
-    await LocationProVider.requestLocationServices();
-    mainMenuController.setLoading(true);
-
-    try {
-      var value = await getDataServer();
-
-      if (value == 1) {
-        snackBar('Tải dữ liệu thành công', '',
-            durationSecond: const Duration(seconds: 3));
-      }
-    } catch (e) {
-      snackBar('Đã có lỗi xảy ra', 'Đã có lỗi xảy ra, vui lòng thử lại sau.',
-          style: ToastSnackType.error);
-      developer.log(e.toString());
-    }
-    mainMenuController.setLoading(false);
-  }
-
-  Future getDataServer() async {
-    final data = await inputDataRepository.getData();
-    if (data.statusCode == 200 &&
-        data.body!.responseCode == ApiConstants.responseSuccess) {
-      ///Kiểm tra có lấy dm hay ko?
-      if (data.body!.hasDm != null && data.body!.hasDm == '1') {
-        var db = await DatabaseHelper.instance.database;
-        await DatabaseHelper.instance.deleteOnlyDanhMuc(db);
-      }
-      String dtSaveDB =
-          AppPref.dateTimeSaveDB!; // DateTime.now().toIso8601String();
-      // AppPref.dateTimeSaveDB = dtSaveDB;
-      //   developer.log('data.body = ${jsonEncode(data.body)}');
-      var tableData = TableData(
-        maDTV: AppPref.uid,
-        questionNo07Mau: jsonEncode(data.body!.cauHoiPhieu07Maus),
-        questionNo07TB: jsonEncode(data.body!.cauHoiPhieu07TBs),
-        questionNo07MauMenu: jsonEncode(data.body!.cauHoiPhieu07MauMenu),
-        questionNo07TBMenu: jsonEncode(data.body!.cauHoiPhieu07TBMenu),
-        maSanPhamLoaiTruCoSoCT: data.body!.maSanPhamLoaiTruCoSoCT,
-        createdAt: dtSaveDB,
-        updatedAt: dtSaveDB,
-      );
-      //print(data.body!.data);
-      await updateUserInfo(dtSaveDB);
-      await updateDataInto(tableData);
-      await updateDataCoSoSxkd(data.body!.data, dtSaveDB);
-      if (data.body!.hasDm == '1') {
-        await insertDoiTuongDT(data.body!.data, dtSaveDB);
-        await insertDanhMucChung(data.body!, dtSaveDB);
-        await insertDanhMucPhieuMau(data.body!, dtSaveDB);
-        await insertDanhMucMoTaSanPham(data.body!, dtSaveDB);
-      }
-
-      ///Lưu lại versionDanhMuc
-      AppPref.versionDanhMuc =
-          data.body!.versionDanhMuc ?? AppValues.versionDanhMuc;
-      return 1;
-    } else {
-      //  snackBar('some_error'.tr, data.body!.responseDesc ?? data.message ?? '',   style: ToastSnackType.error);
-      String? msg = data.body != null
-          ? data.body!.responseDesc
-          : data.message ?? 'Có lỗi lấy dữ liệu phỏng vấn';
-
-      Get.dialog(AlertDialog(
-        scrollable: true,
-        title: const Text('Thông báo'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              msg ?? 'Có lỗi lấy dữ liệu phỏng vấn',
-              style: TextStyle(color: Color(0xFFB00020)),
-            )
-          ],
-        ),
-        actions: <Widget>[
-          WidgetButton(title: 'Đóng', onPressed: () => Get.back()),
-        ],
-      ));
-      return null;
-    }
-  }
-
-  Future updateUserInfo(String dtSaveDB) async {
-    UserModel userModel = mainMenuController.userModel.value;
-    var tableUserInfo = TableUserInfo();
-    tableUserInfo
-      ..maDangNhap = userModel.maDangNhap
-      ..tenNguoiDung = userModel.tenNguoiDung
-      ..matKhau = userModel.matKhau
-      ..maTinh = userModel.maTinh
-      ..maTKCS = userModel.maTKCS
-      ..diaChi = userModel.diaChi
-      ..sdt = userModel.sDT
-      ..ghiChu = userModel.ghiChu
-      ..iMei = userModel.iMei
-      ..ngayCapNhat = userModel.ngayCapNhat
-      ..createdAt = dtSaveDB
-      ..updatedAt = dtSaveDB;
-
-    await userInfoProvider.insert([tableUserInfo], dtSaveDB);
-  }
-
-  Future<Map> updateDataInto(TableData tableData) async {
-    String dtSaveDB = tableData.createdAt!;
-    List<int> ids = await dataProvider.insert([tableData], dtSaveDB);
-    return await dataProvider.selectOne(ids[0]);
-  }
-
-  Future updateDataCoSoSxkd(dynamic tableData, String dtSaveDB) async {
-    List<TableDmDiaBanCosoSxkd> dmDiaBanCosoSxkd =
-        TableData.toListDiaBanCoSoSXKDs(tableData);
-
-    List<TableBkCoSoSXKD> danhSachBkCsSxkd = [];
-    for (var element in dmDiaBanCosoSxkd) {
-      danhSachBkCsSxkd.addAll(element.tablebkCoSoSXKD ?? []);
-    }
-
-    List<TableBkCoSoSXKDNganhSanPham> danhSachNganhSanPham = [];
-    for (var element in danhSachBkCsSxkd) {
-      danhSachNganhSanPham.addAll(element.tableNganhSanPhams ?? []);
-    }
-
-    await insertDmDiaBanCosoSxkd(dmDiaBanCosoSxkd, dtSaveDB);
-
-    await updateBkCoSoxkd(danhSachBkCsSxkd, dtSaveDB);
-    //Lấy ds sánh cơ sở đang edit
-    var coso = await bkCoSoSXKDProvider
-        .selectAllByIdCoSoMaThaiDT2(AppDefine.dangPhongVan);
-    List<TableBkCoSoSXKD> coSosDangPV = [];
-    if (coso.isNotEmpty) {
-      var coSos = TableBkCoSoSXKD.listFromJson(coso);
-      coSosDangPV.addAll(coSos);
-    }
-    await updateNganhSanPham(danhSachNganhSanPham, dtSaveDB);
-    await updatePhieuMau(danhSachBkCsSxkd, dtSaveDB, coSosDangPV);
-  }
-
-  Future updateBkCoSoxkd(
-      List<TableBkCoSoSXKD> bkCosoSxkd, String dtSaveDB) async {
-    var coso = await bkCoSoSXKDProvider.selectAll();
-    List<TableBkCoSoSXKD> currentCoSos = [];
-    if (coso.isNotEmpty) {
-      var coSos = TableBkCoSoSXKD.listFromJson(coso);
-      currentCoSos.addAll(coSos);
-    }
-    List<TableBkCoSoSXKD> coSosInsert = [];
-    for (var item in bkCosoSxkd) {
-      var cosoItem =
-          currentCoSos.where((x) => x.iDCoSo == item.iDCoSo).firstOrNull;
-      if (cosoItem != null) {
-        if (cosoItem.maTrangThaiDT2 != AppDefine.dangPhongVan) {
-          item.createdAt = dtSaveDB;
-          await bkCoSoSXKDProvider.getDuLieuPVUpdateByIdCoSo(
-              item, item.iDCoSo!, dtSaveDB);
-        }
-      } else {
-        coSosInsert.add(item);
-      }
-    }
-    if (coSosInsert.isNotEmpty) {
-      await bkCoSoSXKDProvider.insert(coSosInsert, dtSaveDB);
-    }
-  }
-
-  Future updateNganhSanPham(
-      List<TableBkCoSoSXKDNganhSanPham> bkCosoSxkdNganhSanPham,
-      String dtSaveDB) async {
-    var nganhSp = await bkCoSoSXKDNganhSanPhamProvider.selectAll();
-    List<TableBkCoSoSXKDNganhSanPham> currentNganhSps = [];
-    List<TableBkCoSoSXKDNganhSanPham> nganhSpsInsert = [];
-    if (nganhSp.isNotEmpty) {
-      var nganhSps = TableBkCoSoSXKDNganhSanPham.listFromJson(nganhSp);
-      currentNganhSps.addAll(nganhSps);
-    }
-    for (var item in bkCosoSxkdNganhSanPham) {
-      var sp =
-          currentNganhSps.where((x) => x.idCoSo == item.idCoSo).firstOrNull;
-      if (sp != null) {
-        await bkCoSoSXKDNganhSanPhamProvider.getDuLieuPVUpdateByIdCoSo(
-            item, item.idCoSo!, dtSaveDB);
-      } else {
-        nganhSpsInsert.add(item);
-      }
-    }
-    if (nganhSpsInsert.isNotEmpty) {
-      await bkCoSoSXKDNganhSanPhamProvider.insert(nganhSpsInsert, dtSaveDB);
-    }
-  }
-
-  Future updatePhieuMau(List<TableBkCoSoSXKD> danhSachBkCsSxkd, String dtSaveDB,
-      List<TableBkCoSoSXKD> coSosDangPV) async {
-    List<TablePhieu> danhSachPhieu = [];
-    List<TablePhieuMauTB> danhSachPhieuMauTB = [];
-    List<TablePhieuMauTBSanPham> danhSachPhieuMauTBSanPham = [];
-    List<TablePhieuNganhCN> danhSachPhieuNganhCN = [];
-    List<TablePhieuNganhLT> danhSachPhieuNganhLT = [];
-    List<TablePhieuNganhTM> danhSachPhieuNganhTM = [];
-    List<TablePhieuNganhTMSanPham> danhSachPhieuNganhTMSanPham = [];
-    List<TablePhieuNganhVT> danhSachPhieuNganhVT = [];
-    List<TablePhieuNganhVTGhiRo> danhSachPhieuNganhVTGhiRos = [];
-
-    ///Lấy các idCoSo đang PV (đang editing)
-    List<String> idCoSoDangPVs = [];
-    var dsIdCoSoDangPV = coSosDangPV.map((x) => x.iDCoSo!).toList();
-    if (dsIdCoSoDangPV.isNotEmpty) {
-      idCoSoDangPVs.addAll(dsIdCoSoDangPV);
-    }
-
-    ///Lấy các cơ sở đang PV (đang editing)
-    List<TableBkCoSoSXKD> danhSachBkCsSxkdInsert = [];
-    if (idCoSoDangPVs.isNotEmpty) {
-      if (danhSachBkCsSxkd.isNotEmpty) {
-        var cs = danhSachBkCsSxkd
-            .where((x) => !idCoSoDangPVs.contains(x.iDCoSo))
-            .toList();
-        danhSachBkCsSxkdInsert.addAll(cs);
-      }
-    } else {
-      danhSachBkCsSxkdInsert.addAll(danhSachBkCsSxkd);
-    }
-
-    for (var element in danhSachBkCsSxkdInsert) {
-      if (element.tablePhieu != null) {
-        danhSachPhieu.add(element.tablePhieu!);
-        if (element.tablePhieu!.tablePhieuMauTB != null) {
-          danhSachPhieuMauTB.add(element.tablePhieu!.tablePhieuMauTB!);
-        }
-        if (element.tablePhieu!.tablePhieuMauTBSanPham != null) {
-          if (element.tablePhieu!.tablePhieuMauTBSanPham!.isNotEmpty) {
-            danhSachPhieuMauTBSanPham
-                .addAll(element.tablePhieu!.tablePhieuMauTBSanPham!);
-          }
-        }
-        if (element.tablePhieu!.tablePhieuNganhCN != null) {
-          if (element.tablePhieu!.tablePhieuNganhCN!.isNotEmpty) {
-            danhSachPhieuNganhCN.addAll(element.tablePhieu!.tablePhieuNganhCN!);
-          }
-        }
-        if (element.tablePhieu!.tablePhieuNganhLT != null) {
-          danhSachPhieuNganhLT.add(element.tablePhieu!.tablePhieuNganhLT!);
-        }
-        if (element.tablePhieu!.tablePhieuNganhTM != null) {
-          danhSachPhieuNganhTM.add(element.tablePhieu!.tablePhieuNganhTM!);
-        }
-        if (element.tablePhieu!.tablePhieuNganhTMSanPham != null) {
-          if (element.tablePhieu!.tablePhieuNganhTMSanPham!.isNotEmpty) {
-            danhSachPhieuNganhTMSanPham
-                .addAll(element.tablePhieu!.tablePhieuNganhTMSanPham!);
-          }
-        }
-        if (element.tablePhieu!.tablePhieuNganhVT != null) {
-          danhSachPhieuNganhVT.add(element.tablePhieu!.tablePhieuNganhVT!);
-
-          if (element.tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos !=
-              null) {
-            if (element.tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos!
-                .isNotEmpty) {
-              danhSachPhieuNganhVTGhiRos.addAll(element
-                  .tablePhieu!.tablePhieuNganhVT!.tablePhieuNganhVTGhiRos!);
-            }
-          }
-        }
-      }
-    }
-    await phieuProvider.updateGetDuLieuPV(danhSachPhieu, dtSaveDB);
-    await phieuMauTBProvider.updateGetDuLieuPV(danhSachPhieuMauTB, dtSaveDB);
-    await phieuMauTBSanPhamProvider.insertGetDLPV(
-        danhSachPhieuMauTBSanPham, dtSaveDB);
-    await phieuNganhCNProvider.insertGetDLPV(danhSachPhieuNganhCN, dtSaveDB);
-
-    await phieuNganhLTProvider.updateGetDuLieuPV(
-        danhSachPhieuNganhLT, dtSaveDB);
-    await phieuNganhTMProvider.updateGetDuLieuPV(
-        danhSachPhieuNganhTM, dtSaveDB);
-    await phieuNganhTMSanphamProvider.insertGetDLPV(
-        danhSachPhieuNganhTMSanPham, dtSaveDB);
-    await phieuNganhVTProvider.updateGetDuLieuPV(
-        danhSachPhieuNganhVT, dtSaveDB);
-
-    await phieuNganhVTGhiRoProvider.insertGetDLPV(
-        danhSachPhieuNganhVTGhiRos, dtSaveDB);
-  }
-
-  /*****END::LẤY DỮ LIỆU PV KHI NHẤN NÚT TẢI DỮ LIỆU PV******/
-
-  onInterViewScreen() async {
+  onInterViewScreen() async { 
     Map? isHad = await hasGetDataPv();
     if (isHad != null) {
       //if (isDefaultUserType()) {
@@ -928,7 +682,7 @@ class HomeController extends BaseController with SyncMixinV2 {
     await dmQuocTichProvider.init();
     await ctDmTinhTrangDKKDProvider.init();
     await ctDmTrinhDoChuyenMonProvider.init();
-    // await ctDmNhomNganhVcpaProvider.init();
+   // await ctDmNhomNganhVcpaProvider.init();
     await dmMotaSanphamProvider.init();
     await dmLinhvucProvider.init();
 
@@ -1011,8 +765,8 @@ class HomeController extends BaseController with SyncMixinV2 {
     // resetVarBeforeSync();
     // endSync(false);
     await getDataHome();
-    var resSync = await uploadDataMixinHome(
-        syncRepository, sendErrorRepository, progress);
+    var resSync =
+        await uploadDataMixinHome(syncRepository, sendErrorRepository, progress);
     // responseCode.value = resSync.responseCode ?? '';
     if (resSync.responseCode == ApiConstants.responseSuccess) {
       //   responseMessage.value = resSync.responseMessage ?? "Đồng bộ thành công.";

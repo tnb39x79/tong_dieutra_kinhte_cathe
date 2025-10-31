@@ -201,6 +201,39 @@ class TableBkCoSoSXKD {
 
     return json;
   }
+Map<String, dynamic> toJsonGetDLPV() {
+    final Map<String, dynamic> json = <String, dynamic>{};
+    json['IDCoSo'] = iDCoSo;
+    json['LoaiPhieu'] = loaiPhieu;
+    json['MaTinh'] = maTinh;
+    json['TenTinh'] = tenTinh;
+    json['MaTKCS'] = maTKCS;
+    json['TenTKCS'] = tenTKCS;
+    json['MaXa'] = maXa;
+    json['TenXa'] = tenXa;
+    json['MaThon'] = maThon;
+    json['TenThon'] = tenThon;
+    json['IDDB'] = iDDB;
+    json['MaDiaBan'] = maDiaBan;
+    json['TenDiaBan'] = tenDiaBan;
+    json['MaCoSo'] = maCoSo;
+    json['TenCoSo'] = tenCoSo;
+    json['DiaChi'] = diaChi;
+    json['TenChuCoSo'] = tenChuCoSo;
+    json['MaDiaDiem'] = maDiaDiem;
+    json['DienThoai'] = dienThoai;
+    json['Email'] = email;
+    json['SoLaoDong'] = soLaoDong;
+    json['DoanhThu'] = doanhThu;
+    json['MaTinhTrangHD'] = maTinhTrangHD;
+    json['TenNguoiCungCap'] = tenNguoiCungCap;
+    json['DienThoaiNguoiCungCap'] = dienThoaiNguoiCungCap;
+    json['MaDTV'] = maDTV;
+    json['MaTrangThaiDT'] = maTrangThaiDT; 
+    json['CreatedAt'] = createdAt; 
+
+    return json;
+  }
 
   static List<TableBkCoSoSXKD> listFromJson(dynamic json) {
     List<TableBkCoSoSXKD> list = [];

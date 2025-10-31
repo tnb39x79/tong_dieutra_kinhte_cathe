@@ -185,7 +185,7 @@ mixin SyncMixinV2 {
     await Future.wait([
       getFullCoSoSXBody(),
     ]);
-    developer.log('GET BODY: ${jsonEncode(fullBody)}');
+    developer.log('GET FULL BODY HOME: ${jsonEncode(fullBody)}');
   }
 
   Future getListInterviewedHome() async {

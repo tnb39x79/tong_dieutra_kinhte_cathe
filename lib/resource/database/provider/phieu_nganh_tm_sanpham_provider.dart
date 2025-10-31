@@ -64,6 +64,25 @@ class PhieuNganhTMSanPhamProvider
     return ids;
   }
 
+  Future<List<int>> insertGetDLPV(
+      List<TablePhieuNganhTMSanPham> value, String createdAt) async {
+    try {
+      for (var element in value) {
+        await db!.delete(tablePhieuNganhTMSanPham,
+            where: '''$colPhieuNganhTMIDCoSo='${element.iDCoSo}' ''');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.maDTV = AppPref.uid;
+      ids.add(await db!.insert(tablePhieuNganhTMSanPham, element.toJson()));
+    }
+    return ids;
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -85,9 +104,11 @@ class PhieuNganhTMSanPhamProvider
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuNganhTMSanPham, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override

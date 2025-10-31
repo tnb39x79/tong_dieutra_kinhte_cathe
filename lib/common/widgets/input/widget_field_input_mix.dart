@@ -116,7 +116,7 @@ class WidgetFieldInputMix extends StatelessWidget {
                         width: 1.0,
                       ),
                     ),
-                    errorMaxLines: 3,
+                    errorMaxLines: 6,
                   ),
                   keyboardType: keyboardType,
                   onChanged: onChanged,

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -1486,6 +1487,10 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   question.loaiCauHoi!,
                   true,
                   question.maPhieu!),
+                  keyboardType: Platform.isAndroid
+              ? TextInputType.number
+              : const TextInputType.numberWithOptions(decimal: false),
+            
             ),
             buildWarningText(question, a1_5_1)
           ]);

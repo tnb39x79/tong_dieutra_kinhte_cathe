@@ -48,6 +48,19 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     return ids;
   }
 
+  Future updateGetDuLieuPV(
+      List<TablePhieuNganhVT> value, String createdAt) async {
+    List<int> ids = [];
+    for (var element in value) {
+      element.createdAt = createdAt;
+      element.maDTV = AppPref.uid;
+      await db!.update(tablePhieuNganhVT, element.toJsonGetDLPV(), where: '''
+      $columnCreatedAt = '$createdAt' AND $colPhieuNganhVTIDCoSo = '${element.iDCoSo}' 
+      AND $columnMaDTV= '${AppPref.uid}'
+    ''');
+    }
+  }
+
   @override
   Future onCreateTable(Database database) {
     return database.execute('''
@@ -194,9 +207,11 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
   }
 
   @override
-  Future<List<Map>> selectAll() {
-    // TODO: implement selectAll
-    throw UnimplementedError();
+  Future<List<Map>> selectAll() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablePhieuNganhVT, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+    ''');
   }
 
   @override
@@ -350,7 +365,7 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     }
     String sql =
         "SELECT ${fields.join(tongVsTich)} as total FROM $tablePhieuNganhVT  WHERE $columnIDCoSo = '$idCoso'    AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
-        log('totalDoubleByMaCauHoi sql $sql');
+    log('totalDoubleByMaCauHoi sql $sql');
     List<Map> map = await db!.rawQuery(sql);
 
     for (var item in map) {
@@ -408,7 +423,6 @@ class PhieuNganhVTProvider extends BaseDBProvider<TablePhieuNganhVT> {
     return result.isNotEmpty;
   }
 
- 
   Future<int> deleteById(int id) {
     var res = db!.delete(tablePhieuNganhVT, where: '''  $columnId = '$id'  ''');
     return res;
