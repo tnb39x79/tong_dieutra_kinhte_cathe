@@ -122,7 +122,7 @@ class DatabaseHelper {
     // todo: create table when start app if not exist db
   }
 
-  Future createTable(Database db) async {
+Future createTable(Database db) async {
     log('BEGIN::createTable', name: 'DatabaseHelper');
     await Future.wait([
       dataProvider.onCreateTable(db),
@@ -171,6 +171,7 @@ class DatabaseHelper {
 
     log('END::Create all table compelete');
   }
+
 
   Future deleteAll(Database db) async {
     log('BEGIN::deleteAll table', name: 'DatabaseHelper');
@@ -245,7 +246,40 @@ Future deleteOnlyDanhMuc(Database db) async {
     await ctDmTrinhDoChuyenMonProvider.deletedTable(db); 
  
     log('END::deleteOnlyDanhMuc table compelete');
-    createTable(db);
+    createOnlyDmTable(db);
+  }
+
+
+
+  Future createOnlyDmTable(Database db) async {
+    log('BEGIN::create only danh muc Table', name: 'DatabaseHelper');
+    await Future.wait([
+      dataProvider.onCreateTable(db),
+      doiTuongDieuTraProvider.onCreateTable(db),
+      dmPhieuProvider.onCreateTable(db),  
+      dmMotaSanphamProvider.onCreateTable(db), 
+      dmLinhvucProvider.onCreateTable(db), 
+      dmTinhTrangHDProvider.onCreateTable(db),
+      dmTrangThaiDTProvider.onCreateTable(db),
+      dmCoKhongProvider.onCreateTable(db),
+      dmDanTocProvider.onCreateTable(db),
+      dmGioiTinhProvider.onCreateTable(db) 
+    ]);
+
+    // dm phieu cá thể mẫu
+    await Future.wait([
+      ctDmHoatDongLogisticProvider.onCreateTable(db),
+      ctDmDiaDiemSXKDProvider.onCreateTable(db),
+      ctDmLinhVucProvider.onCreateTable(db),
+      ctDmLoaiDiaDiemProvider.onCreateTable(db), 
+      dmQuocTichProvider.onCreateTable(db),
+      ctDmTinhTrangDKKDProvider.onCreateTable(db),
+      ctDmTrinhDoChuyenMonProvider.onCreateTable(db),
+      
+    ]);
+ 
+
+    log('END::Create only danh muc table compelete');
   }
   ///DÙNG CHO LẤY DỮ LIỆU PHỎNG VẤN KHI NHẤN NÚT LẤY DỮ LIỆU PHỎNG VẤN : Chỉ tạo các talbe dữ liệu
   Future createOnlyDataTable(Database db) async {

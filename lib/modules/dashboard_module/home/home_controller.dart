@@ -716,7 +716,6 @@ class HomeController extends BaseController with SyncMixinV2 {
 
     await insertDmDiaBanCosoSxkd(dmDiaBanCosoSxkd, dtSaveDB);
 
-    await updateBkCoSoxkd(danhSachBkCsSxkd, dtSaveDB);
     //Lấy ds sánh cơ sở đang edit
     var coso = await bkCoSoSXKDProvider
         .selectAllByIdCoSoMaThaiDT2(AppDefine.dangPhongVan);
@@ -725,13 +724,14 @@ class HomeController extends BaseController with SyncMixinV2 {
       var coSos = TableBkCoSoSXKD.listFromJson(coso);
       coSosDangPV.addAll(coSos);
     }
+    await updateBkCoSoxkd(danhSachBkCsSxkd, dtSaveDB, coSosDangPV);
     await updateNganhSanPham(danhSachNganhSanPham, dtSaveDB);
     await updatePhieuMau(danhSachBkCsSxkd, dtSaveDB, coSosDangPV);
   }
 
-  Future updateBkCoSoxkd(
-      List<TableBkCoSoSXKD> bkCosoSxkd, String dtSaveDB) async {
-    var coso = await bkCoSoSXKDProvider.selectAll();
+  Future updateBkCoSoxkd(List<TableBkCoSoSXKD> bkCosoSxkd, String dtSaveDB,
+      List<TableBkCoSoSXKD> coSosDangPV) async {
+    var coso = await bkCoSoSXKDProvider.selectAllNotMaTrangThaiDT2();
     List<TableBkCoSoSXKD> currentCoSos = [];
     if (coso.isNotEmpty) {
       var coSos = TableBkCoSoSXKD.listFromJson(coso);
@@ -741,12 +741,10 @@ class HomeController extends BaseController with SyncMixinV2 {
     for (var item in bkCosoSxkd) {
       var cosoItem =
           currentCoSos.where((x) => x.iDCoSo == item.iDCoSo).firstOrNull;
-      if (cosoItem != null) {
-        if (cosoItem.maTrangThaiDT2 != AppDefine.dangPhongVan) {
+      if (cosoItem != null) { 
           item.createdAt = dtSaveDB;
           await bkCoSoSXKDProvider.getDuLieuPVUpdateByIdCoSo(
-              item, item.iDCoSo!, dtSaveDB);
-        }
+              item, item.iDCoSo!, dtSaveDB); 
       } else {
         coSosInsert.add(item);
       }

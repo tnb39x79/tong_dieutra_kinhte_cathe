@@ -105,6 +105,14 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     ''');
   }
 
+  Future<List<Map>> selectAllNotMaTrangThaiDT2() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    return await db!.query(tablebkCoSoSXKD, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+      AND   $colBkCoSoSXKDMaTrangThaiDT2 <> ${AppDefine.dangPhongVan}
+    ''');
+  }
+
   @override
   Future<Map> selectOne(int id) {
     // TODO: implement selectOne
@@ -119,7 +127,6 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
 
   Future getDuLieuPVUpdateByIdCoSo(
       TableBkCoSoSXKD value, String idCoSo, String createAt) async {
-      
     await db!.update(tablebkCoSoSXKD, value.toJsonGetDLPV(), where: '''
       $columnCreatedAt = '$createAt' AND $colBkCoSoSXKDIDCoSo = '$idCoSo' 
       AND $columnMaDTV= '${AppPref.uid}'
