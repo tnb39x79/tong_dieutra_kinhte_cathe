@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
+import 'package:gov_statistics_investigation_economic/common/widgets/button/i_button.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/categories/widget_row_item.dart';
 import 'package:gov_statistics_investigation_economic/config/config.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
@@ -44,8 +45,9 @@ class InterviewListScreen extends GetView<InterviewListController> {
             WidgetRowItem(
               title: 'un_interviewed'.trParams({
                 'param': (controller.currentMaDoiTuongDT ==
-                        '${AppDefine.maDoiTuongDT_07Mau}' || controller.currentMaDoiTuongDT ==
-                        '${AppDefine.maDoiTuongDT_07TB}')
+                            '${AppDefine.maDoiTuongDT_07Mau}' ||
+                        controller.currentMaDoiTuongDT ==
+                            '${AppDefine.maDoiTuongDT_07TB}')
                     ? 'coso'.tr
                     : 'commune'.tr,
               }),
@@ -56,8 +58,9 @@ class InterviewListScreen extends GetView<InterviewListController> {
             WidgetRowItem(
               title: 'interviewed'.trParams({
                 'param': (controller.currentMaDoiTuongDT ==
-                        '${AppDefine.maDoiTuongDT_07Mau}' || controller.currentMaDoiTuongDT ==
-                        '${AppDefine.maDoiTuongDT_07TB}')
+                            '${AppDefine.maDoiTuongDT_07Mau}' ||
+                        controller.currentMaDoiTuongDT ==
+                            '${AppDefine.maDoiTuongDT_07TB}')
                     ? 'coso'.tr
                     : 'commune'.tr,
               }),
@@ -65,6 +68,18 @@ class InterviewListScreen extends GetView<InterviewListController> {
               onPressed: () =>
                   controller.toInterViewListDetail(AppDefine.dangPhongVan),
             ),
+            if (controller.allowAddNewCoSo.value)
+              Padding(
+                  padding: EdgeInsets.all(AppValues.borderLv5),
+                  child: WidgetButton(
+                    iconCenter: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => {},
+                    title: 'Thêm mới cơ sở',
+                    background: primaryColor,
+                  ))
           ],
         ),
       );

@@ -97,7 +97,7 @@ class LoginScreen extends GetView<LoginController> {
             hint: 'hint_user_name'.tr,
             bgColor: Colors.white,
             prefix: Image.asset(AppIcons.icProfile),
-            validator: Valid.validateUserName, 
+            validator: Valid.validateUserName,
             inputFormatters: [
               TextInputFormatter.withFunction((oldValue, newValue) {
                 return newValue.copyWith(text: newValue.text.toUpperCase());
@@ -105,14 +105,23 @@ class LoginScreen extends GetView<LoginController> {
             ],
           ),
           const SizedBox(height: 12),
-          WidgetFieldInput(
-            controller: controller.getEditingController(controller.keyPass),
-            hint: 'hint_pass'.tr,
-            bgColor: Colors.white,
-            prefix: Image.asset(AppIcons.icLockBorder),
-            validator: Valid.validatePassword,
-            isHideContent: true,
-          ),
+          Obx(() => WidgetFieldInput(
+                controller: controller.getEditingController(controller.keyPass),
+                hint: 'hint_pass'.tr,
+                bgColor: Colors.white,
+                prefix: Image.asset(AppIcons.icLockBorder),
+                validator: Valid.validatePassword,
+                isHideContent: controller.isPasswordHidden.value,
+                suffix: IconButton(
+                  icon: Icon(
+                    controller.isPasswordHidden.value
+                        ? Icons.visibility_rounded
+                        : Icons.visibility_off_rounded,
+                    color: Colors.grey,
+                  ),
+                  onPressed: controller.onPressVisiblePwd,
+                ),
+              )),
         ],
       ),
     );

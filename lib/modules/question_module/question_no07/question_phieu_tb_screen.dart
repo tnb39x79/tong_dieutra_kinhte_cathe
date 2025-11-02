@@ -1392,8 +1392,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     if ((question.maCauHoi == colPhieuMauTBA7_3) &&
         question.maPhieu == AppDefine.maPhieuTB) {
       return Obx(() {
+        var a7_1Val = controller.getValueByFieldName(
+            question.bangDuLieu!, colPhieuMauTBA7_1);
         var a7_2Val = controller.getValueByFieldName(
             question.bangDuLieu!, colPhieuMauTBA7_2);
+        if (a7_1Val != null && a7_1Val == 2) {
+          return const SizedBox();
+        }
         if (a7_2Val != null && a7_2Val == 2) {
           return const SizedBox();
         }
@@ -1487,10 +1492,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   question.loaiCauHoi!,
                   true,
                   question.maPhieu!),
-                  keyboardType: Platform.isAndroid
-              ? TextInputType.number
-              : const TextInputType.numberWithOptions(decimal: false),
-            
+              keyboardType: Platform.isAndroid
+                  ? TextInputType.number
+                  : const TextInputType.numberWithOptions(decimal: false),
             ),
             buildWarningText(question, a1_5_1)
           ]);
@@ -4789,9 +4793,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       var a1_3_2Value = controller.getValueByFieldName(
           question.bangDuLieu!, colPhieuMauTBA1_3_2);
       if (controller.validateNotEmptyString(a1_3_2Value.toString())) {
-        if (a1_3_2Value < 1946 || a1_3_2Value > 2008) {
-          return wText(
-              'Câu 1.3.2 "Chủ cơ sở nhỏ hơn 18 tuổi Chủ cơ sở lớn hơn 80 tuổi');
+        if (a1_3_2Value < 1946) {
+          return wText('Câu 1.3.2 Chủ cơ sở lớn hơn 80 tuổi');
+        }
+        if (a1_3_2Value > 2008) {
+          return wText('Câu 1.3.2 Chủ cơ sở nhỏ hơn 18 tuổi');
         }
       }
       return const SizedBox();
@@ -4868,18 +4874,19 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       } else if (a1_4Value != null && a1_4Value == 4 && selectedValue == 1) {
         return wText(
             'Cơ sở Không phải đăng ký kinh doanh (C1.4=4) mà có MST (C1.5=1)');
-      } else if (a1_3_4Value == 1 &&
-          a1_5_1Value != null &&
-          a1_5_1Value != '' &&
-          a1_5_1Value.toString().length == 12) {
-        return wText(
-            'Chủ cơ sở là người có quốc tịch Việt Nam mà MST khác 12 số (Quốc tịch Việt Nam MST cơ sở chính là CCCD 12 chữ số)?');
-      } else if (a1_3_4Value == 2 &&
-          a1_5_1Value != null &&
-          a1_5_1Value != '' &&
-          a1_5_1Value.toString().length == 10) {
-        return wText('Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?');
-      }
+      } 
+      // else if (a1_3_4Value == 1 &&
+      //     a1_5_1Value != null &&
+      //     a1_5_1Value != '' &&
+      //     a1_5_1Value.toString().length == 12) {
+      //   return wText(
+      //       'Chủ cơ sở là người có quốc tịch Việt Nam mà MST khác 12 số (Quốc tịch Việt Nam MST cơ sở chính là CCCD 12 chữ số)?');
+      // } else if (a1_3_4Value == 2 &&
+      //     a1_5_1Value != null &&
+      //     a1_5_1Value != '' &&
+      //     a1_5_1Value.toString().length == 10) {
+      //   return wText('Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?');
+      // }
       return const SizedBox();
     } else if (question.maCauHoi == colPhieuMauTBA1_5_1 &&
         question.maPhieu == AppDefine.maPhieuTB) {
@@ -4892,14 +4899,14 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       if (a1_3_4Value == 1 &&
           a1_5_1Value != null &&
           a1_5_1Value != '' &&
-          a1_5_1Value.toString().length == 12) {
+          a1_5_1Value.toString().length == 10) {
         return wText(
             'Chủ cơ sở là người có quốc tịch Việt Nam mà MST khác 12 số (Quốc tịch Việt Nam MST cơ sở chính là CCCD 12 chữ số)?');
       } else if (a1_3_4Value == 2 &&
           a1_5_1Value != null &&
           a1_5_1Value != '' &&
-          a1_5_1Value.toString().length == 10) {
-        return wText('Chủ cơ sở là người nước ngoài  mà MST khác 10 chữ số?');
+          a1_5_1Value.toString().length >= 13) {
+        return wText('Chủ cơ sở là người nước ngoài mà MST khác 10 chữ số?');
       }
     } else if (question.maCauHoi == colPhieuMauTBA2_1 &&
         question.maPhieu == AppDefine.maPhieuTB) {
@@ -5211,13 +5218,15 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
             ? AppUtils.convertStringToDouble(
                 a6_MLTValue.toString().replaceAll(' ', ''))
             : 0;
-        if (a6_MVal < 20) {
-          return wText(
-              'Giá bình quân 1 khách/1 đêm < 20 nghìn đồng có đúng không?');
-        }
-        if (a6_MVal > 1500) {
-          return wText(
-              'Giá bình quân 1 khách/1 đêm > 1,5 triệu đồng có đúng không?');
+        if (a6_MVal > 0) {
+          if (a6_MVal < 20) {
+            return wText(
+                'Giá bình quân 1 khách/1 đêm < 20 nghìn đồng có đúng không?');
+          }
+          if (a6_MVal > 1500) {
+            return wText(
+                'Giá bình quân 1 khách/1 đêm > 1,5 triệu đồng có đúng không?');
+          }
         }
       }
     } else if (question.maCauHoi == "A9_M" &&

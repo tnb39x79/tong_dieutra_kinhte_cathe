@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/utils/app_utils.dart';
 import 'package:gov_statistics_investigation_economic/config/config.dart';
 import 'package:gov_statistics_investigation_economic/modules/modules.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_doituong_dieutra.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 
@@ -14,7 +15,7 @@ import 'package:gov_statistics_investigation_economic/routes/routes.dart';
 /// 2. currentMaDoiTuongDT=53
 /// - Xã chưa phỏng vấn
 /// - Xã đã phỏng vấn
-class InterviewListController extends BaseController {
+class InterviewListControllerV2 extends BaseController {
   final HomeController homeController = Get.find();
 
   static const maDoiTuongDTKey = 'maDoiTuongDT';
@@ -25,13 +26,16 @@ class InterviewListController extends BaseController {
   static const tenDoiTuongDTKey = "tenDoiTuongDT";
 
   BKCoSoSXKDProvider bkCoSoSXKDProvider = BKCoSoSXKDProvider();
+  DmDoiTuongDieuTraProvider doiTuongDieuTraProvider =
+      DmDoiTuongDieuTraProvider();
+  final doiTuongDTs = <TableDoiTuongDieuTra>[].obs;
 
   final countOfUnInterviewed = 0.obs;
   final countOfInterviewed = 0.obs;
-  final allowAddNewCoSo=false.obs;
+    final countOfUnInterviewedMau = 0.obs;
+  final countOfInterviewedMau = 0.obs;
+  final allowAddNewCoSo = false.obs;
 
-  String currentMaDoiTuongDT = Get.parameters[maDoiTuongDTKey]!;
-  String currentTenDoiTuongDT = Get.parameters[tenDoiTuongDTKey]!;
   String? currentMaDiaBan = Get.parameters[maDiaBanKey];
   String? currentTenDiaBan = Get.parameters[tenDiaBanKey];
   String? currentMaXa = Get.parameters[maXaKey];
@@ -40,69 +44,63 @@ class InterviewListController extends BaseController {
   @override
   void onInit() async {
     setLoading(true);
+    await doiTuongDTList();
     await selectCountByType();
     setLoading(false);
     super.onInit();
   }
 
   getSubTitle() {
-    String subTitle = currentTenDoiTuongDT;
-    if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
-        currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      String tt = AppUtils.getXaPhuong(currentTenXa ?? '');
-      subTitle =
-          '$currentTenDoiTuongDT Địa bàn.$currentMaDiaBan - $currentTenDiaBan $tt. $currentMaXa - $currentTenXa';
-    }
+    String tt = AppUtils.getXaPhuong(currentTenXa ?? '');
+    String subTitle =
+        'Địa bàn.$currentMaDiaBan - $currentTenDiaBan $tt. $currentMaXa - $currentTenXa';
+
     return subTitle;
   }
 
-  void backInterviewObjectList() {
-    if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
-        currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      Get.toNamed(AppRoutes.interviewObjectList);
+  void backInterviewObjectList() { 
+      Get.toNamed(AppRoutes.interviewLocationListV2); 
+  }
+
+Future doiTuongDTList() async {
+    List<Map> map = await doiTuongDieuTraProvider.selectAll();
+    for (var element in map) {
+      doiTuongDTs.add(TableDoiTuongDieuTra.fromJson(element));
     }
   }
 
-  void toInterViewListDetail(int maTinhTrangDT) async {
-    if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString() ||
-        currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+  void toInterViewListDetail(TableDoiTuongDieuTra dtDT,int maTinhTrangDT) async {
+     
       await Get.toNamed(AppRoutes.interviewListDetail, parameters: {
-        InterviewListDetailController.maDoiTuongDTKey: currentMaDoiTuongDT,
-        InterviewListDetailController.tenDoiTuongDTKey: currentTenDoiTuongDT,
+        InterviewListDetailController.maDoiTuongDTKey: dtDT.maDoiTuongDT!.toString(),
+        InterviewListDetailController.tenDoiTuongDTKey: dtDT.tenDoiTuongDT!,
         InterviewListDetailController.maTinhTrangDTKey: '$maTinhTrangDT',
         InterviewListDetailController.maDiaBanKey: currentMaDiaBan ?? '',
         InterviewListDetailController.tenDiaBanKey: currentTenDiaBan ?? '',
         InterviewListDetailController.maXaKey: currentMaXa ?? '',
         InterviewListDetailController.tenXaKey: currentTenXa ?? '',
       });
-      selectCountByType();
-    } else {
-      snackBar('dialog_title_warning'.tr,
-          'interview_undefine_investigate_object'.tr);
-    }
+      selectCountByType(); 
   }
 
   Future selectCountByType() async {
-    if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07Mau.toString()) {
+    
+      countOfUnInterviewedMau
+          .value = await bkCoSoSXKDProvider.countOfUnInterviewed(
+               AppDefine.maDoiTuongDT_07Mau, currentMaDiaBan!, currentMaXa!) ??
+          0;
+      countOfInterviewedMau.value = await bkCoSoSXKDProvider.countOfInterviewed(
+               AppDefine.maDoiTuongDT_07Mau, currentMaDiaBan!, currentMaXa!) ??
+          0;
+    
       countOfUnInterviewed
           .value = await bkCoSoSXKDProvider.countOfUnInterviewed(
-              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
+               AppDefine.maDoiTuongDT_07TB, currentMaDiaBan!, currentMaXa!) ??
           0;
       countOfInterviewed.value = await bkCoSoSXKDProvider.countOfInterviewed(
-              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
+               AppDefine.maDoiTuongDT_07TB, currentMaDiaBan!, currentMaXa!) ??
           0;
-    } else if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
-      countOfUnInterviewed
-          .value = await bkCoSoSXKDProvider.countOfUnInterviewed(
-              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
-          0;
-      countOfInterviewed.value = await bkCoSoSXKDProvider.countOfInterviewed(
-              int.parse(currentMaDoiTuongDT), currentMaDiaBan!, currentMaXa!) ??
-          0;
-    } else {
-      countOfUnInterviewed.value = 0;
-      countOfInterviewed.value = 0;
-    }
+    
   }
 
   @override

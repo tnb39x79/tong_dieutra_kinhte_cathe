@@ -7,6 +7,7 @@ class WCard extends StatelessWidget {
     super.key,
     required this.titleHeader,
     required this.doiTuongDT,
+    required this.countTotal,
     required this.countInterviewed,
     required this.countUnInterviewed,
     required this.countSyncSuccess,
@@ -15,10 +16,11 @@ class WCard extends StatelessWidget {
 
   final String titleHeader;
   final String doiTuongDT;
+  final int countTotal;
   final int countInterviewed;
   final int countUnInterviewed;
   final int countSyncSuccess;
-   final int countUnSync;
+  final int countUnSync;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +28,10 @@ class WCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        WCardHeader(titleHeader: titleHeader),
+        if (titleHeader != '') WCardHeader(titleHeader: titleHeader),
         WCardItem(
             doiTuongDT: doiTuongDT,
+            countTotal: countTotal,
             countInterviewed: countInterviewed,
             countUnInterviewed: countUnInterviewed,
             countSyncSuccess: countSyncSuccess,
@@ -36,23 +39,4 @@ class WCard extends StatelessWidget {
       ],
     );
   }
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Card(
-  //     color: Colors.white,
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-  //       child: Column(
-  //         children: [
-  //           WCardHeader(titleHeader: titleHeader),
-  //           WCardItem(
-  //               doiTuongDT: doiTuongDT,
-  //               countInterviewed: countInterviewed,
-  //               countUnInterviewed: countUnInterviewed,
-  //               countSyncSuccess: countSyncSuccess)
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

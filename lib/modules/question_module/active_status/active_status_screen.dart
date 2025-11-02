@@ -11,22 +11,21 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'status_active'.tr,
-        iconLeading: const Icon(
-          Icons.arrow_back_ios_new_rounded,
-          color: Colors.white,
-        ),
-        subTitle: controller.subTitleBar.value,
-        onPressedLeading: () => Get.back(),
-        wTitle: Obx(() => appBarTitle()),
-      ),
-      body: LoadingFullScreen(
+    return LoadingFullScreen(
         loading: controller.loadingSubject,
-        child: _buildBody(),
-      ),
-    );
+        child: Scaffold(
+          appBar: CustomAppBar(
+            title: 'status_active'.tr,
+            iconLeading: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+            ),
+            subTitle: controller.subTitleBar.value,
+            onPressedLeading: () => Get.back(),
+            wTitle: Obx(() => appBarTitle()),
+          ),
+          body: _buildBody(),
+        ));
   }
 
   Widget appBarTitle() {
@@ -48,49 +47,28 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
   }
 
   Widget _buildBody() {
-    return Padding(
-      padding: const EdgeInsets.all(AppValues.padding),
-      child: Column(
-        children: [
-          Obx(() => wTitle()),
-          const SizedBox(height: 8),
-          Expanded(child: Obx(() => _question())),
-          _button()
-        ],
-      ),
-    );
-  }
-
-  Widget wContainer() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(
-        AppValues.padding / 8,
-        0,
-        AppValues.padding / 8,
-        AppValues.padding / 8,
-      ),
-      padding: const EdgeInsets.all(0),
-      width: Get.width,
-      decoration: BoxDecoration(
-        border: BoxBorder.all(width: 1, color: backgroundColorSync),
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(AppValues.borderLv2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            spreadRadius: 2,
-            blurRadius: 7,
-            offset: Offset(0, 2), // changes position of shadow
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: wTitle()),
-        ],
-      ),
-    );
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+      return SingleChildScrollView(
+          physics: const ScrollPhysics(),
+          padding: const EdgeInsets.all(AppValues.padding),
+          child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: viewportConstraints.maxHeight - kToolbarHeight + 20,
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Obx(() => wTitle()),
+                    const SizedBox(height: 8),
+                    Expanded(child: Obx(() => _question())), 
+                    _button()
+                  ],
+                ),
+              )));
+    });
   }
 
   Widget wTitle() {
@@ -102,37 +80,37 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
             text: TextSpan(style: styleMediumBold, children: [
           TextSpan(
               text: 'Tên cơ sở: ',
-              style: styleMediumBold.copyWith(color: blackText)),
+              style: styleMediumBold.copyWith(color: blackText,height: textHeightNormal)),
           TextSpan(
               text:
                   '${controller.tblBkCoSoSXKD.value.tenCoSo ?? ''.toUpperCase()}',
-              style: styleMediumBold.copyWith(color: primaryColor))
+              style: styleMediumBold.copyWith(color: primaryColor,height: textHeightNormal))
         ])),
         RichText(
             text: TextSpan(style: styleMediumBold, children: [
           TextSpan(
               text: 'Tên chủ cơ sở: ',
-              style: styleMediumBold.copyWith(color: blackText)),
+              style: styleMediumBold.copyWith(color: blackText,height: textHeightNormal)),
           TextSpan(
               text:
                   '${controller.tblBkCoSoSXKD.value.tenChuCoSo ?? ''.toUpperCase()}',
-              style: styleMediumBold.copyWith(color: primaryColor))
+              style: styleMediumBold.copyWith(color: primaryColor,height: textHeightNormal))
         ])),
         RichText(
             text: TextSpan(style: styleMediumBold, children: [
           TextSpan(
               text: 'Ngành sản phẩm: ',
-              style: styleMediumBold.copyWith(color: blackText)),
+              style: styleMediumBold.copyWith(color: blackText,height: textHeightNormal)),
           TextSpan(
               text:
                   '${controller.tblBkCoSoSXKDNganhSanPham.value.maNganh ?? ''} - ${controller.tblBkCoSoSXKDNganhSanPham.value.tenNganh ?? ''}.',
-              style: styleMediumBold.copyWith(color: primaryColor))
+              style: styleMediumBold.copyWith(color: primaryColor,height: textHeightNormal))
         ])),
         Divider(),
         const SizedBox(height: 8),
         Text(
           'Chọn tình trạng hoạt động của sơ cở:',
-          style: styleLargeBold.copyWith(color: blackText),
+          style: styleLargeBold.copyWith(color: blackText,height: textHeightNormal),
         )
       ],
     );

@@ -144,6 +144,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   final currentScreenIndex = 0.obs;
   final questionIndex = 0.obs;
   final currentTenPhieu = ''.obs;
+  final currentScreenNoStop = 0.obs;
 
   final keywordDanToc = ''.obs;
   final searchResult = false.obs;
@@ -267,6 +268,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   final isSearchOnline = false.obs;
   final isInitSearch = false.obs;
   final isSearchOnlineSwitch = ValueNotifier<bool>(false);
+  Timer? _debounce;
 
   @override
   void onInit() async {
@@ -863,6 +865,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   Future onMenuPress(int idPhieus, int idManHinh) async {
+    currentScreenNoStop.value = idManHinh;
     await assignAllQuestionGroup();
     if (currentScreenNo.value == 3) {
       var warningNganhBangKeResult =
@@ -991,6 +994,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   /// Handle onPressed [Quay lại] button
   Future onBack() async {
+    currentScreenNoStop.value = 4;
     await fetchData();
     await assignAllQuestionGroup();
     if (currentScreenNo.value == 4) {
@@ -1167,6 +1171,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     }
     if (currentScreenNo.value == 3) {
       await updateNganhAll();
+      await fetchData();
       await tongDoanhThuTatcaSanPhamA5_2();
       var warningNganhBangKeResult =
           await warningMaNganhVoiBangKe(true, isCancel: true);
@@ -1241,6 +1246,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       await getQuestionContent();
       // await manHinhPhieuTB();
       // await manHinhPhieuMau();
+
       if (currentMaDoiTuongDT == AppDefine.maDoiTuongDT_07TB.toString()) {
         if (currentScreenNo.value == 5) {
           if (isBCDE.value == false) {
@@ -1257,6 +1263,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenNo(currentScreenNo.value + 1);
               currentScreenIndex(currentScreenIndex.value + 1);
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 6) {
@@ -1275,6 +1283,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //  await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 7) {
@@ -1293,6 +1303,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //  await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 8) {
@@ -1311,6 +1323,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //  await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 9) {
@@ -1323,8 +1337,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                 1,
                 '',
                 int.parse(currentMaTinhTrangDT!));
-            currentScreenNo(currentScreenNo.value - 1);
-            currentScreenIndex(currentScreenIndex.value - 1);
+            // currentScreenNo(currentScreenNo.value - 1);
+            // currentScreenIndex(currentScreenIndex.value - 1);
+            // currentScreenNoStop.value = currentScreenNo.value;
             await getQuestionContent();
             await setSelectedQuestionGroup();
             var result = await validateCompleted();
@@ -1333,6 +1348,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               return showError(result);
             }
             onKetThucPhongVan();
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
       } else if (currentMaDoiTuongDT ==
@@ -1353,6 +1370,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //   await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 6) {
@@ -1363,6 +1382,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //   await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 7) {
@@ -1398,6 +1419,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               // await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 8) {
@@ -1416,6 +1439,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //   await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 9) {
@@ -1451,18 +1476,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //  await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 10) {
-          // var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
-          // if (warningNganhBangKeResult.isEmpty) {
-          //   if (currentScreenIndex.value <
-          //       generalInformationController.screenNos().length - 1) {
-          //     currentScreenNo(currentScreenNo.value + 1);
-          //     currentScreenIndex(currentScreenIndex.value + 1);
-          //     // await getQuestionContent();
-          //   }
-          // } else
           if (isCap2_55LT.value == false) {
             await insertUpdateXacNhanLogic(
                 currentScreenNo.value,
@@ -1478,6 +1496,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //  await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 11) {
@@ -1512,6 +1532,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //     await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 12) {
@@ -1530,9 +1552,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               currentScreenIndex(currentScreenIndex.value + 1);
               //  await getQuestionContent();
             }
+          } else {
+            currentScreenNoStop.value = currentScreenNo.value;
           }
         }
         if (currentScreenNo.value == 13) {
+          currentScreenNoStop.value = currentScreenNo.value;
           await tongDoanhThuTatcaSanPhamA5_2();
           await getMaNganhCN10To39();
           await getLoaiNangLuongA6_1();
@@ -1545,6 +1570,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
           if (warningNganhBangKeResult.isEmpty) {
             currentScreenNo(12);
+            currentScreenNoStop.value = currentScreenNo.value;
             currentScreenIndex(currentScreenIndex.value - 1);
             await getQuestionContent();
             await setSelectedQuestionGroup();
@@ -1945,13 +1971,18 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           ///Hiển thị popup
           ///KIỂM TRA: CÂU 4T. TỔNG DOANH THU NĂM 2025 < 100 TRIỆU ĐỒNG
           ///VÀ CÂU 4.1_SỐ THÁNG CƠ SỞ CÓ HOẠT ĐỘNG SXKD < 3 THÁNG -> CƠ SỞ KHÔNG THUỘC ĐỐI TƯỢNG ĐIỀU TRA -> KẾT THÚC PHỎNG VẤN
-
-          await kiemTraCau4T();
+          if (_debounce?.isActive ?? false) _debounce?.cancel();
+          _debounce = Timer(const Duration(milliseconds: 500), () {
+            kiemTraCau4T();
+          });
         } else if (maCauHoi == colPhieuMauTBA4_2) {
           ///Hiển thị popup
           ///KIỂM TRA: CÂU 4T. TỔNG DOANH THU NĂM 2025 < 100 TRIỆU ĐỒNG
           ///VÀ CÂU 4.1_SỐ THÁNG CƠ SỞ CÓ HOẠT ĐỘNG SXKD < 3 THÁNG -> CƠ SỞ KHÔNG THUỘC ĐỐI TƯỢNG ĐIỀU TRA -> KẾT THÚC PHỎNG VẤN
-          await kiemTraCau4T();
+          if (_debounce?.isActive ?? false) _debounce?.cancel();
+          _debounce = Timer(const Duration(milliseconds: 500), () {
+            kiemTraCau4T();
+          });
         }
       }
 
@@ -2761,7 +2792,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
     } else if (fieldName == colPhieuNganhCNA2_1) {
     } else if (fieldName == colPhieuNganhCNA2_2) {
-      num minVal = minValue ?? 1;
+      num minVal = minValue ?? 0;
       num maxVal = maxValue ?? 999999999;
       if (validateEmptyString(inputValue)) {
         return 'Vui lòng nhập giá trị.';
@@ -2770,11 +2801,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       num intputVal = inputValue != null
           ? AppUtils.convertStringToDouble(inputValue.replaceAll(' ', ''))
           : 0;
+      if (intputVal == 0) {
+        return 'Giá trị phải lớn hơn 0.';
+      }
       if (intputVal < minVal) {
         return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       } else if (intputVal > maxVal) {
         return 'Giá trị phải nằm trong khoảng ${AppUtils.getTextKhoangGiaTri(minVal, maxVal)}';
       }
+
       return null;
     }
     return null;
@@ -2844,7 +2879,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (a4TVal > 0) {
         var phanTramDT = (a5TVal / a4TVal) * 100;
         if (phanTramDT < 70) {
-          return 'Tổng doanh thu các sản phẩm < 70% so với Tổng doanh thu của cơ sở tại câu 4T. Yêu cầu khai thác doanh thu các sản phẩm phải đạt từ 70% Tổng doanh thu của cơ sở trở lên';
+          return 'Tổng doanh thu các sản phẩm $phanTramDT % < 70% so với Tổng doanh thu của cơ sở tại câu 4T (${a4TValView}). Yêu cầu khai thác doanh thu các sản phẩm phải đạt từ 70% Tổng doanh thu của cơ sở trở lên';
         }
       }
     }
@@ -5499,8 +5534,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         }
       } else if (maCauHoi == colPhieuMauTBA7_2 &&
           maPhieu == AppDefine.maPhieuTB) {
-        if (validateEmptyString(inputValue)) {
-          return 'Vui lòng nhập giá trị.';
+        var a7_1Value = tblPhieuCT[colPhieuMauTBA7_1] != null
+            ? tblPhieuCT[colPhieuMauTBA7_1].toString()
+            : '';
+        if (a7_1Value != null && a7_1Value == "1") {
+          if (validateEmptyString(inputValue)) {
+            return 'Vui lòng nhập giá trị.';
+          }
         }
       } else if (maCauHoi == colPhieuMauTBA7_3 &&
           maPhieu == AppDefine.maPhieuTB) {
@@ -6618,11 +6658,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
                     item.chiTieuCot, item.chiTieuDong, val.toString(),
                     typing: false, fieldName: item.tenTruong);
                 if (validRes != null && validRes != '') {
-                  result = await generateMessageV2(
+                  String? msg =
                       (item.tenHienThi == null || item.tenHienThi == '')
                           ? item.mucCauHoi
-                          : item.tenHienThi,
-                      validRes);
+                          : item.tenHienThi;
+                  if (item.chiTieuDong != null) {
+                    msg = '$msg Mã số ${item.chiTieuDong!.maSo}';
+                  }
+                  result = await generateMessageV2(msg, validRes);
                   break;
                 }
               } else {
@@ -7724,9 +7767,15 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         await onChangeCompleted(ThoiGianBD, startTime.toIso8601String());
         await onChangeCompleted(ThoiGianKT, DateTime.now().toIso8601String());
       }
+      var ttDT = generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT;
       await bkCoSoSXKDProvider.updateTrangThai(currentIdCoSo!);
-      await bkCoSoSXKDProvider.updateValue(
-          colBkCoSoSXKDIsSyncSuccess, AppDefine.unSync, currentIdCoSo!);
+      if (ttDT == 1) {
+        await bkCoSoSXKDProvider.updateValue(
+            colBkCoSoSXKDIsSyncSuccess, AppDefine.synced2, currentIdCoSo!);
+      } else {
+        await bkCoSoSXKDProvider.updateValue(
+            colBkCoSoSXKDIsSyncSuccess, AppDefine.unSync, currentIdCoSo!);
+      }
       AppPref.setQuestionNoStartTime = '';
 
       //  if (resultRoute.isEdited) {
@@ -7743,6 +7792,20 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
       setLoading(false);
       Get.offAllNamed(AppRoutes.mainMenu);
+    }
+    if (resultRoute != null && resultRoute == 'cancel') {
+      if (currentScreenNoStop.value == 0) {
+        currentScreenNoStop.value = 4;
+      }
+      currentScreenNo.value = currentScreenNoStop.value;
+      currentScreenIndex.value = currentScreenNoStop.value - 1;
+
+      await getQuestionContent();
+      await setSelectedQuestionGroup();
+
+      scrollController.animateTo(0.0,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.fastOutSlowIn);
     }
     // handleCompletedQuestion(
     //     tableThongTinNPV: completeInfo,
@@ -8427,8 +8490,6 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return (nganh, messageContent, hasG8610);
   }
 
-  
-
   executeConfirmDeleteProduct(id, String nganh, String maNganhCap5,
       {List<String>? maSanPhamPhieuMauTBSanPhams}) async {
     await xacNhanLogicProvider.deleteByIdHoManHinh(
@@ -8486,7 +8547,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         await phieuNganhTMSanphamProvider.deleteByCoSoId(currentIdCoSo!);
         await phieuNganhTMProvider.deleteByCoSoId(currentIdCoSo!);
       }
-      if (nganh == 'TM_G6810') {
+      if (nganh == 'TMG8610') {
         //Chỉ có thông về hoạt động bán buốn; bán lẻ sửa chữa ô tô mô tô xe máy ;
         //Cập nhật trường 1T = null trong bảng CT_Phieu_NganhTM và Xoá record  trong bảng CT_Phieu_NganhTM_SanPham
         await phieuNganhTMSanphamProvider.deleteByCoSoId(currentIdCoSo!);
@@ -11001,9 +11062,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   @override
   onClose() {
     // focusNode.dispose();
+    _debounce?.cancel();
     super.onClose();
   }
 
-  ///END::CÂU 32
-  ///
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
 }

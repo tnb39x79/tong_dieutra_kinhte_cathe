@@ -2,6 +2,7 @@ class ProgressModel {
   int? maDoiTuongDT;
   String? tenDoiTuongDT;
   String? moTaDoiTuongDT;
+  int? countTotal;
   int? countPhieuInterviewed;
   int? countPhieuUnInterviewed;
   int? countPhieuSyncSuccess;
@@ -11,6 +12,7 @@ class ProgressModel {
       {this.maDoiTuongDT,
       this.tenDoiTuongDT,
       this.moTaDoiTuongDT,
+      this.countTotal,
       this.countPhieuInterviewed,
       this.countPhieuUnInterviewed,
       this.countPhieuSyncSuccess,
@@ -20,6 +22,7 @@ class ProgressModel {
     maDoiTuongDT = json['MaDoiTuongDT'];
     tenDoiTuongDT = json['TenDoiTuongDT'];
     moTaDoiTuongDT = json['MoTaDoiTuongDT'];
+    countTotal = json['CountTotal'];
     countPhieuInterviewed = json['CountPhieuInterviewed'];
     countPhieuUnInterviewed = json['CountPhieuUnInterviewed'];
     countPhieuSyncSuccess = json['CountPhieuSyncSuccess'];
@@ -31,6 +34,7 @@ class ProgressModel {
     data['MaDoiTuongDT'] = maDoiTuongDT;
     data['TenDoiTuongDT'] = tenDoiTuongDT;
     data['MoTaDoiTuongDT'] = moTaDoiTuongDT;
+    data['CountTotal'] = countTotal;
     data['CountPhieuInterviewed'] = countPhieuInterviewed;
     data['CountPhieuUnInterviewed'] = countPhieuUnInterviewed;
     data['CountPhieuSyncSuccess'] = countPhieuSyncSuccess;

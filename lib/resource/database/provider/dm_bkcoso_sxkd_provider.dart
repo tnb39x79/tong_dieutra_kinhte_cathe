@@ -105,11 +105,15 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     ''');
   }
 
-  Future<List<Map>> selectAllNotMaTrangThaiDT2() async {
+  Future<List<Map>> selectAllNotMaTrangThaiDT2(
+      List<String> idCoSoDangPV) async {
     String createdAt = AppPref.dateTimeSaveDB!;
+    if (idCoSoDangPV.isEmpty) {
+      return [];
+    }
     return await db!.query(tablebkCoSoSXKD, where: '''
       $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
-      AND   $colBkCoSoSXKDMaTrangThaiDT2 <> ${AppDefine.dangPhongVan}
+      AND   $colBkCoSoSXKDIDCoSo  not in (${idCoSoDangPV.map((e) => "'$e'").join(', ')})
     ''');
   }
 
@@ -172,6 +176,17 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return result;
   }
 
+  Future<int?> countAll(int maDoiTuongDT) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    int? count = Sqflite.firstIntValue(await db!.rawQuery('''
+      SELECT COUNT(*) FROM $tablebkCoSoSXKD 
+      WHERE $columnCreatedAt = '$createdAt'
+      AND $columnMaDTV = '${AppPref.uid}' 
+      AND $columnMaPhieu = $maDoiTuongDT
+      '''));
+    return count;
+  }
+
   Future<int?> countOfUnInterviewed(
       int maDoiTuongDT, String maDiaBan, String maXa) async {
     String createdAt = AppPref.dateTimeSaveDB!;
@@ -195,7 +210,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       WHERE $colBkCoSoSXKDMaTrangThaiDT IN (${AppDefine.chuaPhongVan}, ${AppDefine.dangPhongVan})
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $columnMaPhieu = '$maDoiTuongDT' 
+      AND $columnMaPhieu = $maDoiTuongDT
       '''));
 
     return count;
@@ -223,11 +238,12 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-       AND $columnMaPhieu = '$maDoiTuongDT' 
+       AND $columnMaPhieu = $maDoiTuongDT
       '''));
     return count;
   }
 
+// AND ($colBkCoSoSXKDIsSyncSuccess=${AppDefine.synced} OR $colBkCoSoSXKDIsSyncSuccess=${AppDefine.unSync} OR $colBkCoSoSXKDIsSyncSuccess=0 OR $colBkCoSoSXKDIsSyncSuccess is null)
   Future<int?> countSyncSuccess() async {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
@@ -235,11 +251,12 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.synced}
+     AND ($colBkCoSoSXKDIsSyncSuccess=${AppDefine.synced})
       '''));
     return count;
   }
 
+// AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.synced}
   Future<int?> countSyncSuccessAll(int maDoiTuongDT) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
@@ -247,23 +264,23 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.synced}
-        AND $columnMaPhieu = '$maDoiTuongDT' 
+     
+        AND $columnMaPhieu = $maDoiTuongDT
       '''));
     return count;
   }
 
+  //AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.unSync}
   Future<int?> countPhieuUnSyncAll(int maDoiTuongDT) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     int? count = Sqflite.firstIntValue(await db!.rawQuery('''
       SELECT COUNT(*) FROM $tablebkCoSoSXKD
-      WHERE $colBkCoSoSXKDMaTrangThaiDT = ${AppDefine.hoanThanhPhongVan} 
+      WHERE $colBkCoSoSXKDMaTrangThaiDT in (  ${AppDefine.dangPhongVan} ,${AppDefine.chuaPhongVan} )
       AND $columnCreatedAt = '$createdAt'
       AND $columnMaDTV = '${AppPref.uid}'
-      AND $colBkCoSoSXKDIsSyncSuccess=${AppDefine.unSync}
-      AND $colBkCoSoSXKDMaTrangThaiDT2 = ${AppDefine.hoanThanhPhongVan} 
-       AND NOT $columnUpdatedAt = '$createdAt'
-        AND $columnMaPhieu = '$maDoiTuongDT' 
+      
+       
+        AND $columnMaPhieu = $maDoiTuongDT
       '''));
     return count;
   }

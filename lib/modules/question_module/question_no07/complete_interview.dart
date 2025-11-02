@@ -256,7 +256,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
                   Expanded(
                     child: WidgetButton(
                       title: 'Hủy',
-                      onPressed: () => Get.back(result: _isEdited),
+                      onPressed: () => Get.back(result: 'cancel'),
                       buttonType: BtnType.outline,
                     ),
                   ),

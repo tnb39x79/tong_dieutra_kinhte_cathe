@@ -28,7 +28,7 @@ class LoginController extends BaseController {
   final keyPass = 'pass';
 
   final formKey = GlobalKey<FormState>();
-
+  final isPasswordHidden = true.obs;
   @override
   void onInit() {
     mapInputControllers.forEach((key, value) {
@@ -185,6 +185,9 @@ class LoginController extends BaseController {
 
   _showError(String msg) =>
       snackBar('error'.tr, msg, style: ToastSnackType.error);
+  void onPressVisiblePwd() {
+    isPasswordHidden.value = !isPasswordHidden.value;
+  }
 
   @override
   void onDetached() {

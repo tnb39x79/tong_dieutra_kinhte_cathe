@@ -7,9 +7,10 @@ const String tableDiaBanCoSoSXKD = 'DmDiaBanCoSoSXKD';
 const String columnDmDiaBanCoSoSxkdId = '_id';
 const String columnDmDiaBanCoSoSxkdMaPhieu = 'LoaiPhieu';
 const String columnDmDiaBanCoSoSxkdMaTinh = 'MaTinh';
-const String columnDmDiaBanCoSoSxkdMaHuyen = 'MaHuyen';
+const String columnDmDiaBanCoSoSxkdMaTKCS = 'MaTKCS';
 const String columnDmDiaBanCoSoSxkdMaXa = 'MaXa';
 const String columnDmDiaBanCoSoSxkdTenXa = 'TenXa';
+const String columnDmDiaBanCoSoSxkdMaThon = 'MaThon';
 const String columnDmDiaBanCoSoSxkdMaDiaBan = 'MaDiaBan';
 const String columnDmDiaBanCoSoSxkdTenDiaBan = 'TenDiaBan';
 
@@ -21,9 +22,10 @@ class TableDmDiaBanCosoSxkd {
   int? id;
   int? loaiPhieu;
   String? maTinh;
-  String? maHuyen;
+  String? maTKCS;
   String? maXa;
   String? tenXa;
+  String? maThon;
   String? maDiaBan;
   String? tenDiaBan;
   String? maDTV;
@@ -34,9 +36,10 @@ class TableDmDiaBanCosoSxkd {
   TableDmDiaBanCosoSxkd(
       {this.loaiPhieu,
       this.maTinh,
-      this.maHuyen,
+      this.maTKCS,
       this.maXa,
       this.tenXa,
+      this.maThon,
       this.maDiaBan,
       this.tenDiaBan,
       this.maDTV,
@@ -48,11 +51,13 @@ class TableDmDiaBanCosoSxkd {
     id = json['_id'];
     loaiPhieu = json['LoaiPhieu'];
     maTinh = json['MaTinh'];
-    maHuyen = json['MaHuyen'];
+    maTKCS = json['MaTKCS'];
     maXa = json['MaXa'];
     tenXa = json['TenXa'];
+    maThon = json['MaThon'];
     maDiaBan = json['MaDiaBan'];
     tenDiaBan = json['TenDiaBan'];
+
     maDTV = json['MaDTV'];
     createdAt = json['CreatedAt'] ?? DateTime.now().toIso8601String();
     updatedAt = json['UpdatedAt'] ?? DateTime.now().toIso8601String();
@@ -65,11 +70,12 @@ class TableDmDiaBanCosoSxkd {
     final Map<String, Object?> data = <String, Object?>{};
     data['LoaiPhieu'] = loaiPhieu;
     data['MaTinh'] = maTinh;
-    data['MaHuyen'] = maHuyen;
+    data['MaTKCS'] = maTKCS;
     data['MaXa'] = maXa;
     data['TenXa'] = tenXa;
     data['MaDiaBan'] = maDiaBan;
     data['TenDiaBan'] = tenDiaBan;
+    data['MaThon'] = maThon;
     data['MaDTV'] = maDTV;
     data['CreatedAt'] = createdAt;
     data['UpdatedAt'] = updatedAt;

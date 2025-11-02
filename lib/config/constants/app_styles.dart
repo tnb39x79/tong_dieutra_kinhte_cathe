@@ -12,6 +12,7 @@ const fontLarge = 18.0;
 
 const textHeightXx = 1.0;
 const textHeight = 1.7;
+const textHeightNormal= 1.8;
 
 const styleXxSmall =
     TextStyle(fontSize: fontXxSmall, height: textHeightXx, fontFamily: inter);

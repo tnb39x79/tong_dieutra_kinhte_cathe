@@ -20,7 +20,7 @@ class ProgressListController extends BaseController {
   void onInit() async {
     setLoading(true);
     await listDoiTuongDT();
-    // await getProgressCount();
+    
     setLoading(false);
     super.onInit();
   }
@@ -42,10 +42,19 @@ class ProgressListController extends BaseController {
 
   Future<ProgressModel> getProgress(
       int maDoiTuongDT, String tenDoiTuongDT, String moTa) async {
+         String tenDT =  moTa;
+      if ( maDoiTuongDT == AppDefine.maDoiTuongDT_07TB) {
+        tenDT = 'Phiếu TB';
+      }
+      if ( maDoiTuongDT == AppDefine.maDoiTuongDT_07Mau) {
+        tenDT = 'Phiếu mẫu';
+      }
     ProgressModel progressModel = ProgressModel();
       progressModel.maDoiTuongDT = maDoiTuongDT;
       progressModel.tenDoiTuongDT = tenDoiTuongDT;
-      progressModel.moTaDoiTuongDT = moTa;
+      progressModel.moTaDoiTuongDT = tenDT;
+       progressModel.countTotal =
+          await bkCoSoSXKDProvider.countAll(maDoiTuongDT) ?? 0;
       progressModel.countPhieuInterviewed =
           await bkCoSoSXKDProvider.countOfInterviewedAll(maDoiTuongDT) ?? 0;
       progressModel.countPhieuUnInterviewed =

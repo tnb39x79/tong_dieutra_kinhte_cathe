@@ -22,6 +22,9 @@ class AppDefine {
 
   static const int synced = 1;
 
+  ///Trạng thái chưa đồng bộ dành cho maTrangThaiDT=1 trước khi PV hoàn thành;
+  static const int synced2 = 2;
+
   // defind type question
   static const int checkBoxCircleWithString = 6;
   static const int inputTypeInterger = 2;

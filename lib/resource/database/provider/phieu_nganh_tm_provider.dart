@@ -169,11 +169,7 @@ class PhieuNganhTMProvider extends BaseDBProvider<TablePhieuNganhTM> {
 
     List<Map> map = await db!.rawQuery('''
           SELECT * FROM $tablePhieuNganhTM 
-          WHERE $columnIDCoSo = '$idCoso' 
-          AND $colPhieuNganhTMA1T is not null
-          AND $colPhieuNganhTMA2 is not null
-          AND $colPhieuNganhTMA3 is not null
-          AND $colPhieuNganhTMA3T is not null 
+          WHERE $columnIDCoSo = '$idCoso'  
           AND $columnCreatedAt = '$createdAt' 
         ''');
     return map.isNotEmpty ? map[0] : {};

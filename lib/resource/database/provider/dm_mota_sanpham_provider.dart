@@ -593,7 +593,7 @@ class DmMotaSanphamProvider extends BaseDBProvider<TableDmMotaSanpham> {
     isGResult = cap5G.isNotEmpty;
 
     String sqlL =
-        "SELECT MaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5Inputs.map((e) => "'$e'").join(', ')})   AND substr($columnDmMoTaSPMaSanPham,1,4) =$maVcpaL6810 AND $columnDmMoTaSPMaLV ='L'";
+        "SELECT MaSanPham FROM $tableDmMoTaSanPham  WHERE $columnDmMoTaSPMaSanPham in (${vcpa5Inputs.map((e) => "'$e'").join(', ')})   AND substr($columnDmMoTaSPMaSanPham,1,4) = '$maVcpaL6810' AND $columnDmMoTaSPMaLV ='L'";
     print('sqlL $sqlL');
     List<Map> mapsL = await db!.rawQuery(sqlL);
     List<String> cap5L = [];

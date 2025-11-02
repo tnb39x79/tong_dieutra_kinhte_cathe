@@ -11,7 +11,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/provider.dart';
 
 class InterviewListDetailController extends BaseController {
-  final InterviewListController interviewListController = Get.find();
+  final InterviewListControllerV2 interviewListController = Get.find();
   // maTinhTrangDT = 1 => chua pv
   // maTinhTrangDT = 9 => da pv
   static const maDoiTuongDTKey = 'maDoiTuongDT';

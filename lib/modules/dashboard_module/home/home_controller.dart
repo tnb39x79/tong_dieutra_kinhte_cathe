@@ -731,24 +731,55 @@ class HomeController extends BaseController with SyncMixinV2 {
 
   Future updateBkCoSoxkd(List<TableBkCoSoSXKD> bkCosoSxkd, String dtSaveDB,
       List<TableBkCoSoSXKD> coSosDangPV) async {
-    var coso = await bkCoSoSXKDProvider.selectAllNotMaTrangThaiDT2();
+    //Danh sach IDCoSo dang PV
+    List<String> idCoSoDangPVs = [];
+    if (coSosDangPV.isNotEmpty) {
+      var idCoSoDangPV = coSosDangPV.map((x) => x.iDCoSo!).toList();
+      if (idCoSoDangPV.isNotEmpty) {
+        idCoSoDangPVs.addAll(idCoSoDangPV);
+      }
+    }
+
+    //Tất cả cơ sở hiện có ở capi
+    List<TableBkCoSoSXKD> allCoSoCapis = [];
+    var allCoSoCapi = await bkCoSoSXKDProvider.selectAll();
+    if (allCoSoCapi.isNotEmpty) {
+      var coSos = TableBkCoSoSXKD.listFromJson(allCoSoCapi);
+      allCoSoCapis.addAll(coSos);
+    }
+
+    var coso =
+        await bkCoSoSXKDProvider.selectAllNotMaTrangThaiDT2(idCoSoDangPVs);
     List<TableBkCoSoSXKD> currentCoSos = [];
     if (coso.isNotEmpty) {
       var coSos = TableBkCoSoSXKD.listFromJson(coso);
       currentCoSos.addAll(coSos);
     }
     List<TableBkCoSoSXKD> coSosInsert = [];
+    List<TableBkCoSoSXKD> coSosUpdate = [];
+
     for (var item in bkCosoSxkd) {
       var cosoItem =
-          currentCoSos.where((x) => x.iDCoSo == item.iDCoSo).firstOrNull;
-      if (cosoItem != null) { 
-          item.createdAt = dtSaveDB;
-          await bkCoSoSXKDProvider.getDuLieuPVUpdateByIdCoSo(
-              item, item.iDCoSo!, dtSaveDB); 
+          allCoSoCapis.where((x) => x.iDCoSo == item.iDCoSo).firstOrNull;
+      if (cosoItem != null) {
+        if (cosoItem.maTrangThaiDT2 != AppDefine.dangPhongVan) {
+          coSosUpdate.add(item);
+        }
       } else {
         coSosInsert.add(item);
       }
     }
+
+    for (var item in coSosUpdate) {
+      var cosoItem =
+          currentCoSos.where((x) => x.iDCoSo == item.iDCoSo).firstOrNull;
+      if (cosoItem != null) {
+        item.createdAt = dtSaveDB;
+        await bkCoSoSXKDProvider.getDuLieuPVUpdateByIdCoSo(
+            item, item.iDCoSo!, dtSaveDB);
+      }
+    }
+
     if (coSosInsert.isNotEmpty) {
       await bkCoSoSXKDProvider.insert(coSosInsert, dtSaveDB);
     }
@@ -798,7 +829,7 @@ class HomeController extends BaseController with SyncMixinV2 {
       idCoSoDangPVs.addAll(dsIdCoSoDangPV);
     }
 
-    ///Lấy các cơ sở đang PV (đang editing)
+    ///Lấy các cơ sở != đang PV (đang editing)
     List<TableBkCoSoSXKD> danhSachBkCsSxkdInsert = [];
     if (idCoSoDangPVs.isNotEmpty) {
       if (danhSachBkCsSxkd.isNotEmpty) {
@@ -880,7 +911,7 @@ class HomeController extends BaseController with SyncMixinV2 {
     if (isHad != null) {
       //if (isDefaultUserType()) {
       AppPref.dateTimeSaveDB = isHad['CreatedAt'];
-      Get.toNamed(AppRoutes.interviewObjectList);
+      Get.toNamed(AppRoutes.interviewLocationListV2);
       // } else {
       //   await goToGeneralInformation();
       // }
@@ -1155,12 +1186,12 @@ class HomeController extends BaseController with SyncMixinV2 {
   @override
   void onResumed() {
     print('HomeController - onResumed called');
-    var isLogout = shouleBeLogoutToDeleteData();
-    isLogout.then((value) {
-      if (value) {
-        mainMenuController.onPressLogOut();
-      }
-    });
+    // var isLogout = shouleBeLogoutToDeleteData();
+    // isLogout.then((value) {
+    //   if (value) {
+    //     mainMenuController.onPressLogOut();
+    //   }
+    // });
   }
 
   @override

@@ -14,7 +14,9 @@ abstract class AppRoutes {
 
   //interview
   static const interviewLocationList = '/interviewLocationList';
+    static const interviewLocationListV2 = '/interviewLocationListV2';
   static const interviewList = '/interviewList';
+    static const interviewListV2 = '/interviewListV2';
   static const interviewListDetail = '/interviewListDetail';
   static const interviewObjectList = '/interview-object-list';
 

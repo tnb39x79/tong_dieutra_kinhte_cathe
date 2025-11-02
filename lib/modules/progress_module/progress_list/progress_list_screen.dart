@@ -27,6 +27,7 @@ class ProgressListScreen extends GetView<ProgressListController> {
 
   Widget _buildBody() {
     return Obx(() {
+      
       return RefreshIndicator(
           onRefresh: () {
             return Future.delayed(
@@ -45,6 +46,7 @@ class ProgressListScreen extends GetView<ProgressListController> {
                     titleHeader: controller.progressList[index].moTaDoiTuongDT!,
                     doiTuongDT:
                         controller.progressList[index].maDoiTuongDT.toString(),
+                    countTotal: controller.progressList[index].countTotal ?? 0,
                     countInterviewed:
                         controller.progressList[index].countPhieuInterviewed ??
                             0,

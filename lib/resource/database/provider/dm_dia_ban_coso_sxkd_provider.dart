@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:developer';
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_bkcoso_sxkd.dart';
@@ -59,9 +60,10 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
         $columnDmDiaBanCoSoSxkdId INTEGER PRIMARY KEY AUTOINCREMENT, 
         $columnDmDiaBanCoSoSxkdMaPhieu INTEGER,
         $columnDmDiaBanCoSoSxkdMaTinh TEXT,
-        $columnDmDiaBanCoSoSxkdMaHuyen TEXT,
+        $columnDmDiaBanCoSoSxkdMaTKCS TEXT,
         $columnDmDiaBanCoSoSxkdMaXa TEXT,
         $columnDmDiaBanCoSoSxkdTenXa TEXT,
+         $columnDmDiaBanCoSoSxkdMaThon TEXT,
         $columnDmDiaBanCoSoSxkdMaDiaBan TEXT,
         $columnDmDiaBanCoSoSxkdTenDiaBan TEXT, 
         $columnMaDTV TEXT, 
@@ -84,11 +86,24 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
     // TODO: implement selectOne
     throw UnimplementedError();
   }
+ Future<List<Map>> selectAllByMaPhieu() async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    String cols="  $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTKCS,";
+    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaDiaBan,";
+    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdTenDiaBan,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoMaDTV,";
+    //cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoCreatedAt,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoUpdatedAt,";
+    cols +=" (SELECT $tablebkCoSoSXKD.$colBkCoSoSXKDTenXa FROM $tablebkCoSoSXKD WHERE $tablebkCoSoSXKD.$colBkCoSoSXKDMaXa = $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ) AS TenXa";
 
+    String sql = "Select DISTINCT $cols  FROM $tableDiaBanCoSoSXKD ";
+    sql +=
+        " WHERE $columnCreatedAt = '$createdAt' ORDER BY $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ";
+        log(sql);
+    return await db!.rawQuery(sql);
+  }
   Future<List<Map>> selectByMaPhieu(int maDoiTuongDT) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     String cols=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdId,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaPhieu,";
-    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaHuyen,";
+    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTKCS,";
     cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaDiaBan,";
     cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdTenDiaBan,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoMaDTV,";
     cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoCreatedAt,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoUpdatedAt,";
