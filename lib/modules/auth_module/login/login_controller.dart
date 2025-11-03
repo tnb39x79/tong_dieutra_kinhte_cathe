@@ -144,12 +144,13 @@ class LoginController extends BaseController {
         String imei = response.body!.iMei!;
         //AppPref.extraToken = response.body!.accessToken;
         AppPref.pageSizeSync = response.body!.pageSizeSync ?? 5;
+        String hp=AppUtils.getHttpOrHttps(response.body!.portAPI??'');
         final response0 = await authRepository
             .getExtraToken(
                 userName: userName.trim(),
                 password: password.trim(),
                 url:
-                    'http://${response.body!.domainAPI}:${response.body!.portAPI}/',
+                    '$hp://${response.body!.domainAPI}',
                 iMei: imei)
             .timeout(const Duration(seconds: AppValues.timeOut));
         if (response0.isSuccess) {

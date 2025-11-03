@@ -8,10 +8,17 @@ import 'package:gov_statistics_investigation_economic/common/utils/utils.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
 class ErrorLogProvider extends GetConnect {
+  @override
+  void onInit() {
+    allowAutoSignedCert = true;
+    httpClient.timeout = const Duration(seconds: 60);
+  }
+
   ///added by: tuannb 10/09/2024
   ///Thêm mới chức năng gửi lỗi cho các chức năng PV;
   Future<Response> sendErrorLog(ErrorLogModel errorLogModel,
       {Function(double)? uploadProgress}) async {
+    allowAutoSignedCert = true;
     String loginData = AppPref.loginData;
     TokenModel model = loginData.isNotEmpty
         ? TokenModel.fromJson(jsonDecode(loginData))
@@ -20,12 +27,13 @@ class ErrorLogProvider extends GetConnect {
       'Authorization': 'Bearer ${AppPref.extraToken}',
       'Content-Type': 'application/json'
     };
-    httpClient.timeout = const Duration(seconds: 15);
-    String url =
-        'http://${model.domainAPI}:${model.portAPI}/${ApiConstants.sendErrorLog}';
+    
+    String hp = AppUtils.getHttpOrHttps(model.portAPI ?? '');
+    String url = ApiConstants.sendErrorLog;
+    httpClient.baseUrl = '$hp://${model.domainAPI}/';
 
     log('HEADER: $headers');
-    log('url: $url');
+    log('url: ${httpClient.baseUrl}$url');
     try {
       var response = await post(
         url,
@@ -52,5 +60,4 @@ class ErrorLogProvider extends GetConnect {
           statusCode: ApiConstants.errorException, statusText: e.toString());
     }
   }
- 
 }

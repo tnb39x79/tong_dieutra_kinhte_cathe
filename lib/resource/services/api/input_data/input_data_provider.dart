@@ -11,9 +11,10 @@ import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 class InputDataProvider extends GetConnect {
   @override
   void onInit() {
+    allowAutoSignedCert = true;
     httpClient.timeout = const Duration(seconds: 60); // default timeout = 8 s,
-    httpClient.addAuthenticator(authInterceptor);
-    httpClient.addResponseModifier(responseInterceptor);
+    // httpClient.addAuthenticator(authInterceptor);
+    // httpClient.addResponseModifier(responseInterceptor);
   }
 
   Future<Response> getData() async {
@@ -27,15 +28,20 @@ class InputDataProvider extends GetConnect {
         ? AppValues.versionDanhMuc
         : AppPref.versionDanhMuc;
     try {
-      String urlGet =
-          'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getData}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}&versionDm=$versionDm';
+      String hp = AppUtils.getHttpOrHttps(loginData.portAPI ?? '');
+      // String urlGet =
+      //     '$hp://${loginData.domainAPI}/${ApiConstants.getData}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}&versionDm=$versionDm';
+      String urlGet = '$hp://${loginData.domainAPI}/';
+      Map<String, dynamic> query = {
+        'uid': AppPref.uid,
+        'versionApp': AppValues.versionApp,
+        'versionDm': versionDm
+      };
+      httpClient.baseUrl = urlGet;
 
-      // return get(
-      //   'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getData}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}&versionDm=$versionDm',
-      //   headers: headers,
-      // );
       var response = await get(
-        urlGet,
+        ApiConstants.getData,
+        query: query,
         headers: headers,
       );
       return response;
@@ -54,45 +60,15 @@ class InputDataProvider extends GetConnect {
       'Authorization': 'Bearer ${AppPref.accessToken}'
     };
     httpClient.timeout = const Duration(seconds: 15);
-    String urlKdt =
-        '${ApiConstants.baseUrl}${ApiConstants.getKyDieuTra}?uid=${AppPref.uid}';
-    try {
-      var response = await get(
-        urlKdt,
-        headers: headers,
-      ).timeout(
-        const Duration(seconds: 15),
-        onTimeout: () {
-          // Time has run out, do what you wanted to do.
-          return const Response(
-              statusCode: HttpStatus.requestTimeout,
-              statusText: "Request timeout");
-        },
-      );
-      return response;
-    } on TimeoutException catch (e) {
-      // catch timeout here..
-      return Response(
-          statusCode: HttpStatus.requestTimeout, statusText: e.message);
-    } catch (e) {
-      return Response(
-          statusCode: ApiConstants.errorException, statusText: e.toString());
-    }
-  }
-
-  Future<Response> getCheckVersion() async {
-    String loginData0 = AppPref.loginData;
-    var json = jsonDecode(loginData0);
-    TokenModel loginData = TokenModel.fromJson(json);
-    Map<String, String>? headers = {
-      'Authorization': 'Bearer ${AppPref.accessToken}'
+    // String urlKdt = '${ApiConstants.baseUrl}${ApiConstants.getKyDieuTra}?uid=${AppPref.uid}';
+    httpClient.baseUrl = ApiConstants.baseUrl;
+    Map<String, dynamic> query = {
+      'uid': AppPref.uid,
     };
-    httpClient.timeout = const Duration(seconds: 15);
-    String urlGetVersion =
-        'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.getCheckVersion}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}';
     try {
       var response = await get(
-        urlGetVersion,
+        ApiConstants.getKyDieuTra,
+        query: query,
         headers: headers,
       ).timeout(
         const Duration(seconds: 15),
@@ -119,11 +95,16 @@ class InputDataProvider extends GetConnect {
       'Authorization': 'Bearer ${AppPref.accessToken}'
     };
     httpClient.timeout = const Duration(seconds: 15);
-    String modelUrl =
-        '${ApiConstants.baseUrl}${ApiConstants.getModelVersion}?uid=${AppPref.uid}&mVersion=${AppPref.dataModelAIVersionFileName}';
+    // String modelUrl = '${ApiConstants.baseUrl}${ApiConstants.getModelVersion}?uid=${AppPref.uid}&mVersion=${AppPref.dataModelAIVersionFileName}';
+    httpClient.baseUrl = ApiConstants.baseUrl;
+    Map<String, dynamic> query = {
+      'uid': AppPref.uid,
+      'mVersion': AppPref.dataModelAIVersionFileName
+    };
     try {
       var response = await get(
-        modelUrl,
+        ApiConstants.getModelVersion,
+        query: query,
         headers: headers,
       ).timeout(
         const Duration(seconds: 15),
@@ -150,12 +131,17 @@ class InputDataProvider extends GetConnect {
       'Authorization': 'Bearer ${AppPref.accessToken}'
     };
     httpClient.timeout = const Duration(seconds: 15);
-  //  final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
-    String modelUrl =
-        '${ApiConstants.baseUrl}${ApiConstants.getModelSpeech}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}';
+    //  final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
+    //String modelUrl = '${ApiConstants.baseUrl}${ApiConstants.getModelSpeech}?uid=${AppPref.uid}&versionApp=${AppValues.versionApp}';
+    httpClient.baseUrl = ApiConstants.baseUrl;
+    Map<String, dynamic> query = {
+      'uid': AppPref.uid,
+      'versionApp': AppValues.versionApp
+    };
     try {
       var response = await get(
-        modelUrl,
+        ApiConstants.getModelSpeech,
+        query: query,
         headers: headers,
       ).timeout(
         const Duration(seconds: 15),
@@ -181,13 +167,20 @@ class InputDataProvider extends GetConnect {
   /// API Endpoint: GET api/GetModelFile?uid=D990030018
   /// Returns ModelFileResponseModel with VCPA and STT model URLs and filenames
   Future<ResponseModel<ModelFileResponseModel>> getModelFile(String uid) async {
+    Map<String, String>? headers = {
+      'Authorization': 'Bearer ${AppPref.accessToken}'
+    };
     if (NetworkService.connectionType == Network.none) {
       return ResponseModel.withDisconnect();
     }
     //final baseUrl = ApiConstants.baseUrl.split('://').last.replaceAll("/", "");
-    String modelUrl = '${ApiConstants.baseUrl}${ApiConstants.getModelFile}?uid=${AppPref.uid}';
-
-    final res = await get(modelUrl);
+    // String modelUrl =  '${ApiConstants.baseUrl}${ApiConstants.getModelFile}?uid=${AppPref.uid}';
+    Map<String, dynamic> query = {
+      'uid': AppPref.uid,
+    };
+    httpClient.baseUrl = ApiConstants.baseUrl;
+    final res =
+        await get(ApiConstants.getModelFile, query: query, headers: headers);
     if (res.statusCode == ApiConstants.success) {
       return ResponseModel(
         statusCode: ApiConstants.success,

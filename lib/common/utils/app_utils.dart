@@ -120,4 +120,15 @@ class AppUtils {
     } 
     return 'Xã';
   }
+
+  static String getHttpOrHttps(String port){
+    String result='https';
+    if(port=="443"){
+      return result;
+    }
+    else if(port=="80"){
+      return 'http';
+    }
+    return result;
+  }
 }

@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -9,9 +8,13 @@ import 'package:gov_statistics_investigation_economic/common/utils/utils.dart';
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:http/http.dart' as http;
 
-class XacnhanTukekhaiProvider  extends GetConnect{
-  
- Future<Response> xacNhanTuKeKhaiCsSxkd(Map body,
+class XacnhanTukekhaiProvider extends GetConnect {
+
+   @override
+  void onInit() {
+    allowAutoSignedCert = true;
+  }
+  Future<Response> xacNhanTuKeKhaiCsSxkd(Map body,
       {Function(double)? uploadProgress}) async {
     String loginData0 = AppPref.loginData;
     var json = jsonDecode(loginData0);
@@ -21,8 +24,9 @@ class XacnhanTukekhaiProvider  extends GetConnect{
       'Content-Type': 'application/json'
     };
     httpClient.timeout = const Duration(seconds: 30);
+    String hp = AppUtils.getHttpOrHttps(loginData.portAPI ?? '');
     String url =
-        'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.postXacNhanTuKeKhai}';
+        '$hp://${loginData.domainAPI}/${ApiConstants.postXacNhanTuKeKhai}';
 
     log('HEADER: $headers');
     log('url: $url');

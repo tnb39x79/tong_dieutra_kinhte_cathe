@@ -620,7 +620,7 @@ class HomeController extends BaseController with SyncMixinV2 {
         await DatabaseHelper.instance.deleteOnlyDanhMuc(db);
       }
       String dtSaveDB =
-          AppPref.dateTimeSaveDB!; // DateTime.now().toIso8601String();
+          AppPref.dateTimeSaveDB ?? DateTime.now().toIso8601String();
       // AppPref.dateTimeSaveDB = dtSaveDB;
       //   developer.log('data.body = ${jsonEncode(data.body)}');
       var tableData = TableData(

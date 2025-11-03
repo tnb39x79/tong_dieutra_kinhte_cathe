@@ -9,10 +9,17 @@ import 'package:gov_statistics_investigation_economic/resource/model/sync/file_m
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 
 class SendErrorProvider extends GetConnect {
+  @override
+  void onInit() {
+    allowAutoSignedCert = true;
+    httpClient.timeout = const Duration(seconds: 60);
+  }
+
   ///added by: tuannb 11/7/2024
   ///Thêm mới chức năng gửi lỗi;
   Future<Response> sendErrorData(Map body,
       {Function(double)? uploadProgress}) async {
+    allowAutoSignedCert = true;
     String loginData0 = AppPref.loginData;
     var json = jsonDecode(loginData0);
     TokenModel loginData = TokenModel.fromJson(json);
@@ -22,19 +29,19 @@ class SendErrorProvider extends GetConnect {
     };
 
     httpClient.timeout = const Duration(seconds: 40);
-    String url =
-        'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.sendErrorData}';
+    String hp = AppUtils.getHttpOrHttps(loginData.portAPI ?? '');
 
+    httpClient.baseUrl = '$hp://${loginData.domainAPI}/';
     log('HEADER: $headers');
-    log('url: $url');
+    log('Url senderrordata: ${httpClient.baseUrl}${ApiConstants.sendErrorData}');
     try {
       var response = await post(
-        url,
+        ApiConstants.sendErrorData,
         body,
         uploadProgress: uploadProgress,
         headers: headers,
       ).timeout(
-        const Duration(seconds: 40),
+        const Duration(seconds: 60),
         onTimeout: () {
           // Time has run out, do what you wanted to do.
           return const Response(
@@ -95,16 +102,15 @@ class SendErrorProvider extends GetConnect {
       'Content-Type': 'application/json'
     };
 
-    httpClient.timeout = const Duration(seconds: 40);
-    String url =
-        'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.sendFullData}';
-
+    httpClient.timeout = const Duration(seconds: 60);
+    String hp = AppUtils.getHttpOrHttps(loginData.portAPI ?? '');
+    String url = '$hp://${loginData.domainAPI}/${ApiConstants.sendFullData}';
+    httpClient.baseUrl = '$hp://${loginData.domainAPI}/';
     log('HEADER: $headers');
     log('url: $url');
-
     try {
       var response = await post(
-        url,
+        ApiConstants.sendFullData,
         jsonEncode(body),
         uploadProgress: uploadProgress,
         headers: headers,

@@ -12,7 +12,7 @@
                 "--flavor",
                 "dev",
                 "--dart-define",
-                "BASE_API=http://v1_capi_giasanxuat.gso.gov.vn/"
+                "BASE_API=https://api_taphuancathe_tdtkinhte2026.nso.gov.vn/"
             ],
         },
         {

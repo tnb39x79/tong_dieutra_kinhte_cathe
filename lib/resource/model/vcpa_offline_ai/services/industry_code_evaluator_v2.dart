@@ -52,13 +52,13 @@ class IndustryCodeEvaluatorV2 extends GetxService {
   Future<void> initialize() async {
     // If already initialized, return immediately
     if (_isInitialized) {
-      _logger.info("IndustryCodeEvaluator already initialized");
+      _logger.info("IndustryCodeEvaluatorV2 already initialized");
       return;
     }
 
     // If currently initializing, wait for it to complete
     if (_isInitializing) {
-      _logger.info("IndustryCodeEvaluator is already initializing, waiting...");
+      _logger.info("IndustryCodeEvaluatorV2 is already initializing, waiting...");
       // Wait until initialization is complete
       while (_isInitializing) {
         await Future.delayed(const Duration(milliseconds: 100));

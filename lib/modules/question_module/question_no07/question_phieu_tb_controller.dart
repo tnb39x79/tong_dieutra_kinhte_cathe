@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/vcpa_offline_ai/services/industry_code_evaluator_v2.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/common.dart';
@@ -31,8 +32,7 @@ import 'package:gov_statistics_investigation_economic/resource/database/table/ta
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_mota_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/question/danh_dau_sanpham_model.dart';
-import 'package:gov_statistics_investigation_economic/resource/model/question/question_group.dart';
-import 'package:gov_statistics_investigation_economic/resource/model/vcpa_offline_ai/services/industry_code_evaluator.dart';
+import 'package:gov_statistics_investigation_economic/resource/model/question/question_group.dart'; 
 
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/api/search_sp/vcpa_vsic_ai_search_repository.dart';
@@ -230,7 +230,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   final maLVSelected = ''.obs;
 
   ///Tìm kiếm vcpa offline AI
-  final evaluator = IndustryCodeEvaluator(isDebug: true);
+  final evaluator = IndustryCodeEvaluatorV2(isDebug: true);
   final isInitializedEvaluator = false.obs;
 
   final a1_3_5TBMaTDCM = [6, 7, 8, 9, 10];
@@ -7801,23 +7801,25 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       setLoading(false);
       Get.offAllNamed(AppRoutes.mainMenu);
     }
-    if (resultRoute != null && resultRoute[0] == 'cancel') {
-      if (currentScreenNoStop.value == 0) {
-        if (resultRoute[1] == 1 || resultRoute[1] == '1') {
-          currentScreenNoStop.value = 2;
-        } else {
-          currentScreenNoStop.value = 4;
+    if (resultRoute != null && resultRoute is List<String>) {
+      if (resultRoute[0] == 'cancel') {
+        if (currentScreenNoStop.value == 0) {
+          if (resultRoute[1] == 1 || resultRoute[1] == '1') {
+            currentScreenNoStop.value = 2;
+          } else {
+            currentScreenNoStop.value = 4;
+          }
         }
+        currentScreenNo.value = currentScreenNoStop.value;
+        currentScreenIndex.value = currentScreenNoStop.value - 1;
+
+        await getQuestionContent();
+        await setSelectedQuestionGroup();
+
+        scrollController.animateTo(0.0,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.fastOutSlowIn);
       }
-      currentScreenNo.value = currentScreenNoStop.value;
-      currentScreenIndex.value = currentScreenNoStop.value - 1;
-
-      await getQuestionContent();
-      await setSelectedQuestionGroup();
-
-      scrollController.animateTo(0.0,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.fastOutSlowIn);
     }
     // handleCompletedQuestion(
     //     tableThongTinNPV: completeInfo,
@@ -7956,16 +7958,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   Future<void> initializeEvaluator() async {
     isInitializedEvaluator.value = false;
     log('Loading model and resources...');
-    try {
-      // final currentFilePath =
-      //     '${AppPref.dataModelAIFilePath}/${AppPref.dataModelSuggestionsPath}';
-      // final currentFile = File(currentFilePath);
-      // var isCurrentFileExist = await currentFile.exists();
-      // if (!isCurrentFileExist) {
-      //   return snackBar('Thông báo',
-      //       'Chưa có dữ liệu AI. Vui lòng thực hiện cập nhật dữ liệu AI',
-      //       style: ToastSnackType.error);
-      // }
+    try { 
 
       final startTime = DateTime.now();
       await evaluator.initialize();

@@ -110,7 +110,7 @@ class InterviewListScreenV2 extends GetView<InterviewListControllerV2> {
                 onPressed: () => controller.toInterViewListDetail(
                     dtDT, AppDefine.dangPhongVan),
               ),
-              if (controller.allowAddNewCoSo.value)
+              if (controller.allowAddNewCoSo.value && dtDT.maDoiTuongDT == AppDefine.maDoiTuongDT_07TB)
                 Padding(
                     padding: EdgeInsets.all(AppValues.borderLv5),
                     child: WidgetButton(

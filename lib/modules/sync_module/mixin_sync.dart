@@ -230,10 +230,11 @@ mixin SyncMixin {
           errorMessage = "${syncData.responseMessage}";
         } else {
           errorMessage = "Lỗi đồng bộ:${syncData.responseMessage}";
-           uploadFullDataJson(syncRepository, sendErrorRepository, progress,
-            isRetryWithSignIn: false);
+          await uploadFullDataJson(
+              syncRepository, sendErrorRepository, progress,
+              isRetryWithSignIn: false);
         }
-       
+
         ResponseSyncModel responseSyncModel = ResponseSyncModel(
             isSuccess: false,
             responseCode: syncData.responseCode,
@@ -248,24 +249,24 @@ mixin SyncMixin {
       mustSendErrorToServer = true;
       errorMessage = 'Có lỗi: ${request.message}';
     } else if (request.statusCode == HttpStatus.requestTimeout) {
-      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+      await uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: false);
       resCode = request.statusCode.toString();
       errorMessage = 'Request timeout.';
     } else if (request.statusCode == HttpStatus.internalServerError) {
-      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+      await uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: false);
       errorMessage = 'Có lỗi: ${request.message}';
     } else {
-      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+      await uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: false);
       errorMessage =
           'Đã có lỗi xảy ra, vui lòng kiểm tra kết nối internet và thử lại!';
     }
     if (mustSendErrorToServer) {
-      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+      await uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: false);
-      uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+      await uploadFullDataJson(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: false);
     }
     ResponseSyncModel responseSyncModel = ResponseSyncModel(
@@ -295,7 +296,7 @@ mixin SyncMixin {
           password: AppPref.password,
           iMei: mainMenuController.userModel.value.iMei);
       AppPref.accessToken = resp.body?.accessToken;
-      uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
+      await uploadDataJsonMixin(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: true);
     }
     responseCode = _request.statusCode.toString();
@@ -381,7 +382,7 @@ mixin SyncMixin {
           password: AppPref.password,
           iMei: mainMenuController.userModel.value.iMei);
       AppPref.accessToken = resp.body?.accessToken;
-      uploadFullDataJson(syncRepository, sendErrorRepository, progress,
+      await uploadFullDataJson(syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: true);
     }
     responseCode = request.statusCode.toString();

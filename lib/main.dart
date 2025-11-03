@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'config/config.dart';
 import 'routes/routes.dart';
 
 void main() async {
+   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await AppPref.initListener();
   runApp(const MyApp());
@@ -57,5 +59,16 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       scrollBehavior: MyCustomScrollBehavior(),
        navigatorObservers: [RouteHistoryObserver()],
     );
+  }
+}
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    final http = super.createHttpClient(context);
+    http.badCertificateCallback =
+        ((X509Certificate cert, String host, int port) {
+      return true;
+    });
+    return http;
   }
 }

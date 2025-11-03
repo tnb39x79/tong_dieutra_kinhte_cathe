@@ -85,7 +85,7 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
 
       var totalPages_pre = (totalRecord / pageSize);
       var totalPages = totalPages_pre.ceil();
-
+     
       for (int i = 1; i <= totalPages; i++) {
         await getListInterviewedPaginatedSync(i, pageSize);
         await Future.delayed(const Duration(seconds: 1));

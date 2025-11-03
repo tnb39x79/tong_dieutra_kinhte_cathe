@@ -66,28 +66,7 @@ class InputDataRepository {
     }
   }
 
-  Future<ResponseCmmModel<String>> getCheckVersion() async {
-    if (NetworkService.connectionType == Network.none) {
-      return ResponseCmmModel.withDisconnect();
-    }
-    try {
-      final data = await provider.getCheckVersion();
-      if (data.statusCode == ApiConstants.success) {
-        return ResponseCmmModel(
-          responseCode: ApiConstants.responseSuccess,
-          objectData: jsonEncode(data.body),
-        );
-      } else if (data.statusCode == HttpStatus.requestTimeout) {
-        return ResponseCmmModel.withRequestTimeout();
-      } else {
-        return ResponseCmmModel.withError(data);
-      }
-    } on TimeoutException catch (_) {
-      return ResponseCmmModel.withRequestTimeout();
-    } catch (e) {
-      return ResponseCmmModel.withRequestException(e);
-    }
-  }
+   
 
   Future<ResponseCmmModel<ModelAIVersionModel>> getModelVersion() async {
     if (NetworkService.connectionType == Network.none) {

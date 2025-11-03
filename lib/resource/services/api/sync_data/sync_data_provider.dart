@@ -9,6 +9,11 @@ import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:http/http.dart' as http;
 
 class SyncProvider extends GetConnect {
+  @override
+  void onInit() {
+    allowAutoSignedCert = true;
+    httpClient.timeout = const Duration(seconds: 60);
+  }
   // @override
   // void onInit() {
   //   httpClient.timeout = const Duration(seconds: 20); // default timeout = 8 s,
@@ -27,15 +32,14 @@ class SyncProvider extends GetConnect {
       'Authorization': 'Bearer ${AppPref.extraToken}',
       'Content-Type': 'application/json'
     };
-    httpClient.timeout = const Duration(seconds: 30);
-    String url =
-        'http://${loginData.domainAPI}:${loginData.portAPI}/${ApiConstants.sync}';
-
+    String hp = AppUtils.getHttpOrHttps(loginData.portAPI ?? '');
+    // String url =  '$hp://${loginData.domainAPI}/${ApiConstants.sync}';
+    httpClient.baseUrl = '$hp://${loginData.domainAPI}/';
     log('HEADER: $headers');
-    log('url: $url');
+    log('syncDataV2 httpClient.baseUrl action: ${httpClient.baseUrl}${ApiConstants.sync}');
     try {
       var response = await post(
-        url,
+        ApiConstants.sync,
         body,
         uploadProgress: uploadProgress,
         headers: headers,
@@ -79,11 +83,9 @@ class SyncProvider extends GetConnect {
     TokenModel model = loginData.isNotEmpty
         ? TokenModel.fromJson(jsonDecode(loginData))
         : TokenModel();
-
-    var request = http.Request(
-        'POST',
-        Uri.parse(
-            '${'http://${model.domainAPI}:${model.portAPI}/'}${ApiConstants.getToken}'));
+    String hp = AppUtils.getHttpOrHttps(model.portAPI ?? '');
+    var request = http.Request('POST',
+        Uri.parse('${'$hp://${model.domainAPI}/'}${ApiConstants.getToken}'));
     request.headers.addAll(headers);
     request.followRedirects = false;
     request.bodyFields = body;

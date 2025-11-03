@@ -1285,11 +1285,11 @@ class EnhancedAiDownloadController extends BaseController {
 
   _initialize() async {
     debugPrint('Initializing Enhanced AI Download Controller');
-    loadingSubject.add(true);
+    setLoading(true);
     await _migrateToRelativePaths(); // Migrate existing paths first
     await _getModelDownloadConfig();
     await _checkExistingModels();
-    loadingSubject.add(false);
+    setLoading(false);
   }
   
   @override

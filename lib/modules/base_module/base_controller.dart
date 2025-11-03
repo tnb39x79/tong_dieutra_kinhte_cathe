@@ -17,17 +17,24 @@ String soDienThoaiBase = 'SoDienThoai';
 String nguoiTraLoiBase = "NguoiTraLoi";
 String soDienThoaiDTVBase = 'SoDienThoaiDTV';
 String hoTenDTVBase = "HoTenDTV";
-String  trangThaiCoSo="TrangThaiCoSo";
+String trangThaiCoSo = "TrangThaiCoSo";
 
 abstract class BaseController extends FullLifeCycleController
     with FullLifeCycleMixin {
   final loadingSubject = BehaviorSubject<bool>.seeded(false);
   final errorSubject = BehaviorSubject<String>();
 
+  // void setLoading(bool loading) {
+  //   if (loading != isLoading) loadingSubject.add(loading);
+  // }
   void setLoading(bool loading) {
-    if (loading != isLoading) loadingSubject.add(loading);
+    setSink.add(loading);
   }
 
+  Sink<bool> get setSink => loadingSubject.sink;
+
+  // Stream to listen to events
+  Stream<bool> get stream => loadingSubject.stream;
   bool get isLoading => loadingSubject.value;
 
   void setError(String message) {
@@ -63,7 +70,6 @@ abstract class BaseController extends FullLifeCycleController
       colorText: colorTxt,
       backgroundColor: Colors.grey.shade100,
       duration: durationSecond,
-      
     );
   }
 
