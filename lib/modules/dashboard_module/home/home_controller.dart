@@ -781,7 +781,7 @@ class HomeController extends BaseController with SyncMixinV2 {
     }
 
     if (coSosInsert.isNotEmpty) {
-      await bkCoSoSXKDProvider.insert(coSosInsert, dtSaveDB);
+      await bkCoSoSXKDProvider.getDuLieuPVInsert(coSosInsert, dtSaveDB);
     }
   }
 

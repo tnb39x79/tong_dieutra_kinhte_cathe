@@ -1492,9 +1492,11 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   question.loaiCauHoi!,
                   true,
                   question.maPhieu!),
-              keyboardType: Platform.isAndroid
-                  ? TextInputType.number
-                  : const TextInputType.numberWithOptions(decimal: false),
+                keyboardType: 
+                 Platform.isAndroid
+                   ? TextInputType.phone
+                   : const TextInputType.numberWithOptions(signed: true,decimal: false),
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]')),],
             ),
             buildWarningText(question, a1_5_1)
           ]);

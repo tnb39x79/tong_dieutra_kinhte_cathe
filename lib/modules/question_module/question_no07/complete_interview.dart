@@ -29,8 +29,9 @@ class CompletedResult {
 }
 
 class CompleteInterviewScreen extends StatefulWidget {
-  const CompleteInterviewScreen({super.key});
+  const CompleteInterviewScreen({super.key, this.lyDoKetThucPv = 0});
 
+  final int? lyDoKetThucPv;
   @override
   State<CompleteInterviewScreen> createState() =>
       _CompleteInterviewScreenState();
@@ -59,6 +60,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   void initState() {
     super.initState();
     completeInfo = controller.completeInfo;
+
     _initData();
     hoTenController.addListener(_setEdited);
     soDienThoaiController.addListener(_setEdited);
@@ -256,7 +258,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
                   Expanded(
                     child: WidgetButton(
                       title: 'Hủy',
-                      onPressed: () => Get.back(result: 'cancel'),
+                      onPressed: () =>
+                          Get.back(result: ['cancel', widget.lyDoKetThucPv]),
                       buttonType: BtnType.outline,
                     ),
                   ),
@@ -435,9 +438,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
 
     Get.back(
       result: CompletedResult(
-        isEdited: _allowEdit,
-        completeInfo: completeInfoNew,
-      ),
+          isEdited: _allowEdit,
+          completeInfo: completeInfoNew),
     );
   }
 

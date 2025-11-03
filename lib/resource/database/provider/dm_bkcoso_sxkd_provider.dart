@@ -53,6 +53,16 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
     return ids;
   }
 
+ Future<List<int>> getDuLieuPVInsert(List<TableBkCoSoSXKD> value, String createdAt,
+      {bool? fromGetData = false}) async {
+   
+    List<int> ids = [];
+    for (var element in value) { 
+      element.createdAt = createdAt; 
+      ids.add(await db!.insert(tablebkCoSoSXKD, element.toJson()));
+    }
+    return ids;
+  }
   @override
   Future onCreateTable(Database database) async {
     return database.execute('''
@@ -109,12 +119,16 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
       List<String> idCoSoDangPV) async {
     String createdAt = AppPref.dateTimeSaveDB!;
     if (idCoSoDangPV.isEmpty) {
-      return [];
-    }
-    return await db!.query(tablebkCoSoSXKD, where: '''
+      return await db!.query(tablebkCoSoSXKD, where: '''
+      $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
+      
+    ''');
+    } else {
+      return await db!.query(tablebkCoSoSXKD, where: '''
       $columnCreatedAt = '$createdAt'  AND $columnMaDTV = '${AppPref.uid}'
       AND   $colBkCoSoSXKDIDCoSo  not in (${idCoSoDangPV.map((e) => "'$e'").join(', ')})
     ''');
+    }
   }
 
   @override

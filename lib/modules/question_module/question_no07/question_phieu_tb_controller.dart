@@ -865,6 +865,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   Future onMenuPress(int idPhieus, int idManHinh) async {
+    var ktRes = await kiemTraCau4T();
+    if (ktRes == 'cancel') {
+      return;
+    }
+
     currentScreenNoStop.value = idManHinh;
     await assignAllQuestionGroup();
     if (currentScreenNo.value == 3) {
@@ -886,7 +891,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       await getLoaiNangLuongA6_1();
     }
     if (idManHinh == 2) {
-      await kiemTraCau4T();
+      var ktRes = await kiemTraCau4T();
+      if (ktRes == 'kethucpv') {}
     }
     if (idManHinh == 3) {
       await tongDoanhThuTatcaSanPhamA5_2();
@@ -2061,10 +2067,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     String result = '';
 
     ///Lấy giá trị 4T
-    var a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
-    var a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+    num a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
+    num a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
     if (a4TValue != null &&
-        a4TValue < 100 &&
+        (a4TValue < 100.0 || a4TValue < 100.00) &&
         a4_1Value != null &&
         a4_1Value < 3) {
       // await Future.delayed(Duration(seconds:1));
@@ -7757,7 +7763,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   Future onKetThucPhongVan({int? lyDoKetThucPV}) async {
     final resultRoute = await Get.to(
-      () => CompleteInterviewScreen(),
+      () => CompleteInterviewScreen(
+        lyDoKetThucPv: lyDoKetThucPV ?? 0,
+      ),
       fullscreenDialog: true,
     );
 
@@ -7793,9 +7801,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       setLoading(false);
       Get.offAllNamed(AppRoutes.mainMenu);
     }
-    if (resultRoute != null && resultRoute == 'cancel') {
+    if (resultRoute != null && resultRoute[0] == 'cancel') {
       if (currentScreenNoStop.value == 0) {
-        currentScreenNoStop.value = 4;
+        if (resultRoute[1] == 1 || resultRoute[1] == '1') {
+          currentScreenNoStop.value = 2;
+        } else {
+          currentScreenNoStop.value = 4;
+        }
       }
       currentScreenNo.value = currentScreenNoStop.value;
       currentScreenIndex.value = currentScreenNoStop.value - 1;
