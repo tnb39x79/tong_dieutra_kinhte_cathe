@@ -239,7 +239,7 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
         .length;
 
     responseMessage.value =
-        'Tổng phiếu đã đồng bộ: $syncedTotal/${danhSachBkCoSoSXKDInterviewed.length}: Phiếu TB $successTotalTB/$totalTB; phiếu mẫu $successTotalMau/$totalMau';
+        'Tổng phiếu đã đồng bộ: $syncedTotal/${danhSachBkCoSoSXKDInterviewed.length}: Phiếu TB $successTotalTB/$totalTB; Phiếu mẫu $successTotalMau/$totalMau';
   }
 
   resetVarBeforeSync() {
@@ -257,10 +257,11 @@ class SyncControllerV2 extends BaseController with StateMixin, SyncMixinV2 {
     endSync(false);
   }
 
-  void backHome() {
+   backHome() async {
     resetVarBeforeSingleSync();
 
     Get.back();
+    return null;
   }
 
   @override

@@ -291,12 +291,12 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
             label: Text('Về trang chính',
                 style: styleSmall.copyWith(color: primaryColor)),
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: greyColor),
+              side: const BorderSide(color: primaryColor),
               foregroundColor: greyColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                borderRadius: BorderRadius.circular(AppValues.borderLv5),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: const EdgeInsets.symmetric(vertical: 10),
             ),
           ),
         ),
@@ -321,7 +321,7 @@ class EnhancedAiDownloadScreen extends GetView<EnhancedAiDownloadController> {
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppValues.borderLv1),
+                  borderRadius: BorderRadius.circular(AppValues.borderLv5),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),

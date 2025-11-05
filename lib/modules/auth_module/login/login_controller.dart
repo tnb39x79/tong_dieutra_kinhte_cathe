@@ -38,6 +38,7 @@ class LoginController extends BaseController {
   }
 
   onPressedLogin() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     String userName = getEditingController(keyUserName).text.trim();
     String password = getEditingController(keyPass).text.trim();
 

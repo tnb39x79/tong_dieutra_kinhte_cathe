@@ -101,6 +101,7 @@ class BKCoSoSXKDProvider extends BaseDBProvider<TableBkCoSoSXKD> {
         $colBkCoSoSXKDMaTrangThaiDT2  INTEGER, 
         $colBkCoSoSXKDTrangThaiLogic INTEGER, 
         $colBkCoSoSXKDIsSyncSuccess INTEGER, 
+        
         $columnCreatedAt TEXT,
         $columnUpdatedAt TEXT
       )

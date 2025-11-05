@@ -130,7 +130,7 @@ class GeneralInformationScreen extends GetView<GeneralInformationController> {
                 textController: controller.tenNganhController,
                 txtTextStyle: styleMediumBold.copyWith(color: primaryColor),
                 maxLine: 3),
-            const SizedBox(height: 24),
+         //   const SizedBox(height: 16),
             WidgetButtonNext(onPressed: controller.onPressNext)
           ],
         ),

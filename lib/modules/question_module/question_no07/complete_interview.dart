@@ -259,7 +259,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
                     child: WidgetButton(
                       title: 'Hủy',
                       onPressed: () =>
-                          Get.back(result: ['cancel', widget.lyDoKetThucPv]),
+                          Get.back(result: ['cancel', widget.lyDoKetThucPv.toString()]),
                       buttonType: BtnType.outline,
                     ),
                   ),

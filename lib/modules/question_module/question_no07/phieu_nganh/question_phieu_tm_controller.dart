@@ -697,7 +697,7 @@ class QuestionTMController extends BaseController with QuestionUtils {
     scaffoldKey.currentState?.openDrawer();
   }
 
-  Future onMenuPress(int id, int ManHinh) async {
+  Future onMenuPress(int id, int ManHinh,QuestionGroupByManHinh item) async {
     await fetchData();
     String validateResult = await validateAllFormV2();
     if (validateResult != '') {

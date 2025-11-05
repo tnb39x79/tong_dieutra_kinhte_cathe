@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:gov_statistics_investigation_economic/common/utils/app_pref.dart';
+import 'package:gov_statistics_investigation_economic/config/constants/app_define.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/database_helper.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/provider/base_db_provider.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
@@ -180,6 +181,24 @@ class PhieuProvider extends BaseDBProvider<TablePhieu> {
       AND $columnIDCoSo = '$idCoso'
     ''');
     return map.isNotEmpty;
+  }
+
+  ///Trạng thái cơ sở thuộc đối tượng điều tra;
+  Future<bool> trangThaiCoSoThuocDTDT(String idCoso) async {
+    String createdAt = AppPref.dateTimeSaveDB!;
+    int result = -1;
+    String sql =
+        "SELECT TrangThaiCoSo FROM $tablePhieu  WHERE $columnIDCoSo = '$idCoso'   AND $columnCreatedAt = '$createdAt' AND $columnMaDTV='${AppPref.uid}'";
+    List<Map> map = await db!.rawQuery(sql);
+
+    for (var item in map) {
+      item.forEach((key, value) {
+        if (value != null) {
+          result = value;
+        }
+      });
+    }
+    return result == AppDefine.thuocDoiTuongDieuTra;
   }
 
   Future<int> totalIntByMaCauHoi(String idCoso, List<String> fieldNames) async {

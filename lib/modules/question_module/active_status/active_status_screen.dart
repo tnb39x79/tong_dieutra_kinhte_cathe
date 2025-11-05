@@ -64,6 +64,7 @@ class ActiveStatusScreen extends GetView<ActiveStatusController> {
                     Obx(() => wTitle()),
                     const SizedBox(height: 8),
                     Expanded(child: Obx(() => _question())), 
+                    const SizedBox(height: 16),
                     _button()
                   ],
                 ),

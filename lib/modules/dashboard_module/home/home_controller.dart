@@ -107,9 +107,11 @@ class HomeController extends BaseController with SyncMixinV2 {
   final isSuccess = false.obs;
   final enSync = false.obs;
   final message = ''.obs;
+  final isHomeLoading = false.obs;
 
   @override
   void onInit() async {
+    isHomeLoading.value = true;
     mainMenuController.setLoading(true);
 
     await initProvider();
@@ -155,6 +157,7 @@ class HomeController extends BaseController with SyncMixinV2 {
       await deleteAllData();
       await logOut();
     }
+    isHomeLoading.value = false;
   }
 
   ///Xoá dữ liệu pv khi: Ngày hiện tại lớn hơn ngày kết thúc điều tra và xoaDuLieu= '1'

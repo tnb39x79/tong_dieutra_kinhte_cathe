@@ -7,8 +7,7 @@ class LoadingFullScreen extends StatelessWidget {
   final Stream<bool> loading;
 
   const LoadingFullScreen(
-      {Key? key, required this.child, required this.loading})
-      : super(key: key);
+      {super.key, required this.child, required this.loading});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class _LoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black12.withOpacity(0.5),
+      color: Colors.black12.withValues(alpha: 0.5),
       constraints: const BoxConstraints.expand(),
       alignment: Alignment.center,
       child: const Center(

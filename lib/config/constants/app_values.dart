@@ -7,7 +7,7 @@ class AppValues {
       'gov.statistics.investigation.economic'; // get from android/app/build.gradle
   static const bundleIdIos =
       'gov.statistics.investigation.economic'; // get from ios/Runner/Info.plist
-  static const versionApp = '1.1.9';
+  static const versionApp = '1.2.0';
   static const versionDanhMuc = '1.0.0';
   static const urlStore =
       "https://apps.apple.com/us/app/t%E1%BB%95ng-%C4%91i%E1%BB%81u-tra-kinh-t%E1%BA%BF-ct-tg/id6740900419";

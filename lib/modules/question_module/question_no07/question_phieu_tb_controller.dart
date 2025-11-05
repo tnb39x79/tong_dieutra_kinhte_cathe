@@ -32,7 +32,7 @@ import 'package:gov_statistics_investigation_economic/resource/database/table/ta
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_dm_mota_sanpham.dart';
 import 'package:gov_statistics_investigation_economic/resource/database/table/table_p07mau.dart';
 import 'package:gov_statistics_investigation_economic/resource/model/question/danh_dau_sanpham_model.dart';
-import 'package:gov_statistics_investigation_economic/resource/model/question/question_group.dart'; 
+import 'package:gov_statistics_investigation_economic/resource/model/question/question_group.dart';
 
 import 'package:gov_statistics_investigation_economic/resource/resource.dart';
 import 'package:gov_statistics_investigation_economic/resource/services/api/search_sp/vcpa_vsic_ai_search_repository.dart';
@@ -785,6 +785,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   Future assignAllQuestionGroup() async {
     // var s= await getQuestionGroupsV2(currentMaDoiTuongDT!, currentIdCoSo!,tblDmPhieu);
     // var qGroups = await getQuestionGroups(currentMaDoiTuongDT!, currentIdCoSo!);
+    //
+    var (isThuocDTDT, a4TValue, a41Value) = await thuocDoiTuongDTCau4T();
+    //
     var qGroups = await getQuestionGroupsV2(
         currentMaDoiTuongDT!, currentIdCoSo!, tblDmPhieu);
     for (var item in qGroups) {
@@ -792,23 +795,27 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           item.questionGroupByManHinh!.isNotEmpty) {
         //item.enable = isBCDE.value == true;
         for (var itQ in item.questionGroupByManHinh!) {
-          if (itQ.maPhieu == AppDefine.maPhieuCN) {
+          if (itQ.maPhieu == AppDefine.maPhieuTB) {
+            if (itQ.manHinh == 3 || itQ.manHinh == 4) {
+              itQ.enable = isThuocDTDT;
+            }
+          } else if (itQ.maPhieu == AppDefine.maPhieuCN) {
             log('From Question CN: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
-            itQ.enable = isBCDE.value == true;
+            itQ.enable = isBCDE.value == true && isThuocDTDT;
           } else if (itQ.maPhieu == AppDefine.maPhieuVT) {
             log('From Question VT: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
             if (itQ.fromQuestion == '1' && itQ.toQuestion == '6') {
-              itQ.enable = isCap5VanTaiHanhKhach.value == true;
+              itQ.enable = isCap5VanTaiHanhKhach.value == true && isThuocDTDT;
             }
             if (itQ.fromQuestion == '7' && itQ.toQuestion == '12') {
-              itQ.enable = isCap5VanTaiHangHoa.value == true;
+              itQ.enable = isCap5VanTaiHangHoa.value == true && isThuocDTDT;
             }
           } else if (itQ.maPhieu == AppDefine.maPhieuVTMau) {
             log('From Question VTMAU: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
             if (itQ.fromQuestion == '1.M' && itQ.toQuestion == '5.M') {
               var isNganhBangKeLaVanTaiHK = isNganhBangKeLaVanTaiHanhKhach();
               if (isNganhBangKeLaVanTaiHK) {
-                itQ.enable = isCap5VanTaiHanhKhach.value == true;
+                itQ.enable = isCap5VanTaiHanhKhach.value == true && isThuocDTDT;
               } else {
                 itQ.enable = false;
               }
@@ -816,7 +823,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             if (itQ.fromQuestion == '6.M' && itQ.toQuestion == '10.M') {
               var isNganhBangKeLaVanTaiHH = isNganhBangKeLaVanTaiHangHoa();
               if (isNganhBangKeLaVanTaiHH) {
-                itQ.enable = isCap5VanTaiHangHoa.value == true;
+                itQ.enable = isCap5VanTaiHangHoa.value == true && isThuocDTDT;
               } else {
                 itQ.enable = false;
               }
@@ -824,14 +831,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           } else if (itQ.maPhieu == AppDefine.maPhieuLT) {
             log('From Question LT: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
             if (itQ.fromQuestion == '1' && itQ.toQuestion == '6.1') {
-              itQ.enable = isCap2_55LT.value == true;
+              itQ.enable = isCap2_55LT.value == true && isThuocDTDT;
             }
           } else if (itQ.maPhieu == AppDefine.maPhieuLTMau) {
             log('From Question LTMAU: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
             if (itQ.fromQuestion == '1.M' && itQ.toQuestion == '10.M') {
               var isNganhBangKeLaLT = isNganhBangKeLaLuuTru();
               if (isNganhBangKeLaLT) {
-                itQ.enable = isCap2_55LT.value == true;
+                itQ.enable = isCap2_55LT.value == true && isThuocDTDT;
               } else {
                 itQ.enable = false;
               }
@@ -840,7 +847,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
             log('From Question TM: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
             if (itQ.fromQuestion == '1' && itQ.toQuestion == '3T') {
               itQ.enable =
-                  isCap2_56TM.value == true || isCap2G_6810TM.value == true;
+                  (isCap2_56TM.value == true || isCap2G_6810TM.value == true) &&
+                      isThuocDTDT;
             }
           } else if (itQ.maPhieu == AppDefine.maPhieuMau) {
             log('From Question MAU: ${itQ.fromQuestion ?? ''} ${itQ.toQuestion ?? ''}');
@@ -848,7 +856,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
               var warningNganhBangKeResult = await getWarningMaNganhVoiBangKe();
               if (warningNganhBangKeResult.isNotEmpty) {
                 itQ.enable = currentMaDoiTuongDT ==
-                    AppDefine.maDoiTuongDT_07Mau.toString();
+                        AppDefine.maDoiTuongDT_07Mau.toString() &&
+                    isThuocDTDT;
               } else {
                 itQ.enable = false;
               }
@@ -864,13 +873,14 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     scaffoldKey.currentState?.openDrawer();
   }
 
-  Future onMenuPress(int idPhieus, int idManHinh) async {
-    var ktRes = await kiemTraCau4T();
-    if (ktRes == 'cancel') {
-      return;
-    }
+  Future onMenuPress(
+      int idPhieus, int idManHinh, QuestionGroupByManHinh item) async {
+    // var ktRes = await kiemTraCau4T();
+    // if (ktRes == 'cancel') {
+    //   return;
+    // }
 
-    currentScreenNoStop.value = idManHinh;
+    currentScreenNoStop.value = item.manHinh ?? 4;
     await assignAllQuestionGroup();
     if (currentScreenNo.value == 3) {
       var warningNganhBangKeResult =
@@ -902,6 +912,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       await getMaNganhCN10To39();
     }
     await fetchData();
+
+    //  var valid4TRes= await kiemTraTrangThaiCoSo();
+    //  if()
     String validateResult = await validateAllFormV2();
     if (validateResult != '') {
       insertUpdateXacNhanLogicWithoutEnable(
@@ -926,6 +939,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       if (qItem.enable!) {
         qItem.isSelected = true;
         currentScreenNo.value = qItem.manHinh!;
+
         if (currentScreenNo.value > 0) {
           currentScreenIndex.value = currentScreenNo.value - 1;
         }
@@ -2065,6 +2079,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   ///VÀ CÂU 4.1_SỐ THÁNG CƠ SỞ CÓ HOẠT ĐỘNG SXKD < 3 THÁNG -> CƠ SỞ KHÔNG THUỘC ĐỐI TƯỢNG ĐIỀU TRA -> KẾT THÚC PHỎNG VẤN
   kiemTraCau4T() async {
     String result = '';
+    await assignAllQuestionGroup();
 
     ///Lấy giá trị 4T
     num a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
@@ -2073,6 +2088,9 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
         (a4TValue < 100.0 || a4TValue < 100.00) &&
         a4_1Value != null &&
         a4_1Value < 3) {
+      String a4TValView = toCurrencyString(a4TValue.toString(),
+          thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+          mantissaLength: 2);
       // await Future.delayed(Duration(seconds:1));
       var backResult = await Get.dialog(DialogBarrierWidget(
           onPressedNegative: () async {
@@ -2080,6 +2098,8 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           },
           onPressedPositive: () async {
             Future.delayed(const Duration(milliseconds: 100), () {
+              updateAnswerCompletedToDb(
+                  trangThaiCoSo, AppDefine.khongThuocDoiTuongDieuTra);
               onKetThucPhongVan(
                   lyDoKetThucPV: AppDefine.khongThuocDoiTuongDieuTra);
             });
@@ -2088,7 +2108,59 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           },
           title: 'dialog_title_warning'.tr,
           content:
-              'Câu 4T: Tổng doanh thu năm 2025 < 100 triệu và Câu 4.1: số tháng cơ sở có hoạt động SXKD < 3 tháng.',
+              'Câu 4T: Tổng doanh thu năm 2025 là $a4TValView < 100 triệu và Câu 4.1: số tháng cơ sở có hoạt động SXKD là $a4_1Value < 3 tháng.',
+          content2: 'Cơ sở không thuộc đối tượng điều tra.',
+          content2StyleText: styleLargeBold.copyWith(color: warningColor)));
+      result = await backResult.toString();
+    } else {
+      await updateAnswerCompletedToDb(
+          trangThaiCoSo, AppDefine.thuocDoiTuongDieuTra);
+    }
+    return result;
+  }
+
+  Future<(bool, num, num)> thuocDoiTuongDTCau4T() async {
+    ///Lấy giá trị 4T
+    num a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
+    num a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+    if (a4TValue != null &&
+        (a4TValue < 100.0 || a4TValue < 100.00) &&
+        a4_1Value != null &&
+        a4_1Value < 3) {
+      return (false, a4TValue, a4_1Value);
+    }
+    return (true, a4TValue, a4_1Value);
+  }
+
+  kiemTraTrangThaiCoSo() async {
+    String result = '';
+    var (res, a4TValue, a4_1Value) = await thuocDoiTuongDTCau4T();
+
+    ///Lấy giá trị 4T
+    if (res == false) {
+      String a4TValView = toCurrencyString(a4TValue.toString(),
+          thousandSeparator: ThousandSeparator.spaceAndPeriodMantissa,
+          mantissaLength: 2);
+      var backResult = await Get.dialog(DialogBarrierWidget(
+          onPressedNegative: () async {
+            currentScreenNo.value = 2;
+            currentScreenNoStop.value = 2;
+            await getQuestionContent();
+            await setSelectedQuestionGroup();
+
+            scrollController.animateTo(0.0,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.fastOutSlowIn);
+            Get.back(result: 'cancel');
+          },
+          onPressedPositive: () async {
+            await updateAnswerCompletedToDb(
+                trangThaiCoSo, AppDefine.khongThuocDoiTuongDieuTra);
+            Get.back(result: 'accept');
+          },
+          title: 'dialog_title_warning'.tr,
+          content:
+              'Vui lòng kiểm tra lại Câu 4T: Tổng doanh thu năm 2025 là $a4TValView < 100 triệu và Câu 4.1: số tháng cơ sở có hoạt động SXKD là $a4_1Value < 3 tháng.',
           content2: 'Cơ sở không thuộc đối tượng điều tra.',
           content2StyleText: styleLargeBold.copyWith(color: warningColor)));
       result = await backResult.toString();
@@ -2096,33 +2168,33 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     return result;
   }
 
-  showDialogKiemTraCau4T() async {
-    ///Lấy giá trị 4T
-    var a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
-    var a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
-    if (a4TValue != null &&
-        a4TValue < 100 &&
-        a4_1Value != null &&
-        a4_1Value < 3) {
-      Get.dialog(DialogBarrierWidget(
-          onPressedNegative: () async {
-            Get.back();
-          },
-          onPressedPositive: () async {
-            Future.delayed(const Duration(seconds: 2), () {
-              onKetThucPhongVan(
-                  lyDoKetThucPV: AppDefine.khongThuocDoiTuongDieuTra);
-            });
+  // showDialogKiemTraCau4T() async {
+  //   ///Lấy giá trị 4T
+  //   var a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
+  //   var a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+  //   if (a4TValue != null &&
+  //       a4TValue < 100 &&
+  //       a4_1Value != null &&
+  //       a4_1Value < 3) {
+  //     Get.dialog(DialogBarrierWidget(
+  //         onPressedNegative: () async {
+  //           Get.back();
+  //         },
+  //         onPressedPositive: () async {
+  //           Future.delayed(const Duration(seconds: 2), () {
+  //             onKetThucPhongVan(
+  //                 lyDoKetThucPV: AppDefine.khongThuocDoiTuongDieuTra);
+  //           });
 
-            Get.back();
-          },
-          title: 'dialog_title_warning'.tr,
-          content:
-              'Câu 4T: Tổng doanh thu năm 2025 < 100 triệu và Câu 4.1: số tháng cơ sở có hoạt động SXKD < 3 tháng.',
-          content2: 'Cơ sở không thuộc đối tượng điều tra.',
-          content2StyleText: styleLargeBold.copyWith(color: warningColor)));
-    }
-  }
+  //           Get.back();
+  //         },
+  //         title: 'dialog_title_warning'.tr,
+  //         content:
+  //             'Câu 4T: Tổng doanh thu năm 2025 < 100 triệu và Câu 4.1: số tháng cơ sở có hoạt động SXKD < 3 tháng.',
+  //         content2: 'Cơ sở không thuộc đối tượng điều tra.',
+  //         content2StyleText: styleLargeBold.copyWith(color: warningColor)));
+  //   }
+  // }
 
   /// Update giá trị của 1 trường
   updateAnswerToDB(String table, String fieldName, value,
@@ -2949,6 +3021,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
           updateAnswerToDB(table, fieldNameGhiRo, null);
           updateAnswerTblPhieuMau(fieldNameGhiRo, null, table);
         }
+        if (value != null && value == 5) {
+          updateAnswerToDB(table, colPhieuMauTBA1_2, null);
+          updateAnswerTblPhieuMau(colPhieuMauTBA1_2, null, table);
+        }
       }
       if (maCauHoi == colPhieuMauTBA1_2) {
         // if (value != 1) {
@@ -2968,7 +3044,12 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
       if (table == tablePhieuNganhTM && maCauHoi == colPhieuNganhTMA2) {
         if (value == 2) {
-          onKetThucPhongVan();
+          if (currentMaTinhTrangDT == AppDefine.maDoiTuongDT_07TB.toString()) {
+            onKetThucPhongVan();
+          } else {
+            updateAnswerToDB(table, colPhieuNganhTMA3, null);
+            updateAnswerTblPhieuMau(colPhieuNganhTMA3T, null, table);
+          }
         }
       }
       if (table == tablePhieuMauTB &&
@@ -7770,6 +7851,17 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     );
 
     if (resultRoute != null && resultRoute is CompletedResult) {
+      //Kiểm tra lyDoKetThucPv có phải từ thông báo ở câu A4T
+      if (lyDoKetThucPV != null &&
+          lyDoKetThucPV == AppDefine.khongThuocDoiTuongDieuTra) {
+        await updateAnswerCompletedToDb(
+            trangThaiCoSo, AppDefine.khongThuocDoiTuongDieuTra);
+      } else {
+        var res4TValid = await kiemTraTrangThaiCoSo();
+        if (res4TValid == 'cancel') {
+          return;
+        }
+      }
       final result = resultRoute.completeInfo;
       if (generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT != 9) {
         await onChangeCompleted(ThoiGianBD, startTime.toIso8601String());
@@ -7792,10 +7884,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       //  }
       if (lyDoKetThucPV != null &&
           lyDoKetThucPV == AppDefine.khongThuocDoiTuongDieuTra) {
-        updateAnswerCompletedToDb(
+        await updateAnswerCompletedToDb(
             trangThaiCoSo, AppDefine.khongThuocDoiTuongDieuTra);
       } else {
-        updateAnswerCompletedToDb(
+        await updateAnswerCompletedToDb(
             trangThaiCoSo, AppDefine.thuocDoiTuongDieuTra);
       }
       setLoading(false);
@@ -7958,8 +8050,7 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   Future<void> initializeEvaluator() async {
     isInitializedEvaluator.value = false;
     log('Loading model and resources...');
-    try { 
-
+    try {
       final startTime = DateTime.now();
       await evaluator.initialize();
       final endTime = DateTime.now();

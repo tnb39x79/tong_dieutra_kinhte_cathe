@@ -66,6 +66,7 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
          $columnDmDiaBanCoSoSxkdMaThon TEXT,
         $columnDmDiaBanCoSoSxkdMaDiaBan TEXT,
         $columnDmDiaBanCoSoSxkdTenDiaBan TEXT, 
+       
         $columnMaDTV TEXT, 
         $columnCreatedAt TEXT,
         $columnUpdatedAt TEXT
@@ -86,28 +87,40 @@ class DiaBanCoSoSXKDProvider extends BaseDBProvider<TableDmDiaBanCosoSxkd> {
     // TODO: implement selectOne
     throw UnimplementedError();
   }
- Future<List<Map>> selectAllByMaPhieu() async {
+
+  Future<List<Map>> selectAllByMaPhieu() async {
     String createdAt = AppPref.dateTimeSaveDB!;
-    String cols="  $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTKCS,";
-    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaDiaBan,";
-    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdTenDiaBan,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoMaDTV,";
+    String cols =
+        "  $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTKCS,";
+    cols +=
+        " $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaDiaBan,";
+    cols +=
+        " $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdTenDiaBan,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoMaDTV,";
     //cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoCreatedAt,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoUpdatedAt,";
-    cols +=" (SELECT $tablebkCoSoSXKD.$colBkCoSoSXKDTenXa FROM $tablebkCoSoSXKD WHERE $tablebkCoSoSXKD.$colBkCoSoSXKDMaXa = $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ) AS TenXa";
+    cols +=
+        " (SELECT $tablebkCoSoSXKD.$colBkCoSoSXKDTenXa FROM $tablebkCoSoSXKD WHERE $tablebkCoSoSXKD.$colBkCoSoSXKDMaXa = $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ) AS TenXa";
 
     String sql = "Select DISTINCT $cols  FROM $tableDiaBanCoSoSXKD ";
     sql +=
         " WHERE $columnCreatedAt = '$createdAt' ORDER BY $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ";
-        log(sql);
+    log(sql);
     return await db!.rawQuery(sql);
   }
+
   Future<List<Map>> selectByMaPhieu(int maDoiTuongDT) async {
     String createdAt = AppPref.dateTimeSaveDB!;
-    String cols=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdId,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaPhieu,";
-    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTKCS,";
-    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaDiaBan,";
-    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdTenDiaBan,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoMaDTV,";
-    cols +=" $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoCreatedAt,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoUpdatedAt,";
-    cols +=" (SELECT $tablebkCoSoSXKD.$colBkCoSoSXKDTenXa FROM $tablebkCoSoSXKD WHERE $tablebkCoSoSXKD.$colBkCoSoSXKDMaXa = $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ) AS TenXa";
+    String cols =
+        " $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdId,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaPhieu,";
+    cols +=
+        " $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTinh,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaTKCS,";
+    cols +=
+        " $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaDiaBan,";
+    cols +=
+        " $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdTenDiaBan,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoMaDTV,";
+    cols +=
+        " $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoCreatedAt,$tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoUpdatedAt,";
+    cols +=
+        " (SELECT $tablebkCoSoSXKD.$colBkCoSoSXKDTenXa FROM $tablebkCoSoSXKD WHERE $tablebkCoSoSXKD.$colBkCoSoSXKDMaXa = $tableDiaBanCoSoSXKD.$columnDmDiaBanCoSoSxkdMaXa ) AS TenXa";
 
     String sql = "Select $cols  FROM $tableDiaBanCoSoSXKD ";
     sql +=

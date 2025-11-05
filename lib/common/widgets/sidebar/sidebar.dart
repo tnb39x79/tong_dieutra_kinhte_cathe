@@ -20,7 +20,7 @@ class SideBar extends StatelessWidget {
   final List<QuestionGroupByMaPhieu> questionGroups;
   final bool? isSelected;
   final String? drawerTitle;
-  final Function(int, int) onPressed;
+  final Function(int, int, QuestionGroupByManHinh) onPressed;
   final bool? hasNganhVT;
   final bool? hasNganhLT;
 
@@ -29,7 +29,7 @@ class SideBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor:  Colors.white,
+      backgroundColor: Colors.white,
       child: Column(
         children: <Widget>[
           Container(
@@ -113,20 +113,19 @@ class SideBar extends StatelessWidget {
             Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(
-                          left: 0, top: 0, right: 0, bottom: 12),
+                    left: 0, top: 0, right: 0, bottom: 12),
                 margin: const EdgeInsets.only(top: 0),
                 decoration: const BoxDecoration(
                     boxShadow: [
                       BoxShadow(
                         color:
-                           Colors.white, // White shadow with some transparency
+                            Colors.white, // White shadow with some transparency
                         spreadRadius: 5, // How much the shadow spreads
                         blurRadius: 10, // How blurry the shadow is
                         offset: Offset(0, 5), // X and Y offset of the shadow
                       ),
                     ],
-                    color:backgroundColorMau,
-                    
+                    color: backgroundColorMau,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(AppValues.borderLv2),
                         topRight: Radius.circular(AppValues.borderLv2),
@@ -134,22 +133,24 @@ class SideBar extends StatelessWidget {
                         bottomLeft: Radius.circular(AppValues.borderLv2))),
                 // Adds a gradient background and rounded corners to the container
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                  buildTenPhieu(tenPhieu),
-                  Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.only(
-                          left: 0, top: 0, right: 0, bottom: 0),
-                      margin: const EdgeInsets.only(top: 0),
-                      decoration: const BoxDecoration( 
-                          color:backgroundColorMau, 
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(AppValues.borderLv2),
-                              bottomRight: Radius.circular(AppValues
-                                  .borderLv2))), // Adds a gradient background and rounded corners to the container
-                      child: buildNhomCauHoi(idPhieu, questionGroupByManHinhs!))
-                ])),
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      buildTenPhieu(tenPhieu),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(
+                              left: 0, top: 0, right: 0, bottom: 0),
+                          margin: const EdgeInsets.only(top: 0),
+                          decoration: const BoxDecoration(
+                              color: backgroundColorMau,
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft:
+                                      Radius.circular(AppValues.borderLv2),
+                                  bottomRight: Radius.circular(AppValues
+                                      .borderLv2))), // Adds a gradient background and rounded corners to the container
+                          child: buildNhomCauHoi(
+                              idPhieu, questionGroupByManHinhs!))
+                    ])),
           ],
         ));
   }
@@ -170,7 +171,7 @@ class SideBar extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color:Color.fromARGB(255, 83, 85, 90),
+            color: Color.fromARGB(255, 83, 85, 90),
           ),
         ));
   }
@@ -183,17 +184,18 @@ class SideBar extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(top: 0),
       itemBuilder: (context, index) {
-        var tl =
-            'Câu ${questionGroupByManHinhs![index].fromQuestion} - câu ${questionGroupByManHinhs![index].toQuestion}';
-        if (questionGroupByManHinhs![index].toQuestion == '') {
-          tl = 'Câu ${questionGroupByManHinhs![index].fromQuestion} ';
+        var itemMH = questionGroupByManHinhs![index];
+        var tl = 'Câu ${itemMH.fromQuestion} - câu ${itemMH.toQuestion}';
+        if (itemMH.toQuestion == '') {
+          tl = 'Câu ${itemMH.fromQuestion} ';
         }
         if (questionGroupByManHinhs![index].fromQuestion == '') {
-          tl = 'Câu ${questionGroupByManHinhs![index].toQuestion} ';
+          tl = 'Câu ${itemMH.toQuestion} ';
         }
-        bool enableMnu = questionGroupByManHinhs![index].enable!;
-        bool isSelected = questionGroupByManHinhs![index].isSelected!;
-        int idManHinh = questionGroupByManHinhs![index].id!;
+
+        bool enableMnu = itemMH.enable!;
+        bool isSelected = itemMH.isSelected!;
+        int idManHinh = itemMH.id!;
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -241,9 +243,8 @@ class SideBar extends StatelessWidget {
                                   : greyColor,
                         ),
                         onTap: () {
-                          onPressed(idPhieu, idManHinh);
+                          onPressed(idPhieu, idManHinh, itemMH);
                         },
-                     
                       )),
                     ),
                   ],

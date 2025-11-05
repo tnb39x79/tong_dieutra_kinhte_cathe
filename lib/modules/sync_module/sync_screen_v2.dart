@@ -316,7 +316,7 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
         int idx = index + 1;
 
         String tenCoSo =
-            'Xã: ${item.maXa!} - ${item.tenCoSo!} (${item.loaiPhieu == 0 ? AppDefine.tenDoiTuongDT_07TB : item.loaiPhieu == 5 ? AppDefine.tenDoiTuongDT_07Mau : ''})';
+            'Địa bàn: ${item.maDiaBan} - Xã: ${item.maXa!} - ${item.tenCoSo!} (${item.loaiPhieu == 0 ? AppDefine.tenDoiTuongDT_07TB : item.loaiPhieu == 5 ? AppDefine.tenDoiTuongDT_07Mau : ''})';
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -330,7 +330,7 @@ class SyncScreenV2 extends GetView<SyncControllerV2> {
 
   Widget buildItem(int idx, TableBkCoSoSXKDSync item) {
     String tenCoSo =
-        '$idx. Xã: ${item.maXa!} - ${item.tenCoSo!} (${item.loaiPhieu == 0 ? AppDefine.tenDoiTuongDT_07TB : item.loaiPhieu == 5 ? AppDefine.tenDoiTuongDT_07Mau : ''})';
+        '$idx. Địa bàn: ${item.maDiaBan} - Xã: ${item.maXa!} - ${item.tenCoSo!} (${item.loaiPhieu == 0 ? AppDefine.tenDoiTuongDT_07TB : item.loaiPhieu == 5 ? AppDefine.tenDoiTuongDT_07Mau : ''})';
     int? syncResultIsSuccess = 0;
     String syncResultMessage = '';
     if (item.syncResult != null) {

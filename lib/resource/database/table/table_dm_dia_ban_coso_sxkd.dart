@@ -13,8 +13,9 @@ const String columnDmDiaBanCoSoSxkdTenXa = 'TenXa';
 const String columnDmDiaBanCoSoSxkdMaThon = 'MaThon';
 const String columnDmDiaBanCoSoSxkdMaDiaBan = 'MaDiaBan';
 const String columnDmDiaBanCoSoSxkdTenDiaBan = 'TenDiaBan';
-
+//const String columnDmDiaBanCoSoSxkdAllowCapi = 'AllowCapi';
 const String columnDmDiaBanCoSoMaDTV = 'MaDTV';
+
 const String columnDmDiaBanCoSoCreatedAt = 'CreatedAt';
 const String columnDmDiaBanCoSoUpdatedAt = 'UpdatedAt';
 
@@ -29,6 +30,7 @@ class TableDmDiaBanCosoSxkd {
   String? maDiaBan;
   String? tenDiaBan;
   String? maDTV;
+//  int? allowCaPi;
   String? createdAt;
   String? updatedAt;
   List<TableBkCoSoSXKD>? tablebkCoSoSXKD;
@@ -43,6 +45,7 @@ class TableDmDiaBanCosoSxkd {
       this.maDiaBan,
       this.tenDiaBan,
       this.maDTV,
+   //   this.allowCaPi,
       this.createdAt,
       this.updatedAt,
       this.tablebkCoSoSXKD});
@@ -59,6 +62,7 @@ class TableDmDiaBanCosoSxkd {
     tenDiaBan = json['TenDiaBan'];
 
     maDTV = json['MaDTV'];
+  //  allowCaPi = json['AllowCapi'];
     createdAt = json['CreatedAt'] ?? DateTime.now().toIso8601String();
     updatedAt = json['UpdatedAt'] ?? DateTime.now().toIso8601String();
     tablebkCoSoSXKD = json['DanhSachBKCoSoSXKD'] != null
@@ -77,6 +81,7 @@ class TableDmDiaBanCosoSxkd {
     data['TenDiaBan'] = tenDiaBan;
     data['MaThon'] = maThon;
     data['MaDTV'] = maDTV;
+   // data['AllowCapi'] = allowCaPi;
     data['CreatedAt'] = createdAt;
     data['UpdatedAt'] = updatedAt;
     return data;
