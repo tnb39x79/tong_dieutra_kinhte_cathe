@@ -2121,15 +2121,22 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
 
   Future<(bool, num, num)> thuocDoiTuongDTCau4T() async {
     ///Lấy giá trị 4T
-    num a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
-    num a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
-    if (a4TValue != null &&
-        (a4TValue < 100.0 || a4TValue < 100.00) &&
-        a4_1Value != null &&
-        a4_1Value < 3) {
-      return (false, a4TValue, a4_1Value);
+    var a4TValue = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4T);
+    var a4_1Value = getValueByFieldName(tablePhieuMauTB, colPhieuMauTBA4_1);
+    num a4TVal = a4TValue != null
+        ? AppUtils.convertStringToDouble(
+            a4TValue.toString().replaceAll(' ', ''))
+        : 0;
+    num a4_1Val = a4_1Value != null
+        ? AppUtils.convertStringToInt(a4_1Value.toString())
+        : 0;
+    if (a4TVal != null &&
+        (a4TVal < 100.0 || a4TVal < 100.00) &&
+        a4_1Val != null &&
+        a4_1Val < 3) {
+      return (false, a4TVal, a4_1Val);
     }
-    return (true, a4TValue, a4_1Value);
+    return (true, a4TVal, a4_1Val);
   }
 
   kiemTraTrangThaiCoSo() async {

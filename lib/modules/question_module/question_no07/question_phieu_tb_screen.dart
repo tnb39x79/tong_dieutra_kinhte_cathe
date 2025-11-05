@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:gov_statistics_investigation_economic/common/money_formatters/formatters/formatter_utils.dart';
 import 'package:gov_statistics_investigation_economic/common/money_formatters/formatters/money_input_enums.dart';
 
-import 'package:gov_statistics_investigation_economic/common/utils/utils.dart';
+import 'package:gov_statistics_investigation_economic/common/utils/utils.dart'; 
 import 'package:gov_statistics_investigation_economic/common/widgets/appbars/appbar_customize.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/input/search_dantoc.dart';
 import 'package:gov_statistics_investigation_economic/common/widgets/input/search_vcpa_cap5.dart';
@@ -49,9 +49,9 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
         onTap: () => controller.unFocus(context),
         child: Scaffold(
           key: controller.scaffoldKey,
-          endDrawerEnableOpenDragGesture: false,
-          appBar: CustomAppBar(
-            title: '${controller.currentTenDoiTuongDT!}',
+          endDrawerEnableOpenDragGesture: false, 
+          appBar:CustomAppBar(
+            title: controller.currentTenDoiTuongDT!,
             questionCode: 4,
             onPressedLeading: () => {},
             subTitle: controller.subTitleBar,
@@ -1198,6 +1198,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     if (question.maCauHoi == colPhieuNganhVTA7_M &&
         question.maPhieu == AppDefine.maPhieuVTMau) {
       return Obx(() {
+        decimalDigits=2;
         var a7MValue = controller.getValueByFieldName(
             question.bangDuLieu!, colPhieuNganhVTA7_M);
         return Column(children: [
@@ -1224,7 +1225,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                 question.loaiCauHoi!,
                 true,
                 question.maPhieu!),
-            flteringTextInputFormatterRegExp: wFilterInput,
+          //  flteringTextInputFormatterRegExp: wFilterInput,
             decimalDigits: decimalDigits,
           ),
           buildWarningText(question, a7MValue)
@@ -1234,6 +1235,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
     if (question.maCauHoi == colPhieuNganhVTA8_M &&
         question.maPhieu == AppDefine.maPhieuVTMau) {
       return Obx(() {
+        decimalDigits=2;
         var a8MValue = controller.getValueByFieldName(
             question.bangDuLieu!, colPhieuNganhVTA8_M);
         return Column(children: [
@@ -1492,11 +1494,13 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
                   question.loaiCauHoi!,
                   true,
                   question.maPhieu!),
-                keyboardType: 
-                 Platform.isAndroid
-                   ? TextInputType.phone
-                   : const TextInputType.numberWithOptions(signed: true,decimal: false),
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]')),],
+              keyboardType: Platform.isAndroid
+                  ? TextInputType.phone
+                  : const TextInputType.numberWithOptions(
+                      signed: true, decimal: false),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]')),
+              ],
             ),
             buildWarningText(question, a1_5_1)
           ]);
@@ -4876,7 +4880,7 @@ class QuestionPhieuTBScreen extends GetView<QuestionPhieuTBController> {
       } else if (a1_4Value != null && a1_4Value == 4 && selectedValue == 1) {
         return wText(
             'Cơ sở Không phải đăng ký kinh doanh (C1.4=4) mà có MST (C1.5=1)');
-      } 
+      }
       // else if (a1_3_4Value == 1 &&
       //     a1_5_1Value != null &&
       //     a1_5_1Value != '' &&

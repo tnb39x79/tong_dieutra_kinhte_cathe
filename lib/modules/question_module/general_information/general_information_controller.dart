@@ -265,7 +265,7 @@ class GeneralInformationController extends BaseController {
       return showError(validRes3);
     }
 
-    var phoneValidate =onValidateSoDT (dienThoaiController.text,'');
+    var phoneValidate = onValidateSoDT(dienThoaiController.text, '');
     if (phoneValidate != null && phoneValidate != '') {
       return showError(phoneValidate);
     }
@@ -280,7 +280,7 @@ class GeneralInformationController extends BaseController {
         "TenChuCoSo": tenChuCoSoController.text,
         "DienThoai": dienThoaiController.text,
       });
-
+      await getGeneralInformation();
       //  await insertNewRecordSanPham();
     }
     setLoading(false);

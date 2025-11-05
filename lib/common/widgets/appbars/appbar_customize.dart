@@ -36,6 +36,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
+    var allText = '${widget.subTitle} ${widget.subTitle}';
     var currentTitle = (widget.subTitle == null || widget.subTitle == "")
         ? Text(
             widget.title!,
@@ -52,14 +53,12 @@ class CustomAppBarState extends State<CustomAppBar> {
                 style: const TextStyle(color: Colors.white)),
             titleAlignment: ListTileTitleAlignment.center,
           );
-    if (widget.wTitle != null) {}
+
     return AppBar(
       automaticallyImplyLeading: false,
       centerTitle: false,
       actions: [widget.actions ?? actionDefault()],
-      // title: Text(getTitleAppBar(), style: styleMediumBold),
       title: widget.wTitle ?? currentTitle,
-
       leading: IconButton(
           onPressed: () {
             if (widget.backAction != null) {
@@ -72,8 +71,16 @@ class CustomAppBarState extends State<CustomAppBar> {
     );
   }
 
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 10);
+  double calculateTextHeight(String text, TextStyle style) {
+    final mediaQueryData = MediaQuery.of(context);
+    final screenWidth = mediaQueryData.size.width;
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr, // Or appropriate text direction
+      maxLines: null, // Allow multiple lines
+    )..layout(maxWidth: screenWidth);
+    return textPainter.height;
+  }
 
   Widget actionDefault() {
     // return IconButton(onPressed: () {}, icon: const Icon(Icons.location_on));
