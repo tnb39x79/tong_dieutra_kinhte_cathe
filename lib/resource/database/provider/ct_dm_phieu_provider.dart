@@ -46,14 +46,14 @@ class DmPhieuProvider extends BaseDBProvider<TableCTDmPhieu> {
       CREATE TABLE IF NOT EXISTS $tableCTDmPhieu
       (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-        $colPhieuMaPhieu  INTEGER,
-        $colPhieuTenPhieu  TEXT,
-        $colPhieuBangDuLieu  TEXT,
-        $colPhieuGhiChu  TEXT,
-        $colPhieuTenHienThi  TEXT,
-        $colPhieuTenHienThiCapi  TEXT,
-        $colPhieuTenPhieuCapi  TEXT,
-        $colPhieuActive  INTEGER
+        $colDmPhieuMaPhieu  INTEGER,
+        $colDmPhieuTenPhieu  TEXT,
+        $colDmPhieuBangDuLieu  TEXT,
+        $colDmPhieuGhiChu  TEXT,
+        $colDmPhieuTenHienThi  TEXT,
+        $colDmPhieuTenHienThiCapi  TEXT,
+        $colDmPhieuTenPhieuCapi  TEXT,
+        $colDmPhieuActive  INTEGER
       )
       ''');
   }
@@ -65,7 +65,7 @@ class DmPhieuProvider extends BaseDBProvider<TableCTDmPhieu> {
 
   Future<Map> getByMaPhieu(int maPhieu) async {
     final List<Map> maps = await db!.query(tableCTDmPhieu, where: '''
-      $colPhieuMaPhieu = $maPhieu
+      $colDmPhieuMaPhieu = $maPhieu
       ''');
 
     if (maps.isNotEmpty) {

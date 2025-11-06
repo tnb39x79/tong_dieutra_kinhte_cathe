@@ -50,6 +50,9 @@ class AppPref {
   ///Số ngày ngày hiện tại - ngày kết thúc điều tra
   static const String soNgayChoPhepXoaDuLieuKey = 'soNgayChoPhepXoaDuLieuKey';
 
+  ///Thoi gian phong van toi thieu
+  static const String thoiGianPVToiThieuKey = 'thoiGianPVToiThieuKey';
+
   ///Versioin danh mục đang sử dụng ở capi
   static const String versionDanhMucKey = 'versionDanhMucKey';
 
@@ -204,6 +207,11 @@ class AppPref {
       _box.write(soNgayChoPhepXoaDuLieuKey, soNgay);
   static String get soNgayChoPhepXoaDuLieu =>
       _box.read(soNgayChoPhepXoaDuLieuKey) ?? '';
+
+  static set thoiGianPVToiThieu(String soNgay) =>
+      _box.write(thoiGianPVToiThieuKey, soNgay);
+  static String get thoiGianPVToiThieu =>
+      _box.read(thoiGianPVToiThieuKey) ?? '';
 
   static set versionDanhMuc(String soNgay) =>
       _box.write(versionDanhMucKey, soNgay);

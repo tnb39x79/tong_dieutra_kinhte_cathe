@@ -9,7 +9,7 @@ class UserModel {
   String? ghiChu;
   String? ngayCapNhat;
   bool? active;
-  String? iMei;
+  String? iMei; 
   // List<dynamic>? nNDIBKHo;
   // List<dynamic>? nNDIBKThon;
   // List<dynamic>? nNPhieuSo02;
@@ -34,7 +34,7 @@ class UserModel {
       this.ghiChu,
       this.ngayCapNhat,
       this.active,
-      this.iMei
+      this.iMei, 
       // this.nNDIBKHo,
       // this.nNDIBKThon,
       // this.nNPhieuSo02,
@@ -59,7 +59,7 @@ class UserModel {
     ghiChu = json['GhiChu'];
     ngayCapNhat = json['NgayCapNhat'];
     active = json['Active'];
-    iMei = json['IMEI'];
+    iMei = json['IMEI']; 
     // ftpPublicUrl = json['FtpPublicUrl'];
     // ftpInternalUrl = json['FtpInternalUrl'];
     // ftpUserName = json['FtpUserName'];
@@ -78,7 +78,7 @@ class UserModel {
     data['GhiChu'] = ghiChu;
     data['NgayCapNhat'] = ngayCapNhat;
     data['Active'] = active;
-    data['IMEI'] = iMei;
+    data['IMEI'] = iMei; 
     // data['FtpPublicUrl'] = ftpPublicUrl;
     // data['FtpInternalUrl'] = ftpInternalUrl;
     // data['FtpUserName'] = ftpUserName;

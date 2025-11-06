@@ -142,6 +142,11 @@ class LoginController extends BaseController {
         } else {
           AppPref.soNgayChoPhepXoaDuLieu = '0';
         }
+        if (response.body!.thoiGianPVToiThieu != null) {
+          AppPref.thoiGianPVToiThieu = response.body!.thoiGianPVToiThieu!;
+        } else {
+          AppPref.thoiGianPVToiThieu = '0';
+        }
         String imei = response.body!.iMei!;
         //AppPref.extraToken = response.body!.accessToken;
         AppPref.pageSizeSync = response.body!.pageSizeSync ?? 5;

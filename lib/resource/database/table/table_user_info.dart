@@ -12,8 +12,7 @@ const String columnUserInfoSDT = 'SDT';
 const String columnUserInfoGhiChu = 'GhiChu';
 const String columnUserInfoNgayCapNhat = 'NgayCapNhat';
 const String columnUserInfoActive = 'Active';
-const String columnUserInfoImei = 'IMEI';
-
+const String columnUserInfoImei = 'IMEI'; 
 const String columnUserInfoCreatedAt = 'CreatedAt';
 const String columnUserInfoUpdatedAt = 'UpdatedAt';
 const String columnUserInfoIsSuccess = 'IsSuccess';
@@ -30,7 +29,7 @@ class TableUserInfo {
   String? ghiChu;
   String? ngayCapNhat;
   int? active;
-  String? iMei;
+  String? iMei; 
   String? createdAt;
   String? updatedAt;
   int? isSuccess;
@@ -47,7 +46,7 @@ class TableUserInfo {
     this.ghiChu,
     this.ngayCapNhat,
     this.active,
-    this.iMei,
+    this.iMei, 
     this.createdAt,
     this.updatedAt,
     this.isSuccess,
@@ -69,7 +68,7 @@ class TableUserInfo {
             ? true
             : false
         : json['Active'];
-    iMei = json['IMEI'];
+    iMei = json['IMEI']; 
     createdAt = json['CreatedAt'];
     updatedAt = json['UpdatedAt'];
 
@@ -92,7 +91,7 @@ class TableUserInfo {
     map['GhiChu'] = ghiChu;
     map['NgayCapNhat'] = ngayCapNhat;
     map['Active'] = active;
-    map['IMEI'] = iMei;
+    map['IMEI'] = iMei; 
     map['CreatedAt'] = createdAt;
     map['UpdatedAt'] = updatedAt;
     map['IsSuccess'] = isSuccess;

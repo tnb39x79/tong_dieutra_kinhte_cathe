@@ -1,12 +1,12 @@
 const String tableCTDmPhieu = 'CT_DM_Phieu';
-const String colPhieuMaPhieu = 'MaPhieu';
-const String colPhieuTenPhieu = 'TenPhieu';
-const String colPhieuBangDuLieu = 'BangDuLieu';
-const String colPhieuGhiChu = 'GhiChu';
-const String colPhieuTenHienThi = 'TenHienThi';
-const String colPhieuTenHienThiCapi = 'TenHienThiCapi';
-const String colPhieuTenPhieuCapi = 'TenPhieuCapi';
-const String colPhieuActive = 'Active';
+const String colDmPhieuMaPhieu = 'MaPhieu';
+const String colDmPhieuTenPhieu = 'TenPhieu';
+const String colDmPhieuBangDuLieu = 'BangDuLieu';
+const String colDmPhieuGhiChu = 'GhiChu';
+const String colDmPhieuTenHienThi = 'TenHienThi';
+const String colDmPhieuTenHienThiCapi = 'TenHienThiCapi';
+const String colDmPhieuTenPhieuCapi = 'TenPhieuCapi';
+const String colDmPhieuActive = 'Active';
 
 class TableCTDmPhieu {
   int? id;

@@ -69,6 +69,7 @@ class TableBkCoSoSXKD {
   String? diaChi;
   String? tenChuCoSo;
   int? maDiaDiem;
+  String? diaDiem_GhiRo;
   String? dienThoai;
   String? email;
   int? soLaoDong;
@@ -105,6 +106,7 @@ class TableBkCoSoSXKD {
       this.diaChi,
       this.tenChuCoSo,
       this.maDiaDiem,
+      this.diaDiem_GhiRo,
       this.dienThoai,
       this.email,
       this.soLaoDong,
@@ -119,7 +121,7 @@ class TableBkCoSoSXKD {
       this.tableNganhSanPhams,
       this.trangThaiLogic,
       this.isSyncSuccess,
-     // this.loaiMauBS,
+      // this.loaiMauBS,
       this.createdAt,
       this.updatedAt});
 
@@ -143,6 +145,7 @@ class TableBkCoSoSXKD {
     diaChi = json['DiaChi'];
     tenChuCoSo = json['TenChuCoSo'];
     maDiaDiem = json['MaDiaDiem'];
+    diaDiem_GhiRo = json['DiaDiem_GhiRo'];
     dienThoai = json['DienThoai'];
     email = json['Email'];
     soLaoDong = json['SoLaoDong'];
@@ -154,7 +157,7 @@ class TableBkCoSoSXKD {
     maTrangThaiDT = json['MaTrangThaiDT'];
     maTrangThaiDT2 = json['MaTrangThaiDT2'];
     isSyncSuccess = json['SyncSuccess'];
-   // loaiMauBS = json['LoaiMauBS'];
+    // loaiMauBS = json['LoaiMauBS'];
     createdAt = json['CreatedAt'];
     updatedAt = json['UpdatedAt'];
 
@@ -200,7 +203,7 @@ class TableBkCoSoSXKD {
     json['MaTrangThaiDT2'] = maTrangThaiDT2;
     json['TrangThaiLogic'] = trangThaiLogic;
     json['SyncSuccess'] = isSyncSuccess;
-  //  json['LoaiMauBS'] = loaiMauBS;
+    //  json['LoaiMauBS'] = loaiMauBS;
     json['CreatedAt'] = createdAt;
     json['UpdatedAt'] = updatedAt;
 
@@ -236,7 +239,7 @@ class TableBkCoSoSXKD {
     json['DienThoaiNguoiCungCap'] = dienThoaiNguoiCungCap;
     json['MaDTV'] = maDTV;
     json['MaTrangThaiDT'] = maTrangThaiDT;
-   // json['LoaiMauBS'] = loaiMauBS;
+    // json['LoaiMauBS'] = loaiMauBS;
     json['CreatedAt'] = createdAt;
 
     return json;
@@ -324,7 +327,7 @@ class TableBkCoSoSXKDSync {
       this.tableNganhSanPhams,
       this.trangThaiLogic,
       this.isSyncSuccess,
-    //  this.loaiMauBS,
+      //  this.loaiMauBS,
       this.createdAt,
       this.updatedAt,
       this.syncResult});
@@ -360,7 +363,7 @@ class TableBkCoSoSXKDSync {
     maTrangThaiDT = json['MaTrangThaiDT'];
     maTrangThaiDT2 = json['MaTrangThaiDT2'];
     isSyncSuccess = json['SyncSuccess'];
-  //  loaiMauBS = json['LoaiMauBS'];
+    //  loaiMauBS = json['LoaiMauBS'];
     createdAt = json['CreatedAt'];
     updatedAt = json['UpdatedAt'];
 
@@ -410,7 +413,7 @@ class TableBkCoSoSXKDSync {
     json['MaTrangThaiDT2'] = maTrangThaiDT2;
     json['TrangThaiLogic'] = trangThaiLogic;
     json['SyncSuccess'] = isSyncSuccess;
-   // json['LoaiMauBS'] = loaiMauBS;
+    // json['LoaiMauBS'] = loaiMauBS;
     json['CreatedAt'] = createdAt;
     json['UpdatedAt'] = updatedAt;
     json['SyncResultDetailItem'] = syncResult;

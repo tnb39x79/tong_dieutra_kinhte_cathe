@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -274,7 +275,14 @@ class HomeController extends BaseController with SyncMixinV2 {
     }
     var db = await DatabaseHelper.instance.database;
     await DatabaseHelper.instance.deleteOnlyDataTable(db);
+    final startTime = DateTime.now();
+    //
     await updateData();
+    //
+    final endTime = DateTime.now();
+    final duration = endTime.difference(startTime);
+    log('Call onGetDuLieuPhieu => updateData(): ${duration.inMilliseconds}ms');
+    //
     await Future.delayed(const Duration(seconds: 2));
     mainMenuController.setLoading(false);
   }
@@ -299,7 +307,14 @@ class HomeController extends BaseController with SyncMixinV2 {
   }
 
   Future getDataFromServer() async {
+    final startTime = DateTime.now();
+    //
     final data = await inputDataRepository.getData();
+    //
+    final endTime = DateTime.now();
+    final duration = endTime.difference(startTime);
+    log('Call getDataFromServer => inputDataRepository.getData(): ${duration.inMilliseconds}ms');
+    //
     if (data.statusCode == 200 &&
         data.body!.responseCode == ApiConstants.responseSuccess) {
       ///Kiểm tra có lấy dm hay ko?
@@ -310,6 +325,7 @@ class HomeController extends BaseController with SyncMixinV2 {
       String dtSaveDB = DateTime.now().toIso8601String();
       AppPref.dateTimeSaveDB = dtSaveDB;
       //   developer.log('data.body = ${jsonEncode(data.body)}');
+      final startTimeParse = DateTime.now();
       var tableData = TableData(
         maDTV: AppPref.uid,
         questionNo07Mau: jsonEncode(data.body!.cauHoiPhieu07Maus),
@@ -320,11 +336,22 @@ class HomeController extends BaseController with SyncMixinV2 {
         createdAt: dtSaveDB,
         updatedAt: dtSaveDB,
       );
+      final endTimeParse = DateTime.now();
+      final duration = endTimeParse.difference(startTimeParse);
+      log('Call parse tableData = TableData: ${duration.inMilliseconds}ms');
       //print(data.body!.data);
+      final startTimeUserParse = DateTime.now();
       await insertUserInfo(dtSaveDB);
       await insertIntoDb(tableData);
+      final endTimeUserParse = DateTime.now();
+      final durationUser = endTimeUserParse.difference(startTimeUserParse);
+      log('Call parse user = user infoe infoDB: ${durationUser.inMilliseconds}ms');
       await insertDoiTuongDT(data.body!.data, dtSaveDB);
+      final startTimePhieuParse = DateTime.now();
       await insertIntoTableCoSoSxkd(data.body!.data, dtSaveDB);
+      final endTimePhieuParse = DateTime.now();
+      final durationPhieu = endTimePhieuParse.difference(startTimePhieuParse);
+      log('Call parse Phieu = TableData: ${durationPhieu.inMilliseconds}ms');
       if (data.body!.hasDm == '1') {
         await insertDanhMucChung(data.body!, dtSaveDB);
         await insertDanhMucPhieuMau(data.body!, dtSaveDB);
@@ -580,12 +607,20 @@ class HomeController extends BaseController with SyncMixinV2 {
     Map? isHad = await hasGetDataPv();
     if (isHad != null) {
       AppPref.dateTimeSaveDB = isHad['CreatedAt'];
-
+      //
+      final startTime = DateTime.now();
+      //
       var resultSunc = await syncDataMixinHome(
           syncRepository, sendErrorRepository, progress,
           isRetryWithSignIn: false);
       developer.log(
           'sync before get data from action: ${resultSunc.responseCode}::${resultSunc.responseMessage}');
+
+      //
+      //
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime);
+      log('Call taiDuLieuPv => syncDataMixinHome: ${duration.inMilliseconds}ms');
     }
 
     await updateOnlyData();
@@ -599,8 +634,14 @@ class HomeController extends BaseController with SyncMixinV2 {
     mainMenuController.setLoading(true);
 
     try {
+      final startTime = DateTime.now();
+      //
       var value = await getDataServer();
-
+      //
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime);
+      log('Call taiDuLieuPv => updateOnlyData => getDataServer: ${duration.inMilliseconds}ms');
+      //
       if (value == 1) {
         snackBar('Tải dữ liệu thành công', '',
             durationSecond: const Duration(seconds: 3));
@@ -639,7 +680,15 @@ class HomeController extends BaseController with SyncMixinV2 {
       //print(data.body!.data);
       await updateUserInfo(dtSaveDB);
       await updateDataInto(tableData);
+      //
+      final startTime = DateTime.now();
+      //
       await updateDataCoSoSxkd(data.body!.data, dtSaveDB);
+      //
+      final endTime = DateTime.now();
+      final duration = endTime.difference(startTime);
+      log('Call taiDuLieuPv => updateOnlyData => getDataServer => updateDataCoSoSxkd: ${duration.inMilliseconds}ms');
+      //
       if (data.body!.hasDm == '1') {
         await insertDoiTuongDT(data.body!.data, dtSaveDB);
         await insertDanhMucChung(data.body!, dtSaveDB);

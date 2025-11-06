@@ -39,6 +39,7 @@ class WidgetSubject extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(child: _info()),
+            const SizedBox(width: 8,),
             _iconActions(),
           ],
         ),
@@ -59,7 +60,7 @@ class WidgetSubject extends StatelessWidget {
   }
 
   Widget _iconActions() {
-    return const Icon(Icons.arrow_forward_ios_rounded, color: greyBorder);
+    return   Icon(Icons.arrow_forward_ios_rounded, color:  Colors.black26.withValues(alpha: 0.3));
   }
 
   Widget _titleTop() {

@@ -37,6 +37,7 @@
 // build apk prod
 //https://api_taphuancathe_tdtkinhte2026.nso.gov.vn/
 flutter build apk --flavor prod --dart-define "BASE_API=http://v1_capi_giasanxuat.gso.gov.vn/"
+flutter build apk --flavor prod --dart-define "BASE_API=https://api_taphuancathe_tdtkinhte2026.nso.gov.vn/"
 ```
 ```
 // build app bundle

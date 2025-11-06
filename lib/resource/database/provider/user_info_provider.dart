@@ -62,7 +62,7 @@ class UserInfoProvider extends BaseDBProvider<TableUserInfo> {
         $columnUserInfoGhiChu TEXT,
         $columnUserInfoNgayCapNhat   TEXT,
         $columnUserInfoActive INTERGER,
-        $columnUserInfoImei   TEXT,
+        $columnUserInfoImei   TEXT, 
         $columnCreatedAt TEXT,
         $columnUpdatedAt TEXT,
         $columnUserInfoIsSuccess INTEGER

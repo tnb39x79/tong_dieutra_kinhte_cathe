@@ -381,56 +381,59 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   /// Fetch Data các bảng của phiếu
   Future fetchData() async {
     Map questionPhieuMap = await phieuProvider.selectByIdCoSo(currentIdCoSo!);
-    Map questionPhieuMauTBMap =
-        await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
-    if (questionPhieuMauTBMap.isNotEmpty) {
-      answerTblPhieuMau.addAll(questionPhieuMauTBMap);
-      var hasFieldTenDanToc = answerTblPhieuMau.containsKey('A1_3_3_tendantoc');
-      if (!hasFieldTenDanToc) {
-        var maDanToc = answerTblPhieuMau['A1_3_3'];
-        if (maDanToc != null && maDanToc != '') {
-          var danTocItems = await dmDanTocProvider.selectByMaDanToc(maDanToc);
-          var result = danTocItems.map((e) => TableDmDanToc.fromJson(e));
-          var dtM = result.toList();
-          log('fetchData getValueDanTocByFieldName: ${danTocItems.length}');
-          var res = dtM.firstOrNull;
-          if (res != null) {
-            log('Ten Dan Toc: ${res.tenDanToc!}');
-            updateAnswerTblPhieuMau(
-                'A1_3_3_tendantoc', res.tenDanToc!, tablePhieuMauTB);
+    if (questionPhieuMap.isNotEmpty) {
+      tblPhieu.value = TablePhieu.fromJson(questionPhieuMap);
+      Map questionPhieuMauTBMap =
+          await phieuMauTBProvider.selectByIdCoSo(currentIdCoSo!);
+      if (questionPhieuMauTBMap.isNotEmpty) {
+        tblPhieuMauTB.value = TablePhieuMauTB.fromJson(questionPhieuMauTBMap);
+        answerTblPhieuMau.addAll(questionPhieuMauTBMap);
+        var hasFieldTenDanToc =
+            answerTblPhieuMau.containsKey('A1_3_3_tendantoc');
+        if (!hasFieldTenDanToc) {
+          var maDanToc = answerTblPhieuMau['A1_3_3'];
+          if (maDanToc != null && maDanToc != '') {
+            var danTocItems = await dmDanTocProvider.selectByMaDanToc(maDanToc);
+            var result = danTocItems.map((e) => TableDmDanToc.fromJson(e));
+            var dtM = result.toList();
+            log('fetchData getValueDanTocByFieldName: ${danTocItems.length}');
+            var res = dtM.firstOrNull;
+            if (res != null) {
+              log('Ten Dan Toc: ${res.tenDanToc!}');
+              updateAnswerTblPhieuMau(
+                  'A1_3_3_tendantoc', res.tenDanToc!, tablePhieuMauTB);
+            }
           }
         }
-      }
-      tblPhieu.value = TablePhieu.fromJson(questionPhieuMap);
-      tblPhieuMauTB.value = TablePhieuMauTB.fromJson(questionPhieuMauTBMap);
 
-      Map phieuNganhLTMap =
-          await phieuNganhLTProvider.selectByIdCoSo(currentIdCoSo!);
-      if (phieuNganhLTMap.isNotEmpty) {
-        answerTblPhieuNganhLT.addAll(phieuNganhLTMap);
-      }
+        Map phieuNganhLTMap =
+            await phieuNganhLTProvider.selectByIdCoSo(currentIdCoSo!);
+        if (phieuNganhLTMap.isNotEmpty) {
+          answerTblPhieuNganhLT.addAll(phieuNganhLTMap);
+        }
 
 //
-      Map phieuNganhVTMap =
-          await phieuNganhVTProvider.selectByIdCoSo(currentIdCoSo!);
-      if (phieuNganhVTMap.isNotEmpty) {
-        answerTblPhieuNganhVT.addAll(phieuNganhVTMap);
+        Map phieuNganhVTMap =
+            await phieuNganhVTProvider.selectByIdCoSo(currentIdCoSo!);
+        if (phieuNganhVTMap.isNotEmpty) {
+          answerTblPhieuNganhVT.addAll(phieuNganhVTMap);
+        }
+        await getThongTinNguoiPV();
+        await getTablePhieuMauTBSanPham();
+        await getTablePhieuNganhCN();
+        await getTablePhieuNganhLT();
+        await getTablePhieuNganhTM();
+        await getTablePhieuNganhTMSanPham();
+        await getTablePhieuNganhVT();
+        await getTablePhieuNganhVTGhiRo();
       }
-      await getThongTinNguoiPV();
-      await getTablePhieuMauTBSanPham();
-      await getTablePhieuNganhCN();
-      await getTablePhieuNganhLT();
-      await getTablePhieuNganhTM();
-      await getTablePhieuNganhTMSanPham();
-      await getTablePhieuNganhVT();
-      await getTablePhieuNganhVTGhiRo();
     }
   }
 
   Future getThongTinNguoiPV() async {
     // String? soDienThoaiDTV = tblPhieu.value.soDienThoaiDTV;
 //    String? hoTenDTV = tblPhieuMau.value.hoTenDTV;
-    // if (soDienThoaiDTV == null || soDienThoaiDTV == '') {
+    // if (soDienThoaiDTV == null || soDienThoaitblPhieuDTV == '') {tblPhieu
     //   soDienThoaiDTV = mainMenuController.userModel.value.sDT;
     // }
     // if (hoTenDTV == null || hoTenDTV == '') {
@@ -440,8 +443,11 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
     await mapCompleteInfo(nguoiTraLoiBase, tblPhieu.value.nguoiTraLoi);
     await mapCompleteInfo(kinhDoBase, tblPhieu.value.kinhDo);
     await mapCompleteInfo(viDoBase, tblPhieu.value.viDo);
-    //  await mapCompleteInfo(soDienThoaiDTVBase, soDienThoaiDTV);
-    // await mapCompleteInfo(hoTenDTVBase, hoTenDTV);
+    await mapCompleteInfo(colPhieuGhiChu, tblPhieu.value.ghiChu);
+    await mapCompleteInfo(
+        colPhieuGiaiTrinhThoiGianPV, tblPhieu.value.giaiTrinhThoiGianPV);
+    await mapCompleteInfo(
+        colPhieuGiaiTrinhToaDo, tblPhieu.value.giaiTrinhToaDo);
   }
 
   Future getTablePhieu() async {
@@ -7850,8 +7856,10 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
   }
 
   Future onKetThucPhongVan({int? lyDoKetThucPV}) async {
+    
     final resultRoute = await Get.to(
       () => CompleteInterviewScreen(
+        thoiGianBDPv: startTime,
         lyDoKetThucPv: lyDoKetThucPV ?? 0,
       ),
       fullscreenDialog: true,
@@ -7871,8 +7879,13 @@ class QuestionPhieuTBController extends BaseController with QuestionUtils {
       }
       final result = resultRoute.completeInfo;
       if (generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT != 9) {
-        await onChangeCompleted(ThoiGianBD, startTime.toIso8601String());
-        await onChangeCompleted(ThoiGianKT, DateTime.now().toIso8601String());
+        await updateAnswerCompletedToDb(ThoiGianBD, startTime.toIso8601String());
+        await updateAnswerCompletedToDb(ThoiGianKT, DateTime.now().toIso8601String());
+      } else {
+        if (validateEmptyString(tblPhieu.value.thoiGianBD)) {
+          await updateAnswerCompletedToDb(ThoiGianBD, startTime.toIso8601String());
+          await updateAnswerCompletedToDb(ThoiGianKT, DateTime.now().toIso8601String());
+        }
       }
       var ttDT = generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT;
       await bkCoSoSXKDProvider.updateTrangThai(currentIdCoSo!);

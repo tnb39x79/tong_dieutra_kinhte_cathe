@@ -15,6 +15,7 @@ import 'package:gov_statistics_investigation_economic/modules/modules.dart';
 import 'package:gov_statistics_investigation_economic/modules/question_module/question_no07/question_phieu_tb_controller.dart';
 
 import 'package:gov_statistics_investigation_economic/resource/database/table/filed_common.dart';
+import 'package:gov_statistics_investigation_economic/resource/database/table/table_phieu.dart';
 
 import '/resource/services/location/location_provider.dart';
 
@@ -29,9 +30,11 @@ class CompletedResult {
 }
 
 class CompleteInterviewScreen extends StatefulWidget {
-  const CompleteInterviewScreen({super.key, this.lyDoKetThucPv = 0});
+  const CompleteInterviewScreen(
+      {super.key, required this.thoiGianBDPv, this.lyDoKetThucPv = 0});
 
   final int? lyDoKetThucPv;
+  final DateTime thoiGianBDPv;
   @override
   State<CompleteInterviewScreen> createState() =>
       _CompleteInterviewScreenState();
@@ -97,8 +100,9 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     soDienThoaiController.text = controller.tblPhieu.value.soDienThoai ?? '';
     _latController.text = completeInfo?[columnViDo].toString() ?? '';
     _lngController.text = completeInfo?[columnKinhDo].toString() ?? '';
-    // _giaiTrinhController.text = completeInfo?[columnGhiChu].ghiChu ?? '';
-    //_lyDoThoiGianController.text =  controller.tblPhieu.value.giaiTrinhThoiGianPV ?? '';
+    _giaiTrinhController.text = completeInfo?[columnGhiChu] ?? '';
+    _lyDoThoiGianController.text =
+        controller.tblPhieu.value.giaiTrinhThoiGianPV ?? '';
     _lyDoDinhViController.text = completeInfo?[giaiTrinhToaDo] ?? '';
 
     if (completeInfo?[columnViDo] != null &&
@@ -216,18 +220,6 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     );
   }
 
-  Widget _buildFormFields() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        buildFormThongTinNguoiPV(),
-        if (!_isFirstLoading) buildLyDo(),
-        _buildLatLngSection(),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -258,8 +250,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
                   Expanded(
                     child: WidgetButton(
                       title: 'Hủy',
-                      onPressed: () =>
-                          Get.back(result: ['cancel', widget.lyDoKetThucPv.toString()]),
+                      onPressed: () => Get.back(
+                          result: ['cancel', widget.lyDoKetThucPv.toString()]),
                       buttonType: BtnType.outline,
                     ),
                   ),
@@ -280,6 +272,36 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     );
   }
 
+  Widget _buildFormFields() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        buildGhiChu(),
+        buildFormThongTinNguoiPV(),
+        if (!_isFirstLoading) buildLyDoThoiGianPv(),
+        if (!_isFirstLoading) buildLyDoDinhVi(),
+        _buildLatLngSection(),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  buildGhiChu() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      TextQuestion("Giải trình chung về phiếu (nếu có)"),
+      WidgetFieldInputText(
+        controller: _giaiTrinhController,
+        hint: 'Nhập Giải trình chung về phiếu (nếu có)',
+        minLine: 3,
+        maxLine: 3,
+        maxLength: 250,
+        enable: true,
+        onChanged: (String? value) => onChangeText(value, colPhieuGhiChu),
+        onMicrophoneTap: () => onMicrophoneTap(_giaiTrinhController),
+      )
+    ]);
+  }
+
   Widget buildFormThongTinNguoiPV() {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       TextQuestion("Người cung cấp thông tin"),
@@ -290,7 +312,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
         onChanged: (String? value) => onChangeText(value, columnNguoiTraLoi),
         validator: (String? value) =>
             onValidate(value, fieldName: columnNguoiTraLoi),
-        onMicrophoneTap: () => onMicrophoneTap(columnNguoiTraLoi),
+        onMicrophoneTap: () => onMicrophoneTap(hoTenController),
         enable: true,
       ),
       const SizedBox(height: 16),
@@ -305,21 +327,43 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     ]);
   }
 
-  buildLyDo() {
+  buildLyDoDinhVi() {
     if (!_hasCoordinates()) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         TextQuestion("Nhập lý do định vị không chính xác"),
         WidgetFieldInputText(
           controller: _lyDoDinhViController,
           hint: 'Nhập lý do định vị không chính xác',
-          maxLine: 3,
           minLine: 3,
+          maxLine: 3,
           maxLength: 500,
           enable: true,
           onChanged: (String? value) => onChangeText(value, giaiTrinhToaDo),
           validator: (String? value) =>
               onValidate(value, fieldName: giaiTrinhToaDo),
-          onMicrophoneTap: () => onMicrophoneTap(giaiTrinhToaDo),
+          onMicrophoneTap: () => onMicrophoneTap(_lyDoDinhViController),
+        )
+      ]);
+    }
+    return SizedBox();
+  }
+
+  buildLyDoThoiGianPv() {
+    if (isThoiGianPv()) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        TextQuestion("Lý do thời gian phỏng vấn ngắn"),
+        WidgetFieldInputText(
+          controller: _lyDoThoiGianController,
+          hint: 'Nhập Lý do thời gian phỏng vấn ngắn',
+          minLine: 3,
+          maxLine: 3,
+          maxLength: 250,
+          enable: true,
+          onChanged: (String? value) =>
+              onChangeText(value, colPhieuGiaiTrinhThoiGianPV),
+          validator: (String? value) =>
+              onValidate(value, fieldName: colPhieuGiaiTrinhThoiGianPV),
+          onMicrophoneTap: () => onMicrophoneTap(_lyDoThoiGianController),
         )
       ]);
     }
@@ -327,29 +371,49 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
   }
 
   onChangeText(String? value, String fieldName) {
-    if (fieldName == columnNguoiTraLoi) {
-      String result;
-      result = value ?? '';
+    // if (fieldName == colPhieuGhiChu) {
+    //   String result;
+    //   result = value ?? '';
 
-      int maxL = 250;
-      // Truncate if necessary
-      if (result.length > maxL) {
-        result = result.substring(0, maxL);
-        controller.onChangeCompleted(fieldName, value);
-      }
-    } else if (fieldName == giaiTrinhToaDo) {
-      String result;
-      result = value ?? '';
+    //   int maxL = 250;
+    //   // Truncate if necessary
+    //   if (result.length > maxL) {
+    //     result = result.substring(0, maxL);
+    //     controller.onChangeCompleted(fieldName, result);
+    //   }
+    // } else if (fieldName == columnNguoiTraLoi) {
+    //   String result;
+    //   result = value ?? '';
 
-      int maxL = 500;
-      // Truncate if necessary
-      if (result.length > maxL) {
-        result = result.substring(0, maxL);
-        controller.onChangeCompleted(fieldName, value);
-      }
-    } else {
-      controller.onChangeCompleted(fieldName, value);
-    }
+    //   int maxL = 250;
+    //   // Truncate if necessary
+    //   if (result.length > maxL) {
+    //     result = result.substring(0, maxL);
+    //     controller.onChangeCompleted(fieldName, result);
+    //   }
+    // } else if (fieldName == colPhieuGiaiTrinhThoiGianPV) {
+    //   String result;
+    //   result = value ?? '';
+
+    //   int maxL = 250;
+    //   // Truncate if necessary
+    //   if (result.length > maxL) {
+    //     result = result.substring(0, maxL);
+    //     controller.onChangeCompleted(fieldName, result);
+    //   }
+    // } else if (fieldName == giaiTrinhToaDo) {
+    //   String result;
+    //   result = value ?? '';
+
+    //   int maxL = 500;
+    //   // Truncate if necessary
+    //   if (result.length > maxL) {
+    //     result = result.substring(0, maxL);
+    //     controller.onChangeCompleted(fieldName, result);
+    //   }
+    // } else {
+    //   controller.onChangeCompleted(fieldName, value);
+    // }
   }
 
   onValidate(String? text, {bool? isRequired, String? fieldName}) {
@@ -358,37 +422,12 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     }
     return null;
   }
-  // Future<void> onMicrophoneTap(TextEditingController controller) async {
-  //   try {
-  //     // Show the modern recording dialog
-  //     final recognizedText = await showRecordingDialog(
-  //       title: 'Ghi âm câu trả lời',
-  //       hint: 'Nhấn để bắt đầu ghi âm câu trả lời...',
-  //       onTextRecognized: (text) {
-  //         log('Text recognized in dialog: "$text"');
-  //       },
-  //     );
-
-  //     // If we got text back, use it to fill the form field
-  //     if (recognizedText != null && recognizedText.isNotEmpty) {
-  //       // Update the form field with the recognized text
-  //       controller.value = controller.value.copyWith(
-  //         text: recognizedText,
-  //         selection: TextSelection.fromPosition(
-  //           TextPosition(offset: recognizedText.length),
-  //         ),
-  //       );
-  //     }
-  //   } catch (e, stackTrace) {
-  //     log('onMicrophoneTap error: $e $stackTrace');
-  //   }
-  // }
 
   _onPressCompleteInterview() async {
-    // if (_isConditionalInterviewTime() && _lyDoThoiGianController.text.isEmpty) {
-    //   controller.showError("Vui lòng nhập lý do thời gian phỏng vấn ngắn");
-    //   return;
-    // }
+    if (isThoiGianPv() && _lyDoThoiGianController.text.isEmpty) {
+      controller.showError("Vui lòng nhập lý do thời gian phỏng vấn ngắn");
+      return;
+    }
     if (controller.validateEmptyString(hoTenController.text) ||
         hoTenController.text.isEmpty) {
       controller.showError("Vui lòng nhập Họ và tên người cung cấp thông tin");
@@ -422,9 +461,16 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
       mapDataInfo(columnViDo, _latController.text);
     }
 
-    // if (_lyDoThoiGianController.text.isNotEmpty) {
-    //   newPhieu.giaiTrinhThoiGianPV = _lyDoThoiGianController.text;
-    // }
+    if (_giaiTrinhController.text.isNotEmpty) {
+      mapDataInfo(colPhieuGhiChu, _giaiTrinhController.text);
+    }
+    if (isThoiGianPv()) {
+      if (_lyDoThoiGianController.text.isNotEmpty) {
+        mapDataInfo(colPhieuGiaiTrinhThoiGianPV, _lyDoThoiGianController.text);
+      }
+    } else {
+      mapDataInfo(colPhieuGiaiTrinhThoiGianPV, null);
+    }
 
     if (_lyDoDinhViController.text.isNotEmpty) {
       mapDataInfo(giaiTrinhToaDo, _lyDoDinhViController.text);
@@ -437,9 +483,8 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     }
 
     Get.back(
-      result: CompletedResult(
-          isEdited: _allowEdit,
-          completeInfo: completeInfoNew),
+      result:
+          CompletedResult(isEdited: _allowEdit, completeInfo: completeInfoNew),
     );
   }
 
@@ -452,27 +497,53 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
 
   /// ----- validate ------
   ///
-  // /// Kiểm tra thời gian phỏng vấn có ngắn hơn thời gian tối thiểu không
-  // bool _isConditionalInterviewTime() {
-  //   try {
-  //     final requiredTime = AppPref.tokenModel?.thoiGianPVToiThieu ?? '0';
-  //     final start = DateTime.parse(widget.tlbPhieu.thoiGianBD ?? '');
-  //     final end = DateTime.parse(widget.tlbPhieu.thoiGianKT ?? '');
-  //     final seconds = end.difference(start).inSeconds;
-
-  //     if (seconds < int.parse(requiredTime)) {
-  //       return true;
-  //     }
-  //     return false;
-  //   } catch (e) {
-  //     log('Error in _isConditionalInterviewTime: ${e.toString()}');
-  //     return false; // Default to false if there's an error
-  //   }
-  // }
-
   /// Kiểm tra có toạ độ hay không
   bool _hasCoordinates() {
     return _latController.text.isNotEmpty && _lngController.text.isNotEmpty;
+  }
+
+  /// Kiểm tra thời gian phỏng vấn có ngắn hơn thời gian tối thiểu không
+  bool isThoiGianPv() {
+    try {
+      int seconds = 0;
+      final requiredTime = AppPref.thoiGianPVToiThieu ?? '0';
+      if (controller
+              .generalInformationController.tblBkCoSoSXKD.value.maTrangThaiDT ==
+          9) {
+        if (controller
+            .validateEmptyString(controller.tblPhieu.value.thoiGianBD)) {
+          final start = widget.thoiGianBDPv;
+          final end = DateTime.now();
+          seconds = end.difference(start).inSeconds;
+          log('widget.thoiGianBDPv: ${widget.thoiGianBDPv.toIso8601String()}');
+          log('widget.thoiGianBDPv: ${end.toIso8601String()}');
+        } else {
+          final start =
+              DateTime.parse(controller.tblPhieu.value.thoiGianBD ?? '');
+          final end =
+              DateTime.parse(controller.tblPhieu.value.thoiGianKT ?? '');
+          seconds = end.difference(start).inSeconds;
+          log('controller.tblPhieu.value.thoiGianBD: ${controller.tblPhieu.value.thoiGianBD}');
+          log('controller.tblPhieu.value.thoiGianKT: ${controller.tblPhieu.value.thoiGianKT}');
+        }
+      } else {
+        final start = widget.thoiGianBDPv;
+        final end = DateTime.now();
+        seconds = end.difference(start).inSeconds;
+        log('widget.thoiGianBDPv: ${widget.thoiGianBDPv.toIso8601String()}');
+        log('widget.thoiGianBDPv: ${end.toIso8601String()}');
+      }
+
+      log('thoiGianPVToiThieu: $requiredTime');
+      log('seconds: ${seconds.toString()}');
+      if (seconds < int.parse(requiredTime)) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      log('Error in isThoiGianPv: ${e.toString()}');
+      return false; // Default to false if there's an error
+    }
   }
 
   /// Kiểm tra xem có phải đang cập nhật toạ độ hay không
@@ -512,7 +583,7 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
     );
   }
 
-  Future<void> onMicrophoneTap(String fieldName) async {
+  Future<void> onMicrophoneTap(TextEditingController controller) async {
     try {
       // Show the modern recording dialog
       final recognizedText = await showRecordingDialog(
@@ -526,7 +597,12 @@ class _CompleteInterviewScreenState extends State<CompleteInterviewScreen> {
       // If we got text back, use it to fill the form field
       if (recognizedText != null && recognizedText.isNotEmpty) {
         // Update the form field with the recognized text
-        onChangeText(recognizedText, fieldName);
+        controller.value = controller.value.copyWith(
+          text: recognizedText,
+          selection: TextSelection.fromPosition(
+            TextPosition(offset: recognizedText.length),
+          ),
+        );
       }
     } catch (e, stackTrace) {
       log('onMicrophoneTap error: $e $stackTrace');
